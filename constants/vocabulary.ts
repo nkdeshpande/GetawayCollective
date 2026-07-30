@@ -58,6 +58,33 @@ export const VOCABULARY_MAP = {
   },
 } as const;
 
+/**
+ * ── DECLARED COMPOUNDS ───────────────────────────────────────────────
+ *
+ * Multi-word terms in which a forbidden word appears but carries a
+ * DIFFERENT meaning. Each is a constitutional term of art, so the phrase
+ * is permitted while the bare word remains forbidden.
+ *
+ * "Service" is forbidden because a hospitality service belongs to the
+ * Operating Partner. "Debt Service" is a financing obligation and has
+ * nothing to do with hospitality — it is stage 5 of the waterfall.
+ * Blocking it would force the code to misname a constitutional stage.
+ *
+ * This list is deliberately short and each entry cites its authority.
+ * It is not a general escape hatch: for one-off legitimate uses, put
+ * `// vocab-lint-ignore` on the line instead. Adding a compound here
+ * exempts the phrase EVERYWHERE, so it needs a real justification.
+ */
+export const ALLOWED_COMPOUNDS: Record<string, string> = {
+  "Debt Service": "L1-16 Part I, waterfall stage 5. A financing obligation, not a hospitality service.",
+  "Commercial Services Agreement": "L1-16 §4.1. The ratified instrument governing Brand & Digital participation.",
+  "Commercial Services": "L1-16 §4.1. Short form of the above.",
+  "Service Level": "EP-18. Operator SLA measurement, a contractual metric.",
+  // The lexeme is the PLATFORM, not the fee — declaring the fee phrase alone
+  // breaks the moment a comment wraps between "platform" and "fees".
+  "booking platform": "L1-16 §1.2. A third party's distribution channel. Its fee is deducted in computing the Revenue Base; it is not a hospitality booking.",
+};
+
 // ── The Member Law (§25a, ratified 30 Jul 2026) ──────────────────────
 /**
  * One identity. Two lifecycle states.

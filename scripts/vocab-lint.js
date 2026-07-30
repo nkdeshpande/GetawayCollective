@@ -59,6 +59,38 @@ function loadForbidden() {
   return rules;
 }
 
+/**
+ * Declared compounds: phrases in which a forbidden word carries a different,
+ * constitutionally sanctioned meaning ("Debt Service", "Commercial Services
+ * Agreement"). Parsed from the same single source as the forbidden list.
+ */
+function loadCompounds() {
+  const src = fs.readFileSync(VOCAB_SRC, "utf8");
+  const block = src.match(/ALLOWED_COMPOUNDS[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!block) return [];
+  return [...block[1].matchAll(/"([^"]+)"\s*:/g)].map((m) => m[1]);
+}
+
+/**
+ * True when the match at `index` sits inside a declared compound.
+ * Compared case-insensitively so "debt service" and "Debt Service" behave
+ * identically — a linter that depends on capitalisation is a coin toss.
+ */
+function insideCompound(line, index, matchLen, compounds) {
+  const lower = line.toLowerCase();
+  for (const c of compounds) {
+    const cl = c.toLowerCase();
+    let from = 0;
+    for (;;) {
+      const at = lower.indexOf(cl, from);
+      if (at === -1) break;
+      if (index >= at && index + matchLen <= at + cl.length) return true;
+      from = at + 1;
+    }
+  }
+  return false;
+}
+
 function walk(dir, out = []) {
   let entries;
   try {
@@ -79,7 +111,11 @@ function walk(dir, out = []) {
 
 // ── Run ───────────────────────────────────────────────────────────────
 const FORBIDDEN = loadForbidden();
-console.log(`[vocab-lint] Enforcing ${FORBIDDEN.length} forbidden terms from constants/vocabulary.ts\n`);
+const COMPOUNDS = loadCompounds();
+console.log(
+  `[vocab-lint] Enforcing ${FORBIDDEN.length} forbidden terms ` +
+  `(${COMPOUNDS.length} declared compounds) from constants/vocabulary.ts\n`,
+);
 
 const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
 const violations = [];
@@ -95,6 +131,7 @@ for (const file of files) {
       rule.pattern.lastIndex = 0;
       let match;
       while ((match = rule.pattern.exec(line)) !== null) {
+        if (insideCompound(line, match.index, match[0].length, COMPOUNDS)) continue;
         violations.push({
           file: rel,
           line: idx + 1,

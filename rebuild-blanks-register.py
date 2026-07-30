@@ -15,10 +15,10 @@ ws.append(['ID', 'Section', 'What is missing', 'My proposed default',
            'Blocks', 'Owner', 'Priority', 'Approve? (Y / amend)'])
 
 open_rows = [
-    ['BLANK-25', 'L1-01 §25 Vocabulary',
-     'Should "Consumer" join the forbidden term list? It appears 6 times in GC.SYSTEM v3.0. Currently only Customer and User are forbidden, so the linter passes Consumer.',
-     'PROPOSED: add it. Same family and same error as Customer - it frames a Member as someone who consumes rather than someone who owns. Adding it is a constitutional vocabulary amendment under §25 and is not mine to make unilaterally. One word closes this.',
-     'L8 UX, brand surface', 'Knowledge Office', 'LOW', ''],
+    ['BLANK-28', 'L1-16 Part I',
+     'No cap on the Stage 1 Operating Company share, and no subordination of it to reserve funding. The ratified waterfall order is 1 OpCo, 2 Brand, 3 Admin Reserve, 4 Sinking Fund, 5 Debt Service, 6 Partners - so the Operating Company ranks AHEAD of both constitutional reserves AND debt service. Demonstrated in tests: a 90 percent operating share leaves the Admin Reserve short by 5,000, the Sinking Fund at zero and debt service wholly unpaid, on a 1,000,000 Revenue Base.',
+     'CANNOT DEFAULT - this is a commercial and fiduciary judgement. Three options: (a) accept as ratified, relying on the Operating Agreement to cap the share commercially rather than constitutionally; (b) cap the Stage 1 share at a constitutional ceiling expressed in basis points of Revenue Base; (c) subordinate Stage 1 to Stages 3-5, so reserves and debt service fund before the operator is paid. Option (c) is the institutional norm but materially changes the operator economics you have already modelled. The engine currently implements exactly what was ratified.',
+     'F-05, F-06, L1-16 Part I', 'Executive Office + Finance', 'HIGH', ''],
 ]
 for r in open_rows:
     ws.append(r)
@@ -74,6 +74,8 @@ ratified = [
      'RATIFIED - MERGED. L1-01 §23 and L1-14 independently assigned the same F-identifiers to different rules, violating §14 Naming Authority. The two sets are merged into ONE canonical table of 18 in L1-01 §23, which is now the sole FINANCIAL numbering. Every rule from both survived; only numbers changed. L1-14 Part IV retains its prose but its numbers are VOID and carry an explicit old-to-new mapping table. Resolved before Wave 2 began, because Wave 2 bakes invariant ids into field definitions.', '30 Jul 2026'],
     ['BLANK-09a', 'L1-16 §2.6a', 'Reserve breach - does distribution suspension survive?',
      'RATIFIED - TWO DISTINCT TESTS. (1) PROSPECTIVE: a distribution that would ITSELF take the reserve below floor is rejected automatically and is NOT voteable - a floor a single payment may cross at will is not a floor. (2) EXISTING BREACH: where the reserve is already below floor, scheduled distributions CONTINUE unless suspended by Ordinary Resolution (>50% of equity present). Automatic on any breach: broadcast to Board, Executive Office and affected LLP Partners, plus deferral of discretionary expenditure. RECORDED TENSION accepted knowingly: partners voting on whether to pause their own distributions are voting on their own cash, and the incentive runs toward continuing to distribute from a vehicle already below its liquidity floor. Limited by the non-voteable prospective test, by the breach being broadcast so the decision is made in the open, and by expenditure deferral operating regardless. Residual exposure: a prolonged sub-floor period sustained by repeated small distributions each individually lawful. Reserve Coverage Ratio (UFR-0385) makes it visible; nothing else prevents it.', '30 Jul 2026'],
+    ['BLANK-25', 'L1-01 §25 Vocabulary', 'Should Consumer join the forbidden list?',
+     'RATIFIED - YES. Getaway Collective has Investor and Member, not Consumer. A Member owns; they do not consume. Linter now enforces 16 terms; the codebase was already clean.', '30 Jul 2026'],
     ['BLANK-26', 'WAVE-2-ARCHITECTURE-TARGET', 'Status of GC.SYSTEM v3.0 Sovereign OS scaffold',
      'RATIFIED - MIGRATION TARGET, not current state. C:/gc-app remains authoritative and nothing restructures now; an empty Turborepo would constrain L7/L8 decisions the semantic layer has not yet made. Palette reconciles with zero drift (10/10 verified programmatically). Tier 05 Financial Objects do NOT reconcile - none of Fund/Asset/Deal/Portfolio/Cash Flow/Covenant/Fraction is a canonical L2 name; mapping recorded, with Fraction the consequential one since it carries a retail fractional-ownership framing the constitution rejects. UI state COMMITTED renamed SEALED to avoid colliding with Commitment (UFR-0182). Eight-step migration sequence recorded; step 3 (generate Zod from the UFR rather than transcribing) is the one that keeps E-06 true.', '30 Jul 2026'],
     ['BLANK-27', 'WAVE-2-ARCHITECTURE-TARGET §4', 'GC.SYSTEM vocabulary - canonicalise or exempt?',
@@ -105,8 +107,8 @@ for line in [
     ['GETAWAY COLLECTIVE - L1 BLANKS REGISTER - Rev 3'],
     ['Regenerated 30 Jul 2026'],
     [''],
-    ['OPEN: 1   (BLANK-25 - should Consumer join the forbidden list)'],
-    ['RATIFIED: 30'],
+    ['OPEN: 1   (BLANK-28 - Operating Company share ranks ahead of reserves and debt service)'],
+    ['RATIFIED: 31'],
     [''],
     ['Column H on Open Blanks: write Y to accept the default, or write the correction.'],
     [''],

@@ -333,11 +333,11 @@ export const UFR: FieldDefinition[] = [
   F({ ufr: "UFR-0263", name: "executed_at", object: BusinessObjectType.Distribution, type: "timestamp", required: true, immutable: true,
       description: "When the payment executed.", sensitivity: "holder", invariants: ["F-07"] }),
   F({ ufr: "UFR-0264", name: "revenue_base", object: BusinessObjectType.Distribution, type: "money", required: true, immutable: true,
-      // The term below names a THIRD PARTY's fee (the OTA or channel that took the
-      // sale), quoted verbatim from the constitutional Revenue Base definition in
-      // L1-16 §1.2. Renaming it would break the tie to the instrument defining it,
-      // so the line carries an explicit exemption rather than a paraphrase.
-      description: "The Revenue Base this distribution was computed from: gross operating receipts less statutory taxes, booking platform fees, channel commissions, settlement charges, and refunds. No GC or affiliate fee is deductible in arriving at this figure.", // vocab-lint-ignore
+      // The deduction below uses a DECLARED COMPOUND from vocabulary.ts,
+      // citing L1-16 §1.2 — a third party's distribution channel, which is
+      // an operating-company concern only in name. Declared centrally
+      // rather than exempted line by line.
+      description: "The Revenue Base this distribution was computed from: gross operating receipts less statutory taxes, booking platform fees, channel commissions, settlement charges, and refunds. No GC or affiliate fee is deductible in arriving at this figure.",
       sensitivity: "holder",
       invariants: ["F-15"] }),
 
