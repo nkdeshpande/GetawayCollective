@@ -1,0 +1,120 @@
+#!/usr/bin/env node
+/**
+ * Token Package export — GC Design System v3.0 LOCKED
+ *
+ * Single source: constants/tokens.ts (which is itself downstream of
+ * GC-DesignSystem.html under the Design Supremacy Clause, L1-01 §29).
+ *
+ * Emits:
+ *   dist/tokens.json  — for design tools, docs, and non-TS consumers
+ *   dist/tokens.css   — custom properties for runtime
+ *
+ * Zero dependencies. Node >= 18.
+ *
+ * Also runs a DRIFT CHECK: every COLOUR, FONT, SPACE and MOTION token defined
+ * in TypeScript must appear in CSS_VARS. Without this, a token added to TS but
+ * forgotten in the CSS block silently exists in one half of the system only —
+ * exactly the divergence the Design Supremacy Clause exists to prevent.
+ */
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const ROOT = path.resolve(__dirname, '..');
+const SRC = path.join(ROOT, 'constants', 'tokens.ts');
+const OUT_DIR = path.join(ROOT, 'dist');
+
+function loadTokens() {
+  const raw = fs.readFileSync(SRC, 'utf8');
+  // tokens.ts is plain object literals plus `export` and `as const`.
+  // Strip both and evaluate; no transpiler needed.
+  const js = raw.replace(/\bexport\s+/g, '').replace(/\s+as\s+const/g, '');
+  const names = [
+    'COLOUR', 'FONT', 'SPACE', 'MOTION', 'RADIUS',
+    'IL', 'METRIC_COLOUR', 'DENSITY', 'MODE', 'CSS_VARS',
+  ];
+  // eslint-disable-next-line no-new-func
+  const fn = new Function(`${js}\nreturn {${names.join(',')}};`);
+  return fn();
+}
+
+/** Every token that must be reachable from CSS. */
+function expectedCssVars(t) {
+  const expect = [];
+  const skip = new Set(['strokeIdle', 'strokeActive']); // emitted as literals
+  for (const k of Object.keys(t.COLOUR)) {
+    if (!skip.has(k)) expect.push({ group: 'COLOUR', key: k, value: t.COLOUR[k] });
+  }
+  for (const k of Object.keys(t.FONT)) expect.push({ group: 'FONT', key: k, value: t.FONT[k] });
+  for (const k of Object.keys(t.SPACE)) expect.push({ group: 'SPACE', key: k, value: t.SPACE[k] });
+  for (const k of Object.keys(t.MOTION.ease)) {
+    expect.push({ group: 'MOTION.ease', key: k, value: t.MOTION.ease[k] });
+  }
+  for (const k of Object.keys(t.MOTION.duration)) {
+    expect.push({ group: 'MOTION.duration', key: k, value: t.MOTION.duration[k] });
+  }
+  return expect;
+}
+
+function driftCheck(t) {
+  const css = t.CSS_VARS;
+  // A token is present if its resolved VALUE appears in the generated CSS.
+  // Value-matching rather than name-matching: it catches a var that was wired
+  // to the wrong token, which a name check would pass.
+  const missing = expectedCssVars(t).filter((e) => !css.includes(String(e.value)));
+  return missing;
+}
+
+function main() {
+  const t = loadTokens();
+
+  const missing = driftCheck(t);
+  if (missing.length) {
+    console.error('[export-tokens] DRIFT — tokens defined in TypeScript but absent from CSS_VARS:\n');
+    for (const m of missing) {
+      console.error(`  ${m.group}.${m.key}  =  ${m.value}`);
+    }
+    console.error('\nAdd them to CSS_VARS in constants/tokens.ts, then re-run.');
+    process.exit(1);
+  }
+
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+
+  const json = {
+    $schema: 'https://design-tokens.org/schema.json',
+    name: 'GC Design System',
+    version: '3.0-LOCKED',
+    source: 'GC-DesignSystem.html via constants/tokens.ts',
+    authority: 'L1-01 §29 Design Supremacy Clause',
+    generated: 'run scripts/export-tokens.js to regenerate — do not edit by hand',
+    colour: t.COLOUR,
+    font: t.FONT,
+    space: t.SPACE,
+    motion: t.MOTION,
+    radius: t.RADIUS,
+    informationHierarchy: t.IL,
+    metricColour: t.METRIC_COLOUR,
+    density: t.DENSITY,
+    mode: t.MODE,
+  };
+
+  fs.writeFileSync(path.join(OUT_DIR, 'tokens.json'), `${JSON.stringify(json, null, 2)}\n`, 'utf8');
+
+  const header = [
+    '/* GC Design System — v3.0 LOCKED',
+    ' * GENERATED FILE — do not edit.',
+    ' * Source: constants/tokens.ts · regenerate with `npm run tokens`',
+    ' * Authority: L1-01 §29 Design Supremacy Clause',
+    ' */',
+    '',
+  ].join('\n');
+
+  fs.writeFileSync(path.join(OUT_DIR, 'tokens.css'), header + t.CSS_VARS.trimStart(), 'utf8');
+
+  const n = expectedCssVars(t).length;
+  console.log(`[export-tokens] OK — ${n} tokens verified in both formats`);
+  console.log('  dist/tokens.json');
+  console.log('  dist/tokens.css');
+}
+
+main();

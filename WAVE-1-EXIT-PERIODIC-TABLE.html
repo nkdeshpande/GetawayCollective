@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wave 1 Exit Checklist — Periodic Table</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f9f9f7;
+      color: #0b0b0b;
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #1a1a19;
+        color: #ffffff;
+      }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 16px;
+      color: #6b6b6b;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .header p {
+        color: #9a9a9a;
+      }
+    }
+
+    .legend {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-box {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .legend-box {
+        border-color: #444;
+      }
+    }
+
+    .legend-box.locked {
+      background: #1FAA59;
+      border-color: #0F6E56;
+    }
+
+    .legend-box.partial {
+      background: #EF9F27;
+      border-color: #854F0B;
+    }
+
+    .legend-box.tbd {
+      background: #E24B4A;
+      border-color: #A32D2D;
+    }
+
+    .category-section {
+      margin-bottom: 4rem;
+    }
+
+    .category-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0b0b0b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1.5rem;
+      padding-left: 1rem;
+      border-left: 4px solid #0b0b0b;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .category-title {
+        color: #ffffff;
+        border-left-color: #ffffff;
+      }
+    }
+
+    .periodic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 14px;
+      margin-bottom: 3rem;
+    }
+
+    .element {
+      aspect-ratio: 1;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 200ms ease;
+      background: #ffffff;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element {
+        background: #2a2a29;
+        border-color: #3a3a39;
+        box-shadow: none;
+      }
+    }
+
+    .element:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-color: #bbb;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element:hover {
+        border-color: #555;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      }
+    }
+
+    .element.locked {
+      background: #E1F5EE;
+      border-color: #0F6E56;
+    }
+
+    .element.locked:hover {
+      background: #BFEEE3;
+      box-shadow: 0 4px 12px rgba(15, 110, 86, 0.15);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element.locked {
+        background: #0a3c2f;
+        border-color: #1D9E75;
+      }
+      .element.locked:hover {
+        background: #0d5a3f;
+      }
+    }
+
+    .element.partial {
+      background: #FAEEDA;
+      border-color: #854F0B;
+    }
+
+    .element.partial:hover {
+      background: #FAC775;
+      box-shadow: 0 4px 12px rgba(132, 79, 11, 0.15);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element.partial {
+        background: #4d3a0f;
+        border-color: #BA7517;
+      }
+      .element.partial:hover {
+        background: #5f4619;
+      }
+    }
+
+    .element.tbd {
+      background: #FCEBEB;
+      border-color: #A32D2D;
+    }
+
+    .element.tbd:hover {
+      background: #F7C1C1;
+      box-shadow: 0 4px 12px rgba(162, 45, 45, 0.15);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element.tbd {
+        background: #4a2222;
+        border-color: #D85A30;
+      }
+      .element.tbd:hover {
+        background: #5e2e2e;
+      }
+    }
+
+    .element-symbol {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .element.locked .element-symbol {
+      color: #0F6E56;
+    }
+
+    .element.partial .element-symbol {
+      color: #854F0B;
+    }
+
+    .element.tbd .element-symbol {
+      color: #A32D2D;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element.locked .element-symbol {
+        color: #1FAA59;
+      }
+      .element.partial .element-symbol {
+        color: #EF9F27;
+      }
+      .element.tbd .element-symbol {
+        color: #E24B4A;
+      }
+    }
+
+    .element-name {
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .element.locked .element-name {
+      color: #085041;
+    }
+
+    .element.partial .element-name {
+      color: #633806;
+    }
+
+    .element.tbd .element-name {
+      color: #791F1F;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element.locked .element-name {
+        color: #9FE1CB;
+      }
+      .element.partial .element-name {
+        color: #FAC775;
+      }
+      .element.tbd .element-name {
+        color: #F0997B;
+      }
+    }
+
+    .element-status {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .element.locked .element-status {
+      background: rgba(15, 110, 86, 0.15);
+      color: #0F6E56;
+    }
+
+    .element.partial .element-status {
+      background: rgba(132, 79, 11, 0.15);
+      color: #854F0B;
+    }
+
+    .element.tbd .element-status {
+      background: rgba(162, 45, 45, 0.15);
+      color: #A32D2D;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .element.locked .element-status {
+        background: rgba(31, 170, 89, 0.2);
+        color: #1FAA59;
+      }
+      .element.partial .element-status {
+        background: rgba(239, 159, 39, 0.2);
+        color: #EF9F27;
+      }
+      .element.tbd .element-status {
+        background: rgba(226, 75, 74, 0.2);
+        color: #E24B4A;
+      }
+    }
+
+    .summary-section {
+      margin-top: 4rem;
+      padding-top: 3rem;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .summary-section {
+        border-top-color: #3a3a39;
+      }
+    }
+
+    .summary-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+    }
+
+    .summary-card {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .summary-card {
+        background: #2a2a29;
+        border-color: #3a3a39;
+        box-shadow: none;
+      }
+    }
+
+    .summary-card h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b6b6b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .summary-card h3 {
+        color: #9a9a9a;
+      }
+    }
+
+    .summary-card .number {
+      font-size: 32px;
+      font-weight: 600;
+      color: #0b0b0b;
+      margin: 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .summary-card .number {
+        color: #ffffff;
+      }
+    }
+
+    .summary-card .detail {
+      font-size: 12px;
+      color: #6b6b6b;
+      margin-top: 6px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .summary-card .detail {
+        color: #9a9a9a;
+      }
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid #ddd;
+      font-size: 12px;
+      color: #6b6b6b;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .footer {
+        border-top-color: #3a3a39;
+        color: #9a9a9a;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Wave 1 Exit Checklist</h1>
+      <p>Foundation Lock — Periodic Table of Deliverables | 30 Jul 2026</p>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-box locked"></div>
+        <span>Locked & Ratified</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box partial"></div>
+        <span>Partial (Completion Pending)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-box tbd"></div>
+        <span>TBD (User Decision)</span>
+      </div>
+    </div>
+
+    <div class="category-section">
+      <h2 class="category-title">Content Layer</h2>
+      <div class="periodic-grid">
+        <div class="element locked" title="1,059 lines, 14 ratified items, 0 blockers">
+          <div class="element-symbol">Ct</div>
+          <div class="element-name">Enterprise Constitution</div>
+          <div class="element-status">Locked</div>
+        </div>
+        <div class="element locked" title="Investment Platform (not OpCo) thesis">
+          <div class="element-symbol">Th</div>
+          <div class="element-name">Constitutional Thesis</div>
+          <div class="element-status">Locked</div>
+        </div>
+        <div class="element tbd" title="JTBD framework provided, awaiting approval">
+          <div class="element-symbol">Br</div>
+          <div class="element-name">Brand Constitution</div>
+          <div class="element-status">Pending</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-section">
+      <h2 class="category-title">Data Layer</h2>
+      <div class="periodic-grid">
+        <div class="element locked" title="25 institutional objects (Enterprise, Assets, Capital, Governance, Performance, Intelligence)">
+          <div class="element-symbol">Bo</div>
+          <div class="element-name">Business Objects</div>
+          <div class="element-status">Locked</div>
+        </div>
+        <div class="element locked" title="L2 specifications complete">
+          <div class="element-symbol">Bd</div>
+          <div class="element-name">Object Descriptions</div>
+          <div class="element-status">Locked</div>
+        </div>
+        <div class="element partial" title="13 defined, 7 ratified, tests deferred to L3">
+          <div class="element-symbol">Iv</div>
+          <div class="element-name">Invariants</div>
+          <div class="element-status">Partial</div>
+        </div>
+        <div class="element tbd" title="Privacy, Security, Accessibility, ESG, Ethics">
+          <div class="element-symbol">Pl</div>
+          <div class="element-name">Enterprise Policies</div>
+          <div class="element-status">TBD</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-section">
+      <h2 class="category-title">Visual Layer</h2>
+      <div class="periodic-grid">
+        <div class="element locked" title="v3.0 LOCKED (Design Supremacy Clause §29)">
+          <div class="element-symbol">Ds</div>
+          <div class="element-name">Design System</div>
+          <div class="element-status">Locked</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-section">
+      <h2 class="category-title">Configuration Layer</h2>
+      <div class="periodic-grid">
+        <div class="element locked" title="13 forbidden terms, passing clean">
+          <div class="element-symbol">Lnt</div>
+          <div class="element-name">Vocabulary Linter</div>
+          <div class="element-status">Locked</div>
+        </div>
+        <div class="element partial" title="Complete but needs JSON/CSS export">
+          <div class="element-symbol">Tk</div>
+          <div class="element-name">Token Package</div>
+          <div class="element-status">Export</div>
+        </div>
+        <div class="element tbd" title="Needs eslint integration + pre-commit hook">
+          <div class="element-symbol">Bs</div>
+          <div class="element-name">Build System</div>
+          <div class="element-status">TBD</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-section">
+      <h2 class="category-title">Test Layer</h2>
+      <div class="periodic-grid">
+        <div class="element tbd" title="Deferred to L3 Wave 2 build">
+          <div class="element-symbol">Fx</div>
+          <div class="element-name">Sample Fixtures</div>
+          <div class="element-status">L3</div>
+        </div>
+        <div class="element tbd" title="Deferred to L3 Wave 2 build">
+          <div class="element-symbol">Lt</div>
+          <div class="element-name">Linter Tests</div>
+          <div class="element-status">L3</div>
+        </div>
+        <div class="element tbd" title="Deferred to L3 Wave 2 build">
+          <div class="element-symbol">Tt</div>
+          <div class="element-name">Token Tests</div>
+          <div class="element-status">L3</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-section">
+      <h2 class="category-title">Infrastructure</h2>
+      <div class="periodic-grid">
+        <div class="element locked" title="C:\gc-app live, main branch ready">
+          <div class="element-symbol">Git</div>
+          <div class="element-name">Repository</div>
+          <div class="element-status">Live</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-section">
+      <h2 class="summary-title">Wave 1 Readiness Summary</h2>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h3>Locked</h3>
+          <p class="number">7</p>
+          <p class="detail">of 16 (44%)</p>
+        </div>
+        <div class="summary-card">
+          <h3>Partial</h3>
+          <p class="number">3</p>
+          <p class="detail">of 16 (19%)</p>
+        </div>
+        <div class="summary-card">
+          <h3>TBD</h3>
+          <p class="number">6</p>
+          <p class="detail">of 16 (37%)</p>
+        </div>
+        <div class="summary-card">
+          <h3>Blockers</h3>
+          <p class="number">0</p>
+          <p class="detail">All resolved ✓</p>
+        </div>
+        <div class="summary-card">
+          <h3>Wave 2 Entry</h3>
+          <p class="number">48 hrs</p>
+          <p class="detail">to gate</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Wave 1 Exit Checklist — Periodic Table Format | C:\gc-app\WAVE-1-EXIT-PERIODIC-TABLE.html</p>
+      <p>Companion to: WAVE-1-EXIT-CHECKLIST.md (detailed) | WAVE-INTAKE.md (original plan)</p>
+    </div>
+  </div>
+</body>
+</html>

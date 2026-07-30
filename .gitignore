@@ -1,0 +1,21 @@
+node_modules/
+.next/
+.turbo/
+out/
+build/
+coverage/
+
+# Generated token package — regenerate with `npm run tokens`
+dist/
+
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.env
+.env.local
+.env*.local
+*.tsbuildinfo
+.vscode/
+.idea/
+~$*.xlsx
