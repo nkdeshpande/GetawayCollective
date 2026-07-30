@@ -146,6 +146,10 @@ export const UFR: FieldDefinition[] = [
       description: "The strategy binding these Properties together. Must be specific enough to exclude a Property that does not fit.", sensitivity: "member" }),
   F({ ufr: "UFR-0042", name: "concentration_ceiling", object: BusinessObjectType.Portfolio, type: "percent", required: true,
       description: "Maximum share of the portfolio a single holder may hold. Constitutional ceiling is 10 percent (L1-01 §27).", sensitivity: "member" }),
+  F({ ufr: "UFR-0043", name: "organization_id", object: BusinessObjectType.Portfolio, type: "reference", required: true,
+      references: BusinessObjectType.Organization, immutable: true,
+      description: "The Organization that curates this Portfolio. Always Getaway Collective. Anchors the Portfolio to the enterprise root — without it a Portfolio floats unowned.", sensitivity: "member",
+      invariants: ["E-05"] }),
 
   // ═══ ASSETS DOMAIN ═════════════════════════════════════════════════
 
@@ -186,7 +190,7 @@ export const UFR: FieldDefinition[] = [
   F({ ufr: "UFR-0082", name: "completed_on", object: BusinessObjectType.Acquisition, type: "date", required: true, immutable: true,
       description: "Date legal title transferred.", sensitivity: "member", invariants: ["A-04"] }),
   F({ ufr: "UFR-0083", name: "investment_thesis_id", object: BusinessObjectType.Acquisition, type: "reference", required: true,
-      references: BusinessObjectType.InvestmentThesis,
+      references: BusinessObjectType.InvestmentThesis, immutable: true,
       description: "The thesis under which this acquisition was approved. Required — no Property enters the portfolio without one.", sensitivity: "member" }),
 
   // ── Valuation ─────────────────────────────────────────────────────
@@ -345,7 +349,7 @@ export const UFR: FieldDefinition[] = [
       description: "Instrument type. 'operating_agreement' and 'commercial_services' are always material related-party transactions regardless of value.", sensitivity: "member",
       invariants: ["I-07"] }),
   F({ ufr: "UFR-0281", name: "counterparty_id", object: BusinessObjectType.Agreement, type: "reference", required: true,
-      references: BusinessObjectType.Organization,
+      references: BusinessObjectType.Organization, immutable: true,
       description: "The other party. Where this is an affiliated division, the agreement is a related-party transaction.", sensitivity: "member",
       invariants: ["I-07"] }),
   F({ ufr: "UFR-0282", name: "annual_value", object: BusinessObjectType.Agreement, type: "money", required: false,
@@ -383,6 +387,13 @@ export const UFR: FieldDefinition[] = [
   F({ ufr: "UFR-0306", name: "rationale", object: BusinessObjectType.Resolution, type: "text", required: true, immutable: true,
       description: "Recorded reasoning. Every decision has provenance: who, when, why, what options were considered.", sensitivity: "member",
       invariants: ["E-02", "I-06"] }),
+  F({ ufr: "UFR-0307", name: "committee_id", object: BusinessObjectType.Resolution, type: "reference", required: true,
+      references: BusinessObjectType.Committee, immutable: true,
+      description: "The governance body that passed this Resolution. Required — a resolution with no issuing body cannot be checked against that body's decision authority.", sensitivity: "member",
+      invariants: ["E-05", "I-02"] }),
+  F({ ufr: "UFR-0308", name: "vehicle_id", object: BusinessObjectType.Resolution, type: "reference", required: false,
+      references: BusinessObjectType.InvestmentVehicle, immutable: true,
+      description: "The vehicle this Resolution concerns, where it is vehicle-specific. Null for enterprise-level resolutions such as policy approval.", sensitivity: "member" }),
 
   // ── Policy ────────────────────────────────────────────────────────
   F({ ufr: "UFR-0320", name: "policy_id", object: BusinessObjectType.Policy, type: "string", required: true, immutable: true,
@@ -391,7 +402,7 @@ export const UFR: FieldDefinition[] = [
       description: "Version number. Policies version forward; superseded versions remain permanently retrievable.", sensitivity: "public",
       invariants: ["E-03"] }),
   F({ ufr: "UFR-0322", name: "approved_by_resolution_id", object: BusinessObjectType.Policy, type: "reference", required: true,
-      references: BusinessObjectType.Resolution,
+      references: BusinessObjectType.Resolution, immutable: true,
       description: "The Board resolution approving this version. Only the Board may approve policy amendments.", sensitivity: "member",
       invariants: ["E-02"] }),
 
@@ -402,6 +413,10 @@ export const UFR: FieldDefinition[] = [
   F({ ufr: "UFR-0341", name: "decision_authority", object: BusinessObjectType.Committee, type: "json", required: true,
       description: "Matters this committee may decide versus merely recommend. Committees do not replace Board authority unless expressly delegated.", sensitivity: "member",
       invariants: ["E-07", "I-02"] }),
+  F({ ufr: "UFR-0342", name: "organization_id", object: BusinessObjectType.Committee, type: "reference", required: true,
+      references: BusinessObjectType.Organization, immutable: true,
+      description: "The Organization this Committee serves. Anchors governance bodies to the enterprise root.", sensitivity: "public",
+      invariants: ["E-05"] }),
 
   // ── Compliance Event ──────────────────────────────────────────────
   F({ ufr: "UFR-0360", name: "event_type", object: BusinessObjectType.ComplianceEvent, type: "enum", required: true,
@@ -411,7 +426,7 @@ export const UFR: FieldDefinition[] = [
       values: ["advisory", "governance_alert", "material", "constitutional_breach"],
       description: "Severity band. constitutional_breach is reserved for the CF-01 through CF-06 triggers and compels re-ratification of the affected layer.", sensitivity: "internal" }),
   F({ ufr: "UFR-0362", name: "declared_by", object: BusinessObjectType.ComplianceEvent, type: "reference", required: true,
-      references: BusinessObjectType.Committee,
+      references: BusinessObjectType.Committee, immutable: true,
       description: "Who declared it. For constitutional failure this is the Governance and Ethics Committee, or the executive in the interim state, or the Independent Constitutional Review Panel where the declaring authority is itself implicated.", sensitivity: "internal",
       invariants: ["E-02"] }),
   F({ ufr: "UFR-0363", name: "disclosed_to_partners", object: BusinessObjectType.ComplianceEvent, type: "boolean", required: true,
@@ -441,12 +456,20 @@ export const UFR: FieldDefinition[] = [
       description: "Name of the comparator: a market index, portfolio average, or peer fund. Must identify the source precisely enough to reproduce the figure.", sensitivity: "member" }),
   F({ ufr: "UFR-0401", name: "benchmark_value", object: BusinessObjectType.Benchmark, type: "decimal", required: true,
       description: "Comparator value for the period.", sensitivity: "member" }),
+  F({ ufr: "UFR-0402", name: "vehicle_id", object: BusinessObjectType.Benchmark, type: "reference", required: true,
+      references: BusinessObjectType.InvestmentVehicle, immutable: true,
+      description: "The vehicle this comparator is measured against. A benchmark with no subject is uninterpretable — it was previously unanchored in the graph.", sensitivity: "member",
+      invariants: ["E-05"] }),
 
   F({ ufr: "UFR-0420", name: "horizon_years", object: BusinessObjectType.Forecast, type: "integer", required: true,
       description: "Forecast horizon in years.", sensitivity: "member" }),
   F({ ufr: "UFR-0421", name: "scenario", object: BusinessObjectType.Forecast, type: "enum", required: true,
       values: ["base", "downside", "upside", "exit"],
       description: "Scenario modelled. Every forecast declares its case; an undeclared forecast gets read as base and misleads.", sensitivity: "member" }),
+  F({ ufr: "UFR-0422", name: "vehicle_id", object: BusinessObjectType.Forecast, type: "reference", required: true,
+      references: BusinessObjectType.InvestmentVehicle, immutable: true,
+      description: "The vehicle forecast. Required: a projection detached from what it projects cannot be reconciled against outcome.", sensitivity: "member",
+      invariants: ["E-05"] }),
 
   F({ ufr: "UFR-0440", name: "risk_category", object: BusinessObjectType.Risk, type: "enum", required: true,
       values: ["liquidity", "interest_rate", "operator", "market", "climate", "currency", "legal", "regulatory", "technology", "counterparty"],
@@ -457,11 +480,15 @@ export const UFR: FieldDefinition[] = [
   F({ ufr: "UFR-0442", name: "impact", object: BusinessObjectType.Risk, type: "enum", required: true,
       values: ["negligible", "minor", "moderate", "major", "severe"],
       description: "Assessed impact if the risk materialises. Combined with likelihood to place the risk on the register and set the escalation path.", sensitivity: "member" }),
+  F({ ufr: "UFR-0443", name: "vehicle_id", object: BusinessObjectType.Risk, type: "reference", required: true,
+      references: BusinessObjectType.InvestmentVehicle, immutable: true,
+      description: "The vehicle exposed to this risk. The risk register is maintained per vehicle; an unattached risk entry cannot be escalated to anyone.", sensitivity: "member",
+      invariants: ["E-05"] }),
 
   // ═══ INTELLIGENCE DOMAIN ═══════════════════════════════════════════
 
   F({ ufr: "UFR-0460", name: "property_id", object: BusinessObjectType.DueDiligence, type: "reference", required: true,
-      references: BusinessObjectType.Property,
+      references: BusinessObjectType.Property, immutable: true,
       description: "The Property investigated.", sensitivity: "internal" }),
   F({ ufr: "UFR-0461", name: "workstream", object: BusinessObjectType.DueDiligence, type: "enum", required: true,
       values: ["legal", "technical", "environmental", "financial", "commercial", "title"],
@@ -480,6 +507,10 @@ export const UFR: FieldDefinition[] = [
       description: "Identified drivers of return.", sensitivity: "member" }),
   F({ ufr: "UFR-0483", name: "risk_mitigants", object: BusinessObjectType.InvestmentThesis, type: "json", required: true,
       description: "Identified risks and their mitigations. A thesis that names no risks is not a thesis.", sensitivity: "member" }),
+  F({ ufr: "UFR-0484", name: "property_id", object: BusinessObjectType.InvestmentThesis, type: "reference", required: true,
+      references: BusinessObjectType.Property, immutable: true,
+      description: "The Property this thesis concerns. Written while the Property is in prospecting state, before Acquisition references the thesis.", sensitivity: "member",
+      invariants: ["E-05"] }),
 
   F({ ufr: "UFR-0500", name: "market_region", object: BusinessObjectType.MarketIntelligence, type: "string", required: true,
       description: "Geographic scope of the intelligence.", sensitivity: "internal" }),

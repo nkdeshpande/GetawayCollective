@@ -10,8 +10,11 @@
     "lint": "next lint && npm run lint:vocab",
     "lint:vocab": "node scripts/vocab-lint.js",
     "lint:ufr": "node scripts/ufr-lint.js",
+    "lint:rel": "node scripts/rel-lint.js",
     "tokens": "node scripts/export-tokens.js",
-    "verify": "npm run lint:vocab && npm run lint:ufr && npm run tokens && npm run type-check",
+    "schemas": "node scripts/gen-schemas.js",
+    "schemas:check": "node scripts/gen-schemas.js --check",
+    "verify": "npm run lint:vocab && npm run lint:ufr && npm run lint:rel && npm run schemas:check && npm run tokens && npm run type-check",
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui"
