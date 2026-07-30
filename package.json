@@ -9,8 +9,9 @@
     "start": "next start",
     "lint": "next lint && npm run lint:vocab",
     "lint:vocab": "node scripts/vocab-lint.js",
+    "lint:ufr": "node scripts/ufr-lint.js",
     "tokens": "node scripts/export-tokens.js",
-    "verify": "npm run lint:vocab && npm run tokens && npm run type-check",
+    "verify": "npm run lint:vocab && npm run lint:ufr && npm run tokens && npm run type-check",
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui"

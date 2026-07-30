@@ -1,0 +1,8 @@
+#!/bin/sh
+# Constitutional pre-commit gate.
+# Enable with:  git config core.hooksPath .githooks
+echo "[pre-commit] constitutional checks"
+node scripts/vocab-lint.js || { echo "[pre-commit] BLOCKED: vocabulary"; exit 1; }
+node scripts/ufr-lint.js   || { echo "[pre-commit] BLOCKED: field registry (E-06)"; exit 1; }
+node scripts/export-tokens.js || { echo "[pre-commit] BLOCKED: token drift"; exit 1; }
+echo "[pre-commit] OK"

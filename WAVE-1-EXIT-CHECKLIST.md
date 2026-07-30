@@ -41,7 +41,7 @@
 ┌─ DATA ────────────────────────────────────────────────────────────┐
 │                                                                    │
 │  ✓ BUSINESS OBJECTS      ✓ OBJECT               ✓ INVARIANTS      │
-│    25 institutional       DESCRIPTIONS            32 defined      │
+│    27 institutional       DESCRIPTIONS            32 defined      │
 │    (Enterprise,           (L2 BO specs)           11 ratified     │
 │     Assets,                                       21 planned      │
 │     Capital,                                      E-01…E-07       │
@@ -219,7 +219,7 @@
 | Blank | Priority | Status | User Input |
 |-------|----------|--------|-----------|
 | BLANK-05 | BLOCKER | ✓ RATIFIED | TIME domain (fourth sovereign) |
-| BLANK-20 | BLOCKER | ✓ RATIFIED | L2 BO model (25 institutional) |
+| BLANK-20 | BLOCKER | ✓ RATIFIED | L2 BO model (27 institutional) |
 | BLANK-06 | HIGH | ✓ RATIFIED | Layer model (L1–L12 canonical) |
 | BLANK-11a | HIGH | ✓ RATIFIED | Guest deprecation (removed) |
 | BLANK-01 | MEDIUM | ✓ RATIFIED | Category → L1-02 Brand Constitution |
@@ -246,7 +246,7 @@
 ## WAVE 2 ENTRY READINESS
 
 **✓ READY NOW (can begin W2 content work):**
-- L2 Business Object Taxonomy (25 objects locked)
+- L2 Business Object Taxonomy (27 objects locked)
 - Enterprise Constitution (1,059 lines, 14 ratified)
 - Design System v3.0 LOCKED
 - Layer Model (L1–L12 canonical)
@@ -354,7 +354,7 @@ Blockers:               ✓ 0
 11. §29 Design Supremacy Clause: GC-DesignSystem.html v3.0 LOCKED
 12. §29b Typography: Outfit, Inter, Space Mono, Playfair
 13. §30 Success Metrics: 20 investment-focused KPIs
-14. §33 L2 Business Objects: 25-object institutional model
+14. §33 L2 Business Objects: 27-object institutional model
 15. §25a Guest Deprecation: Removed from investment constitution
 
 ---

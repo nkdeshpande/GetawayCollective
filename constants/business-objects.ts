@@ -1,5 +1,5 @@
 /**
- * L2 Business Object Taxonomy — 25 institutional objects
+ * L2 Business Object Taxonomy — 27 institutional objects
  *
  * RATIFIED 30 Jul 2026 · L1-01 §33 (BLANK-20)
  *
@@ -160,5 +160,5 @@ export function rejectionReason(candidate: string): string | null {
   if ((OPERATING_COMPANY_NOUNS as readonly string[]).includes(lower)) {
     return `"${candidate}" belongs to the Operating Company (Sensory Getaways), not the investment platform. Constitutional Test: would an Investment Committee discuss it?`;
   }
-  return `"${candidate}" is not one of the 25 ratified L2 business objects (L1-01 §33).`;
+  return `"${candidate}" is not one of the 27 ratified L2 business objects (L1-01 §33).`;
 }

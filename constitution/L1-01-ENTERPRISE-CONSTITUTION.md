@@ -1231,7 +1231,7 @@ This document is **L1-01**. It is one of **sixteen** L1 artifacts.
 | L1-07 | Service Constitution | Defines operational behaviours | Operations | Partial — four principles captured (§19) |
 | L1-08 | Technology Constitution | Defines engineering principles | Technology | Substantially complete (§18) |
 | L1-09 | Enterprise Principles | Defines universal decision rules | Enterprise Architecture | Complete (§17) |
-| L1-10 | Business Object Constitution | References E01 | Domain Architecture | ✓ **RATIFIED** (§33) — 25 institutional objects |
+| L1-10 | Business Object Constitution | References E01 | Domain Architecture | ✓ **RATIFIED** (§33) — 27 institutional objects |
 | L1-11 | Relationship Constitution | References E02 | Domain Architecture | Wave 2 — unblocked by L1-10 |
 | L1-12 | Enterprise Vocabulary | Defines canonical language | Knowledge Office | ✓ **RATIFIED** — Member Law (§25a) + glossary (§25b) |
 | **L1-13** | **Enterprise Policy Framework** | Defines enterprise-wide governance | Governance | ✓ **RATIFIED** — `L1-13-ENTERPRISE-POLICY-FRAMEWORK.md` · 22 policies · EP-01 authored in full |
@@ -1342,7 +1342,7 @@ If it fails the test, it does not belong in L2. It belongs in Sensory Getaways o
 
 **Constitutional Consequence**
 
-This simplified 25-object model eliminates the confusion between investment governance and operational execution. Every team building L3–L12 now knows: we are building an institutional investment platform, not a hospitality company.
+This simplified 27-object model eliminates the confusion between investment governance and operational execution. Every team building L3–L12 now knows: we are building an institutional investment platform, not a hospitality company.
 
 ---
 
