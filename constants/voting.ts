@@ -69,6 +69,32 @@ export const SPECIAL_RESOLUTION_MATTERS = [
 
 export type SpecialResolutionMatter = (typeof SPECIAL_RESOLUTION_MATTERS)[number];
 
+/**
+ * Named Ordinary Resolution matters (>50% of equity PRESENT).
+ * Not exhaustive — anything absent from SPECIAL and ENTRENCHED is ordinary.
+ * Listed where the classification is load-bearing enough to be explicit.
+ */
+export const SUSPEND_DISTRIBUTIONS = "SUSPEND_DISTRIBUTIONS" as const;
+
+/**
+ * Suspending distributions during a reserve breach (L1-16 §2.6a).
+ *
+ * Requires BOTH an active breach AND an Ordinary Resolution. A breach alone
+ * does not suspend anything.
+ *
+ * Note what this does NOT govern: a distribution that would ITSELF take the
+ * reserve below floor is rejected by F-06 and is not voteable. That check
+ * lives in the distribution command, not here. Partners may vote on how to
+ * respond to a breach; they may not vote to cause one.
+ */
+export function mayFreezeDistributions(
+  reserveBreachActive: boolean,
+  tally: VoteTally,
+): boolean {
+  if (!reserveBreachActive) return false;
+  return resolveVote(SUSPEND_DISTRIBUTIONS, tally).approved;
+}
+
 export function resolutionTypeFor(matter: string): ResolutionType {
   if ((ENTRENCHED_PRINCIPLES as readonly string[]).includes(matter)) {
     return ResolutionType.Unanimous;

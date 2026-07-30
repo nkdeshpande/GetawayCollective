@@ -127,21 +127,44 @@ The minimum Reserve Floor shall equal **the greater of**:
 
 ## 2.6 Breach Response — AMENDED 30 Jul 2026
 
-Where the Reserve Balance falls below the Reserve Floor, the response is deliberately **minimal and automatic**:
+Where the Reserve Balance falls below the Reserve Floor:
+
+**Automatic, requiring no decision:**
 
 1. **Broadcast.** A reserve breach notification is issued to the Board, the Executive Office, and affected LLP Partners.
 2. **Expenditure deferral.** Discretionary expenditure is deferred until the reserve is restored, provided the deferral does not compromise asset integrity.
-3. **All discretionary distributions to LLP Partners are suspended** until the reserve is restored.
+
+**By resolution only:**
+
+3. **Suspension of distributions** requires **both** an active reserve breach **and** an Ordinary Resolution (>50% of equity present, §24a). Distributions are **not** suspended automatically by the breach alone.
 
 > **A reserve breach shall never trigger a capital call.**
 >
 > This follows directly from §2.7. Investor capital is growth capital. A reserve shortfall is an operating and expenditure problem, and it is solved by deferring spend and pausing distributions — never by asking investors for money to cover it.
 
-**Permitted corrective actions:** expenditure deferral · adjustment of reserve allocations · suspension of distributions · refinancing or treasury measures · other Board-approved recovery actions **that do not draw on investor capital**.
+**Permitted corrective actions:** expenditure deferral · adjustment of reserve allocations · suspension of distributions (by resolution) · refinancing or treasury measures · other Board-approved recovery actions **that do not draw on investor capital**.
 
-> **AMENDMENT NOTICE.** An earlier draft of this section prescribed a 5-business-day Board notification, a 15-business-day Investment Committee Reserve Recovery Plan, and a 30-calendar-day Board determination. That escalation machinery is **repealed** in favour of the automatic response above. Rationale: a reserve breach is a known condition with a known remedy; it does not require a bespoke Board process each time it occurs. The Board is informed by broadcast and retains authority to intervene, but no intervention is *required* for the corrective mechanism to operate.
+## 2.6a The Two Distribution Tests — RATIFIED 30 Jul 2026
 
-> ⚠️ **Open interpretation — flagged for confirmation.** The instruction was *"just a broadcast is sent and expenses are delayed."* Item 3 (distribution suspension) has been **retained**, because your BLANK-09 ruling stated it explicitly and the later instruction did not say to remove it. If distributions should in fact continue during a reserve breach, this is the line to strike — but note that doing so would allow partner distributions to continue while the reserve is below floor, which materially weakens invariant **F-04**.
+*Resolves BLANK-09a. These are different questions and receive different answers.*
+
+| | Test | Response |
+|---|---|---|
+| **Prospective** | Would *this distribution* take the reserve below the floor? | **Rejected automatically.** No vote. A floor that a single payment may cross at will is not a floor. |
+| **Existing** | The reserve is *already* below floor — do scheduled distributions continue? | **They continue** unless suspended by Ordinary Resolution. |
+
+The prospective test is the Reserve Floor doing the one thing it exists to do. The existing-breach test is a governance judgement about how to respond to a condition that has already arisen, and the partners whose capital is at stake decide it.
+
+> **AMENDMENT NOTICE.** An earlier draft prescribed a 5-business-day Board notification, a 15-business-day Reserve Recovery Plan, and a 30-calendar-day Board determination, plus automatic suspension of distributions on any breach. The escalation machinery is **repealed**; automatic suspension is **replaced** by the resolution requirement above.
+
+> ⚠️ **Recorded tension — accepted knowingly.** Partners voting on whether to pause their own distributions are voting on their own cash. The incentive runs toward continuing to distribute out of a vehicle that is already below its liquidity floor, which is the precise circumstance the floor was built to prevent.
+>
+> Three things limit the exposure, and none of them removes it:
+> - the **prospective test above is not voteable** — no single distribution may itself breach the floor, so the reserve cannot be drained by a payment;
+> - the breach is **broadcast to all partners**, so a decision to continue distributing is made in the open and recorded;
+> - **expenditure deferral is automatic**, so the recovery mechanism operates whether or not distributions pause.
+>
+> **The residual exposure is a prolonged sub-floor period sustained by repeated small distributions, each individually lawful.** The Reserve Coverage Ratio (UFR-0385) makes that visible in every Performance Report; nothing else prevents it.
 
 ## 2.7 Capital Calls — Growth Capital, Not Working Capital
 

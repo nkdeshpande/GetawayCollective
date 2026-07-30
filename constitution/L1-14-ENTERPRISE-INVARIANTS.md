@@ -778,7 +778,16 @@ The Reserve Floor is **the greater of** (a) six months of the LLP's **non-operat
 
 **Alert bands:** ≥120% healthy · 110–119% advisory · 100–109% governance alert · **<100% constitutional breach**.
 
-**Breach response (amended 30 Jul 2026):** broadcast notification to Board, Executive Office, and affected LLP Partners · discretionary expenditure deferred · discretionary distributions suspended. **A reserve breach shall never trigger a capital call** — investor capital is growth capital (F-11). The earlier 5/15/30-day Board escalation machinery is repealed.
+**Two distinct tests (ratified 30 Jul 2026, L1-16 §2.6a):**
+- **Prospective** — a distribution that would *itself* take the reserve below floor is **rejected automatically and is not voteable**. This is the enforceable half of the invariant.
+- **Existing breach** — where the reserve is *already* below floor, scheduled distributions **continue** unless suspended by Ordinary Resolution (>50% of equity present).
+
+**Automatic on breach:** broadcast to Board, Executive Office, and affected LLP Partners · discretionary expenditure deferred.
+
+**A reserve breach shall never trigger a capital call** — investor capital is growth capital (F-16). The earlier 5/15/30-day Board escalation machinery is repealed.
+
+**Test Names**
+`test_distribution_breaching_floor_rejected` · `test_existing_breach_does_not_auto_suspend` · `test_suspension_requires_ordinary_resolution`
 
 **Owning Layer**  
 L5 (Capabilities)

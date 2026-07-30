@@ -506,7 +506,7 @@ Actor → Authority → Action → Audit
 | F-03 | **Capital Is Accounted** | Every committed unit of capital sits in exactly one of: Committed · Drawn · Invested · Returned · Distributed. No capital is ever unaccounted. |
 | F-04 | **Ledger Is Append-Only** | Ledger entries are immutable. Corrections post offsetting entries. *(FINANCIAL-layer statement of E-04.)* |
 | F-05 | **Waterfall Determinism** | Distribution follows the fixed six-stage waterfall (L1-16 Part I). Computable without interpretation. Stage 6 cannot execute while Stage 5 is outstanding. |
-| F-06 | **Reserve Floor Enforced** | Distributions that would breach the Reserve Floor are rejected. Floor per L1-16 §2.3. Not NAV-linked. |
+| F-06 | **Reserve Floor Enforced** | A distribution that would itself take the reserve below the Floor is rejected automatically and is not voteable. Where the reserve is *already* below Floor, scheduled distributions continue unless suspended by Ordinary Resolution (L1-16 §2.6a). Floor per L1-16 §2.3. Not NAV-linked. |
 | F-07 | **Distribution Immutability** | Executed payouts cannot change. |
 | F-08 | **Economic Versioning** | Economic models never mutate. They version forward. One active model per Vehicle. |
 | F-09 | **Governance Determinism** | A voting outcome automatically produces resolution state. No manual interpretation step. |
