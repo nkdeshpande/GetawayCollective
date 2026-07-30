@@ -76,7 +76,12 @@ export const AgreementCreateSchema = z.object({
   term_months: z.number().int().optional(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const AgreementUpdateSchema = z.object({
   /** UFR-0280 — Instrument type. 'operating_agreement' and 'commercial_services' are always material related-party transactions regardless of value. */
   agreement_type: z.enum(["subscription", "llp_agreement", "operating_agreement", "commercial_services", "share_purchase", "shareholders", "financing", "lease"]).optional(),
@@ -84,7 +89,7 @@ export const AgreementUpdateSchema = z.object({
   annual_value: z.string().regex(/^-?\d+(\.\d{1,4})?$/, "money must be a decimal string, never a float").optional(),
   /** UFR-0283 — Term length. Over 36 months is material regardless of value. */
   term_months: z.number().int().optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Benchmark ─────────────────────────────────────────────────
 export const BenchmarkSchema = SystemFields.extend({
@@ -106,13 +111,18 @@ export const BenchmarkCreateSchema = z.object({
   vehicle_id: z.string().uuid(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const BenchmarkUpdateSchema = z.object({
   /** UFR-0400 — Name of the comparator: a market index, portfolio average, or peer fund. Must identify the source precisely enough to reproduce the figure. */
   benchmark_name: z.string().min(1).optional(),
   /** UFR-0401 — Comparator value for the period. */
   benchmark_value: z.number().optional(),
-}).partial();
+}).partial().strict();
 
 // ─── CapitalCall ───────────────────────────────────────────────
 export const CapitalCallSchema = SystemFields.extend({
@@ -138,11 +148,16 @@ export const CapitalCallCreateSchema = z.object({
   purpose: z.enum(["acquisition", "approved_expansion", "approved_redevelopment", "extraordinary_event", "llp_agreement_provision"]),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const CapitalCallUpdateSchema = z.object({
   /** UFR-0202 — Date called funds are due from holders. Drives default tracking under the LLP Agreement. */
   due_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Commitment ────────────────────────────────────────────────
 export const CommitmentSchema = SystemFields.extend({
@@ -172,11 +187,16 @@ export const CommitmentCreateSchema = z.object({
   commitment_state: z.enum(["offered", "accepted", "settled", "lapsed", "withdrawn"]),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const CommitmentUpdateSchema = z.object({
   /** UFR-0184 — Commitment lifecycle. 'lapsed' is the automatic outcome when accreditation expires before acceptance. */
   commitment_state: z.enum(["offered", "accepted", "settled", "lapsed", "withdrawn"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Committee ─────────────────────────────────────────────────
 export const CommitteeSchema = SystemFields.extend({
@@ -198,13 +218,18 @@ export const CommitteeCreateSchema = z.object({
   organization_id: z.string().uuid(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const CommitteeUpdateSchema = z.object({
   /** UFR-0340 — The governance bodies established by EP-01 §3.5, plus the Independent Constitutional Review Panel convened under L1-01 §31. */
   committee_name: z.enum(["board", "investment", "audit_risk", "governance_ethics", "brand_market", "operations_asset_performance", "independent_constitutional_review_panel"]).optional(),
   /** UFR-0341 — Matters this committee may decide versus merely recommend. Committees do not replace Board authority unless expressly delegated. */
   decision_authority: z.unknown().optional(),
-}).partial();
+}).partial().strict();
 
 // ─── ComplianceEvent ───────────────────────────────────────────
 export const ComplianceEventSchema = SystemFields.extend({
@@ -230,7 +255,12 @@ export const ComplianceEventCreateSchema = z.object({
   disclosed_to_partners: z.boolean(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const ComplianceEventUpdateSchema = z.object({
   /** UFR-0360 — Classification of the event. 'constitutional_failure' carries the CF-01 through CF-06 triggers and compels re-ratification. */
   event_type: z.enum(["audit_finding", "regulatory_notice", "policy_breach", "conflict_disclosure", "constitutional_failure", "operator_sla_breach", "reserve_breach"]).optional(),
@@ -238,7 +268,7 @@ export const ComplianceEventUpdateSchema = z.object({
   severity: z.enum(["advisory", "governance_alert", "material", "constitutional_breach"]).optional(),
   /** UFR-0363 — Whether this was disclosed to affected LLP Partners. Material failures affecting investor rights, reporting, distributions, ownership or governance mu */
   disclosed_to_partners: z.boolean().optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Disposition ───────────────────────────────────────────────
 export const DispositionSchema = SystemFields.extend({
@@ -314,13 +344,18 @@ export const DueDiligenceCreateSchema = z.object({
   outcome: z.enum(["clear", "clear_with_conditions", "adverse"]),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const DueDiligenceUpdateSchema = z.object({
   /** UFR-0461 — Diligence workstream. All must complete before acquisition approval. */
   workstream: z.enum(["legal", "technical", "environmental", "financial", "commercial", "title"]).optional(),
   /** UFR-0462 — Workstream finding. An adverse outcome in any single workstream blocks acquisition approval until resolved or explicitly accepted by the Investment Co */
   outcome: z.enum(["clear", "clear_with_conditions", "adverse"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Forecast ──────────────────────────────────────────────────
 export const ForecastSchema = SystemFields.extend({
@@ -342,13 +377,18 @@ export const ForecastCreateSchema = z.object({
   vehicle_id: z.string().uuid(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const ForecastUpdateSchema = z.object({
   /** UFR-0420 — Forecast horizon in years. */
   horizon_years: z.number().int().optional(),
   /** UFR-0421 — Scenario modelled. Every forecast declares its case; an undeclared forecast gets read as base and misleads. */
   scenario: z.enum(["base", "downside", "upside", "exit"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Investment ────────────────────────────────────────────────
 export const InvestmentSchema = SystemFields.extend({
@@ -374,11 +414,16 @@ export const InvestmentCreateSchema = z.object({
   capital_state: z.enum(["committed", "drawn", "invested", "returned", "distributed"]),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const InvestmentUpdateSchema = z.object({
   /** UFR-0223 — Every unit of capital sits in exactly one of these states at all times. The sum across states must reconcile to total committed — no capital is ever u */
   capital_state: z.enum(["committed", "drawn", "invested", "returned", "distributed"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── InvestmentOffering ────────────────────────────────────────
 export const InvestmentOfferingSchema = SystemFields.extend({
@@ -412,7 +457,12 @@ export const InvestmentOfferingCreateSchema = z.object({
   offering_state: z.enum(["draft", "open", "closed", "cancelled"]),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const InvestmentOfferingUpdateSchema = z.object({
   /** UFR-0140 — Name of the offering, e.g. Series A. */
   offering_name: z.string().min(1).optional(),
@@ -424,7 +474,7 @@ export const InvestmentOfferingUpdateSchema = z.object({
   brand_participation_rate: z.number().min(0).optional(),
   /** UFR-0145 — Offering lifecycle. Commitments may be accepted only while state is open; closing is irreversible, and cancelled offerings retain their record rather  */
   offering_state: z.enum(["draft", "open", "closed", "cancelled"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── InvestmentThesis ──────────────────────────────────────────
 export const InvestmentThesisSchema = SystemFields.extend({
@@ -454,7 +504,12 @@ export const InvestmentThesisCreateSchema = z.object({
   property_id: z.string().uuid(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const InvestmentThesisUpdateSchema = z.object({
   /** UFR-0480 — Why this Property should outperform over twenty years. Immutable once versioned — edits create a new version so that what was believed at approval rem */
   thesis_statement: z.string().optional(),
@@ -464,7 +519,7 @@ export const InvestmentThesisUpdateSchema = z.object({
   return_drivers: z.unknown().optional(),
   /** UFR-0483 — Identified risks and their mitigations. A thesis that names no risks is not a thesis. */
   risk_mitigants: z.unknown().optional(),
-}).partial();
+}).partial().strict();
 
 // ─── InvestmentVehicle ─────────────────────────────────────────
 export const InvestmentVehicleSchema = SystemFields.extend({
@@ -502,7 +557,12 @@ export const InvestmentVehicleCreateSchema = z.object({
   lifecycle_state: z.enum(["forming", "raising", "deployed", "stabilised", "winding_down", "dissolved"]),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const InvestmentVehicleUpdateSchema = z.object({
   /** UFR-0020 — Name of the vehicle as it appears in subscription documents. */
   vehicle_name: z.string().min(1).optional(),
@@ -512,7 +572,7 @@ export const InvestmentVehicleUpdateSchema = z.object({
   approved_leverage_limit: z.number().min(0).optional(),
   /** UFR-0027 — Vehicle lifecycle. Reserve funding obligations become mandatory at 'stabilised' (L1-16 §2.8). */
   lifecycle_state: z.enum(["forming", "raising", "deployed", "stabilised", "winding_down", "dissolved"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Investor ──────────────────────────────────────────────────
 export const InvestorSchema = SystemFields.extend({
@@ -546,7 +606,12 @@ export const InvestorCreateSchema = z.object({
   became_member_on: z.string().datetime().optional(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const InvestorUpdateSchema = z.object({
   /** UFR-0160 — Legal name of the natural person or entity. */
   legal_name: z.string().min(1).optional(),
@@ -558,7 +623,7 @@ export const InvestorUpdateSchema = z.object({
   accreditation_expires_on: z.string().datetime().optional(),
   /** UFR-0164 — ISO 3166-2 code of tax residence. Drives withholding and reporting obligations. */
   tax_jurisdiction: z.string().min(1).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── MarketIntelligence ────────────────────────────────────────
 export const MarketIntelligenceSchema = SystemFields.extend({
@@ -576,11 +641,16 @@ export const MarketIntelligenceCreateSchema = z.object({
   observed_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const MarketIntelligenceUpdateSchema = z.object({
   /** UFR-0500 — Geographic scope of the intelligence. */
   market_region: z.string().min(1).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Organization ──────────────────────────────────────────────
 export const OrganizationSchema = SystemFields.extend({
@@ -614,7 +684,12 @@ export const OrganizationCreateSchema = z.object({
   role_in_enterprise: z.enum(["asset_platform", "operating_partner", "brand_partner", "investment_vehicle", "external_counterparty"]),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const OrganizationUpdateSchema = z.object({
   /** UFR-0001 — Registered legal name exactly as it appears on incorporation documents. Not a trading name. */
   legal_name: z.string().min(1).optional(),
@@ -624,7 +699,7 @@ export const OrganizationUpdateSchema = z.object({
   jurisdiction: z.string().min(1).optional(),
   /** UFR-0006 — Constitutional role per L1-01 §2. Determines which decision rights the entity may exercise. */
   role_in_enterprise: z.enum(["asset_platform", "operating_partner", "brand_partner", "investment_vehicle", "external_counterparty"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── OwnershipPosition ─────────────────────────────────────────
 export const OwnershipPositionSchema = SystemFields.extend({
@@ -652,13 +727,18 @@ export const OwnershipPositionCreateSchema = z.object({
   ownership_class: z.string().min(1),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const OwnershipPositionUpdateSchema = z.object({
   /** UFR-0242 — Ownership units held. The sum of this field across all positions in a vehicle must equal total_units_issued exactly. */
   units_held: z.number().optional(),
   /** UFR-0244 — Ownership class. Partners within the same class hold identical rights per unit — an entrenched principle (L1-01 §32b). */
   ownership_class: z.string().min(1).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── PerformanceReport ─────────────────────────────────────────
 export const PerformanceReportSchema = SystemFields.extend({
@@ -707,11 +787,16 @@ export const PolicyCreateSchema = z.object({
   approved_by_resolution_id: z.string().uuid(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const PolicyUpdateSchema = z.object({
   /** UFR-0321 — Version number. Policies version forward; superseded versions remain permanently retrievable. */
   policy_version: z.number().int().optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Portfolio ─────────────────────────────────────────────────
 export const PortfolioSchema = SystemFields.extend({
@@ -737,7 +822,12 @@ export const PortfolioCreateSchema = z.object({
   organization_id: z.string().uuid(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const PortfolioUpdateSchema = z.object({
   /** UFR-0040 — Name of the curated collection, e.g. Coastal Portfolio. */
   portfolio_name: z.string().min(1).optional(),
@@ -745,7 +835,7 @@ export const PortfolioUpdateSchema = z.object({
   investment_strategy: z.string().optional(),
   /** UFR-0042 — Maximum share of the portfolio a single holder may hold. Constitutional ceiling is 10 percent (L1-01 §27). */
   concentration_ceiling: z.number().min(0).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Property ──────────────────────────────────────────────────
 export const PropertySchema = SystemFields.extend({
@@ -791,7 +881,12 @@ export const PropertyCreateSchema = z.object({
   environmental_commitments: z.unknown().optional(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const PropertyUpdateSchema = z.object({
   /** UFR-0060 — Canonical name of the Property. The single spelling used across every surface. */
   property_name: z.string().min(1).optional(),
@@ -803,7 +898,7 @@ export const PropertyUpdateSchema = z.object({
   lifecycle_state: z.enum(["prospecting", "pending", "acquired", "development", "stabilised", "disposition_pending", "exited"]).optional(),
   /** UFR-0067 — Date of Operational Stabilisation. Sets the point at which the 2.5% + 2.5% reserve funding becomes mandatory and capital calls stop being available fo */
   stabilised_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Research ──────────────────────────────────────────────────
 export const ResearchSchema = SystemFields.extend({
@@ -821,13 +916,18 @@ export const ResearchCreateSchema = z.object({
   research_version: z.number().int(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const ResearchUpdateSchema = z.object({
   /** UFR-0520 — Research subject area. Determines which committee receives the output and how long it is retained. */
   research_topic: z.enum(["esg", "geographic", "asset_class", "economic", "regulatory"]).optional(),
   /** UFR-0521 — Version. Research is knowledge and versions forward rather than mutating. */
   research_version: z.number().int().optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Resolution ────────────────────────────────────────────────
 export const ResolutionSchema = SystemFields.extend({
@@ -898,7 +998,12 @@ export const RiskCreateSchema = z.object({
   vehicle_id: z.string().uuid(),
 });
 
-/** Immutable fields are absent by construction — that is the enforcement. */
+/**
+ * Immutable and computed fields are absent by construction — that is the
+ * enforcement. .strict() makes their presence an ERROR rather than a silent
+ * strip: without it, an update carrying an immutable field returns success
+ * with that field quietly dropped, and the caller believes it was applied.
+ */
 export const RiskUpdateSchema = z.object({
   /** UFR-0440 — Risk register classification per EP-11. */
   risk_category: z.enum(["liquidity", "interest_rate", "operator", "market", "climate", "currency", "legal", "regulatory", "technology", "counterparty"]).optional(),
@@ -906,7 +1011,7 @@ export const RiskUpdateSchema = z.object({
   likelihood: z.enum(["rare", "unlikely", "possible", "likely", "almost_certain"]).optional(),
   /** UFR-0442 — Assessed impact if the risk materialises. Combined with likelihood to place the risk on the register and set the escalation path. */
   impact: z.enum(["negligible", "minor", "moderate", "major", "severe"]).optional(),
-}).partial();
+}).partial().strict();
 
 // ─── Valuation ─────────────────────────────────────────────────
 export const ValuationSchema = SystemFields.extend({

@@ -1,10 +1,11 @@
 #!/bin/sh
-# Constitutional pre-commit gate.
-# Enable with:  git config core.hooksPath .githooks
+# Constitutional pre-commit gate.  Enable with: git config core.hooksPath .githooks
 echo "[pre-commit] constitutional checks"
-node scripts/vocab-lint.js       || { echo "[pre-commit] BLOCKED: vocabulary (L1-01 §25)"; exit 1; }
-node scripts/ufr-lint.js         || { echo "[pre-commit] BLOCKED: field registry (E-06)"; exit 1; }
-node scripts/rel-lint.js         || { echo "[pre-commit] BLOCKED: relationship graph (E-05)"; exit 1; }
-node scripts/gen-schemas.js --check || { echo "[pre-commit] BLOCKED: contracts diverged from registry (E-06)"; exit 1; }
-node scripts/export-tokens.js    || { echo "[pre-commit] BLOCKED: token drift (§29)"; exit 1; }
+node scripts/vocab-lint.js          || { echo "BLOCKED: vocabulary (L1-01 §25)"; exit 1; }
+node scripts/ufr-lint.js            || { echo "BLOCKED: field registry (E-06)"; exit 1; }
+node scripts/rel-lint.js            || { echo "BLOCKED: relationship graph (E-05)"; exit 1; }
+node scripts/gen-schemas.js --check || { echo "BLOCKED: contracts diverged from registry (E-06)"; exit 1; }
+node scripts/gen-db.js --check      || { echo "BLOCKED: db schema diverged from registry (E-06)"; exit 1; }
+node scripts/gen-fixtures.js --check|| { echo "BLOCKED: fixtures stale"; exit 1; }
+node scripts/export-tokens.js       || { echo "BLOCKED: token drift (§29)"; exit 1; }
 echo "[pre-commit] OK"

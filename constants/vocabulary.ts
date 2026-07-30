@@ -14,6 +14,7 @@ export const VOCABULARY_MAP = {
     "Room": "Never. Investment platform has no rooms.",
     "Studio": "Never. Operating company concern, not investment platform.",
     "Customer": "Never. Say Investor or Member.",
+    "Consumer": "Never. Say Investor or Member. A Member owns; they do not consume.",
     "User": "Never. Say Investor or Member.",
     "Booking": "Never. Operating company concern.",
     "Journey": "Never. Say Investor Lifecycle.",

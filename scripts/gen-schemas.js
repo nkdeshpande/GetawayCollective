@@ -157,10 +157,15 @@ function build() {
     L.push("");
 
     if (updatable.length) {
-      L.push(`/** Immutable fields are absent by construction — that is the enforcement. */`);
+      L.push(`/**`);
+      L.push(` * Immutable and computed fields are absent by construction — that is the`);
+      L.push(` * enforcement. .strict() makes their presence an ERROR rather than a silent`);
+      L.push(` * strip: without it, an update carrying an immutable field returns success`);
+      L.push(` * with that field quietly dropped, and the caller believes it was applied.`);
+      L.push(` */`);
       L.push(`export const ${obj}UpdateSchema = z.object({`);
       for (const f of updatable) L.push(line({ ...f, required: false }));
-      L.push("}).partial();");
+      L.push("}).partial().strict();");
     } else {
       L.push(`/** Every field is immutable or computed: this object is append-only. */`);
       L.push(`export const ${obj}UpdateSchema = z.object({}).strict();`);

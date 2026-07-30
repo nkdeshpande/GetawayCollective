@@ -1,7 +1,7 @@
 {
   "name": "gc-app",
   "version": "0.0.1",
-  "description": "Getaway Collective · 10-Wave Constitutional Build",
+  "description": "Getaway Collective \u00b7 10-Wave Constitutional Build",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,25 +14,32 @@
     "tokens": "node scripts/export-tokens.js",
     "schemas": "node scripts/gen-schemas.js",
     "schemas:check": "node scripts/gen-schemas.js --check",
-    "verify": "npm run lint:vocab && npm run lint:ufr && npm run lint:rel && npm run schemas:check && npm run tokens && npm run type-check",
+    "verify": "npm run lint:vocab && npm run lint:ufr && npm run lint:rel && npm run schemas:check && npm run db:check && npm run fixtures:check && npm run tokens && npm run type-check && npm run test:run",
     "type-check": "tsc --noEmit",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "db:schema": "node scripts/gen-db.js",
+    "db:check": "node scripts/gen-db.js --check",
+    "fixtures": "node scripts/gen-fixtures.js",
+    "fixtures:check": "node scripts/gen-fixtures.js --check",
+    "test:run": "vitest run"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "next": "^15.0.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "next": "^15.0.0"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.1.0",
+    "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "@types/node": "^20.0.0",
-    "typescript": "^5.3.0",
     "eslint": "^8.55.0",
     "eslint-config-next": "^15.0.0",
-    "vitest": "^1.0.0",
-    "@testing-library/react": "^14.1.0"
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
