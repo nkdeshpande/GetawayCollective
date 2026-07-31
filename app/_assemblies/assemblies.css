@@ -361,7 +361,17 @@ section[data-sec]{padding:var(--gc-sp-2xl) 0;border-bottom:1px solid var(--gc-ha
    label is now the record that capital moved — the last thing that should
    be the dimmest on the screen. */
 .piston.settled{opacity:1;border-color:var(--gc-confirm);pointer-events:none}
-.piston.settled .fill{background:var(--gc-confirm)}
+/* WIDTH, NOT JUST COLOUR.
+   The fill was only ever 100% under `.arm`, and the React port drops
+   `arm` the instant it settles — so the green drained back to zero over
+   three seconds and left `color:var(--gc-void)` sitting on the void ground
+   at 1.00:1. The word "Committed" is the only record on that screen that
+   capital moved, and it was invisible.
+   Found by auditing the SETTLED state, not the idle one. A sweep that
+   only ever measures a screen at rest never sees the state that matters
+   most here. `.settled` now carries its own fill so it does not depend
+   on another class still being present. */
+.piston.settled .fill{background:var(--gc-confirm);width:100%;transition:none}
 .piston.settled .cap{mix-blend-mode:normal;color:var(--gc-void)}
 
 /* ── Settled ─────────────────────────────────────────────────────── */
@@ -1081,5 +1091,82 @@ th.num{text-align:right}
   text-transform:uppercase;max-width:16ch}
 .pl-card p{margin-top:var(--gc-sp-s);max-width:52ch}
 .pl-ctl{display:flex;gap:var(--gc-sp-2xs);align-items:center}
+
+/* ── AS-36 · THE ALLOCATION MATRIX ────────────────────────────────
+   Adapted from AllocateCapital1.html. The source's selected state was
+   a gold fill; copper is money-only here, so selection is carried by a
+   filled rule, a weight change and aria-checked together. */
+.alloc{border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel)}
+.on-paper .alloc{border-color:var(--gc-hairline);background:var(--gc-paper-panel)}
+.alloc-head{display:flex;gap:var(--gc-sp-l);justify-content:space-between;flex-wrap:wrap;
+  padding:var(--gc-sp-m);border-bottom:1px solid var(--gc-hairline-inv)}
+.on-paper .alloc-head{border-bottom-color:var(--gc-hairline)}
+.alloc-cap{display:flex;flex-direction:column;gap:var(--gc-sp-3xs);min-width:190px}
+.alloc-bar{height:6px;background:rgba(242,242,242,.14);display:block}
+.on-paper .alloc-bar{background:rgba(10,10,10,.10)}
+.alloc-bar span{display:block;height:100%;background:var(--gc-steel-dim)}
+
+.alloc-ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;
+  background:var(--gc-hairline-inv)}
+.on-paper .alloc-ladder{background:var(--gc-hairline)}
+.alloc-tile{display:flex;flex-direction:column;gap:var(--gc-sp-3xs);align-items:flex-start;
+  background:var(--gc-void);border:none;padding:var(--gc-sp-s) var(--gc-sp-s) var(--gc-sp-m);
+  color:inherit;cursor:pointer;text-align:left;
+  transition:background var(--gc-dur-instant)}
+.on-paper .alloc-tile{background:var(--gc-paper)}
+.alloc-tile:hover{background:var(--gc-void-panel)}
+.on-paper .alloc-tile:hover{background:var(--gc-paper-panel)}
+.alloc-tile .mark{width:100%;height:3px;background:var(--gc-hairline-inv);display:block;
+  margin-bottom:var(--gc-sp-2xs)}
+.on-paper .alloc-tile .mark{background:var(--gc-hairline)}
+.alloc-tile .p{font:400 24px/1 var(--gc-font-mono);font-variant-numeric:tabular-nums;
+  color:var(--gc-steel-dim);letter-spacing:-.02em}
+.on-paper .alloc-tile .p{color:var(--gc-steel)}
+.alloc-tile .u{color:var(--gc-steel-dim)}
+.on-paper .alloc-tile .u{color:var(--gc-steel)}
+.alloc-tile[aria-checked="true"]{background:var(--gc-void-panel)}
+.on-paper .alloc-tile[aria-checked="true"]{background:var(--gc-paper-panel)}
+.alloc-tile[aria-checked="true"] .mark{background:var(--gc-ink-inverse)}
+.on-paper .alloc-tile[aria-checked="true"] .mark{background:var(--gc-ink)}
+.alloc-tile[aria-checked="true"] .p{font-weight:700;color:var(--gc-ink-inverse)}
+.on-paper .alloc-tile[aria-checked="true"] .p{color:var(--gc-ink)}
+.alloc-tile.off{cursor:not-allowed}
+/* NOT opacity.
+   `opacity:.5` on the disabled tiles took steel-dim from 7.04:1 to
+   2.53:1 — measured on the rendered page, not guessed. WCAG exempts a
+   disabled CONTROL, but this tile carries the reason it is disabled and
+   the size it would have been, and a reason nobody can read is not a
+   reason given. Struck through instead: it says unavailable without
+   dimming, and it says it without relying on colour. */
+.alloc-tile.off .p,.alloc-tile.off .u{text-decoration:line-through;
+  text-decoration-thickness:1px}
+.alloc-tile .x{color:var(--gc-hazard)}
+.on-paper .alloc-tile .x{color:var(--gc-hazard-deep)}
+@media (prefers-reduced-motion:reduce){ .alloc-tile{transition:none} }
+
+.alloc-limits{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:var(--gc-sp-m);padding:var(--gc-sp-m);border-top:1px solid var(--gc-hairline-inv)}
+.on-paper .alloc-limits{border-top-color:var(--gc-hairline)}
+
+.alloc-body{display:grid;grid-template-columns:1fr 330px;gap:var(--gc-sp-l);
+  padding:var(--gc-sp-m);border-top:1px solid var(--gc-hairline-inv)}
+.on-paper .alloc-body{border-top-color:var(--gc-hairline)}
+@media (max-width:900px){ .alloc-body{grid-template-columns:1fr} }
+.alloc-read .lead{padding-bottom:var(--gc-sp-m);margin-bottom:var(--gc-sp-2xs)}
+.alloc-read .lead .t-display-l{margin-top:var(--gc-sp-3xs)}
+.alloc-conf{margin-left:var(--gc-sp-2xs);display:inline-block;vertical-align:middle}
+.alloc-side{display:flex;flex-direction:column;gap:var(--gc-sp-m);align-items:flex-start}
+.alloc-gov{border:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-s);width:100%}
+.on-paper .alloc-gov{border-color:var(--gc-hairline)}
+.alloc-gov .g{padding:var(--gc-sp-2xs) 0 var(--gc-sp-2xs) var(--gc-sp-s);
+  border-left:2px solid var(--gc-steel);margin-top:var(--gc-sp-2xs)}
+.alloc-gov .g.power{border-left-color:var(--gc-electric)}
+
+/* The closed form, for screens that are not about choosing. */
+.alloc-bar-row{border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel)}
+.on-paper .alloc-bar-row{border-color:var(--gc-hairline);background:var(--gc-paper-panel)}
+.alloc-bar-row .in{display:flex;gap:var(--gc-sp-s);align-items:baseline;flex-wrap:wrap;
+  padding:var(--gc-sp-s) var(--gc-sp-m)}
+.alloc-bar-row .in .btn{margin-left:auto;align-self:center}
 
 [hidden]{display:none !important}

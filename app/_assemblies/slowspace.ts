@@ -80,11 +80,105 @@ export const STACK = {
 export const EQUITY = STACK.land + STACK.formation;          // ₹4.00 Cr
 export const PROJECT = EQUITY + STACK.debt;                  // ₹9.50 Cr
 
+/* ── The minimum unit, and the ladder built from it ───────────────── */
+/*
+ * THE STAKE IS CHOSEN, NOT FIXED.
+ *
+ * The earlier model had one unit — 10% for ₹40,00,000 — and ten of them
+ * were the vehicle. That is a clean structure and a bad instrument: it
+ * admits exactly one kind of investor, and it forces anyone who wants
+ * less to want nothing.
+ *
+ * 5% is the minimum unit and the increment. Everything else on every
+ * screen is derived from the number of units selected, so there is one
+ * place where the size of a position is decided and no screen holds its
+ * own copy of what a position is worth.
+ *
+ * WHY THE CEILING IS 50% AND NOT MORE.
+ * §24a carries an ordinary resolution on MORE THAN 50% of contribution,
+ * and a tie is not approval. A partner above 50% therefore carries every
+ * ordinary resolution alone and the rest of the register votes for the
+ * record only. At exactly 50% the same partner can block anything and
+ * carry nothing — which is a real position, and the last one at which
+ * the vehicle is still a partnership rather than a holding company with
+ * spectators. The cap is where that line is, and the screen says so
+ * rather than presenting 50% as merely the largest tile on offer.
+ */
+export const ALLOCATION = {
+  minBps: 500,      //  5.00% — the minimum unit AND the increment
+  stepBps: 500,
+  maxBps: 5000,     // 50.00% — see above; a governance limit, not a sales one
+  defaultBps: 1000, // the worked position, and what an unparameterised link means
+} as const;
+
+/** Every legal selection, low to high. Derived; never typed out. */
+export const LADDER: readonly number[] = (() => {
+  const out: number[] = [];
+  for (let b = ALLOCATION.minBps; b <= ALLOCATION.maxBps; b += ALLOCATION.stepBps) out.push(b);
+  return out;
+})();
+
+/** Twenty minimum units are the whole equity layer. Checked below. */
+export const UNITS_IN_VEHICLE = 10000 / ALLOCATION.minBps;   // 20
+
+const MIN_UNITS = allocate(EQUITY, Array(UNITS_IN_VEHICLE).fill(1n));
+export const MIN_UNIT = MIN_UNITS[0];                        // ₹20,00,000
+
+/*
+ * The ladder is only uniform if the equity layer divides evenly into
+ * minimum units. Where it does not, largest-remainder hands one rupee to
+ * some units and not others, and `MIN_UNIT * n` stops being the price of
+ * n units — silently, and in the investor's disfavour or ours depending
+ * on which end of the list they land. Asserted rather than assumed, so a
+ * vehicle whose equity layer does not tile has to be dealt with rather
+ * than mispriced.
+ */
+if (MIN_UNITS.some((u) => u !== MIN_UNIT)) {
+  throw new Error(
+    `Equity layer ${inr(EQUITY)} does not divide into ${UNITS_IN_VEHICLE} equal units`,
+  );
+}
+
+/**
+ * ENTITLEMENT IS A POOL, DIVIDED — not a per-unit figure multiplied.
+ *
+ * 18–21 nights per 10% was the stated entitlement, and multiplying it
+ * gives 9–10.5 nights for a 5% holding. Half a night is not a night. The
+ * pool is stated for the whole vehicle and each position takes its floor
+ * of it, so the sum of every partner's entitlement can never exceed what
+ * the property can actually deliver.
+ */
+export const NIGHT_POOL = { min: 180, max: 210 } as const;
+
+const nightsFor = (bps: number) => ({
+  min: Math.floor((NIGHT_POOL.min * bps) / 10000),
+  max: Math.floor((NIGHT_POOL.max * bps) / 10000),
+});
+
+/**
+ * WHAT IS LEFT.
+ *
+ * Read from the vehicle register. The ladder offers what the constitution
+ * permits; this is what the vehicle still has. A tile above the remaining
+ * capacity is disabled for a different reason than a tile above the cap,
+ * and the two reasons are shown separately because they are not the same
+ * fact.
+ */
+export const SUBSCRIBED_UNITS = 11;                            // of 20
+export const SUBSCRIBED_BPS = SUBSCRIBED_UNITS * ALLOCATION.minBps;
+export const REMAINING_BPS = 10000 - SUBSCRIBED_BPS;           // 45.00%
+
 /* ── The unit ─────────────────────────────────────────────────────── */
+/*
+ * Retained as the WORKED position — the one the settled member holds and
+ * the one every screen falls back to when no size has been chosen. It is
+ * now derived from the ladder rather than typed, so it cannot drift from
+ * the instrument it is an instance of.
+ */
 export const UNIT = {
-  commitment: 4000000_0000n,    // ₹40,00,000
-  sharePct: 1000,               // 10.00%, in basis points
-  nights: { min: 18, max: 21 },
+  commitment: MIN_UNIT * BigInt(ALLOCATION.defaultBps / ALLOCATION.minBps),  // ₹40,00,000
+  sharePct: ALLOCATION.defaultBps,                                           // 10.00%, bps
+  nights: nightsFor(ALLOCATION.defaultBps),                                  // 18–21
   lockIn: "36 months from financial close",
 };
 
@@ -102,11 +196,16 @@ export const UNIT = {
  * It HOLDS a unit; it does not buy one. The Member Law still fires on
  * settlement of the full commitment and on nothing else — paying the
  * deposit makes nobody a partner, and the screens say so.
+ *
+ * FLAT, AND MORE OBVIOUSLY SO NOW THAT THE UNIT MOVES.
+ * ₹50,000 holds a 5% position and a 50% position alike. When the stake
+ * was fixed, a percentage would merely have been redundant; now it would
+ * be false — so `balance` is no longer stored here. It belongs to a
+ * position, and it is computed by `position()` below.
  */
 export const DEPOSIT = {
   amount: 50000_0000n,          // ₹50,000
   refundable: "Refundable in full until the Vehicle Agreement is signed.",
-  balance: UNIT.commitment - 50000_0000n,
   window: "15 working days from the deposit",
 } as const;
 
@@ -175,6 +274,116 @@ export const MY_YIELD_BPS = Number((MY_DISTRIBUTION * 10000n) / UNIT.commitment)
 
 /** DSCR is derived from the same inputs, so it cannot contradict them. */
 export const DSCR = decimalRatio(INVESTOR_SHARE, DEBT_SERVICE);
+
+/* ═══════════════════════════════════════════════════════════════════
+   A POSITION — everything that follows from choosing a size
+
+   One function. Every screen that shows what a stake is worth calls it,
+   so the accreditation screen, the commitment screen and the settled
+   screen cannot disagree about the same selection.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export interface Control {
+  /** True of this holding. Rendered as stated; never softened. */
+  t: string;
+  /** Whether the statement is a power or a limit. Drives nothing but tone. */
+  kind: "power" | "limit";
+}
+
+/**
+ * What a holding of this size can and cannot do, from §24a alone.
+ *
+ * Derived from the thresholds rather than written per tile, because a
+ * written version is a second statement of the constitution that drifts
+ * from it. The arithmetic of a blocking stake is not obvious — you block
+ * a 76% special resolution by holding MORE than 24%, and a reader
+ * working that out for themselves will get it wrong about as often as
+ * not.
+ */
+export function controlOf(bps: number): readonly Control[] {
+  const out: Control[] = [];
+
+  /* Ordinary: MORE than 50% carries. A tie is not approval, so exactly
+     50% carries nothing — and blocks everything. */
+  if (bps > 5000) {
+    out.push({ t: "Carries every ordinary resolution alone", kind: "power" });
+  } else if (bps === 5000) {
+    out.push({ t: "Blocks every ordinary resolution; carries none alone", kind: "power" });
+  } else {
+    out.push({ t: "Cannot carry or block an ordinary resolution alone", kind: "limit" });
+  }
+
+  /* Special: 76% carries, so more than 24% withholds it. */
+  out.push(
+    bps > 2400
+      ? { t: "Blocks any special resolution alone", kind: "power" }
+      : { t: "Cannot block a special resolution alone", kind: "limit" },
+  );
+
+  out.push({ t: `Casts ${(bps / 100).toFixed(0)}% of the vote, by contribution`, kind: "limit" });
+  return out;
+}
+
+export interface Position {
+  bps: number;
+  units: number;
+  commitment: bigint;
+  deposit: bigint;
+  balance: bigint;
+  /** Share of stage six, once there is a stage six to share. */
+  distribution: bigint;
+  /** On the commitment. Constant across the ladder — see the note below. */
+  yieldBps: number;
+  nights: { min: number; max: number };
+  control: readonly Control[];
+  /** Whether the vehicle can still sell this much. */
+  available: boolean;
+}
+
+/**
+ * Clamp any input onto the ladder. Never throws: a query string is
+ * attacker-controlled and a malformed one should land on the default
+ * rather than blank the screen.
+ */
+export function toLadder(bps: unknown): number {
+  const n = typeof bps === "number" ? bps : Number.parseInt(String(bps ?? ""), 10);
+  if (!Number.isFinite(n)) return ALLOCATION.defaultBps;
+  const snapped = Math.round(n / ALLOCATION.stepBps) * ALLOCATION.stepBps;
+  return Math.min(ALLOCATION.maxBps, Math.max(ALLOCATION.minBps, snapped));
+}
+
+export function position(bpsIn: number): Position {
+  const bps = toLadder(bpsIn);
+  const units = bps / ALLOCATION.minBps;
+  const commitment = MIN_UNIT * BigInt(units);
+  const distribution = rate(PARTNER_DISTRIBUTION, bps);
+
+  return {
+    bps,
+    units,
+    commitment,
+    deposit: DEPOSIT.amount,
+    balance: commitment - DEPOSIT.amount,
+    distribution,
+    /*
+     * Constant at 18.00% across the whole ladder, because distribution
+     * and commitment scale by the same factor. Stated per position
+     * anyway, and shown on the screen, precisely BECAUSE it does not
+     * move: the reference this interaction came from changed a "yield
+     * entitlement" figure with every tile — 10% / 20% / 50% "of profit
+     * pool" — which reads as a better return for a bigger cheque. It is
+     * a bigger share of the same pool at the same rate. Showing both
+     * numbers is the difference between the two readings.
+     */
+    yieldBps: Number((distribution * 10000n) / commitment),
+    nights: nightsFor(bps),
+    control: controlOf(bps),
+    available: bps <= REMAINING_BPS,
+  };
+}
+
+/** The worked position. Identical to position(1000); named for the screens that assume it. */
+export const MY_POSITION = position(ALLOCATION.defaultBps);
 
 export const RETURNS = {
   cashYield: { v: MY_YIELD_BPS / 100, conf: "modelled" as Confidence },

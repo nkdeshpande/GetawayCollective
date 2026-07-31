@@ -11,6 +11,8 @@ import {
   MATERIAL_RISK, ACKNOWLEDGEMENT,
   PARTNER_DISTRIBUTION,
   GOVERNANCE, RISK_TERMS,
+  ALLOCATION, LADDER, MIN_UNIT, UNITS_IN_VEHICLE, NIGHT_POOL, DEPOSIT,
+  SUBSCRIBED_UNITS, REMAINING_BPS, position, toLadder, controlOf,
 } from "../app/_assemblies/slowspace";
 import { allocate, inr } from "../app/_assemblies/data";
 
@@ -28,6 +30,140 @@ describe("the capital stack", () => {
     expect(units.every((u) => u === UNIT.commitment)).toBe(true);
     expect(units.reduce((a, b) => a + b, 0n)).toBe(EQUITY);
     expect(inr(UNIT.commitment)).toBe("₹40,00,000");
+  });
+});
+
+describe("the allocation ladder", () => {
+  it("keeps the worked position exactly where it was", () => {
+    // The ladder replaced a fixed 10% unit. If 10% now prices, pays or
+    // entitles differently, the ladder did not generalise the instrument
+    // — it changed it, and every screen and document quoting ₹40,00,000
+    // silently became wrong.
+    const p = position(1000);
+    expect(inr(p.commitment)).toBe("₹40,00,000");
+    expect(p.commitment).toBe(UNIT.commitment);
+    expect(p.nights).toEqual({ min: 18, max: 21 });
+    expect(p.distribution).toBe(MY_DISTRIBUTION);
+    expect(p.yieldBps).toBe(MY_YIELD_BPS);
+  });
+
+  it("tiles the equity layer exactly, with nothing left over", () => {
+    expect(MIN_UNIT * BigInt(UNITS_IN_VEHICLE)).toBe(EQUITY);
+    expect(inr(MIN_UNIT)).toBe("₹20,00,000");
+  });
+
+  it("prices every rung as a whole number of minimum units", () => {
+    for (const bps of LADDER) {
+      const p = position(bps);
+      expect(p.commitment % MIN_UNIT, `${bps}bps`).toBe(0n);
+      expect(p.commitment, `${bps}bps`).toBe(MIN_UNIT * BigInt(p.units));
+    }
+  });
+
+  it("runs 5% to 50% in 5% steps and stops there", () => {
+    expect(LADDER[0]).toBe(500);
+    expect(LADDER[LADDER.length - 1]).toBe(5000);
+    expect(LADDER).toHaveLength(10);
+    for (const bps of LADDER) expect(bps % ALLOCATION.stepBps).toBe(0);
+  });
+
+  it("does not improve the rate of return with size", () => {
+    /*
+     * The whole point of showing two figures rather than one. The source
+     * interaction moved a "yield entitlement" number with each tile,
+     * which reads as a better deal for a bigger cheque. A larger holding
+     * is a larger share of the same pool at the SAME rate, and if this
+     * ever stops being true the screen is making a claim it should not.
+     */
+    const rates = LADDER.map((b) => position(b).yieldBps);
+    expect(new Set(rates).size).toBe(1);
+    expect(rates[0]).toBe(1800);
+  });
+
+  it("never entitles more nights than the property has", () => {
+    // Twenty minimum holdings must not sum past the pool. Multiplying a
+    // per-unit figure would have: 21 nights per 10% is 10.5 per 5%, and
+    // rounding that up twenty times invents ten nights a year.
+    const minUnits = Array.from({ length: UNITS_IN_VEHICLE }, () => position(ALLOCATION.minBps));
+    const maxSum = minUnits.reduce((n, p) => n + p.nights.max, 0);
+    expect(maxSum).toBeLessThanOrEqual(NIGHT_POOL.max);
+
+    for (const bps of LADDER) {
+      const p = position(bps);
+      expect(Number.isInteger(p.nights.min), `${bps}bps`).toBe(true);
+      expect(Number.isInteger(p.nights.max), `${bps}bps`).toBe(true);
+      expect(p.nights.max).toBeLessThanOrEqual(NIGHT_POOL.max);
+    }
+  });
+
+  it("takes a flat deposit at every size", () => {
+    for (const bps of LADDER) {
+      const p = position(bps);
+      expect(p.deposit, `${bps}bps`).toBe(DEPOSIT.amount);
+      expect(p.balance, `${bps}bps`).toBe(p.commitment - DEPOSIT.amount);
+    }
+  });
+
+  it("snaps and clamps any input rather than throwing", () => {
+    // The value arrives in a query string, so it is attacker-controlled.
+    // A malformed one must land on the default, not blank the screen.
+    expect(toLadder("1500")).toBe(1500);
+    expect(toLadder(1499)).toBe(1500);      // snapped to the ladder
+    expect(toLadder(1)).toBe(500);          // clamped up to the minimum
+    expect(toLadder(99999)).toBe(5000);     // clamped down to the ceiling
+    expect(toLadder(-4000)).toBe(500);
+    expect(toLadder("banana")).toBe(1000);  // the default
+    expect(toLadder(undefined)).toBe(1000);
+    expect(toLadder(null)).toBe(1000);
+    for (const junk of ["", "NaN", "1e999", "0x10", "  "]) {
+      expect(LADDER, junk).toContain(toLadder(junk));
+    }
+  });
+});
+
+describe("what a holding of a given size controls", () => {
+  const says = (bps: number) => controlOf(bps).map((c) => c.t).join(" | ");
+
+  it("treats a tie as not approval", () => {
+    // §24a carries an ordinary resolution on MORE than 50%. At exactly
+    // 50% a partner blocks everything and carries nothing — which is why
+    // the ladder stops there rather than one rung higher.
+    expect(says(5000)).toContain("Blocks every ordinary resolution; carries none alone");
+    expect(says(5000)).not.toContain("Carries every ordinary resolution alone");
+    expect(says(4500)).toContain("Cannot carry or block an ordinary resolution alone");
+  });
+
+  it("puts the special-resolution block above 24%, not at 25%", () => {
+    // A special resolution needs 76%, so it is withheld by MORE than
+    // 24%. The off-by-one here is the kind a reader working it out for
+    // themselves gets wrong, which is why it is derived and not typed.
+    expect(says(2400)).toContain("Cannot block a special resolution alone");
+    expect(says(2500)).toContain("Blocks any special resolution alone");
+  });
+
+  it("never offers a rung that carries an ordinary resolution alone", () => {
+    for (const bps of LADDER) {
+      expect(says(bps), `${bps}bps`).not.toContain("Carries every ordinary resolution alone");
+    }
+  });
+
+  it("states the vote as contribution, at every size", () => {
+    for (const bps of LADDER) {
+      expect(says(bps), `${bps}bps`).toContain("by contribution");
+    }
+  });
+});
+
+describe("what the vehicle still has", () => {
+  it("offers only what remains, and says which limit is biting", () => {
+    // Two ceilings, two reasons: what the constitution permits, and what
+    // is left unsold. Collapsing them would tell a reader the wrong
+    // thing about which one they are up against.
+    expect(REMAINING_BPS).toBe(10000 - SUBSCRIBED_UNITS * ALLOCATION.minBps);
+    for (const bps of LADDER) {
+      expect(position(bps).available, `${bps}bps`).toBe(bps <= REMAINING_BPS);
+    }
+    expect(LADDER.some((b) => !position(b).available)).toBe(true);
   });
 });
 

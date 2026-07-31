@@ -31,8 +31,9 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import {
-  LLP, SITE, UNIT, MY_DISTRIBUTION, MY_YIELD_BPS, GOVERNANCE, PROGRAMME,
+  LLP, SITE, UNIT, GOVERNANCE, PROGRAMME,
   DISCLOSURE, DEPOSIT, STACK, PROJECT, EQUITY,
+  ALLOCATION, position, MIN_UNIT, type Position as Holding,
 } from "./slowspace";
 import { inr } from "./data";
 import { ConfidenceTag } from "./atoms";
@@ -82,33 +83,52 @@ function Absent({ what, because, when }: { what: string; because: string; when: 
   );
 }
 
-function Position() {
+function PositionPanel({ p }: { p: Holding }) {
   return (
     <>
       <div className="row" style={{ gap: "var(--gc-sp-s)", alignItems: "stretch" }}>
         <div className="panel on-panel" style={{ flex: "1 1 240px" }}>
           <span className="t-micro label">Contributed</span>
           <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-            {inr(UNIT.commitment)}
+            {inr(p.commitment)}
           </div>
-          <span className="t-mono-s dim">{pct(UNIT.sharePct)} of {LLP.name}</span>
+          <span className="t-mono-s dim">
+            {pct(p.bps)} of {LLP.name} · {p.units} × {inr(MIN_UNIT)}
+          </span>
           <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="verified" /></div>
         </div>
         <div className="panel on-panel" style={{ flex: "1 1 240px" }}>
           <span className="t-micro label">Indicative annual distribution</span>
           <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-            {inr(MY_DISTRIBUTION)}
+            {inr(p.distribution)}
           </div>
-          <span className="t-mono-s dim">{(MY_YIELD_BPS / 100).toFixed(1)}% once stabilised</span>
+          <span className="t-mono-s dim">{(p.yieldBps / 100).toFixed(1)}% once stabilised</span>
           <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="modelled" /></div>
         </div>
         <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
           <span className="t-micro label">Voting weight</span>
           <div className="t-display-m" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-            {pct(UNIT.sharePct)}
+            {pct(p.bps)}
           </div>
           <span className="t-mono-s dim">contribution-weighted · §24a</span>
         </div>
+      </div>
+
+      {/* WHAT THE WEIGHT ACTUALLY BUYS.
+          A percentage beside the words "voting weight" tells a partner
+          how much they cast and nothing about whether it decides
+          anything. These are the same three statements the allocation
+          matrix showed before the commitment, from the same function —
+          so what was promised at selection is what is stated at rest. */}
+      <div className="panel on-panel" style={{ marginTop: "var(--gc-sp-m)", maxWidth: "560px" }}>
+        <span className="t-micro label">What this holding can do</span>
+        {p.control.map((c) => (
+          <div className="kv" key={c.t}>
+            <span className="v t-body-s" style={{ textAlign: "left", fontFamily: "inherit" }}>
+              {c.t}
+            </span>
+          </div>
+        ))}
       </div>
 
       <div className="panel on-paper" style={{ marginTop: "var(--gc-sp-m)" }}>
@@ -128,14 +148,14 @@ function Position() {
   );
 }
 
-function Entitlement() {
+function Entitlement({ p }: { p: Holding }) {
   return (
     <>
       <div className="panel on-panel needs-you" style={{ maxWidth: "420px" }}>
         <span className="t-micro label">Nights available now</span>
         <div className="t-display-m nights" style={{ marginTop: "var(--gc-sp-2xs)" }}>0</div>
         <span className="t-mono-s dim">
-          of {UNIT.nights.min}–{UNIT.nights.max} a year, once the property is open
+          of {p.nights.min}–{p.nights.max} a year, once the property is open
         </span>
       </div>
       <div style={{ marginTop: "var(--gc-sp-m)" }}>
@@ -244,8 +264,8 @@ function Disclosure() {
   );
 }
 
-const RENDER: Record<PanelId, () => React.ReactElement> = {
-  position: Position,
+const RENDER: Record<PanelId, (props: { p: Holding }) => React.ReactElement> = {
+  position: PositionPanel,
   entitlement: Entitlement,
   documents: Documents,
   resolutions: Resolutions,
@@ -255,8 +275,11 @@ const RENDER: Record<PanelId, () => React.ReactElement> = {
 
 /* ── The console ──────────────────────────────────────────────────── */
 
-export function VehicleConsole({ initial = "position" }: { initial?: PanelId }) {
+export function VehicleConsole({
+  initial = "position", bps = ALLOCATION.defaultBps,
+}: { initial?: PanelId; bps?: number }) {
   const [active, setActive] = useState<PanelId>(initial);
+  const held = position(bps);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
   /* Arrow keys move between tabs and activate as they go, which is the
@@ -288,7 +311,7 @@ export function VehicleConsole({ initial = "position" }: { initial?: PanelId }) 
             LLPIN {LLP.llpin} · {SITE.name} · {SITE.lifecycle}
           </span>
         </div>
-        <span className="t-mono-s dim">{pct(UNIT.sharePct)} held</span>
+        <span className="t-mono-s dim">{pct(held.bps)} held</span>
       </div>
 
       <div className="console-tabs" role="tablist" aria-label="Vehicle views">
@@ -318,14 +341,14 @@ export function VehicleConsole({ initial = "position" }: { initial?: PanelId }) 
         className="console-panel"
       >
         <p className="t-body-s dim" style={{ marginBottom: "var(--gc-sp-m)" }}>{current.note}</p>
-        <Panel />
+        <Panel p={held} />
       </div>
 
       <div className="console-foot">
         <span className="t-body-s dim">
           Every view of this vehicle is in this module. Nothing about it is reached by leaving.
         </span>
-        <Link className="btn" href="/flow">Walk the flow again</Link>
+        <Link className="btn" href={`/flow?share=${held.bps}`}>Walk the flow again</Link>
       </div>
     </section>
   );

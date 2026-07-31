@@ -14,16 +14,27 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   LLP, SITE, STACK, EQUITY, PROJECT, UNIT, GROSS_REVENUE,
-  WATERFALL_SLOWSPACE, MY_DISTRIBUTION, MY_YIELD_BPS, DSCR, RETURNS,
+  WATERFALL_SLOWSPACE, DSCR, RETURNS,
   GOVERNANCE, RISKS_SLOWSPACE, MATERIAL_RISK, ACKNOWLEDGEMENT, DISCLOSURE, DEPOSIT,
-  PROGRAMME,
+  PROGRAMME, ALLOCATION, MIN_UNIT, NIGHT_POOL, position,
 } from "./slowspace";
 import { inr, rate, plate } from "./data";
 import { documentByPath } from "@/content/legal";
 import { ConfidenceTag, Pct, Footer } from "./atoms";
 import { VehicleConsole, Programme } from "./console";
+import { AllocationMatrix, AllocationBar, useShare, withShare } from "./allocation";
 
-const pct = (bps: number) => (bps / 100).toFixed(2) + "%";
+/*
+ * Two decimals, dropped when they are both zero.
+ *
+ * It read "10.00%" everywhere while the unit was fixed, which was merely
+ * fussy. Once the size became selectable the allocation matrix started
+ * rendering the same share as "45%" one line above this rendering it as
+ * "45.00%" — one screen, one number, two spellings, which reads as two
+ * numbers. Basis points still allow a fractional share, so the decimals
+ * remain available; they are simply not shown when there is nothing there.
+ */
+const pct = (bps: number) => (bps / 100).toFixed(2).replace(/\.00$/, "") + "%";
 
 /* ═══════════════════════════════════════════════════════════════════
    STEP 1 · THE OFFERING — space vantage, public
@@ -34,6 +45,9 @@ const pct = (bps: number) => (bps / 100).toFixed(2) + "%";
    ═══════════════════════════════════════════════════════════════════ */
 
 export function Offering() {
+  const [bps, pick] = useShare();
+  const p = position(bps);
+
   return (
     <>
       <section data-sec="FLOW.1" style={{ paddingTop: 0 }}>
@@ -74,41 +88,53 @@ export function Offering() {
             <span className="t-micro label">{LLP.name} · LLPIN {LLP.llpin}</span>
           </div>
 
-          <div className="row" style={{ gap: "var(--gc-sp-s)", alignItems: "stretch" }}>
-            <div className="panel on-panel" style={{ flex: "1 1 300px" }}>
-              <span className="t-micro label">The unit</span>
-              <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                {inr(UNIT.commitment)}
-              </div>
-              <p className="t-body" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                secures {pct(UNIT.sharePct)} of {LLP.name}
-              </p>
-              <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                Ten units are the whole equity layer. The figure is derived from{" "}
-                {inr(EQUITY)} by largest remainder, not typed separately.
-              </p>
-            </div>
+          {/* THE SIZE IS CHOSEN HERE, AND NOWHERE ELSE.
+              This block used to state one unit — ₹40,00,000 for 10% —
+              as a fact about the offering. It is a fact about ONE
+              position in it. Everything downstream now reads the
+              selection rather than assuming that one. */}
+          <AllocationMatrix
+            bps={bps}
+            onPick={pick}
+            go={{ t: "Take this position →", to: "/flow/accreditation" }}
+          />
 
+          <div className="row" style={{ gap: "var(--gc-sp-s)", alignItems: "stretch",
+                                        marginTop: "var(--gc-sp-l)" }}>
             <div className="panel on-panel" style={{ flex: "1 1 300px" }}>
-              <span className="t-micro label">Indicative distribution</span>
+              <span className="t-micro label">Rate of distribution</span>
               <div className="t-display-m" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                <Pct v={MY_YIELD_BPS / 100} conf="modelled" />
+                <Pct v={p.yieldBps / 100} conf="modelled" />
               </div>
               <p className="t-body" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                <span className="money">{inr(MY_DISTRIBUTION)}</span> a year, once stabilised
+                <span className="money">{inr(p.distribution)}</span> a year at {pct(p.bps)}, once
+                stabilised
               </p>
               <div style={{ marginTop: "var(--gc-sp-2xs)" }}>
                 <ConfidenceTag c="modelled" />
               </div>
             </div>
 
-            <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
+            <div className="panel on-panel" style={{ flex: "1 1 300px" }}>
               <span className="t-micro label">Entitlement</span>
               <div className="t-display-m nights" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                {UNIT.nights.min}–{UNIT.nights.max}
+                {p.nights.min}–{p.nights.max}
               </div>
               <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                nights a year, per {pct(UNIT.sharePct)}. Begins at settlement, not here.
+                nights a year at {pct(p.bps)}, taken from a pool of{" "}
+                {NIGHT_POOL.min}–{NIGHT_POOL.max} for the whole property. Begins at settlement, not
+                here.
+              </p>
+            </div>
+
+            <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
+              <span className="t-micro label">The minimum unit</span>
+              <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+                {inr(MIN_UNIT)}
+              </div>
+              <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+                {(ALLOCATION.minBps / 100).toFixed(0)}% of {LLP.name}. Derived from {inr(EQUITY)} by
+                largest remainder, not typed separately.
               </p>
             </div>
           </div>
@@ -299,9 +325,11 @@ export function Offering() {
           <h2 className="t-display-m">Take a position</h2>
           <p className="t-body dim measure" style={{ margin: "var(--gc-sp-s) 0 var(--gc-sp-m)" }}>
             Accreditation comes first, then the risk disclosure, then the commitment. You can stop at
-            any point before the last one.
+            any point before the last one. The {pct(p.bps)} selected above &mdash;{" "}
+            <span className="money">{inr(p.commitment)}</span> &mdash; travels with you, and can be
+            changed at any step until the commitment.
           </p>
-          <Link className="btn primary" href="/flow/accreditation">
+          <Link className="btn primary" href={withShare("/flow/accreditation", p.bps)}>
             Begin accreditation →
           </Link>
         </div>
@@ -325,6 +353,8 @@ const STEPS = [
 ] as const;
 
 export function Accreditation() {
+  const [bps, pick] = useShare();
+  const p = position(bps);
   const [step, setStep] = useState(0);
   const [saved, setSaved] = useState<string | null>(null);
   const [vals, setVals] = useState<Record<string, string>>({});
@@ -371,6 +401,10 @@ export function Accreditation() {
             Fifteen working days from submission. Every field saves as you leave it, so you can stop
             and come back — nothing here has to be done in one sitting.
           </p>
+
+          <div style={{ marginTop: "var(--gc-sp-l)", maxWidth: "760px" }}>
+            <AllocationBar bps={bps} onPick={pick} />
+          </div>
 
           <div style={{ marginTop: "var(--gc-sp-xl)", maxWidth: "620px" }}>
             {STEPS.map((s, i) => (
@@ -438,16 +472,20 @@ export function Accreditation() {
                             number is the commitment. */}
                         <div className="panel on-panel" style={{ maxWidth: "560px" }}>
                           <div className="kv">
+                            <span className="label t-micro">Position selected</span>
+                            <span className="v">{pct(p.bps)} · {p.units} × {inr(MIN_UNIT)}</span>
+                          </div>
+                          <div className="kv">
                             <span className="label t-micro">Payable now</span>
-                            <span className="v money">{inr(DEPOSIT.amount)}</span>
+                            <span className="v money">{inr(p.deposit)}</span>
                           </div>
                           <div className="kv">
                             <span className="label t-micro">Balance, completed offline</span>
-                            <span className="v money">{inr(DEPOSIT.balance)}</span>
+                            <span className="v money">{inr(p.balance)}</span>
                           </div>
                           <div className="kv">
                             <span className="label t-micro">Total commitment</span>
-                            <span className="v money">{inr(UNIT.commitment)}</span>
+                            <span className="v money">{inr(p.commitment)}</span>
                           </div>
                           <div className="kv">
                             <span className="label t-micro">Deposit is</span>
@@ -456,10 +494,14 @@ export function Accreditation() {
                         </div>
 
                         <p className="t-body measure" style={{ marginTop: "var(--gc-sp-m)" }}>
-                          The {inr(DEPOSIT.amount)} reserves a unit. The remaining{" "}
-                          <span className="money">{inr(DEPOSIT.balance)}</span>, the Vehicle
+                          The {inr(DEPOSIT.amount)} reserves the position. The remaining{" "}
+                          <span className="money">{inr(p.balance)}</span>, the Vehicle
                           Agreement and the transfer of funds are completed off the platform,
                           within {DEPOSIT.window}.
+                        </p>
+                        <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+                          The deposit is {inr(DEPOSIT.amount)} whatever size you take. It does not
+                          scale, and it is not a percentage of anything.
                         </p>
                         <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
                           Paying the deposit does not make you a partner. The Member Law fires on
@@ -512,7 +554,8 @@ export function Accreditation() {
                   An application already in flight completes before any suspension applies —
                   COMPLETE-THEN-SUSPEND, §24b.
                 </p>
-                <Link className="btn primary" href="/flow/risk" style={{ marginTop: "var(--gc-sp-s)" }}>
+                <Link className="btn primary" href={withShare("/flow/risk", p.bps)}
+                      style={{ marginTop: "var(--gc-sp-s)" }}>
                   Continue to the risk disclosure →
                 </Link>
               </div>
@@ -603,6 +646,7 @@ export function Accreditation() {
    ═══════════════════════════════════════════════════════════════════ */
 
 export function RiskDisclosure() {
+  const [bps] = useShare();
   const [reached, setReached] = useState(false);
   const [ack, setAck] = useState(false);
 
@@ -698,7 +742,7 @@ export function RiskDisclosure() {
             <span>{ACKNOWLEDGEMENT.statement}</span>
           </label>
           <span className="go">
-            <Link className="btn" href="/flow/commit"
+            <Link className="btn" href={withShare("/flow/commit", bps)}
                   aria-disabled={!ack}
                   style={ack ? undefined : { pointerEvents: "none", opacity: 1, borderColor: "var(--gc-steel)", color: "var(--gc-steel)" }}>
               Continue to Commitment
@@ -726,19 +770,35 @@ export function RiskDisclosure() {
    ═══════════════════════════════════════════════════════════════════ */
 
 export function Commit() {
+  const [bps, pick] = useShare();
+  const p = position(bps);
   const [held, setHeld] = useState(false);
   const [done, setDone] = useState(false);
-  const [cap, setCap] = useState("Hold to commit " + inr(UNIT.commitment));
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+
+  /*
+   * The caption follows the SELECTION, so it cannot be initialised from
+   * state and left there. It was `useState("Hold to commit ₹40,00,000")`
+   * — a default read once at mount, which would have gone on naming the
+   * old fixed unit while the panel beside it said something else.
+   * `phase` holds the only thing that is genuinely stateful; the words
+   * are derived on every render from that and the position.
+   */
+  const [phase, setPhase] = useState<"idle" | "arm" | "released" | "done">("idle");
+  const cap =
+    phase === "done" ? "Committed"
+      : phase === "arm" ? "Hold…"
+      : phase === "released" ? "Released — hold to commit"
+      : "Hold to commit " + inr(p.commitment);
 
   const start = (e: React.SyntheticEvent) => {
     if (done || timer) return;
     e.preventDefault();
     setHeld(true);
-    setCap("Hold…");
+    setPhase("arm");
     setTimer(setTimeout(() => {
       setDone(true);
-      setCap("Committed");
+      setPhase("done");
       setTimer(null);
     }, 3000));
   };
@@ -747,7 +807,7 @@ export function Commit() {
     clearTimeout(timer);
     setTimer(null);
     setHeld(false);
-    setCap("Released — hold to commit");
+    setPhase("released");
   };
 
   return (
@@ -765,6 +825,16 @@ export function Commit() {
                 Review, then commit
               </h1>
 
+              {/* THE LAST SCREEN THAT CAN STILL CHANGE THE SIZE.
+                  It is shown here, and locked the moment the piston
+                  settles — a size that could be edited after the
+                  commitment would make the commitment meaningless, and
+                  removing the control before then would break the
+                  promise made on the offering page. */}
+              <div style={{ maxWidth: "560px", marginBottom: "var(--gc-sp-m)" }}>
+                <AllocationBar bps={bps} onPick={pick} locked={done} />
+              </div>
+
               <div className="panel on-panel" style={{ maxWidth: "560px" }}>
                 <div className="kv">
                   <span className="label t-micro">Vehicle</span>
@@ -776,11 +846,17 @@ export function Commit() {
                 </div>
                 <div className="kv">
                   <span className="label t-micro">Your share</span>
-                  <span className="v">{pct(UNIT.sharePct)}</span>
+                  <span className="v">
+                    {pct(p.bps)} · {p.units} unit{p.units === 1 ? "" : "s"} of {inr(MIN_UNIT)}
+                  </span>
                 </div>
                 <div className="kv">
                   <span className="label t-micro">Committed now</span>
-                  <span className="v money">{inr(UNIT.commitment)}</span>
+                  <span className="v money">{inr(p.commitment)}</span>
+                </div>
+                <div className="kv">
+                  <span className="label t-micro">Of which payable on the platform</span>
+                  <span className="v money">{inr(p.deposit)}</span>
                 </div>
                 <div className="kv">
                   <span className="label t-micro">Completion window</span>
@@ -790,6 +866,17 @@ export function Commit() {
                   <span className="label t-micro">Lock-in</span>
                   <span className="v t-body-s">{UNIT.lockIn}</span>
                 </div>
+              </div>
+
+              <div className="panel on-panel" style={{ maxWidth: "560px", marginTop: "var(--gc-sp-s)" }}>
+                <span className="t-micro label">What this holding will be able to do</span>
+                {p.control.map((c) => (
+                  <div className="kv" key={c.t}>
+                    <span className="v t-body-s" style={{ textAlign: "left", fontFamily: "inherit" }}>
+                      {c.t}
+                    </span>
+                  </div>
+                ))}
               </div>
 
               <p className="t-body-s dim" style={{ margin: "var(--gc-sp-m) 0", maxWidth: "56ch" }}>
@@ -823,7 +910,7 @@ export function Commit() {
                      style={{ marginTop: "var(--gc-sp-m)", borderLeft: "2px solid var(--gc-confirm)", maxWidth: "560px" }}>
                   <span className="t-micro" style={{ color: "var(--gc-confirm)" }}>Recorded</span>
                   <p className="t-body" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                    {inr(UNIT.commitment)} committed against {LLP.name}. Your state is{" "}
+                    {inr(p.commitment)} committed against {LLP.name}, for {pct(p.bps)}. Your state is{" "}
                     <strong>Committed</strong>.
                   </p>
                   <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)", maxWidth: "56ch" }}>
@@ -831,7 +918,7 @@ export function Commit() {
                     when the funds clear, within 15 working days. Governance rights and entitlement
                     begin then, not now.
                   </p>
-                  <Link className="btn primary" href="/flow/settled"
+                  <Link className="btn primary" href={withShare("/flow/settled", p.bps)}
                         style={{ marginTop: "var(--gc-sp-s)" }}>
                     See what happens next →
                   </Link>
@@ -843,17 +930,20 @@ export function Commit() {
               <h3>Derivation</h3>
               <div className="row"><span>Equity layer</span>
                 <span className="v">{inr(EQUITY)}</span></div>
-              <div className="row"><span>Units of {pct(UNIT.sharePct)}</span>
-                <span className="v">10</span></div>
-              <div className="row tot"><span>Your unit</span>
-                <span className="v">{inr(UNIT.commitment)}</span></div>
+              <div className="row"><span>Minimum unit ({(ALLOCATION.minBps / 100).toFixed(0)}%)</span>
+                <span className="v">{inr(MIN_UNIT)}</span></div>
+              <div className="row"><span>Units selected</span>
+                <span className="v">{p.units} of {10000 / ALLOCATION.minBps}</span></div>
+              <div className="row tot"><span>Your commitment</span>
+                <span className="v">{inr(p.commitment)}</span></div>
               <div className="row"><span>Indicative annual</span>
-                <span className="v">{inr(MY_DISTRIBUTION)}</span></div>
+                <span className="v">{inr(p.distribution)}</span></div>
               <div className="row"><span>Nights per year</span>
-                <span className="v">{UNIT.nights.min}–{UNIT.nights.max}</span></div>
+                <span className="v">{p.nights.min}–{p.nights.max}</span></div>
               <p className="note">
-                Derived from the equity layer by largest remainder, so ten units are exactly{" "}
-                {inr(EQUITY)} with nothing left over.
+                Derived from the equity layer by largest remainder, so{" "}
+                {10000 / ALLOCATION.minBps} minimum units are exactly {inr(EQUITY)} with nothing
+                left over — and any selection is a whole number of them.
               </p>
               <p className="note">
                 The annual figure is modelled, not promised. It carries its class here and everywhere
@@ -876,6 +966,9 @@ export function Commit() {
    ═══════════════════════════════════════════════════════════════════ */
 
 export function Settled() {
+  const [bps] = useShare();
+  const p = position(bps);
+
   return (
     <>
       <section data-sec="FLOW.5">
@@ -894,15 +987,15 @@ export function Settled() {
             <div className="panel on-panel" style={{ flex: "1 1 260px" }}>
               <span className="t-micro label">Your position</span>
               <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                {inr(UNIT.commitment)}
+                {inr(p.commitment)}
               </div>
-              <span className="t-mono-s dim">{pct(UNIT.sharePct)} of {LLP.name}</span>
+              <span className="t-mono-s dim">{pct(p.bps)} of {LLP.name}</span>
               <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="verified" /></div>
             </div>
             <div className="panel on-panel" style={{ flex: "1 1 260px" }}>
               <span className="t-micro label">First distribution</span>
               <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                {inr(MY_DISTRIBUTION / 4n)}
+                {inr(p.distribution / 4n)}
               </div>
               <span className="t-mono-s dim">quarterly, from stabilisation</span>
               <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="forecast" /></div>
@@ -910,7 +1003,7 @@ export function Settled() {
             <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
               <span className="t-micro label">Voting weight</span>
               <div className="t-display-m" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                {pct(UNIT.sharePct)}
+                {pct(p.bps)}
               </div>
               <span className="t-mono-s dim">contribution-weighted · §24a</span>
             </div>
@@ -945,7 +1038,7 @@ export function Settled() {
               going back and out again. They are panels of one console
               now, switched in place. */}
           <div style={{ marginTop: "var(--gc-sp-xl)" }}>
-            <VehicleConsole />
+            <VehicleConsole bps={p.bps} />
           </div>
 
           <div style={{ marginTop: "var(--gc-sp-l)" }}>
