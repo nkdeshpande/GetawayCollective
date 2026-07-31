@@ -178,6 +178,11 @@ const BY_PATH = {
   "/collective/press": { component: "Wire", from: "@/app/_assemblies/publicpages" },
   "/communique/request": { component: "Dossier", from: "@/app/_assemblies/publicpages" },
   "/signal": { component: "Signal", from: "@/app/_assemblies/publicpages" },
+  "/space": { component: "Space", from: "@/app/_assemblies/publicpages" },
+  "/time": { component: "Time", from: "@/app/_assemblies/publicpages" },
+  "/collective/gallery": { component: "Evidence", from: "@/app/_assemblies/publicpages" },
+  "/structure": { component: "Structure", from: "@/app/_assemblies/publicpages" },
+  "/auth/sign-in": { component: "Identify", from: "@/app/_assemblies/publicpages" },
 
   /* The legal corpus: one renderer, seven documents, chosen by path.
      AS-29 takes the path as a prop rather than being seven components. */

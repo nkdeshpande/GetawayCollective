@@ -463,10 +463,358 @@ export const WIRE: PublicPage = {
   ],
 };
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   SPACE · THE PHYSICAL PRODUCT
+   Wireframes 2.0 · "/space." — GC.WF.E + GC.WF.C
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const SPACE: PublicPage = {
+  id: "PUB.12",
+  path: "/space",
+  alias: "The Architecture of Silence",
+  title: "The architecture of silence",
+  standfirst: "We do not build villas. We build machines for restoration.",
+  intent: "Define the physical product: what is built, from what, and what it costs to keep standing.",
+  panes: [
+    {
+      n: "01", eyebrow: "The Definition", ground: "void",
+      title: "Not a house. An instrument for looking at a place.",
+      body: [
+        "Every decision in the envelope is made against one test: does this reduce what reaches " +
+        "the person inside. Mass, orientation, sightlines and acoustics are the whole of it, and " +
+        "each is measurable.",
+      ],
+    },
+    {
+      n: "02", eyebrow: "The Equation", ground: "paper",
+      title: "Land, envelope, operation.",
+      lede: "Three inputs. Each is bought separately, and each fails separately.",
+      list: [
+        { k: "Land", v: "Held by the vehicle, on its own title. It is the part that does not depreciate and the part that cannot be moved if the market moves." },
+        { k: "Envelope", v: "The built shell. Specified for mass and acoustics before finish, because finish is the part a visitor notices and the part that matters least in ten years." },
+        { k: "Operation", v: "Carried out by an operating partner under contract to the vehicle, paid at stage one of the waterfall." },
+      ],
+      note:
+        "The wireframe wrote a build area and a market into this section. Neither is in any " +
+        "registry, and both differ per property. They are on the property record instead.",
+      cta: { label: "The property records", href: "/collection" },
+    },
+    {
+      n: "03", eyebrow: "The Materiality", ground: "paper",
+      title: "What the specification is for.",
+      list: [
+        { k: "Mass", v: "Heavy wall sections. Chosen for what they keep out, and for a thermal lag that removes most of the mechanical cooling." },
+        { k: "Orientation", v: "Set from the sun path before the plan is fixed, so shading is structural rather than added." },
+        { k: "Water and power", v: "Off-grid capable, which is a resilience decision before it is an environmental one." },
+        { k: "Sightlines", v: "Privacy that does not depend on curtains, because a curtain is a thing somebody has to remember." },
+      ],
+      note:
+        "Specification is a claim that can be checked against a drawing. Adjectives are not, and " +
+        "there are none here.",
+    },
+    {
+      n: "04", eyebrow: "Operation", ground: "void",
+      title: "The property runs without you, and without us.",
+      body: [
+        "Getaway Collective does not operate any property. An operating partner does, under a " +
+        "Commercial Services Agreement with the vehicle, measured against a Service Level.",
+        "The intent is that a partner arrives and finds the place as it should be, with nothing " +
+        "asked of them and nobody met at a desk. That is an operating promise. It is paid for " +
+        "before anything reaches partners, and it can fail.",
+      ],
+      cta: { label: "Who runs it, and who answers", href: "/collective/operators" },
+    },
+    {
+      n: "05", eyebrow: "The Assets", ground: "void",
+      title: "What exists, and at what stage.",
+      lede:
+        "Stage decides what can honestly be shown. A stabilised property has a record; one in " +
+        "lease-up has a forecast; one that is not built has a programme and nothing else.",
+      cta: { label: "Open the collection", href: "/collection" },
+    },
+    {
+      n: "06", eyebrow: "The Triad", ground: "void",
+      title: "Space is one of three.",
+      list: [
+        { k: "Capital", v: "What the position is, what it pays, and in what order." },
+        { k: "Time", v: "Nights, how many, and when they begin." },
+      ],
+      cta: { label: "How capital works", href: "/how-capital-works" },
+    },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   TIME · THE RETURN ON ATTENTION
+   Wireframes 2.0 · "3.0 TIME PAGE"
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const TIME: PublicPage = {
+  id: "PUB.13",
+  path: "/time",
+  alias: "The Return on Attention",
+  title: "Time as an asset",
+  standfirst: "Nights in proportion to contribution. An incident of the position, never the product.",
+  intent: "Define what entitlement is, what it is not, and when it begins.",
+  panes: [
+    {
+      n: "01", eyebrow: "The Definition", ground: "void",
+      title: "Not an escape. A recalibration.",
+      body: [
+        "The wireframe frames this as reclaiming attention, and that framing is kept. What is not " +
+        "kept is any suggestion that the nights are what you are buying.",
+      ],
+    },
+    {
+      n: "02", eyebrow: "The Instrument", ground: "paper",
+      title: "What entitlement actually is.",
+      list: [
+        { k: "Proportional", v: "Nights follow contribution. A ten per cent partner draws a tenth of the available span." },
+        { k: "Not carried forward", v: "Nights untaken in a year do not accrue and are not exchanged for money." },
+        { k: "Not separately priced", v: "Entitlement is an incident of the position. A position whose nights went untouched for a decade is worth exactly what it was worth the day it settled." },
+        { k: "Begins at handover", v: "Nothing is drawable against an unbuilt asset, and the figure before then is zero rather than a promise." },
+      ],
+      note:
+        "A released night is sold and its revenue enters the waterfall at stage one, like any " +
+        "other. So a partner who draws nothing is paid slightly more, and one who draws their " +
+        "full span slightly less. Neither is penalised; the arithmetic simply follows.",
+    },
+    {
+      n: "03", eyebrow: "Precedence", ground: "paper",
+      title: "Who gets the last weekend in December.",
+      body: [
+        "Where more partners want the same dates than the property can hold, the partner who has " +
+        "drawn least that year goes first. Not the largest position, and not the earliest request.",
+        "Weighted voting decides money. It does not decide dates, and a system in which the " +
+        "largest holder always won would make the entitlement worth having only for the largest " +
+        "holder.",
+      ],
+      cta: { label: "Stated as an obligation", href: "/legal/terms" },
+    },
+    {
+      n: "04", eyebrow: "Liquidity", ground: "paper",
+      title: "On exchanging time.",
+      body: [
+        "The wireframe specifies an exchange console — a market in nights, with a price. That is " +
+        "not built, and it is not described here as though it were.",
+        "Making entitlement tradeable would turn a night into an instrument with a price, which " +
+        "changes what the position is and what regulates it. It is a decision for the partners of " +
+        "a vehicle, by resolution, and not one to be announced on a public page first.",
+      ],
+      note: "Stated rather than omitted, because the wireframe promises it and a reader may have seen it.",
+    },
+    {
+      n: "05", eyebrow: "The Triad", ground: "void",
+      title: "Time is one of three.",
+      list: [
+        { k: "Space", v: "What is built, from what, and what it takes to keep standing." },
+        { k: "Capital", v: "What the position pays, and in what order." },
+      ],
+      cta: { label: "The physical product", href: "/space" },
+    },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   PUB.08 · THE EVIDENCE PORTFOLIO
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const EVIDENCE: PublicPage = {
+  id: "PUB.08",
+  path: "/collective/gallery",
+  alias: "The Proof",
+  title: "The Evidence Portfolio",
+  standfirst: "Heavy cardstock on an architect's desk, rather than an infinite feed.",
+  intent: "Show what has been built, with the provenance of each image attached to it.",
+  unpopulated:
+    "No plates yet. Every property in the collection is at pre-construction, lease-up or " +
+    "stabilised-without-a-photographic-record, and a portfolio filled with renders presented as " +
+    "photographs is the single most common misrepresentation in this industry. Each plate will " +
+    "carry what it is — photograph, render or drawing — and the date it was made.",
+  panes: [
+    {
+      n: "01", eyebrow: "The Rule", ground: "paper",
+      title: "Every plate says what it is.",
+      list: [
+        { k: "Photograph", v: "Of the thing as built, with the date taken." },
+        { k: "Render", v: "Of a thing not yet built. Labelled on the plate itself, not in a caption below it." },
+        { k: "Drawing", v: "A section or plan. The most honest of the three, and the least flattering." },
+      ],
+      note:
+        "A render and a photograph are different claims. Rendering them identically is a lie that " +
+        "requires no words, and it is the reason this page ships empty rather than full.",
+    },
+    {
+      n: "02", eyebrow: "The Weight", ground: "paper",
+      title: "Deliberate, not endless.",
+      body: [
+        "The wireframe asks for archival friction — plates that turn rather than slide, and a " +
+        "scroll that resists. The friction is kept as restraint on quantity rather than as a " +
+        "physics effect: a portfolio of twelve considered plates says more than a feed of two " +
+        "hundred.",
+      ],
+      cta: { label: "The property records", href: "/collection" },
+    },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   STRUCTURE · THE VEHICLE
+   From the PUB.01 footer: "SPV STRUCTURE".
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const STRUCTURE: PublicPage = {
+  id: "PUB.14",
+  path: "/structure",
+  alias: "The Vehicle",
+  title: "How the vehicle is structured",
+  standfirst:
+    "One property, one body corporate. What you contract with, what it owns, and what happens to " +
+    "it if things go wrong.",
+  intent: "Answer the structural question in public, before anyone has to ask for a document.",
+  panes: [
+    {
+      n: "01", eyebrow: "The Default", ground: "paper",
+      title: "A Limited Liability Partnership, not an SPV.",
+      body: [
+        "The footer of the original wireframe calls this page SPV Structure. The constitutional " +
+        "default is a Limited Liability Partnership registered in India, and a special purpose " +
+        "vehicle requires Board approval for the specific property.",
+        "The difference is not cosmetic. Under an LLP a partner's exposure is limited to what " +
+        "they contributed, votes are weighted by contribution rather than counted per head, and " +
+        "the Agreement binds anyone who acquires a position whether or not they have read it.",
+      ],
+      cta: { label: "Why a body corporate", href: "/journal/why-a-body-corporate" },
+    },
+    {
+      n: "02", eyebrow: "The Three Entities", ground: "paper",
+      title: "Three parties, and they are not interchangeable.",
+      list: [
+        { k: "Getaway Collective", v: "Operates the platform, admits partners, administers the register, enforces the rules. Holds no equity in any vehicle it governs, and that clause is entrenched." },
+        { k: "The vehicle", v: "Owns the asset. You contract with it, and your rights arise under its Agreement and the Limited Liability Partnership Act 2008." },
+        { k: "The operating partner", v: "Runs the property under contract to the vehicle. Not a party to your agreement, and owes you no duty under it." },
+      ],
+      note: "Most misunderstandings about what this is come from collapsing these three into one.",
+    },
+    {
+      n: "03", eyebrow: "Governance", ground: "paper",
+      title: "Thresholds, and what a tie means.",
+      list: [
+        { k: "Ordinary resolution", v: "More than 50% of contribution present and voting." },
+        { k: "Special resolution", v: "At least 76% of total contribution." },
+        { k: "Entrenched principles", v: "100%. Unanimous, so the rule outlives the people who wrote it." },
+        { k: "A tie", v: "Not approval. Where a vote is exactly balanced the resolution fails." },
+      ],
+      cta: { label: "The full terms", href: "/legal/terms" },
+    },
+    {
+      n: "04", eyebrow: "Failure", ground: "paper",
+      title: "What happens if the vehicle cannot meet its obligations.",
+      body: [
+        "Partners rank last. A lender takes priority over every partner, and the residue after a " +
+        "forced sale is frequently nothing.",
+        "Each vehicle holds one asset and is legally independent, so no property supports another " +
+        "and no property is exposed to another's failure. That cuts both ways: there is no " +
+        "diversification inside a vehicle either.",
+      ],
+      cta: { label: "The disclosure in full", href: "/legal/risk-disclosure" },
+    },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE BRIDGE — the closer
+
+   Wireframes 2.0 · GC.UX.05, "ENOUGH THINKING". It sits at the foot of
+   /capital, /space and /how-it-works.
+
+   The source frames it as a circuit breaker for analysis paralysis:
+   text that slams into place and tells the reader they have thought
+   enough. That is a page telling somebody to stop deliberating about an
+   irreversible commitment, on a platform whose commitment control is
+   deliberately slow BECAUSE the deliberation matters.
+
+   The component is kept and its argument is inverted: it says what has
+   been covered and what has not, and points at the two things that
+   should be read before anyone commits rather than after.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const BRIDGE = {
+  title: "You have not read enough yet.",
+  body:
+    "The wireframe puts a closer here reading ENOUGH THINKING, on the argument that complexity " +
+    "is the enemy of execution. On an irreversible commitment that argument runs the wrong way. " +
+    "The commitment control on this platform takes three seconds of sustained pressure for the " +
+    "same reason.",
+  before: [
+    { k: "The Hospitality Asset Disclosure", v: "/legal/risk-disclosure" },
+    { k: "The Terms and Conditions", v: "/legal/terms" },
+  ],
+  close:
+    "The asset is finite and the queue is real, and neither is a reason to decide today.",
+} as const;
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   IDENTIFY · THE HANDSHAKE
+   Wireframes 2.0 · "THE LOGIN" — Identity & Access Protocol
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const IDENTIFY: PublicPage = {
+  id: "PUB.15",
+  path: "/auth/sign-in",
+  alias: "The Handshake",
+  title: "Identify",
+  standfirst: "No password. A single-use link, and nothing to remember or lose.",
+  intent: "Entry, without holding a secret we would then have to protect.",
+  panes: [
+    {
+      n: "01", eyebrow: "Why no password", ground: "paper",
+      title: "We do not hold one.",
+      list: [
+        { k: "Nothing to breach", v: "A platform that stores no password cannot leak one, and cannot leak one you also used elsewhere." },
+        { k: "Nothing to reset", v: "There is no recovery flow to social-engineer, because there is nothing to recover." },
+        { k: "Single use", v: "Each link works once and expires. A link forwarded or found later opens nothing." },
+      ],
+      note:
+        "We will never ask you for a password, a one-time code, or the full number of any payment " +
+        "instrument. A message that does is not from us.",
+    },
+    {
+      n: "02", eyebrow: "What the response means", ground: "paper",
+      title: "The same answer either way.",
+      body: [
+        "Submitting an address always produces the same confirmation, whether or not that address " +
+        "is known to us. A different message for a known address would let anyone check who holds " +
+        "a position here by typing addresses into a form.",
+        "So the confirmation is not evidence that an account exists. If no link arrives, the " +
+        "likeliest reasons are that the address is not registered or that the message was filtered.",
+      ],
+      note:
+        "The wireframe calls this view Exclusion by Default and captions it Authorized Personnel " +
+        "Only. Access is restricted, and it is enforced at the route rather than announced at the " +
+        "door — a sign-in page that tells a stranger they are unwelcome achieves nothing except " +
+        "telling them there is something behind it.",
+    },
+    {
+      n: "03", eyebrow: "What happens next", ground: "void",
+      title: "Where the link takes you.",
+      list: [
+        { k: "An accredited partner", v: "To your position, and to the vehicles you are a partner in." },
+        { k: "An application in flight", v: "To the furthest incomplete stage. Nothing is lost by leaving it." },
+        { k: "Neither", v: "To accreditation, which is where anyone starts." },
+      ],
+      cta: { label: "What accreditation asks for", href: "/flow/accreditation" },
+    },
+  ],
+};
+
 /* ═══════════════════════════════════════════════════════════════════ */
 
 export const PUBLIC_PAGES: readonly PublicPage[] = [
   ROOT, MANIFESTO, PARTNERS, OPERATORS, DOSSIER, SIGNAL, WIRE,
+  SPACE, TIME, EVIDENCE, STRUCTURE, IDENTIFY,
 ];
 
 export const pageByPath = (path: string): PublicPage | undefined =>

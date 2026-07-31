@@ -164,6 +164,28 @@ for (const m of asmSrc.matchAll(/export const \w+: Assembly = \{([\s\S]*?)\n\};/
   asmIntent.set(id, (m[1].match(/\bintent:\s*\n?\s*"((?:[^"\\]|\\.)*)"/) || [])[1] || "");
 }
 
+/** The public surface: path → its panes, from content/public.ts. */
+const publicSrc = read("content", "public.ts");
+const publicPages = new Map();
+for (const m of publicSrc.matchAll(/export const \w+: PublicPage = \{([\s\S]*?)\n\};/g)) {
+  const b = m[1];
+  const ppath = (b.match(/\bpath:\s*"([^"]+)"/) || [])[1];
+  if (!ppath) continue;
+  const panes = [...b.matchAll(
+    /n:\s*"(\d\d)",\s*eyebrow:\s*"([^"]*)",\s*ground:\s*"(\w+)",\s*\n?\s*title:\s*"((?:[^"\\]|\\.)*)"/g,
+  )].map((x) => ({ n: x[1], eyebrow: unescapeTs(x[2]), ground: x[3], title: unescapeTs(x[4]) }));
+  publicPages.set(ppath, {
+    id: (b.match(/\bid:\s*"([^"]+)"/) || [])[1],
+    alias: (b.match(/\balias:\s*"([^"]*)"/) || [])[1],
+    unpopulated: /\bunpopulated:/.test(b),
+    panes,
+  });
+}
+if (publicPages.size === 0) {
+  console.error("[ia-map] Parsed zero public pages. Refusing to write with the public surface missing.");
+  process.exit(2);
+}
+
 /** Declared contents for routes that render no assembly. */
 const pageContents = new Map();
 {
@@ -287,6 +309,18 @@ function contentsOf(r) {
     out.push({ h: "AS-31 The Vehicle Console",
                t: panels.map((x) => x.label).join(" · ") });
     for (const x of panels) out.push({ h: `— ${x.label}`, t: x.note });
+    return out;
+  }
+
+  const pub = publicPages.get(r.path);
+  if (pub && pub.panes.length) {
+    out.push({ h: `${pub.id} · ${pub.alias}`,
+               t: `${pub.panes.length} panes · ` +
+                  `${pub.panes.filter((x) => x.ground === "paper").length} on paper` +
+                  (pub.unpopulated ? " · states that it is not yet populated" : "") });
+    for (const pane of pub.panes) {
+      out.push({ h: `${pane.n} ${pane.eyebrow}`, t: `${pane.title}  ⟨${pane.ground}⟩` });
+    }
     return out;
   }
 

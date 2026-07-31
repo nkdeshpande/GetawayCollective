@@ -4,20 +4,20 @@
  * Written by scripts/gen-app.js from constants/routes.ts.
  * Run `npm run app` to regenerate, `npm run app:check` to verify.
  *
- * Route     /auth/sign-in
+ * Route     /structure
  * Access    public   (derived from vantage)
  * Assembly  AS-32 · The Public Surface
  * 
  */
 
 import type { Metadata } from "next";
-import { Identify } from "@/app/_assemblies/publicpages";
+import { Structure } from "@/app/_assemblies/publicpages";
 
 export const metadata: Metadata = {
-  title: "Identify · Getaway Collective",
+  title: "The Vehicle · Getaway Collective",
   robots: { index: true, follow: true },
 };
 
-export default async function Pauth_sign_in() {
-  return <Identify />;
+export default async function Pstructure() {
+  return <Structure />;
 }

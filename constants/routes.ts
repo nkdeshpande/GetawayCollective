@@ -197,7 +197,7 @@ export const PASSPORT_ACCESS_REASON =
   "here would close the only door into the system.";
 
 export const AUTH_ROUTES: readonly Route[] = [
-  R("/auth/sign-in", "Sign In", "gateway", null,
+  R("/auth/sign-in", "Identify", "gateway", "AS-32",
     { notes: "No password is ever handled by the design system. Delegated." }),
   R("/auth/verify", "Verify", "gateway", null,
     { notes:
@@ -448,11 +448,6 @@ export const JOURNAL_ROUTES: readonly Route[] = [
  * has neither an assembly nor an entry here.
  */
 export const PAGE_CONTENTS: Record<string, readonly { part: string; holds: string }[]> = {
-  "/auth/sign-in": [
-    { part: "Request", holds: "Email address only. No password field — the platform does not hold passwords." },
-    { part: "Sent", holds: "Confirmation that a link was sent, worded identically whether or not the address is known. A different message would confirm who holds an account." },
-    { part: "Recovery", holds: "What to do when the link does not arrive, without a control that reveals whether the address exists." },
-  ],
   "/auth/verify": [
     { part: "Verifying", holds: "The state while a link is checked. No control, because there is nothing for the viewer to do." },
     { part: "Expired", holds: "What a stale link means and how to request another. Links are single-use and time-bound." },
@@ -623,6 +618,24 @@ export const COLLECTIVE_ROUTES: readonly Route[] = [
     { notes: "PUB.07 — the intelligence pack. What requesting it creates is stated above the form." }),
   R("/signal", "The Signal", "gateway", "AS-32",
     { notes: "PUB.09 — the weekly transmission. No tuner gate; the form is simply present." }),
+
+  /* The triad. Capital is already public at /how-capital-works, which is
+     the same page under an older name and is retained rather than
+     duplicated — /capital belongs to the office workspace. */
+  R("/space", "Space", "gateway", "AS-32",
+    { notes: "The physical product: what is built, from what, and what it takes to keep standing." }),
+  R("/time", "Time", "gateway", "AS-32",
+    { notes: "Entitlement: what it is, what it is not, and when it begins. The wireframe's " +
+             "exchange console is stated as unbuilt rather than described as though it exists." }),
+
+  R("/collective/gallery", "The Evidence Portfolio", "gateway", "AS-32",
+    { notes: "PUB.08. Ships empty: every plate must say whether it is a photograph, a render or " +
+             "a drawing, and a portfolio of renders shown as photographs is the commonest " +
+             "misrepresentation in this industry. /gallery (AS-09) is a property gallery and is " +
+             "a different thing; both are retained." }),
+  R("/structure", "The Vehicle", "gateway", "AS-32",
+    { notes: "From the PUB.01 footer, which calls it SPV Structure. The constitutional default " +
+             "is an LLP; an SPV needs Board approval per property, and the page says so." }),
 ];
 
 export const ROUTES: readonly Route[] = [

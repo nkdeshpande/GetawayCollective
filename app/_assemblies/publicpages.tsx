@@ -30,7 +30,7 @@
  */
 
 import Link from "next/link";
-import { pageByPath, type PublicPage, type Pane } from "@/content/public";
+import { pageByPath, BRIDGE, type PublicPage, type Pane } from "@/content/public";
 import { PROPERTIES, inr } from "./data";
 import { ConfidenceTag, Footer } from "./atoms";
 
@@ -207,6 +207,85 @@ function DossierForm() {
   );
 }
 
+
+/**
+ * THE BRIDGE — the closer, argued the other way.
+ *
+ * GC.UX.05 in the wireframes reads "ENOUGH THINKING", slammed into place
+ * at 6rem, on the reasoning that complexity is the enemy of execution.
+ *
+ * On an irreversible commitment that reasoning runs backwards. The
+ * commitment control on this platform takes three seconds of sustained
+ * pressure precisely because the deliberation is the point, and a page
+ * telling someone they have deliberated enough is the same pattern as a
+ * countdown timer, wearing better typography.
+ *
+ * The component is kept — a closer at the foot of the argument pages is
+ * right — and it points at the two documents that should be read before
+ * committing rather than after.
+ */
+function Bridge() {
+  return (
+    <section data-sec="AS-32.bridge" className="on-paper">
+      <div className="wrap">
+        <h2 className="t-display-m measure">{BRIDGE.title}</h2>
+        <p className="t-body measure" style={{ marginTop: "var(--gc-sp-s)" }}>{BRIDGE.body}</p>
+        <div className="row" style={{ marginTop: "var(--gc-sp-m)", gap: "var(--gc-sp-s)" }}>
+          {BRIDGE.before.map((b) => (
+            <Link key={b.v} href={b.v} className="panel on-paper"
+                  style={{ flex: "1 1 280px", textDecoration: "none" }}>
+              <span className="t-body-l" style={{ fontWeight: 600 }}>{b.k}</span>
+            </Link>
+          ))}
+        </div>
+        <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-m)" }}>{BRIDGE.close}</p>
+      </div>
+    </section>
+  );
+}
+
+/* The pages the wireframes place the closer on. */
+const BRIDGED = new Set(["/space", "/time", "/how-it-works"]);
+
+
+/**
+ * The identify form. One field, and the same answer either way.
+ *
+ * The wireframe's second state is a six-box OTP grid. Six separate inputs
+ * are a well-known accessibility trap — a screen reader announces six
+ * unlabelled fields, paste rarely works, and focus management has to be
+ * hand-built and usually is not. A single field labelled with what to
+ * paste does the same job, so that is what is here.
+ */
+function IdentifyForm() {
+  return (
+    <section data-sec="AS-32.identify">
+      <div className="wrap">
+        <div className="panel on-panel" style={{ maxWidth: "560px" }}>
+          <span className="t-micro label">Identify</span>
+          <form style={{ marginTop: "var(--gc-sp-m)" }} className="fields" action="/auth/verify">
+            <div className="f full">
+              <label htmlFor="id-email">Email address</label>
+              <input id="id-email" name="email" type="email" autoComplete="email" required
+                     aria-describedby="id-help" />
+              <span className="help t-body-s" id="id-help">
+                A single-use link is sent here. It works once and then expires.
+              </span>
+            </div>
+          </form>
+          <button className="btn primary" type="submit" style={{ marginTop: "var(--gc-sp-m)" }}>
+            Send the link
+          </button>
+          <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-s)", maxWidth: "56ch" }}>
+            The confirmation you see next is identical whether or not this address is known to us.
+            That is deliberate, and it is explained above.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ── The page ─────────────────────────────────────────────────────── */
 
 export function PublicSurface({ path }: { path: string }) {
@@ -241,9 +320,11 @@ export function PublicSurface({ path }: { path: string }) {
 
       {page.panes.map((p) => <PaneBlock key={p.n} p={p} />)}
 
-      {page.path === "/" ? <AssetRow /> : null}
+      {page.path === "/" || page.path === "/space" ? <AssetRow /> : null}
+      {BRIDGED.has(page.path) ? <Bridge /> : null}
       {page.path === "/signal" ? <SignalForm /> : null}
       {page.path === "/communique/request" ? <DossierForm /> : null}
+      {page.path === "/auth/sign-in" ? <IdentifyForm /> : null}
 
       <Footer />
     </>
@@ -258,3 +339,8 @@ export const Operators = () => <PublicSurface path="/collective/operators" />;
 export const Dossier = () => <PublicSurface path="/communique/request" />;
 export const Signal = () => <PublicSurface path="/signal" />;
 export const Wire = () => <PublicSurface path="/collective/press" />;
+export const Space = () => <PublicSurface path="/space" />;
+export const Time = () => <PublicSurface path="/time" />;
+export const Evidence = () => <PublicSurface path="/collective/gallery" />;
+export const Structure = () => <PublicSurface path="/structure" />;
+export const Identify = () => <PublicSurface path="/auth/sign-in" />;
