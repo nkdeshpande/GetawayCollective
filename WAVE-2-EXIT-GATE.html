@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wave 2 Exit Gate — Getaway Collective</title>
+<style>
+/* ── Token package, inlined from dist/tokens.css (v3.0 LOCKED) ── */
+/* GC Design System — v3.0 LOCKED
+ * GENERATED FILE — do not edit.
+ * Source: constants/tokens.ts · regenerate with `npm run tokens`
+ * Authority: L1-01 §29 Design Supremacy Clause
+ */
+:root {
+  --gc-void: #0A0A0A;
+  --gc-void-panel: #121212;
+  --gc-paper: #F2F2F2;
+  --gc-paper-panel: #FFFFFF;
+  --gc-mist: #E8E8E6;
+
+  --gc-ink: #0A0A0A;
+  --gc-ink-inverse: #F2F2F2;
+  --gc-steel: #6B6B6B;
+  --gc-steel-dim: #9A9A9A;
+
+  --gc-forest: #0C3024;
+  --gc-copper: #C79F6B;
+  --gc-electric: #2061DE;
+  --gc-hazard: #E8672E;
+  --gc-critical: #FF3B30;
+  --gc-confirm: #1FAA59;
+
+  --gc-hairline: rgba(10,10,10,0.12);
+  --gc-hairline-inv: rgba(242,242,242,0.14);
+
+  --gc-f-display: 'Outfit', 'Segoe UI Variable Display', -apple-system, sans-serif;
+  --gc-f-body: 'Inter', 'Segoe UI Variable', -apple-system, sans-serif;
+  --gc-f-mono: 'Space Mono', ui-monospace, 'Consolas', 'SFMono-Regular', monospace;
+  --gc-f-editorial: 'Playfair Display', Georgia, serif;
+
+  --gc-sp-3xs: 4px;
+  --gc-sp-2xs: 8px;
+  --gc-sp-xs: 12px;
+  --gc-sp-s: 16px;
+  --gc-sp-m: 24px;
+  --gc-sp-l: 32px;
+  --gc-sp-xl: 48px;
+  --gc-sp-2xl: 64px;
+  --gc-sp-3xl: 96px;
+  --gc-sp-4xl: 128px;
+
+  --gc-stroke-idle: 1px;
+  --gc-stroke-active: 2px;
+  --gc-radius: 0px;
+
+  --gc-ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+  --gc-ease-shutter: cubic-bezier(0.9, 0, 0.2, 1);
+  --gc-dur-instant: 120ms;
+  --gc-dur-fast: 240ms;
+  --gc-dur-cinema: 600ms;
+  --gc-dur-commit: 3000ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gc-bg: var(--gc-void);
+    --gc-bg-panel: var(--gc-void-panel);
+    --gc-fg: var(--gc-ink-inverse);
+    --gc-fg-dim: var(--gc-steel-dim);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --gc-bg: var(--gc-paper);
+    --gc-bg-panel: var(--gc-paper-panel);
+    --gc-fg: var(--gc-ink);
+    --gc-fg-dim: var(--gc-steel);
+  }
+}
+
+
+  /* Locked token package is the source. Nothing here invents a colour. */
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--gc-void); color: var(--gc-ink-inverse);
+    font-family: var(--gc-f-body); font-size: 15px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: var(--gc-sp-2xl) var(--gc-sp-l) var(--gc-sp-4xl); }
+  h1, h2, h3 { font-family: var(--gc-f-display); font-weight: 300; letter-spacing: -0.01em; margin: 0; }
+  h1 { font-size: clamp(28px, 5vw, 46px); text-transform: uppercase; letter-spacing: 0.02em; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gc-steel-dim);
+       margin: var(--gc-sp-3xl) 0 var(--gc-sp-m); font-weight: 400; }
+  .eyebrow { font-family: var(--gc-f-mono); font-size: 11px; letter-spacing: 0.22em;
+             text-transform: uppercase; color: var(--gc-copper); margin-bottom: var(--gc-sp-xs); }
+  .lede { color: var(--gc-steel-dim); max-width: 62ch; margin-top: var(--gc-sp-s); }
+  .rule { height: 1px; background: var(--gc-hairline-inv); border: 0; margin: var(--gc-sp-xl) 0 0; }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+             gap: 1px; background: var(--gc-hairline-inv); margin-top: var(--gc-sp-l); }
+  .metric { background: var(--gc-void-panel); padding: var(--gc-sp-m); }
+  .metric .n { font-family: var(--gc-f-mono); font-size: 30px; font-variant-numeric: tabular-nums;
+               color: var(--gc-copper); display: block; line-height: 1.1; }
+  .metric .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+               color: var(--gc-steel-dim); margin-top: var(--gc-sp-2xs); display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .scroll { overflow-x: auto; }
+  th { text-align: left; font-weight: 400; font-size: 11px; text-transform: uppercase;
+       letter-spacing: 0.14em; color: var(--gc-steel-dim); padding: var(--gc-sp-2xs) var(--gc-sp-s);
+       border-bottom: 1px solid var(--gc-hairline-inv); white-space: nowrap; }
+  td { padding: var(--gc-sp-xs) var(--gc-sp-s); border-bottom: 1px solid var(--gc-hairline-inv);
+       vertical-align: top; }
+  td.mono, .mono { font-family: var(--gc-f-mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+  tr:last-child td { border-bottom: 0; }
+
+  .pill { display: inline-block; font-family: var(--gc-f-mono); font-size: 10px; letter-spacing: 0.1em;
+          text-transform: uppercase; padding: 3px 8px; border: 1px solid currentColor; white-space: nowrap; }
+  .ok { color: var(--gc-confirm); }
+  .gen { color: var(--gc-electric); }
+  .part { color: var(--gc-hazard); }
+  .def { color: var(--gc-steel); }
+
+  .inv { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--gc-sp-s); }
+  .inv span { font-family: var(--gc-f-mono); font-size: 11px; padding: 4px 7px;
+              border: 1px solid var(--gc-hairline-inv); color: var(--gc-confirm); }
+  .inv span.no { color: var(--gc-steel); }
+
+  .note { border-left: 2px solid var(--gc-copper); padding: var(--gc-sp-xs) 0 var(--gc-sp-xs) var(--gc-sp-s);
+          color: var(--gc-steel-dim); margin-top: var(--gc-sp-m); max-width: 68ch; }
+  .note strong { color: var(--gc-ink-inverse); font-weight: 500; }
+  footer { margin-top: var(--gc-sp-3xl); padding-top: var(--gc-sp-m);
+           border-top: 1px solid var(--gc-hairline-inv); color: var(--gc-steel);
+           font-family: var(--gc-f-mono); font-size: 11px; }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) body { background: var(--gc-paper); color: var(--gc-ink); }
+    :root:not([data-theme="dark"]) .metric { background: var(--gc-paper-panel); }
+    :root:not([data-theme="dark"]) .metrics,
+    :root:not([data-theme="dark"]) th, :root:not([data-theme="dark"]) td,
+    :root:not([data-theme="dark"]) .inv span { border-color: var(--gc-hairline); }
+    :root:not([data-theme="dark"]) .metrics { background: var(--gc-hairline); }
+    :root:not([data-theme="dark"]) h2, :root:not([data-theme="dark"]) .lede,
+    :root:not([data-theme="dark"]) .k, :root:not([data-theme="dark"]) .note { color: var(--gc-steel); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Getaway Collective · Constitutional Build</div>
+  <h1>Wave 2 Exit Gate</h1>
+  <p class="lede">Semantic Core. Every figure on this page is read from the repository
+  at generation time — the Wave 1 checklist drifted from reality precisely because it
+  was maintained by hand.</p>
+  <hr class="rule">
+
+  <div class="metrics">
+    <div class="metric"><span class="n">27</span><span class="k">L2 objects</span></div>
+    <div class="metric"><span class="n">127</span><span class="k">registered fields</span></div>
+    <div class="metric"><span class="n">28</span><span class="k">graph edges</span></div>
+    <div class="metric"><span class="n">32</span><span class="k">capabilities</span></div>
+    <div class="metric"><span class="n">158</span><span class="k">tests passing</span></div>
+    <div class="metric"><span class="n">35/41</span><span class="k">invariants enforced</span></div>
+  </div>
+
+  <h2>Gate checks</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Check</th><th>Command</th><th>Enforces</th><th>Status</th></tr></thead>
+    <tbody>
+    <tr><td>Vocabulary</td><td class="mono">vocab-lint</td>
+      <td class="mono">L1-01 §25</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Field registry</td><td class="mono">ufr-lint</td>
+      <td class="mono">E-06</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Relationship graph</td><td class="mono">rel-lint</td>
+      <td class="mono">E-05</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Capability registry</td><td class="mono">cap-lint</td>
+      <td class="mono">E-01</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Zod contracts</td><td class="mono">schemas:check</td>
+      <td class="mono">E-06</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Database schema</td><td class="mono">db:check</td>
+      <td class="mono">E-06</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Fixtures</td><td class="mono">fixtures:check</td>
+      <td class="mono">—</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Design tokens</td><td class="mono">tokens</td>
+      <td class="mono">§29</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Types + tests</td><td class="mono">type-check, test:run</td>
+      <td class="mono">—</td><td><span class="pill ok">pass</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Layers</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Layer</th><th>Component</th><th>State</th><th>Status</th></tr></thead>
+    <tbody>
+    <tr><td class="mono">L1</td><td>Constitution</td><td class="mono">5 ratified documents</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L2</td><td>Business objects</td><td class="mono">27 objects, 6 domains</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L2.5</td><td>Unified Field Registry</td><td class="mono">127 fields, 27/27 covered</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L3</td><td>Relationship graph</td><td class="mono">28 edges, 4 roots, no cycles</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L5</td><td>Capabilities</td><td class="mono">32 commands, 51 events</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L5</td><td>Authority</td><td class="mono">31 rights, 8 roles</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L10</td><td>Persistence</td><td class="mono">27 tables, 28 foreign keys</td>
+      <td><span class="pill gen">generated</span></td></tr>
+    <tr><td class="mono">L7/L8</td><td>Application &amp; UX</td><td class="mono">GC.SYSTEM v3.0 — migration target</td>
+      <td><span class="pill def">deferred</span></td></tr>
+    <tr><td class="mono">L9</td><td>Analytics</td><td class="mono">event log in place, projections pending</td>
+      <td><span class="pill part">partial</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Invariant coverage</h2>
+  <div class="inv">
+    <span>E-01</span><span>E-02</span><span>E-03</span><span>E-04</span><span>E-05</span><span>E-07</span><span>A-02</span><span>A-03</span><span>A-04</span><span>A-05</span><span>A-07</span><span>A-08</span><span>I-01</span><span>I-02</span><span>I-03</span><span>I-04</span><span>I-05</span><span>I-06</span><span>I-07</span><span>I-08</span><span>F-01</span><span>F-02</span><span>F-03</span><span>F-04</span><span>F-05</span><span>F-06</span><span>F-07</span><span>F-09</span><span>F-10</span><span>F-13</span><span>F-14</span><span>F-15</span><span>F-16</span><span>F-17</span><span>F-18</span>
+    <span class="no">E-06</span><span class="no">A-01</span><span class="no">A-06</span><span class="no">F-08</span><span class="no">F-11</span><span class="no">F-12</span>
+  </div>
+  <div class="note">
+    <strong>35 of 41 enforced.</strong>
+    The 6 unlit are not gaps in discipline — E-06, A-01, A-06, F-08, F-11, F-12
+    govern graph integrity, layer authority, and asset lifecycle behaviour that only
+    becomes checkable once there is persisted state to check. They are declared,
+    owned, and named in tests that do not yet have a database to run against.
+  </div>
+
+  <h2>Persistence</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Measure</th><th>Value</th><th>Why it matters</th></tr></thead>
+    <tbody>
+      <tr><td>Tables</td><td class="mono">27</td><td>One per ratified L2 object</td></tr>
+      <tr><td>Foreign keys</td><td class="mono">28</td><td>Every edge in the L3 graph, with <span class="mono">ON DELETE restrict</span></td></tr>
+      <tr><td>Float columns</td><td class="mono">0</td><td>A <span class="mono">double precision</span> money column would reintroduce the error the contract layer refuses</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Open</h2>
+  <div class="note">
+    <strong>No open constitutional questions.</strong> 32 blanks ratified, 0 open.
+    Remaining work is execution: L7/L8 wait on the GC.SYSTEM migration, correctly
+    held as a target rather than scaffolded into an empty monorepo before the
+    semantic layer had made its decisions.
+  </div>
+
+  <footer>
+    Generated by scripts/gen-gate-report.js · tokens inlined from dist/tokens.css (v3.0 LOCKED, §29)<br>
+    Regenerate: npm run gate
+  </footer>
+</div>
+</body>
+</html>

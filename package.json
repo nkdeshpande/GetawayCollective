@@ -25,7 +25,8 @@
     "test:run": "vitest run",
     "lint:cap": "node scripts/cap-lint.js",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "gate": "node scripts/gen-gate-report.js"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
