@@ -29,6 +29,9 @@
  * whole of it.
  */
 
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { pageByPath, BRIDGE, type PublicPage, type Pane } from "@/content/public";
 import { PROPERTIES, inr } from "./data";
@@ -144,7 +147,32 @@ function AssetRow() {
 }
 
 /** The subscription form. Plain, and reachable. */
+/**
+ * Both forms below share one submission shape: idle → sending → sent, or
+ * idle → sending → failed. Failure is shown as failure — see lib/leads.ts
+ * — never as a success screen over a message that was actually dropped.
+ */
+type Phase = "idle" | "sending" | "sent" | "failed";
+
 function SignalForm() {
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [email, setEmail] = useState("");
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPhase("sending");
+    try {
+      const res = await fetch("/api/signal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setPhase(res.ok ? "sent" : "failed");
+    } catch {
+      setPhase("failed");
+    }
+  };
+
   return (
     <section data-sec="AS-32.signal" className="on-paper">
       <div className="wrap">
@@ -153,17 +181,36 @@ function SignalForm() {
           <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-3xs)" }}>
             One transmission a week
           </h2>
-          <form
-            style={{ marginTop: "var(--gc-sp-m)", display: "flex", gap: "var(--gc-sp-2xs)", flexWrap: "wrap" }}
-            action="/signal"
-          >
-            <label htmlFor="sig-email" className="t-micro label" style={{ flexBasis: "100%" }}>
-              Email address
-            </label>
-            <input id="sig-email" name="email" type="email" autoComplete="email" required
-                   style={{ flex: "1 1 260px" }} />
-            <button className="btn primary" type="submit">Tune in</button>
-          </form>
+
+          {phase === "sent" ? (
+            <p className="t-body" role="status" style={{ marginTop: "var(--gc-sp-m)" }}>
+              Received. The first transmission arrives within a week.
+            </p>
+          ) : (
+            <form
+              onSubmit={submit}
+              style={{ marginTop: "var(--gc-sp-m)", display: "flex", gap: "var(--gc-sp-2xs)", flexWrap: "wrap" }}
+            >
+              <label htmlFor="sig-email" className="t-micro label" style={{ flexBasis: "100%" }}>
+                Email address
+              </label>
+              <input id="sig-email" name="email" type="email" autoComplete="email" required
+                     value={email} onChange={(e) => setEmail(e.target.value)}
+                     disabled={phase === "sending"} style={{ flex: "1 1 260px" }} />
+              <button className="btn primary" type="submit" disabled={phase === "sending"}>
+                {phase === "sending" ? "Sending…" : "Tune in"}
+              </button>
+            </form>
+          )}
+
+          {phase === "failed" ? (
+            <p className="t-body-s" role="status" style={{ marginTop: "var(--gc-sp-s)", color: "var(--gc-hazard)" }}>
+              This has not reached us. Write to{" "}
+              <a href="mailto:signal@getawaycollective.in">signal@getawaycollective.in</a> directly
+              and it reaches the same place.
+            </p>
+          ) : null}
+
           <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)", maxWidth: "56ch" }}>
             Not sold, not tracked, one click out. The unsubscribe link is in every transmission and
             takes effect immediately.
@@ -176,31 +223,70 @@ function SignalForm() {
 
 /** The dossier request. The consequence is stated above the form, not below it. */
 function DossierForm() {
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [vals, setVals] = useState({ name: "", email: "", city: "" });
+  const set = (k: keyof typeof vals) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setVals((p) => ({ ...p, [k]: e.target.value }));
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPhase("sending");
+    try {
+      const res = await fetch("/api/dossier", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(vals),
+      });
+      setPhase(res.ok ? "sent" : "failed");
+    } catch {
+      setPhase("failed");
+    }
+  };
+
   return (
     <section data-sec="AS-32.dossier" className="on-paper">
       <div className="wrap">
         <div className="panel on-paper" style={{ maxWidth: "620px" }}>
           <span className="t-micro label">Request transmission</span>
-          <form className="fields" style={{ marginTop: "var(--gc-sp-m)" }}>
-            <div className="f full">
-              <label htmlFor="d-name">Full name</label>
-              <input id="d-name" name="name" type="text" autoComplete="name" required />
-            </div>
-            <div className="f full">
-              <label htmlFor="d-email">Email address</label>
-              <input id="d-email" name="email" type="email" autoComplete="email" required />
-            </div>
-            <div className="f full">
-              <label htmlFor="d-city">City</label>
-              <input id="d-city" name="city" type="text" autoComplete="address-level2" />
-              <span className="help t-body-s">
-                Used to say which properties are within reach of you. Optional.
-              </span>
-            </div>
-          </form>
-          <button className="btn primary" type="submit" style={{ marginTop: "var(--gc-sp-m)" }}>
-            Send the pack
-          </button>
+
+          {phase === "sent" ? (
+            <p className="t-body" role="status" style={{ marginTop: "var(--gc-sp-m)" }}>
+              Received. The pack is sent to the address given, usually within one working day.
+            </p>
+          ) : (
+            <form className="fields" style={{ marginTop: "var(--gc-sp-m)" }} onSubmit={submit}>
+              <div className="f full">
+                <label htmlFor="d-name">Full name</label>
+                <input id="d-name" name="name" type="text" autoComplete="name" required
+                       value={vals.name} onChange={set("name")} disabled={phase === "sending"} />
+              </div>
+              <div className="f full">
+                <label htmlFor="d-email">Email address</label>
+                <input id="d-email" name="email" type="email" autoComplete="email" required
+                       value={vals.email} onChange={set("email")} disabled={phase === "sending"} />
+              </div>
+              <div className="f full">
+                <label htmlFor="d-city">City</label>
+                <input id="d-city" name="city" type="text" autoComplete="address-level2"
+                       value={vals.city} onChange={set("city")} disabled={phase === "sending"} />
+                <span className="help t-body-s">
+                  Used to say which properties are within reach of you. Optional.
+                </span>
+              </div>
+              <button className="btn primary" type="submit" disabled={phase === "sending"}
+                      style={{ marginTop: "var(--gc-sp-m)" }}>
+                {phase === "sending" ? "Sending…" : "Send the pack"}
+              </button>
+            </form>
+          )}
+
+          {phase === "failed" ? (
+            <p className="t-body-s" role="status" style={{ marginTop: "var(--gc-sp-s)", color: "var(--gc-hazard)" }}>
+              This has not reached us. Write to{" "}
+              <a href="mailto:communique@getawaycollective.in">communique@getawaycollective.in</a>{" "}
+              directly and it reaches the same place.
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

@@ -14,6 +14,11 @@ import { fontVars } from "./_system/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  /* Required for every relative URL in metadata (icons, og:image) to
+     resolve to an absolute one. Falls back to localhost so `next build`
+     never fails for want of an env var; production sets
+     NEXT_PUBLIC_SITE_URL to the real domain. */
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
     default: "Getaway Collective",
     template: "%s",

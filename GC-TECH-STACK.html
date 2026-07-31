@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F2F2F2" media="(prefers-color-scheme: light)">
+<title>Getaway Collective · The Stack</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0A0A0A;--void-panel:#121212;--paper:#F2F2F2;--paper-panel:#FFFFFF;
+  --ink:#F2F2F2;--ink-inv:#0A0A0A;--steel:#9A9A9A;--steel-op:#6C6C6C;--hair:rgba(242,242,242,.12);
+  --forest:#228A68;--copper:#C79F6B;--electric:#2061DE;--hazard:#E8672E;--critical:#FF3B30;--confirm:#1FAA59;
+  --f-d:'Outfit',system-ui,sans-serif;--f-m:'Space Mono',monospace;
+  --bg:var(--void);--bg2:var(--void-panel);--fg:var(--ink);--fg-dim:var(--steel);--border:var(--hair);
+}
+@media(prefers-color-scheme:light){
+  :root{--bg:var(--paper);--bg2:var(--paper-panel);--fg:var(--ink-inv);--fg-dim:var(--steel-op);
+    --border:rgba(10,10,10,.12);--forest:#0C3024;--copper:#8C6635;--confirm:#177F43;--hazard:#BE4915;--critical:#DD0C00}
+}
+:root[data-theme="dark"]{--bg:var(--void);--bg2:var(--void-panel);--fg:var(--ink);--fg-dim:var(--steel);
+  --border:var(--hair);--forest:#228A68;--copper:#C79F6B;--confirm:#1FAA59;--hazard:#E8672E;--critical:#FF3B30}
+:root[data-theme="light"]{--bg:var(--paper);--bg2:var(--paper-panel);--fg:var(--ink-inv);--fg-dim:var(--steel-op);
+  --border:rgba(10,10,10,.12);--forest:#0C3024;--copper:#8C6635;--confirm:#177F43;--hazard:#BE4915;--critical:#DD0C00}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-d);font-weight:300;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.mono{font-family:var(--f-m)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+.spine{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;padding:14px 24px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.wm{font-family:var(--f-m);font-weight:700;font-size:12px;letter-spacing:.16em}
+.wm b{color:var(--copper);font-weight:700}
+.ver{font-family:var(--f-m);font-size:10px;color:var(--fg-dim);letter-spacing:.14em}
+.toggle{margin-left:auto;border:1px solid var(--border);background:transparent;color:var(--fg-dim);
+  font-family:var(--f-m);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+.toggle:hover{color:var(--fg)}
+.toggle:focus-visible{outline:2px solid var(--electric);outline-offset:2px}
+
+header{padding:56px 0 18px}
+.kick{font-family:var(--f-m);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-dim);margin-bottom:16px}
+h1{font-family:var(--f-d);font-weight:700;font-size:clamp(2rem,4.6vw,3.4rem);line-height:1.06;letter-spacing:-.015em;max-width:20ch}
+.sub{color:var(--fg-dim);max-width:74ch;margin:20px 0 0;font-size:16px}
+.sub b{color:var(--fg);font-weight:500}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;background:var(--border);
+  border:1px solid var(--border);margin:32px 0 8px}
+.stat{background:var(--bg2);padding:16px 18px}
+.stat .n{font-family:var(--f-m);font-weight:700;font-size:1.7rem;line-height:1}
+.stat .l{font-family:var(--f-m);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-dim);margin-top:7px}
+.stat .x{font-size:12px;color:var(--fg-dim);margin-top:8px;line-height:1.5}
+
+.fam{margin:52px 0}
+.fh{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;padding-bottom:10px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.fh .sw{width:11px;height:11px;flex:none;align-self:center}
+.fh h2{font-family:var(--f-d);font-weight:600;font-size:1.15rem;letter-spacing:.01em}
+.fh .cap{font-family:var(--f-m);font-size:10px;color:var(--fg-dim);margin-left:auto;text-align:right}
+.fintro{color:var(--fg-dim);font-size:14px;max-width:82ch;margin:0 0 16px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.tile{background:var(--bg2);padding:16px 15px;border-top:3px solid var(--c);color:inherit}
+.tile .sym{font-family:var(--f-d);font-weight:700;font-size:1.3rem;line-height:1;color:var(--c)}
+.tile .nm{font-size:13px;font-weight:500;margin-top:8px;line-height:1.35}
+.tile .cp{font-family:var(--f-m);font-size:9px;color:var(--fg-dim);margin-top:7px;letter-spacing:.02em;line-height:1.6}
+.tile .why{font-size:12px;color:var(--fg-dim);margin-top:9px;line-height:1.55;border-top:1px solid var(--border);padding-top:9px}
+
+.big{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.big .tile{padding:20px 18px}
+.big .sym{font-size:1.75rem}
+.big .nm{font-size:15px;margin-top:10px}
+.covers{list-style:none;margin-top:11px;display:flex;flex-wrap:wrap;gap:6px}
+.covers li{font-family:var(--f-m);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;
+  border:1px solid var(--border);padding:3px 9px;color:var(--fg-dim)}
+
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+th{text-align:left;font-family:var(--f-m);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim);
+  padding:0 14px 10px 0;border-bottom:1px solid var(--border);font-weight:400;vertical-align:bottom}
+td{padding:13px 14px 13px 0;border-bottom:1px solid var(--border);vertical-align:top;color:var(--fg-dim)}
+td:first-child{color:var(--fg);font-weight:500;white-space:nowrap}
+td.f{font-family:var(--f-m);font-size:11.5px;color:var(--fg);white-space:normal}
+.scroll{overflow-x:auto}
+
+.note{border:1px solid var(--border);border-left:3px solid var(--fg-dim);padding:19px;margin:24px 0;
+  font-size:14px;color:var(--fg-dim);background:var(--bg2)}
+.note b{color:var(--fg)}
+.note.warn{border-left-color:var(--critical)}
+.note.own{border-left-color:var(--copper)}
+.note h3{font-family:var(--f-d);font-size:1.05rem;font-weight:600;color:var(--fg);margin-bottom:10px}
+.note ul{margin:11px 0 0 1.1em}
+.note li{margin-bottom:8px}
+code{font-family:var(--f-m);font-size:12px;background:var(--bg);border:1px solid var(--border);padding:1px 6px;color:var(--fg)}
+
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0;font-family:var(--f-m);font-size:10.5px;
+  color:var(--fg-dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+</style>
+</head>
+<body>
+
+<div class="spine">
+  <span class="wm">GC<b>·</b>STACK</span>
+  <span class="ver">THE MINIMAL STACK · V1</span>
+  <button class="toggle" id="themeToggle" type="button">Light / Dark</button>
+</div>
+
+<div class="wrap">
+<header>
+  <div class="kick">Getaway Collective · what runs the platform</div>
+  <h1>Five accounts. One authorization model.</h1>
+  <p class="sub">
+    Getaway Collective governs the vehicles that own properties; it does not run buildings, and it holds no
+    equity in what it governs. The stack follows the same discipline: <b>the fewest relationships that cover
+    every capability</b>, with the constitution — routes, rights, capabilities — staying in this repository
+    rather than living in a vendor's dashboard.
+  </p>
+
+  <div class="stats">
+    <div class="stat" style="border-top:3px solid var(--electric)">
+      <div class="n" style="color:var(--electric)">5</div>
+      <div class="l">Accounts</div>
+      <div class="x">Vercel · Neon · Clerk · Resend · Razorpay.</div>
+    </div>
+    <div class="stat" style="border-top:3px solid var(--forest)">
+      <div class="n" style="color:var(--forest)">6</div>
+      <div class="l">Runtime dependencies</div>
+      <div class="x"><code>next react react-dom drizzle-orm zod</code>, plus <code>react-hook-form</code>.</div>
+    </div>
+    <div class="stat" style="border-top:3px solid var(--copper)">
+      <div class="n" style="color:var(--copper)">5</div>
+      <div class="l">Slots closed by code already written</div>
+      <div class="x">CMS, authorization, forms, feature flags and the design reference are files, not subscriptions.</div>
+    </div>
+    <div class="stat" style="border-top:3px solid var(--fg-dim)">
+      <div class="n" style="color:var(--fg-dim)">1</div>
+      <div class="l">Authorization model</div>
+      <div class="x">In <code>lib/authority.ts</code>. Every account below stops at authentication.</div>
+    </div>
+  </div>
+</header>
+
+<div class="note">
+  <h3>The counts are read from the repository, not estimated</h3>
+  <b>Six runtime dependencies</b> is <code>package.json</code> today plus the one addition this document proposes.
+  The 23 linters and generators that govern this platform are zero-dependency Node and TypeScript — they are
+  not counted here because they cost nothing to keep.
+  <br><br>
+  Nothing below has been provisioned, and pricing is deliberately not quoted: every vendor changes its tiers,
+  and a number written here is wrong within six months. Verify current terms before committing to any of them.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="fam">
+  <div class="fh">
+    <span class="sw" style="background:var(--electric)"></span>
+    <h2>The five accounts</h2>
+    <span class="cap">four to run the platform · the fifth the day a deposit is taken</span>
+  </div>
+  <p class="fintro">
+    Each is chosen for <b>fit against what already exists</b> — the Drizzle migrations already target Postgres,
+    the route table already derives access from vantage, the authority model already declares 33 rights.
+    A product that slots in without an adapter written around it beats a better product that needs one.
+  </p>
+  <div class="tiles big" id="accounts"></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="note warn">
+  <h3>Clerk authenticates. It does not authorize.</h3>
+  Clerk ships organizations, roles and permissions as a product feature. <b>None of it is used.</b> This
+  platform already has a complete authorization model: 33 rights, 8 roles, grants carrying a scope and an
+  expiry, one <code>authorise()</code> entry point with no default-allow branch, and a linter that refuses a
+  right no role carries.
+  <br><br>
+  Two authorization models is worse than either alone — not because they would disagree on day one, but
+  because six months later the question <i>"why could this person do that"</i> has its answer split between a
+  dashboard and a repository, and only one of them is in version control.
+  <ul>
+    <li><b>Clerk owns:</b> who someone is — the session, MFA, device list, sign-in, recovery. It answers one
+      question and hands back a stable identity.</li>
+    <li><b>The repository owns:</b> everything after that. <code>resolveSubject()</code> maps the Clerk identity
+      to a <code>Subject</code>, and the existing guard decides access exactly as it does today.</li>
+    <li><b>The rule:</b> no Clerk role or organization name appears anywhere in this codebase. If one does, the
+      boundary has broken.</li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="fam">
+  <div class="fh">
+    <span class="sw" style="background:var(--copper)"></span>
+    <h2>Already closed by code in this repository</h2>
+    <span class="cap">why the account count stays at five</span>
+  </div>
+  <p class="fintro">
+    Not deferrals. Each of these is a capability a platform this size usually buys, already implemented here
+    with the file that does it. Listed with what replacing it would cost — the honest reading is that keeping
+    it is cheaper than migrating it, not that it beats a dedicated product on features.
+  </p>
+  <div class="scroll">
+    <table id="owned"></table>
+  </div>
+</section>
+
+<div class="note own">
+  <h3>Why forms stay native</h3>
+  <code>react-hook-form</code> plus the Zod schemas already in the repository, rather than a form-builder
+  service. Accreditation collects identity documents, PAN, address, tax residency and source-of-funds
+  evidence — routing that through a third-party form product makes that vendor a data processor for the most
+  sensitive material this platform will ever hold. A data-processing agreement, a residency question, a
+  sub-processor list to monitor, and their breach becomes a notification obligation here.
+  <br><br>
+  In exchange, it would buy field validation that <code>constants/validation.ts</code> already declares, with
+  copy already checked against 17 tone prohibitions. <b>No capability is bought — only exposure.</b>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="fam">
+  <div class="fh">
+    <span class="sw" style="background:var(--forest)"></span>
+    <h2>Payments: Razorpay</h2>
+    <span class="cap">India-domiciled platform · Indian residents · rupee deposits</span>
+  </div>
+  <p class="fintro">
+    The vehicles are Indian LLPs. Partners are Indian residents settling in rupees. Razorpay is built for
+    that transaction from the ground up rather than adapted to it.
+  </p>
+  <div class="tiles" id="pay"></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="fam">
+  <div class="fh">
+    <span class="sw" style="background:var(--steel)"></span>
+    <h2>Not needed yet — and the trigger that changes that</h2>
+    <span class="cap">a deferral with no trigger is a decision nobody made</span>
+  </div>
+  <p class="fintro">
+    Every line names the condition under which it returns. If a condition is met and the capability is still
+    absent, that is a fault — which is the point of writing the trigger down instead of saying "later".
+  </p>
+  <div class="scroll">
+    <table id="deferred"></table>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="note">
+  <h3>The rule that keeps five accounts safe</h3>
+  Business logic calls a <b>capability</b> — "notify a partner", "persist", "take a deposit" — never a product.
+  <code>lib/commands.ts</code> declares 35 capabilities, each naming the right it requires and the events it
+  emits, and a linter refuses one that emits nothing. A vendor is an implementation of a capability; swapping
+  one is an adapter change.
+  <br><br>
+  <b>Concretely:</b> Razorpay sits behind the payments capability, Resend behind notifications, Clerk behind
+  <code>resolveSubject()</code>, Vercel Blob behind media registration. None of those names belongs inside a
+  business rule.
+</div>
+
+<div class="note warn">
+  <h3>Before any of this is provisioned</h3>
+  <ul>
+    <li><b>Data residency.</b> Clerk holds identities, Neon holds accreditation records, Vercel holds request
+      logs — three processors handling personal data under the DPDP Act. Confirm what each actually guarantees
+      on region, not what the marketing page implies, <b>before the first accreditation record exists.</b>
+      Moving personal data across regions afterwards is materially harder than choosing correctly now.</li>
+    <li><b>Who holds the deposit.</b> The flow takes ₹50,000 on the platform and completes the balance offline.
+      Whether that money is ever held by Getaway Collective or passes straight to the vehicle changes the
+      regulatory shape of the platform, and it changes the Razorpay integration pattern.</li>
+    <li><b>Clerk or WorkOS.</b> Clerk fits an individual partner, which is what a ₹40,00,000 unit implies.
+      WorkOS becomes the right pick the moment an institutional investor needs SSO against their own identity
+      provider — a family office running Okta cannot use a magic link. Ask the question before the first
+      institutional offering opens; switching afterwards is real work.</li>
+    <li><b>Authentication is unimplemented.</b> <code>resolveSubject()</code> currently returns ANONYMOUS and
+      every guard fails closed — correct for now, and the first thing Clerk touches.</li>
+  </ul>
+</div>
+
+<div class="note">
+  <h3>What five accounts do not cover</h3>
+  No error tracking, no uptime monitoring, no log retention beyond platform defaults, no feature flags, no
+  analytics. Defensible at prototype scale. <b>Not defensible at the first real partner</b> — error tracking
+  should be account six before launch, not after the first incident, because its entire value is in already
+  having it when something breaks.
+</div>
+
+</div>
+
+<footer class="wrap" style="display:flex">
+  <span>Getaway Collective · The Minimal Stack v1</span>
+  <span>fewest accounts · own the registries · authenticate once, authorize in the repository</span>
+</footer>
+
+<script>
+var ACCOUNTS=[
+ {s:'Vc',n:'Vercel',c:'host · CDN · cron · blob · image optimisation',
+  covers:['Hosting','CDN','Edge','Cron','Blob storage','Image opt','Preview envs'],
+  why:'Next.js is theirs, so the app deploys with no adapter and no build shim. Vercel Blob is the media '+
+      'target for the admin media page — no extra configuration, and the kind discipline (photograph, '+
+      'render, drawing) lives in Postgres as metadata rather than in the store.'},
+ {s:'Ne',n:'Neon',c:'serverless Postgres',
+  covers:['Postgres','Branch per PR','Autoscale','Point-in-time restore'],
+  why:'The Drizzle migrations already target Postgres, so this requires no change to anything built. '+
+      'Branch-per-PR gives every preview deployment its own database, which matters in a repository where '+
+      '619 tests and eleven generators run on every change.'},
+ {s:'Ck',n:'Clerk',c:'authentication only — see the boundary panel',
+  covers:['Sessions','MFA','Magic link','Device list','Recovery'],
+  why:'Built-in MFA is the reason. An office right that can register a legal entity and put a binding '+
+      'document in force should not be reachable with a single factor, and building MFA well is not a good '+
+      'use of a small team. Its organizations and roles stay off.'},
+ {s:'Rs',n:'Resend',c:'transactional email',
+  covers:['Email','React Email','Deliverability'],
+  why:'Carries the email leg of the notifications table — capital calls, distribution notices, '+
+      'accreditation decisions — with React Email templates. Not a notification service: notifications are '+
+      'a Drizzle table, because a dedicated platform only earns its place when SMS or push arrive.'},
+ {s:'Rz',n:'Razorpay',c:'the deposit · not needed until one is taken',
+  covers:['Payments','Refunds','Receipts','Settlement','Reconciliation'],
+  why:'Built for Indian rupee transactions between Indian entities, which is what every deposit on this '+
+      'platform is. Not required to run the prototype — nothing takes money until the deposit step is live.'}
+];
+
+var OWNED=[
+ {slot:'Headless CMS',file:'content/*.ts',
+  what:'Six modules — legal, journal, public, member, gateway, admin — holding every word the platform says, with load-time checks enforcing assembly rules.',
+  cost:'A migration would move roughly 9,000 words into a database and lose the checks that refuse an uncited answer or a figure in a descriptive grid.'},
+ {slot:'Authorization',file:'lib/authority.ts',
+  what:'33 rights, 8 roles, grants carrying scope and expiry, one authorise() entry point with no default-allow branch. Separation of powers enforced by what each role omits.',
+  cost:'The most defensible slot on this page. Moving it to a hosted policy engine would take the constitution out of version control.'},
+ {slot:'Forms',file:'constants/validation.ts',
+  what:'Declared validation with message, help and accessible text per field, checked against 17 tone prohibitions.',
+  cost:'Nothing to replace. A form SaaS would add a processor for KYC data and buy no capability — see the panel above.'},
+ {slot:'Feature flags',file:'constants/routes.ts',
+  what:'Access derives from vantage; an override must state its reason; reachability is a property of the route table and is linted.',
+  cost:'A runtime toggle service would only matter once something needs toggling at runtime. Nothing does yet.'},
+ {slot:'Design reference',file:'GC-ASSEMBLIES.html',
+  what:'34 assemblies, 120 sections, 132 recorded corrections, generated alongside the CSS it documents.',
+  cost:'A dedicated component workshop would give isolated states and interaction testing, at the cost of a second build and dependency tree.'},
+ {slot:'Architecture map',file:'INFORMATION-ARCHITECTURE.html',
+  what:'120 routes, each describing what it holds, generated from the route table and refusing to write when any route describes nothing.',
+  cost:'Nothing comparable exists as a product to replace it with.'}
+];
+
+var PAY=[
+ {s:'₹', n:'UPI', c:'the primary rail', why:'How most Indian retail deposits actually move. Razorpay routes to it natively.'},
+ {s:'Rz', n:'Razorpay Route', c:'split settlement', why:'Relevant if a deposit ever needs to divide between the platform and a vehicle at the moment it settles, rather than after.'},
+ {s:'Rc', n:'Razorpay Reconciliation', c:'matching to the ledger', why:'Every settlement needs to land against a specific unit and a specific vehicle. This is the API that makes that automatic rather than manual.'}
+];
+
+var DEFERRED=[
+ {g:'Event orchestration',el:'A durable workflow engine, a message broker',
+  trig:'A second deployable service, or a workflow that must survive a process restart. Until then an outbox pattern in Postgres covers atomic emit-with-state, and it is a table rather than a broker.'},
+ {g:'AI inference',el:'A model router, a hosted LLM API',
+  trig:'A shipped feature that calls a model at request time. Claude is used to build this platform; nothing in the product does. The router matters the day a model becomes swappable infrastructure rather than a tool used once.'},
+ {g:'Media processing',el:'Video transcoding, PDF generation',
+  trig:'Video transcoding when there is video. PDF generation when a partner needs a printable statement — likely the first of these actually needed. Image optimisation is already covered by Vercel.'},
+ {g:'Data',el:'Vector search, time-series storage, a cache layer, full-text search',
+  trig:'Vector search when there is retrieval to do. Time-series when telemetry exists. A cache when a measured request is slow — not before measuring. Full-text search when Postgres search is demonstrably not enough.'},
+ {g:'Secrets management',el:'A dedicated secrets vault',
+  trig:'Platform environment variables until there is a secret worth rotating on a schedule.'},
+ {g:'Messaging channels',el:'WhatsApp, SMS, a translation layer',
+  trig:'WhatsApp when partners ask for it — plausible in this market. SMS for a second factor if Clerk does not already cover it. Translation at the second language, which nobody has decided to need yet.'},
+ {g:'Infrastructure',el:'Containers, an orchestrator, infrastructure-as-code, a second CDN',
+  trig:'All of these arrive together, the day Vercel is outgrown or a long-running process is needed. Adopting any one early buys operational burden with no capability.'},
+ {g:'Other',el:'A typed RPC layer, mapping, tax and currency APIs',
+  trig:'RPC when there is a client this repository does not render. Mapping when a property page needs a real map. Tax and FX when there is revenue to tax and a second currency in play.'}
+];
+
+document.getElementById('accounts').innerHTML=ACCOUNTS.map(function(a){
+  return '<div class="tile" style="--c:var(--electric)">'+
+    '<div class="sym">'+a.s+'</div><div class="nm">'+a.n+'</div>'+
+    '<div class="cp">'+a.c+'</div>'+
+    '<ul class="covers">'+a.covers.map(function(c){return '<li>'+c+'</li>';}).join('')+'</ul>'+
+    '<div class="why">'+a.why+'</div></div>';}).join('');
+
+document.getElementById('pay').innerHTML=PAY.map(function(p){
+  return '<div class="tile" style="--c:var(--forest)">'+
+    '<div class="sym">'+p.s+'</div><div class="nm">'+p.n+'</div>'+
+    '<div class="cp">'+p.c+'</div><div class="why">'+p.why+'</div></div>';}).join('');
+
+document.getElementById('owned').innerHTML=
+  '<thead><tr><th>Slot</th><th>File</th><th>What it does</th><th>What replacing it would cost</th></tr></thead><tbody>'+
+  OWNED.map(function(o){return '<tr><td>'+o.slot+'</td><td class="f">'+o.file+'</td><td>'+o.what+'</td><td>'+o.cost+'</td></tr>';}).join('')+
+  '</tbody>';
+
+document.getElementById('deferred').innerHTML=
+  '<thead><tr><th>Area</th><th>Not taken</th><th>The trigger that brings it back</th></tr></thead><tbody>'+
+  DEFERRED.map(function(d){return '<tr><td>'+d.g+'</td><td class="f">'+d.el+'</td><td>'+d.trig+'</td></tr>';}).join('')+
+  '</tbody>';
+
+/* Theme toggle. No transitions on colour or background anywhere in this
+   stylesheet — the toggle changes custom properties and element state in
+   the same frame, and a transitioned colour freezes on the previous
+   value when that happens. */
+var root=document.documentElement;
+document.getElementById('themeToggle').addEventListener('click',function(){
+  var cur=root.getAttribute('data-theme');
+  var next=cur==='dark'?'light':(cur==='light'?'dark':(matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark'));
+  root.setAttribute('data-theme',next);
+});
+</script>
+</body>
+</html>
