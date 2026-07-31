@@ -6,12 +6,12 @@
  *
  * Route     /legal/accessibility
  * Access    public   (derived from vantage)
- * Assembly  none — shell only
+ * Assembly  AS-29 · The Standing Document
  * 
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { StandingDoc } from "@/app/_assemblies/documents";
 
 export const metadata: Metadata = {
   title: "Accessibility Statement · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Plegal_accessibility() {
-  return (
-    <Surface
-      path="/legal/accessibility"
-      assembly={null}
-    />
-  );
+  return <StandingDoc path="/legal/accessibility" />;
 }

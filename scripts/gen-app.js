@@ -170,6 +170,20 @@ const PORTED = {
 /* Routes whose component is chosen by PATH, not by assembly. The worked
    flow declares assembly: null on purpose — see constants/routes.ts. */
 const BY_PATH = {
+  /* The legal corpus: one renderer, seven documents, chosen by path.
+     AS-29 takes the path as a prop rather than being seven components. */
+  "/legal": { component: "DocumentIndex", from: "@/app/_assemblies/documents" },
+  "/legal/terms": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/terms" },
+  "/legal/risk-disclosure": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/risk-disclosure" },
+  "/legal/privacy": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/privacy" },
+  "/legal/cookies": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/cookies" },
+  "/legal/disclosures": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/disclosures" },
+  "/legal/complaints": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/complaints" },
+  "/legal/accessibility": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/accessibility" },
+
+  "/journal": { component: "JournalIndex", from: "@/app/_assemblies/documents" },
+  "/journal/[slug]": { component: "JournalEntry", from: "@/app/_assemblies/documents", param: "slug" },
+
   "/flow": { component: "Offering", from: "@/app/_assemblies/flow" },
   "/flow/accreditation": { component: "Accreditation", from: "@/app/_assemblies/flow" },
   "/flow/risk": { component: "RiskDisclosure", from: "@/app/_assemblies/flow" },
@@ -275,6 +289,13 @@ function pageSource(r) {
       ? `  const property = propertyBySlug(params.${r.params[0]});\n` +
         `  if (!property) notFound();\n` +
         `  return <${port.component} p={property} />;\n`
+      : port && port.prop
+        /* One component serving several routes takes the path as a prop.
+           Emitted as a literal, so the generated page states which
+           document it is rather than resolving it at request time. */
+        ? `  return <${port.component} path=${JSON.stringify(port.prop)} />;\n`
+      : port && port.param
+        ? `  return <${port.component} ${port.param}={params.${port.param}} />;\n`
       : port
         ? `  return <${port.component} />;\n`
         : `  return (\n` +

@@ -6,12 +6,12 @@
  *
  * Route     /legal/complaints
  * Access    public   (derived from vantage)
- * Assembly  none — shell only
+ * Assembly  AS-29 · The Standing Document
  * 
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { StandingDoc } from "@/app/_assemblies/documents";
 
 export const metadata: Metadata = {
   title: "Complaints Procedure · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Plegal_complaints() {
-  return (
-    <Surface
-      path="/legal/complaints"
-      assembly={null}
-    />
-  );
+  return <StandingDoc path="/legal/complaints" />;
 }

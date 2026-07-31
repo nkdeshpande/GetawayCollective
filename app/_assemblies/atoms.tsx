@@ -103,19 +103,35 @@ export function Footer() {
           </div>
         </div>
 
+        {/*
+          THE STANDING DISCLOSURE IS NOT REPEATED HERE.
+
+          It used to be, in full, on all 25 pages that render this footer.
+          It now lives in content/legal.ts and is rendered by exactly two
+          documents: the Terms and Conditions at Part L, and the Risk
+          Factors at Part A.
+
+          The reason is not brevity. Wording repeated in twenty-five
+          places becomes twenty-five wordings the moment one is revised,
+          and which one a reader was shown then depends on which screen
+          they happened to be on. A disclosure that varies by screen is
+          not a disclosure. It is also the case that text appearing under
+          every page is text nobody reads, so the repetition was buying
+          the appearance of disclosure rather than the fact of it.
+
+          A load-time check in content/legal.ts enforces the count, and a
+          check in scripts/vocab-lint.js catches the wording reappearing
+          anywhere outside those two documents.
+        */}
         <div className="disclosure">
           <p>
-            <strong>Capital is at risk.</strong> Investments of this kind are illiquid and are not
-            traded on any public exchange. You may lose some or all of the capital you commit.
-          </p>
-          <p>
-            Past performance is not a guide to future performance. Yields shown anywhere on this
-            platform are modelled or estimated unless expressly marked otherwise, and no return is
-            guaranteed by any party.
+            Capital is at risk and these positions are illiquid. What that means in full — including
+            what happens to your position when things go wrong — is set out in the{" "}
+            <Link href="/legal/risk-disclosure">Risk Factors</Link> and in Part L of the{" "}
+            <Link href="/legal/terms">Terms and Conditions</Link>.
           </p>
           <p className="dim">
-            Nothing here is investment advice. Getaway Collective does not provide personalised
-            financial advice and is not a registered investment adviser.
+            Those two documents state it once, so that it can be revised once.
           </p>
         </div>
 

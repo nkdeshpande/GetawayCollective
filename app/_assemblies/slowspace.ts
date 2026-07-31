@@ -38,7 +38,7 @@
  *    documents. They do not cross into ours.
  */
 
-import { inr, rate, allocate, type Confidence } from "./data";
+import { inr, rate, allocate, decimalRatio, type Confidence } from "./data";
 
 /* ── The entity ───────────────────────────────────────────────────── */
 export const LLP = {
@@ -152,7 +152,7 @@ export const MY_DISTRIBUTION = rate(PARTNER_DISTRIBUTION, UNIT.sharePct);
 export const MY_YIELD_BPS = Number((MY_DISTRIBUTION * 10000n) / UNIT.commitment);
 
 /** DSCR is derived from the same inputs, so it cannot contradict them. */
-export const DSCR = Number((INVESTOR_SHARE * 100n) / DEBT_SERVICE) / 100;
+export const DSCR = decimalRatio(INVESTOR_SHARE, DEBT_SERVICE);
 
 export const RETURNS = {
   cashYield: { v: MY_YIELD_BPS / 100, conf: "modelled" as Confidence },

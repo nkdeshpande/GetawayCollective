@@ -155,19 +155,19 @@ export const PUBLIC_ROUTES: readonly Route[] = [
 // ─────────────────────────────────────────────────────────────────────
 
 export const LEGAL_ROUTES: readonly Route[] = [
-  R("/legal", "Legal", "gateway", null, { notes: "Index of the standing documents." }),
-  R("/legal/terms", "Terms of Use", "gateway", null),
-  R("/legal/privacy", "Privacy Notice", "gateway", null),
-  R("/legal/cookies", "Cookie Notice", "gateway", null),
+  R("/legal", "Legal", "gateway", "AS-29", { notes: "Index of the standing documents." }),
+  R("/legal/terms", "Terms and Conditions", "gateway", "AS-29"),
+  R("/legal/privacy", "Privacy Notice", "gateway", "AS-29"),
+  R("/legal/cookies", "Cookie Notice", "gateway", "AS-29"),
   R("/legal/risk-disclosure", "Risk Disclosure", "capital", "AS-14",
     { accessOverride: { access: "public", because:
         "It gates commitment, and it is also the document a prospective investor most needs to " +
         "read before deciding whether to start. Public to read; the ACKNOWLEDGEMENT still " +
         "requires identity and is recorded against a version." } }),
-  R("/legal/disclosures", "Standing Disclosures", "gateway", null,
+  R("/legal/disclosures", "Standing Disclosures", "gateway", "AS-29",
     { notes: "Capital at risk, past performance, no guarantee. Body size, reading tone." }),
-  R("/legal/complaints", "Complaints Procedure", "gateway", null),
-  R("/legal/accessibility", "Accessibility Statement", "gateway", null,
+  R("/legal/complaints", "Complaints Procedure", "gateway", "AS-29"),
+  R("/legal/accessibility", "Accessibility Statement", "gateway", "AS-29",
     { notes: "States what has been tested and what has not. Currently: contrast computed, no " +
              "assistive-technology testing performed." }),
 ];
@@ -411,10 +411,28 @@ export const FLOW_ROUTES: readonly Route[] = [
       notes: "Step 5. The first screen where the Member Law has fired." }),
 ];
 
+// -----------------------------------------------------------------
+// THE JOURNAL
+//
+// What the platform says about itself, one binding decision at a time.
+// Public, gateway vantage, and deliberately separate from /voices:
+// what partners say about returns is regulated speech, and an
+// explanation of a mechanism is not.
+// -----------------------------------------------------------------
+
+export const JOURNAL_ROUTES: readonly Route[] = [
+  R("/journal", "The Journal", "gateway", "AS-30",
+    { notes: "Index. Entries newest first; the order is checked at load." }),
+  R("/journal/[slug]", "Journal Entry", "gateway", "AS-30",
+    { params: ["slug"],
+      notes: "One entry. Figures are read from the registries, never typed into the prose." }),
+];
+
 export const ROUTES: readonly Route[] = [
   ...PUBLIC_ROUTES, ...LEGAL_ROUTES, ...AUTH_ROUTES,
   ...MEMBER_ROUTES, ...CAPITAL_ROUTES, ...ADMIN_ROUTES, ...SYSTEM_ROUTES,
   ...FLOW_ROUTES,
+  ...JOURNAL_ROUTES,
 ];
 
 /**

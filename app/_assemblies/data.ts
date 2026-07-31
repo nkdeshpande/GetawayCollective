@@ -44,6 +44,28 @@ export const rate = (minor: bigint, basisPoints: number): bigint =>
   (minor * BigInt(basisPoints)) / 10000n;
 
 /**
+ * A ratio of two money amounts, to two decimals, rounded half away from
+ * zero. Bigint until the last step.
+ *
+ * The obvious spelling — Number((a * 100n) / b) / 100 — TRUNCATES,
+ * because bigint division does. A cover ratio of 1.9496 came out as 1.94
+ * while the comment three lines above it said 1.95, and the test that
+ * guarded the figure used toBeCloseTo(1.95, 1), a tolerance of ±0.05,
+ * which cannot tell the two apart.
+ *
+ * Understating a cover ratio is the safe direction, which is exactly why
+ * it survived: nobody looking at 1.94 would think it wrong. The next
+ * figure to use the same spelling might not be one where truncation is
+ * conservative.
+ */
+export function decimalRatio(numerator: bigint, denominator: bigint): number {
+  if (denominator === 0n) throw new Error("decimalRatio: denominator is zero");
+  const tenths = (numerator * 1000n) / denominator;      // one guard digit
+  const half = tenths >= 0n ? 5n : -5n;
+  return Number((tenths + half) / 10n) / 100;
+}
+
+/**
  * Largest-remainder allocation, so a split sums EXACTLY to the total.
  *
  * The prototype stated a fraction price separately at ₹1,03,33,333 beside

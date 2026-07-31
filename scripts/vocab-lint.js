@@ -30,10 +30,32 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const VOCAB_SRC = path.join(ROOT, "constants", "vocabulary.ts");
 
-const SCAN_DIRS = ["app", "lib", "constants", "types", "fixtures", "tests", "components", "packages", "apps"];
+const SCAN_DIRS = ["app", "lib", "constants", "content", "types", "fixtures", "tests", "components", "packages", "apps"];
+
+/*
+ * Top-level directories that hold no member-facing prose, and why.
+ *
+ * SCAN_DIRS is an allowlist, which means a new directory is unscanned by
+ * default and nothing says so. content/ was added carrying 5,154 words of
+ * member-facing legal prose and this linter reported the same 183 files
+ * as the run before it — a clean PASS that had read none of it.
+ *
+ * Every top-level directory must now appear in one list or the other, so
+ * the next one is a build failure rather than a silent omission.
+ */
+const NOT_PROSE = {
+  scripts: "The checkers themselves. Their output is read by developers, not partners.",
+  constitution: "Source canon in Markdown. Scanned by its own tooling, and quoting a forbidden term is how it defines one.",
+  docs: "Developer documentation.",
+  generated: "Written from the registries; fix a violation at its generator.",
+  migrations: "Database schema.",
+};
 const SCAN_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".json"]);
 const SKIP_DIRS = new Set(["node_modules", ".next", "dist", "build", ".git", "scripts", ".turbo"]);
 const IGNORE_PRAGMA = "vocab-lint-ignore";
+
+/** CRLF to LF. Every read in this file goes through it — see the note above. */
+const normalise = (text) => text.split("\r\n").join("\n");
 
 /** The vocabulary module necessarily names the forbidden terms in order to forbid them. */
 const SELF_REFERENTIAL = new Set([path.join("constants", "vocabulary.ts")]);
@@ -141,6 +163,26 @@ function insideQuotation(line, index) {
   return ticks % 2 === 1;
 }
 
+/* No top-level source directory may be neither scanned nor excused. */
+{
+  const present = fs.readdirSync(ROOT, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && !SKIP_DIRS.has(e.name) && !e.name.startsWith("."))
+    .map((e) => e.name);
+  const unaccounted = present.filter(
+    (d) => !SCAN_DIRS.includes(d) && !(d in NOT_PROSE) &&
+           !SCAN_DIRS.some((s) => s.startsWith(d + "/")),
+  );
+  if (unaccounted.length) {
+    console.error(
+      `[vocab-lint] Unaccounted top-level director${unaccounted.length > 1 ? "ies" : "y"}: ` +
+        `${unaccounted.join(", ")}.\n` +
+        `  Add to SCAN_DIRS if it can hold member-facing prose, or to NOT_PROSE with a reason.\n` +
+        `  Refusing to report a PASS over a directory nobody decided about.`,
+    );
+    process.exit(2);
+  }
+}
+
 const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
 const violations = [];
 
@@ -167,6 +209,71 @@ for (const file of files) {
       }
     }
   });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE STANDING DISCLOSURE APPEARS IN ONE PLACE
+
+   The three paragraphs on capital at risk, past performance and advice
+   are stated once, in content/legal.ts, and rendered by exactly two
+   documents: the Terms and Conditions at Part L and the Risk Factors at
+   Part A. Anything else restating them — a footer, a banner, a hero, a
+   commitment screen — is a second wording waiting to drift from the
+   first.
+
+   That is not hypothetical. The footer carried the full text on all 25
+   pages that render it, while a load-time check inside content/legal.ts
+   reported the constraint satisfied, because that check could only see
+   its own module. Only rendering the pages showed it.
+
+   Detection is by distinctive phrase rather than by whole paragraph, so
+   a near-copy with one word changed is caught too. A near-copy is the
+   failure mode that matters; an exact copy at least stays consistent.
+   ═══════════════════════════════════════════════════════════════════ */
+{
+  const HOME = path.join("content", "legal.ts");
+  const PHRASES = [
+    "lose some or all of the capital",
+    "Past performance is not a guide to future performance",
+    "is not a registered investment adviser",
+  ];
+
+  const homeAbs = path.join(ROOT, HOME);
+  if (!fs.existsSync(homeAbs)) {
+    console.error(`[vocab-lint] ${HOME} is missing. Refusing to police copies of a text with no original.`);
+    process.exit(2);
+  }
+  const home = normalise(fs.readFileSync(homeAbs, "utf8"));
+  const absent = PHRASES.filter((x) => !home.includes(x));
+  if (absent.length) {
+    console.error(
+      `[vocab-lint] The standing disclosure is not in ${HOME}: "${absent[0]}" is missing.\n` +
+        `  Refusing to police copies of a text that no longer has an original.`,
+    );
+    process.exit(2);
+  }
+
+  for (const file of files) {
+    const rel = path.relative(ROOT, file);
+    if (rel === HOME) continue;
+    const lines = normalise(fs.readFileSync(file, "utf8")).split("\n");
+    lines.forEach((line, idx) => {
+      if (line.includes(IGNORE_PRAGMA)) return;
+      for (const phrase of PHRASES) {
+        const at = line.indexOf(phrase);
+        if (at === -1) continue;
+        violations.push({
+          file: rel,
+          line: idx + 1,
+          column: at + 1,
+          term: phrase,
+          guidance:
+            "Restates the standing disclosure. It is stated once in content/legal.ts and " +
+            "rendered by the Terms and the Risk Factors. Link to one of them instead.",
+        });
+      }
+    });
+  }
 }
 
 if (violations.length > 0) {

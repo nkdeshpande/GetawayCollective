@@ -2152,6 +2152,148 @@ export const RISK_REGISTER: Assembly = {
 };
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   AS-29 · THE STANDING DOCUMENT
+
+   One renderer for the whole legal corpus. The prose lives in
+   content/legal.ts; this describes only how a long document is made
+   navigable and where its assertions sit.
+   ═══════════════════════════════════════════════════════════════════ */
+export const STANDING_DOCUMENT: Assembly = {
+  id: "AS-29",
+  name: "The Standing Document",
+  scope: "screen",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Render a long binding document so that it can be read, cited and returned to.",
+  answers: "What am I agreeing to, and where exactly does it say that?",
+  sections: [
+    S("AS-29.a", "Masthead", "masthead",
+      "Title, what the document is for in one sentence, version, effective date and reading time.",
+      [],
+      "Reading time is COMPUTED from the word count, never typed. A document that says five " +
+      "minutes and takes twenty has told its first untruth before the first clause."),
+    S("AS-29.b", "Contents", "onward",
+      "Every part, linked, with its clause range. Sticky on wide screens.",
+      [],
+      "A binding document without a contents list is a document nobody returns to. Returning to " +
+      "one clause is the commonest reason anyone opens it after the first read."),
+    S("AS-29.c", "Body", "narrative",
+      "Numbered parts and clauses, in order, each clause addressable by its own anchor.",
+      [],
+      "Clause numbers are permanent and never renumbered between versions. A cross-reference in " +
+      "correspondence outlives the version it was written against."),
+    S("AS-29.d", "Assertions", "figure",
+      "Clauses marked as assertions of fact, set on the paper ground.",
+      [],
+      "Ground inversion carries meaning here: void is narrative, paper is an assertion the " +
+      "platform will be held to. A clause that states what WILL happen sits on paper."),
+    S("AS-29.e", "Alongside", "onward",
+      "The documents that must be read with this one, and why each.",
+      [],
+      "'See also' is not a reason. Each link states what the other document adds, so a reader " +
+      "can decide whether they need it."),
+  ],
+  corrections: [
+    {
+      source: "AS-29 design",
+      now: "The standing disclosure is rendered by exactly two documents.",
+      because:
+        "Wording repeated on a banner, a footer and five pages becomes five wordings the moment " +
+        "one is revised, and which one a reader was shown then depends on which screen they were " +
+        "on. It is stated once so it can be revised once, and a load-time check enforces it.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-29 design",
+      now: "Reading time is computed from the text.",
+      was: "A typed estimate.",
+      because:
+        "A typed figure stops being true at the first edit, and nothing on the screen would show " +
+        "that it had.",
+      kind: "numeric",
+    },
+    {
+      source: "Accessibility",
+      now: "Clause anchors are focusable and the contents list is reachable by keyboard.",
+      because:
+        "A contents list that only works with a pointer excludes the readers most likely to need " +
+        "to jump rather than scroll.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-30 · THE JOURNAL
+
+   What the platform says about itself. Distinct from Voices (AS-24),
+   which carries what partners say — a testimonial about returns is
+   regulated speech and an explanation of a mechanism is not.
+   ═══════════════════════════════════════════════════════════════════ */
+export const JOURNAL_ASSEMBLY: Assembly = {
+  id: "AS-30",
+  name: "The Journal",
+  scope: "screen",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Explain one binding decision at a time, and state what it cost.",
+  answers: "Why is it built this way, and what did that choice give up?",
+  sections: [
+    S("AS-30.a", "Index", "grid",
+      "Every entry, newest first, with its kind and a one-sentence standfirst.",
+      [],
+      "Entries are ordered by date and the order is checked at load. A published date out of " +
+      "sequence would silently reorder the index without anything appearing wrong."),
+    S("AS-30.b", "Entry", "narrative",
+      "Title, standfirst, and the body in blocks.",
+      [],
+      "An entry may explain a rule. It may not create one — anything binding lives in the " +
+      "constitution or a registry, and the entry cites it."),
+    S("AS-30.c", "Cited figures", "figure",
+      "Every number an entry depends on, read from the registry rather than typed.",
+      [],
+      "Prose that quietly disagreed with the registry would be the most persuasive wrong number " +
+      "on the platform, because it would be the one written to be readable. Citations are " +
+      "resolved at load and a citation reading nothing throws."),
+    S("AS-30.d", "Onward", "onward",
+      "Where to go next, and why that one.",
+      [],
+      "Each onward link states what it adds. A list of related links with no reasons is a way of " +
+      "looking thorough without being useful."),
+  ],
+  corrections: [
+    {
+      source: "AS-30 design",
+      now: "Figures in an entry are imported from the canon.",
+      was: "Prose quotes numbers.",
+      because:
+        "An essay written six months ago quoting a threshold that has since changed is a " +
+        "document actively contradicting the application, and it reads more convincingly than " +
+        "the screen it contradicts.",
+      kind: "numeric",
+    },
+    {
+      source: "L1-13 Policy",
+      now: "The Journal is separated from Voices.",
+      because:
+        "What partners say about returns is regulated speech carrying attribution and " +
+        "verification obligations. What the platform says about its own mechanisms is not. " +
+        "Holding them in one place would eventually apply the wrong rules to one of them.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-30 design",
+      now: "Every entry states what the decision cost.",
+      because:
+        "A record of decisions that only lists their benefits is marketing wearing the clothes " +
+        "of a record, and it is the form readers trust most and should trust least.",
+      kind: "vocabulary",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -2181,6 +2323,8 @@ export const ASSEMBLIES: readonly Assembly[] = [
   CAPITAL_CALL,
   BALLOT,
   RISK_REGISTER,
+  STANDING_DOCUMENT,
+  JOURNAL_ASSEMBLY,
 ];
 
 /**

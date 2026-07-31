@@ -4,20 +4,20 @@
  * Written by scripts/gen-app.js from constants/routes.ts.
  * Run `npm run app` to regenerate, `npm run app:check` to verify.
  *
- * Route     /legal
+ * Route     /journal
  * Access    public   (derived from vantage)
- * Assembly  AS-29 · The Standing Document
+ * Assembly  AS-30 · The Journal
  * 
  */
 
 import type { Metadata } from "next";
-import { DocumentIndex } from "@/app/_assemblies/documents";
+import { JournalIndex } from "@/app/_assemblies/documents";
 
 export const metadata: Metadata = {
-  title: "Legal · Getaway Collective",
+  title: "The Journal · Getaway Collective",
   robots: { index: true, follow: true },
 };
 
-export default async function Plegal() {
-  return <DocumentIndex />;
+export default async function Pjournal() {
+  return <JournalIndex />;
 }

@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { StandingDoc } from "@/app/_assemblies/documents";
 
 export const metadata: Metadata = {
   title: "Risk Disclosure · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Plegal_risk_disclosure() {
-  return (
-    <Surface
-      path="/legal/risk-disclosure"
-      assembly={"AS-14"}
-    />
-  );
+  return <StandingDoc path="/legal/risk-disclosure" />;
 }

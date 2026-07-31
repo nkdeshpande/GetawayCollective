@@ -79,7 +79,10 @@ describe("the two claims that cannot both hold", () => {
     // The dossier claimed 2.4x cover AND ~18% cash yield. Computed from
     // its own inputs, 18% gives 1.95x. Both are defensible; they are not
     // simultaneously true.
-    expect(DSCR).toBeCloseTo(1.95, 1);
+    /* Two decimals, not one. A tolerance of +/-0.05 passed on 1.94 and
+       1.95 alike, which is how a truncating derivation went unnoticed
+       beside a comment asserting the rounded figure. */
+    expect(DSCR).toBeCloseTo(1.95, 2);
     expect(DSCR).not.toBeCloseTo(2.4, 1);
   });
 

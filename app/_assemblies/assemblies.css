@@ -265,6 +265,16 @@ section[data-sec]{padding:var(--gc-sp-2xl) 0;border-bottom:1px solid var(--gc-ha
 
 /* ── AS-05 · Member console ──────────────────────────────────────── */
 .panel{background:var(--gc-void-panel);border:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-m)}
+/* A panel ON PAPER.
+   `.panel` and `.on-paper` are both single-class selectors and `.panel`
+   is declared later, so `.panel.on-paper` kept the void-panel background
+   while `.on-paper` set the colour to ink: #0A0A0A on #121212, 1.06:1.
+   Eighty-six elements across the legal corpus rendered that way — whole
+   clauses invisible against their own cards.
+   The combination is the natural thing to write, so it is made correct
+   here rather than forbidden in a comment. Specificity 0,2,0 beats both
+   parents in either declaration order. */
+.panel.on-paper{background:var(--gc-paper-panel);border-color:var(--gc-hairline);color:var(--gc-ink)}
 .kv{display:flex;justify-content:space-between;gap:var(--gc-sp-s);
   padding:var(--gc-sp-xs) 0;border-bottom:1px solid var(--gc-hairline-inv)}
 .kv:last-child{border-bottom:none}

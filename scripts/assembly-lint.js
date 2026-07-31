@@ -109,6 +109,51 @@ function assemblies() {
 
 const ASSEMBLIES = assemblies();
 
+/*
+ * Everything in the ASSEMBLIES array must have been parsed above.
+ *
+ * The parser matches `export const NAME: Assembly`. Two assemblies were
+ * added declared `const` rather than `export const`: they were in the
+ * array, they typechecked, the application would have rendered them —
+ * and this linter reported the same 28 as the run before, passing over
+ * both without a word.
+ *
+ * A checker that silently narrows its own input is worse than no checker,
+ * because the PASS is read as coverage. Compare the membership list
+ * against what was parsed, and refuse when they differ.
+ */
+{
+  const arr = src.match(/export const ASSEMBLIES: readonly Assembly\[\] = \[([\s\S]*?)\n\];/);
+  if (!arr) {
+    console.error("[assembly-lint] Could not parse the ASSEMBLIES array. Refusing to run.");
+    process.exit(2);
+  }
+  const listed = [...arr[1].matchAll(/^\s*(\w+),/gm)].map((m) => m[1]);
+  if (listed.length === 0) {
+    console.error("[assembly-lint] ASSEMBLIES parsed as empty. Refusing to run.");
+    process.exit(2);
+  }
+  const parsed = new Set(ASSEMBLIES.map((a) => a.constName));
+  const invisible = listed.filter((n) => !parsed.has(n));
+  if (invisible.length) {
+    console.error(
+      `[assembly-lint] ${invisible.join(", ")} ${invisible.length > 1 ? "are" : "is"} in the ` +
+        `ASSEMBLIES array but was not parsed.\n` +
+        `  Declare it as \`export const NAME: Assembly = {\`. Anything else is rendered by the ` +
+        `application and unseen by this checker.`,
+    );
+    process.exit(2);
+  }
+  /* And the reverse: an assembly defined but never listed is dead. */
+  const orphans = [...parsed].filter((n) => !listed.includes(n));
+  if (orphans.length) {
+    warn.push(
+      `${orphans.join(", ")} defined but absent from the ASSEMBLIES array — ` +
+        `checked here, and rendered nowhere.`,
+    );
+  }
+}
+
 if (ASSEMBLIES.length === 0 || organismIds.size === 0 || apertureVantage.size === 0) {
   console.error("[assembly-lint] Parsed zero assemblies, organisms or apertures. Refusing to pass vacuously.");
   process.exit(2);

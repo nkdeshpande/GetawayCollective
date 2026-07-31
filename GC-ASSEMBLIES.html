@@ -293,6 +293,16 @@ section[data-sec]{padding:var(--s-2xl) 0;border-bottom:1px solid var(--hair)}
 
 /* ── AS-05 · Member console ──────────────────────────────────────── */
 .panel{background:var(--void-panel);border:1px solid var(--hair);padding:var(--s-m)}
+/* A panel ON PAPER.
+   `.panel` and `.on-paper` are both single-class selectors and `.panel`
+   is declared later, so `.panel.on-paper` kept the void-panel background
+   while `.on-paper` set the colour to ink: #0A0A0A on #121212, 1.06:1.
+   Eighty-six elements across the legal corpus rendered that way — whole
+   clauses invisible against their own cards.
+   The combination is the natural thing to write, so it is made correct
+   here rather than forbidden in a comment. Specificity 0,2,0 beats both
+   parents in either declaration order. */
+.panel.on-paper{background:var(--paper-panel);border-color:var(--hair-lt);color:var(--ink)}
 .kv{display:flex;justify-content:space-between;gap:var(--s-s);
   padding:var(--s-xs) 0;border-bottom:1px solid var(--hair)}
 .kv:last-child{border-bottom:none}
@@ -3696,6 +3706,159 @@ A["AS-28"] = { vantage:"capital", render: () => {
     </div>
   </div>
 </div>` } };
+
+/* AS-29 - THE STANDING DOCUMENT
+   ---------------------------------------------------------------
+   One renderer for the whole legal corpus. The prose lives in
+   content/legal.ts and is imported by the application; this reference
+   shows the SHAPE - how a long binding document is made navigable, and
+   where its assertions sit on the paper ground.
+
+   The standing disclosure is deliberately absent from this file. It is
+   rendered by exactly two documents, and a check in vocab-lint fails the
+   build if the wording appears anywhere else, this reference included.
+   --------------------------------------------------------------- */
+A["AS-29"] = { vantage:"gateway", render: () => {
+  const PARTS = [
+    { r:"A", t:"Who you are contracting with", n:4 },
+    { r:"B", t:"Eligibility", n:4 },
+    { r:"C", t:"Your account and the passport", n:3 },
+    { r:"D", t:"Commitment and settlement", n:5 },
+    { r:"E", t:"Money", n:7 },
+    { r:"F", t:"Entitlement", n:4 },
+    { r:"G", t:"Lock-in and transfer", n:4 },
+    { r:"H", t:"Governance", n:4 },
+    { r:"I", t:"The platform itself", n:5 },
+    { r:"J", t:"Liability", n:4 },
+    { r:"K", t:"Changes, complaints and law", n:4 },
+    { r:"L", t:"Standing disclosure", n:2 },
+  ];
+  return `
+<div class="wrap">
+  <span class="t-micro" style="color:var(--steel)">AS-29 &middot; DOC-01 &middot; Version 2.0 &middot; In force from 2026-07-31</span>
+  <h1 class="t-display-l" style="margin:var(--s-2xs) 0 var(--s-s)">Terms and Conditions</h1>
+  <p class="t-body-l" style="color:var(--steel);max-width:65ch">
+    What you are agreeing to when you commit capital through this platform, and what each of the
+    three entities involved is and is not responsible for.
+  </p>
+  <p class="t-mono-s" style="color:var(--steel);margin-top:var(--s-2xs)">
+    2,445 words &middot; about 12 minutes &mdash; both computed from the text, never typed.
+  </p>
+
+  <span class="t-micro" style="color:var(--steel);display:block;margin-top:var(--s-xl)">Contents</span>
+  <ol style="list-style:none;padding:0;margin-top:var(--s-s)">
+    ${PARTS.map(p => `<li style="margin-bottom:var(--s-2xs)">
+      <span class="t-mono-s" style="color:var(--steel);margin-right:var(--s-xs)">${p.r}</span>
+      <span class="t-body">${esc(p.t)}</span>
+      <span class="t-mono-s" style="color:var(--steel);margin-left:var(--s-2xs)">${p.n} clauses</span>
+    </li>`).join("")}
+  </ol>
+
+  <div style="margin-top:var(--s-xl)">
+    <span class="t-mono-s" style="color:var(--steel)">D.1</span>
+    <h3 class="t-body-l" style="font-weight:600;margin-top:var(--s-3xs)">A commitment is an offer</h3>
+    <p class="t-body" style="max-width:65ch;margin-top:var(--s-2xs)">
+      Confirming a commitment is an offer to contribute capital to a vehicle on the terms shown at
+      the moment you confirm. It binds you. It does not, by itself, make you a partner.
+    </p>
+  </div>
+
+  <div class="panel on-paper" style="margin-top:var(--s-m);max-width:70ch">
+    <span class="t-mono-s" style="color:var(--steel)">D.2</span>
+    <h3 class="t-body-l" style="font-weight:600;margin-top:var(--s-3xs)">Settlement is the event that matters</h3>
+    <p class="t-body" style="margin-top:var(--s-2xs)">
+      You become a partner when your capital settles &mdash; when cleared funds reach the vehicle
+      &mdash; and not before. Acceptance of your offer does not do it. Confirmation on screen does
+      not do it. Settlement does.
+    </p>
+  </div>
+
+  <div class="fixes">
+    <span class="fix"><b>Rule</b> A clause that states what WILL happen sits on paper. Void is
+      narrative; paper is an assertion the platform will be held to.</span>
+    <span class="fix"><b>Rule</b> Reading time is computed from the word count. A document that
+      says five minutes and takes twenty has told its first untruth before the first clause.</span>
+    <span class="fix"><b>Rule</b> Clause numbers are permanent and never renumbered between
+      versions &mdash; a cross-reference in correspondence outlives the version it was written
+      against.</span>
+    <span class="fix"><b>Fixed</b> The standing disclosure appeared in full in the footer of all 25
+      pages that render it. Repeated wording becomes several wordings at the first revision, and
+      which one a reader saw then depends on which screen they were on. Stated once now.</span>
+  </div>
+</div>` } };
+
+/* AS-30 - THE JOURNAL
+   ---------------------------------------------------------------
+   What the platform says about itself, one binding decision at a time.
+
+   Separate from Voices (AS-24) because a partner talking about returns
+   is regulated speech and an explanation of a mechanism is not. Holding
+   both in one place would eventually apply the wrong rules to one.
+   --------------------------------------------------------------- */
+A["AS-30"] = { vantage:"gateway", render: () => {
+  const ENTRIES = [
+    { id:"J-08", k:"Why it is built this way", d:"2026-07-30", m:4,
+      t:"What this platform does not do",
+      s:"A list of things we have been asked for and declined, with the reason for each." },
+    { id:"J-07", k:"Why it is built this way", d:"2026-07-24", m:5,
+      t:"The night is not the product",
+      s:"Entitlement is an incident of a capital position, not the reason it exists." },
+    { id:"J-06", k:"A place", d:"2026-07-19", m:6, t:"Two waters",
+      s:"A sandbar at Padubidri with the Arabian Sea on one side and the estuary on the other." },
+    { id:"J-05", k:"How it works", d:"2026-07-11", m:5, t:"Reading a modelled number",
+      s:"Every forward-looking figure carries a class saying how it was arrived at." },
+    { id:"J-04", k:"Why it is built this way", d:"2026-07-03", m:6,
+      t:"Governance without ownership",
+      s:"The party that writes the rules holds no equity in the vehicles those rules govern." },
+    { id:"J-03", k:"How it works", d:"2026-06-25", m:5, t:"What settlement changes",
+      s:"There is a precise moment at which a person becomes a partner." },
+    { id:"J-02", k:"How it works", d:"2026-06-14", m:7, t:"The waterfall, read from the bottom",
+      s:"Six stages, in order. The number that matters is the last one." },
+    { id:"J-01", k:"Why it is built this way", d:"2026-06-02", m:6,
+      t:"Why a body corporate, and not a share of a building",
+      s:"Chosen for what happens when things go wrong, not when they go right." },
+  ];
+  return `
+<div class="wrap">
+  <span class="t-micro" style="color:var(--steel)">AS-30 &middot; The Journal</span>
+  <h1 class="t-display-l" style="margin:var(--s-2xs) 0 var(--s-s)">One decision at a time</h1>
+  <p class="t-body-l" style="color:var(--steel);max-width:65ch">
+    Every figure quoted in an entry is read from the same registry the application reads, so an
+    entry cannot describe a platform that does not exist.
+  </p>
+
+  <div class="stack" style="margin-top:var(--s-xl)">
+    ${ENTRIES.map(e => `<div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:var(--s-s);flex-wrap:wrap">
+        <span class="t-mono-s" style="color:var(--steel)">${e.id} &middot; ${esc(e.k)}</span>
+        <span class="t-mono-s" style="color:var(--steel)">${e.d} &middot; ${e.m} min</span>
+      </div>
+      <h2 class="t-display-s" style="margin-top:var(--s-2xs)">${esc(e.t)}</h2>
+      <p class="t-body" style="color:var(--steel);max-width:65ch;margin-top:var(--s-2xs)">${esc(e.s)}</p>
+    </div>`).join("")}
+  </div>
+
+  <div class="panel on-paper" style="margin-top:var(--s-xl);max-width:70ch">
+    <span class="t-micro" style="color:var(--steel)">Assertion &middot; from J-02</span>
+    <p class="t-body" style="margin-top:var(--s-3xs)">
+      A percentage described as the partners&rsquo; share, with a note that it also services
+      borrowing, is not the partners&rsquo; share. It is the partners&rsquo; share plus somebody
+      else&rsquo;s, and the somebody else is paid first.
+    </p>
+  </div>
+
+  <div class="fixes">
+    <span class="fix"><b>Rule</b> An entry may explain a rule. It may not create one &mdash;
+      anything binding lives in the constitution or a registry, and the entry cites it.</span>
+    <span class="fix"><b>Rule</b> Figures are imported from the canon and resolved at load. A
+      citation that reads nothing throws rather than rendering blank.</span>
+    <span class="fix"><b>Rule</b> Every entry states what the decision cost. A record of decisions
+      listing only their benefits is marketing in the clothes of a record.</span>
+    <span class="fix"><b>Rule</b> Entries are ordered by date and the order is checked at load. A
+      published date out of sequence would silently reorder the index.</span>
+  </div>
+</div>` } };
+
 
 /* ═══════════════════════════════════════════════════════════════════
    AS-16 · SIGNAL LOST
