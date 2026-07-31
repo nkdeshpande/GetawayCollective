@@ -1,0 +1,480 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GC.SYSTEM &middot; Assembly Reference</title><style>
+:root{--void:#0A0A0A;--panel:#141414;--paper:#F4F1EA;--ink:#0A0A0A;--steel:#6B6B6B;
+--dim:#8E8E8E;--copper:#C9A227;--hair:rgba(255,255,255,.10)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--void);color:#EDEDED;font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",sans-serif;
+-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px 120px}
+header{padding:80px 0 48px;border-bottom:1px solid var(--hair)}
+h1{font:600 40px/1.05 ui-sans-serif,sans-serif;letter-spacing:-.03em;text-wrap:balance}
+.eyebrow{font:400 11px/1 ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.lede{margin-top:20px;max-width:64ch;color:#CFCFCF}
+.stats{display:flex;flex-wrap:wrap;gap:36px;margin-top:36px}
+.stat b{display:block;font:600 28px/1 ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.stat span{font:400 11px/1 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+h2{font:600 13px/1 ui-sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+margin:72px 0 20px;padding-bottom:12px;border-bottom:1px solid var(--hair)}
+.as{border:1px solid var(--hair);margin-bottom:20px;background:var(--panel)}
+.as-h{padding:24px 28px;border-bottom:1px solid var(--hair);display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.as-h .id{font-family:ui-monospace,monospace;font-size:12px;color:var(--copper);letter-spacing:.06em}
+.as-h h3{font:600 22px/1.2 ui-sans-serif;letter-spacing:-.02em}
+.tag{font:400 10px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;
+border:1px solid var(--hair);padding:4px 8px;color:var(--dim)}
+.as-b{padding:24px 28px;overflow-x:auto}
+.q{color:var(--paper);font-size:16px;margin-bottom:6px}
+.i{color:var(--dim);font-size:14px;margin-bottom:24px;max-width:72ch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font:400 10px/1 ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;
+color:var(--steel);padding:0 12px 8px 0;border-bottom:1px solid var(--hair)}
+td{padding:12px 12px 12px 0;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top}
+td.r{font-family:ui-monospace,monospace;font-size:11px;color:var(--steel);white-space:nowrap}
+.k{font-family:ui-monospace,monospace;font-size:11px;color:var(--steel)}
+.rule{display:block;margin-top:7px;color:var(--dim);font-size:12.5px;max-width:70ch}
+.refs{font-family:ui-monospace,monospace;font-size:11px;color:var(--copper);white-space:nowrap}
+.refs .to{color:var(--steel)}
+.c{border-left:2px solid var(--t);padding:18px 0 20px 20px;margin-bottom:2px;
+border-bottom:1px solid rgba(255,255,255,.05)}
+.c-h{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-bottom:12px}
+.c-k{font:400 10px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--t)}
+.c-s{font-family:ui-monospace,monospace;font-size:11px;color:var(--steel)}
+.wn{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:13px}
+@media(max-width:760px){.wn{grid-template-columns:1fr}}
+.wn div{padding:13px 15px;background:rgba(255,255,255,.03);font-size:13px}
+.wn div:first-child{color:var(--dim)}
+.wn b{display:block;font:400 9px/1 ui-monospace,monospace;letter-spacing:.16em;
+text-transform:uppercase;color:var(--steel);margin-bottom:8px}
+.bc{font-size:13.5px;color:#D8D8D8;max-width:74ch}
+code{font-family:ui-monospace,monospace;font-size:.88em;background:rgba(255,255,255,.07);padding:1px 5px}
+.note{margin-top:20px;padding:16px 18px;border:1px solid var(--hair);color:var(--dim);font-size:13px;max-width:74ch}
+.ground{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--hair);margin-top:10px}
+@media(max-width:640px){.ground{grid-template-columns:1fr}}
+.ground>div{padding:34px 28px;font-size:14px}
+.ground .lt{background:var(--paper);color:var(--ink)}
+.ground b{display:block;font:400 10px/1 ui-monospace,monospace;letter-spacing:.16em;
+text-transform:uppercase;margin-bottom:11px;opacity:.55}
+</style></head><body><div class="wrap">
+
+<header>
+<div class="eyebrow">GC.SYSTEM &middot; Tier 05/06 &middot; Wave 6.5</div>
+<h1>Assembly Reference</h1>
+<p class="lede">Whole screens, adapted from the Kyoto prototype set. Each assembly names its sections
+in order, what each one is for, and every place the source prototype and the canon disagreed &mdash;
+recorded rather than silently resolved, because a silent resolution is a decision nobody can review.</p>
+<div class="stats">
+<div class="stat"><b>8</b><span>Assemblies</span></div>
+<div class="stat"><b>34</b><span>Sections</span></div>
+<div class="stat"><b>41</b><span>Corrections</span></div>
+<div class="stat"><b>16</b><span>Accessibility</span></div>
+<div class="stat"><b>7</b><span>Constitutional</span></div>
+</div>
+</header>
+
+<h2>The Ground Inversion</h2>
+<p class="i">The strongest idea in the source set. The page runs dark while it explains, and flips to
+paper the moment it makes a financial claim. Nothing announces the switch &mdash; you simply arrive
+somewhere that feels audited. It works because it maps a real distinction onto the one property of a
+screen nobody can miss, which is what makes it a rule rather than a treatment.</p>
+<div class="ground">
+<div><b>Void &middot; narrative</b>Explaining, persuading, setting scene. A figure here reads as context.</div>
+<div class="lt"><b>Paper &middot; assertion</b>Making a financial claim. Light means audited.</div>
+</div>
+
+<h2>The Assemblies</h2>
+<article class="as">
+<div class="as-h"><span class="id">AS-01</span><h3>The Gateway Grid</h3>
+<span class="tag">gateway</span><span class="tag">gateway vantage</span></div>
+<div class="as-b">
+<p class="q">What does this collection hold, and does any of it interest me?</p>
+<p class="i">Make someone want to know more about a property, without telling them anything untrue.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-01.a</td>
+<td><strong>Signal Line</strong> <span class="k">masthead</span><br>System identity and nothing else. One mono line.
+<span class="rule">No figure appears above the grid. A headline number here is a claim made before any context exists.</span></td>
+<td class="refs">A-01
+</td></tr><tr><td class="r">AS-01.b</td>
+<td><strong>Property Grid</strong> <span class="k">grid</span><br>One narrow aperture per property, in a 4:5 frame.
+<span class="rule">Photograph, name, and at most two deferred figures. The valuation is not here — see AP-01's withholding.</span></td>
+<td class="refs">AP-01<br>O-01
+</td></tr><tr><td class="r">AS-01.c</td>
+<td><strong>Into the Console</strong> <span class="k">onward</span><br>One route out, to the wide aperture on the same object.
+<span class="rule">The gateway never dead-ends. Everything it withholds is one navigation away, and it says so — which is why a route to a wider aperture is not a widening.</span></td>
+<td class="refs">&mdash;
+<br><span class="to">&rarr; AP-02</span></td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-02</span><h3>The Property Console</h3>
+<span class="tag">capital</span><span class="tag">capital vantage</span></div>
+<div class="as-b">
+<p class="q">What is each asset worth, on whose authority, and is anything wrong?</p>
+<p class="i">Let someone accountable for these assets see everything bearing on them.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-02.a</td>
+<td><strong>Console Header</strong> <span class="k">masthead</span><br>Vehicle, as-at date, and the reserve band. Three facts.
+<span class="rule">The reserve band appears before any property does. A console that shows assets before it shows whether the vehicle can meet its obligations has the priority backwards.</span></td>
+<td class="refs">O-04
+</td></tr><tr><td class="r">AS-02.b</td>
+<td><strong>Asset Grid</strong> <span class="k">grid</span><br>One wide aperture per property.
+<span class="rule">Valuation source renders directly beneath the valuation, never in a tooltip.</span></td>
+<td class="refs">AP-02<br>O-01
+</td></tr><tr><td class="r">AS-02.c</td>
+<td><strong>Telemetry Strip</strong> <span class="k">figure</span><br>Live operational status per asset, and when it last spoke.
+<span class="rule">A stale telemetry reading renders as stale, not as silence. Silence reads as healthy.</span></td>
+<td class="refs">A-11
+</td></tr><tr><td class="r">AS-02.d</td>
+<td><strong>Console Actions</strong> <span class="k">action</span><br>Sync, record valuation, open ledger.
+<span class="rule">Recording a valuation is a provenance event. It captures source and date or it does not commit.</span></td>
+<td class="refs">O-08
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-03</span><h3>The Property Masthead</h3>
+<span class="tag">space</span><span class="tag">space vantage</span></div>
+<div class="as-b">
+<p class="q">What am I looking at, and which of the three questions do I have?</p>
+<p class="i">Present one property as an asset: what it is, what it costs, when it is available.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-03.a</td>
+<td><strong>Masthead</strong> <span class="k">masthead</span><br>Full-bleed image, property name in display-xl, jurisdiction.
+<span class="rule">One figure maximum over the image, and never the valuation. FB-1 bars full-bleed under numeric data.</span></td>
+<td class="refs">AP-03
+</td></tr><tr><td class="r">AS-03.b</td>
+<td><strong>Trinity Lens</strong> <span class="k">grid</span><br>Space · Capital · Time as three lenses onto the same property.
+<span class="rule">Lenses, not steps. Tabs imply peers; a numbered sequence would imply an order that does not exist. The Capital lens renders the SPACE aperture’s capital fields and routes to the console for the rest — a visitor standing at the space vantage does not receive console disclosure because a tab happens to be labelled Capital.</span></td>
+<td class="refs">AP-03
+<br><span class="to">&rarr; AP-02 AP-04</span></td></tr><tr><td class="r">AS-03.c</td>
+<td><strong>Thesis</strong> <span class="k">narrative</span><br>Why this asset should outperform. Prose, measure-capped.
+<span class="rule">The one place editorial italic is permitted, once.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-03.d</td>
+<td><strong>Into Commitment</strong> <span class="k">onward</span><br>Route to AS-06 if the offering is open; to the register if not.
+<span class="rule">An asset with no open offering says so plainly rather than showing a dead control.</span></td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-04</span><h3>The Capital Explainer</h3>
+<span class="tag">capital</span><span class="tag">capital vantage</span></div>
+<div class="as-b">
+<p class="q">Where does the revenue go, in what order, and what am I last in line behind?</p>
+<p class="i">Explain how money moves through the structure, to someone deciding whether to commit.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-04.a</td>
+<td><strong>Premise</strong> <span class="k">masthead</span><br>One claim, in display-xl. Dark ground.
+</td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-04.b</td>
+<td><strong>The Structure</strong> <span class="k">narrative</span><br>The three-entity model as a diagram: platform, vehicle, operating partner.
+<span class="rule">The diagram states that the platform holds no equity in the vehicle. §27.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-04.c</td>
+<td><strong>The Waterfall</strong> <span class="k">figure</span><br>Six stages, in order, on paper ground.
+<span class="rule">PAPER GROUND. The ground flips to light the moment the page makes a financial claim — that inversion is the strongest signal in the source set and it is now a rule.</span></td>
+<td class="refs">O-03
+</td></tr><tr><td class="r">AS-04.d</td>
+<td><strong>The Floor</strong> <span class="k">feature</span><br>Reserve floor and what happens when distribution would breach it.
+<span class="rule">The floor is the greater of six months' non-operational fixed obligations or the Board minimum. It is not NAV-linked and the copy may not imply that it is.</span></td>
+<td class="refs">O-04
+</td></tr><tr><td class="r">AS-04.e</td>
+<td><strong>Return Drivers</strong> <span class="k">narrative</span><br>Yield and appreciation, stated as drivers not promises.
+</td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-04.f</td>
+<td><strong>Onward</strong> <span class="k">onward</span><br>Space · Time · Commitment.
+</td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-05</span><h3>The Member Console</h3>
+<span class="tag">member</span><span class="tag">member vantage</span></div>
+<div class="as-b">
+<p class="q">Is anything waiting on me, and what did my capital do?</p>
+<p class="i">Show a holder what they own, what it paid, and what needs them.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-05.a</td>
+<td><strong>Position</strong> <span class="k">feature</span><br>Total position, change since entry, next distribution and its date.
+<span class="rule">A blocked distribution renders at the same weight as a paid one, with its reason. A member whose payment did not land is owed the reason, not a quieter number.</span></td>
+<td class="refs">O-02<br>O-05
+</td></tr><tr><td class="r">AS-05.b</td>
+<td><strong>Assets</strong> <span class="k">grid</span><br>One member-vantage aperture per held property.
+</td>
+<td class="refs">AP-04<br>O-01
+</td></tr><tr><td class="r">AS-05.c</td>
+<td><strong>Entitlement</strong> <span class="k">feature</span><br>Nights held, nights used, what is scheduled.
+<span class="rule">Phone-parity. Entitlement is a member act and must never require a desktop.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-05.d</td>
+<td><strong>Documents</strong> <span class="k">ledger</span><br>Agreements, certificates, filings. What is signed and what is not.
+<span class="rule">An unsigned document that needs the member is the only thing on this screen permitted to use the critical tone.</span></td>
+<td class="refs">O-08
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-06</span><h3>The Commitment Flow</h3>
+<span class="tag">capital</span><span class="tag">capital vantage</span></div>
+<div class="as-b">
+<p class="q">What exactly am I committing to, for how much, and what happens next?</p>
+<p class="i">Take an Investor from intent to a binding commitment, with nothing hidden at the moment of signing.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-06.a</td>
+<td><strong>Asset Anchor</strong> <span class="k">feature</span><br>The property, the amount, and the terms. Sticky through every step.
+<span class="rule">Never collapses, never scrolls away. On compact it pins to the top rather than being dropped.</span></td>
+<td class="refs">AP-03
+</td></tr><tr><td class="r">AS-06.b</td>
+<td><strong>Identity</strong> <span class="k">action</span><br>Legal name, contact. Autosaved per field on blur.
+</td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-06.c</td>
+<td><strong>Accreditation</strong> <span class="k">action</span><br>PR-01. Resumable; a partial application survives the session.
+<span class="rule">COMPLETE-THEN-SUSPEND: an application already in flight completes before any suspension applies.</span></td>
+<td class="refs">O-07
+</td></tr><tr><td class="r">AS-06.d</td>
+<td><strong>Review</strong> <span class="k">feature</span><br>The full commitment, restated, with everything that binds.
+<span class="rule">Nothing new appears after this section. A term first shown on the confirmation screen was not disclosed, it was sprung.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-06.e</td>
+<td><strong>The Piston</strong> <span class="k">action</span><br>The commitment control. Linear, 3000ms, never eased.
+<span class="rule">The only control that moves capital. No Recovery Strip follows it — M-06 is for reversible acts.</span></td>
+<td class="refs">M-04
+</td></tr><tr><td class="r">AS-06.f</td>
+<td><strong>Settled</strong> <span class="k">feature</span><br>What was committed, and that membership begins at settlement, not here.
+<span class="rule">The Member Law fires on settlement. This screen may not congratulate someone on becoming a Member before their money has moved.</span></td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-07</span><h3>The Portfolio Narrative</h3>
+<span class="tag">gateway</span><span class="tag">gateway vantage</span></div>
+<div class="as-b">
+<p class="q">What actually gets built on these assets?</p>
+<p class="i">Explain what the operating partner's brands are, and how they differ.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-07.a</td>
+<td><strong>Premise</strong> <span class="k">masthead</span><br>One claim over ambient media.
+</td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-07.b</td>
+<td><strong>The Three</strong> <span class="k">narrative</span><br>One section per brand: name, position, media, two paragraphs.
+</td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-07.c</td>
+<td><strong>Attributes</strong> <span class="k">grid</span><br>Three attributes per brand, in a hairline terminal grid.
+<span class="rule">Attributes are descriptive. No figure appears in this grid — it is not a comparison table.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-07.d</td>
+<td><strong>Onward</strong> <span class="k">onward</span><br>Into the gateway grid.
+</td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-08</span><h3>The Story Playback</h3>
+<span class="tag">gateway</span><span class="tag">gateway vantage</span></div>
+<div class="as-b">
+<p class="q">What does it feel like to be there?</p>
+<p class="i">Show a place at full bleed, in sequence, to someone who has not decided anything yet.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-08.a</td>
+<td><strong>Grid</strong> <span class="k">grid</span><br>Tiles in a 4:5 frame. Each opens the player at its own index.
+</td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-08.b</td>
+<td><strong>Player</strong> <span class="k">feature</span><br>Full-screen sequence with progress, manual advance, and pause.
+<span class="rule">NO FIGURE APPEARS IN THE PLAYER. A number on a timed card that advances in four seconds cannot be read, checked, or returned to.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-08.c</td>
+<td><strong>Exit</strong> <span class="k">onward</span><br>Always visible, always reachable by Escape.
+</td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+<p class="note">Gateway only. There is no member or capital variant of this assembly and there should not be: the format's whole premise is that you cannot go back and check.</p>
+</div></article>
+
+<h2>Corrections &mdash; 41 across 8 screens</h2>
+
+<h2 style="color:#E8672E">constitutional &mdash; 7</h2>
+<div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-01</span><span class="c-s">GC_onboardDoc.html</span></div>
+<div class="wn"><div><b>Was</b>Yield shown as a bare figure — <code>YIELD: 8.4%</code>.</div>
+<div><b>Now</b>Yield carries its confidence class, or it is not shown.</div></div>
+<p class="bc">A forward-looking figure rendered identically to a settled one is the single easiest way to mislead without stating anything false.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-03</span><span class="c-s">Hero+tabs.html</span></div>
+<div class="wn"><div><b>Was</b><code>Digital Custody · Blockchain Backed Equity</code> as a capital-tab field.</div>
+<div><b>Now</b>Removed. The share register is the record of ownership.</div></div>
+<p class="bc">Nothing in the canon tokenises equity, and a claim about how ownership is recorded is a legal representation, not a design flourish.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-04</span><span class="c-s">TheCapital02feb_Good.HTML</span></div>
+<div class="wn"><div><b>Was</b>Four-stage waterfall: Operator 35% → Platform Fee 15% → Sinking 2.5% → Net 47.5%.</div>
+<div><b>Now</b>Six stages: OpCo → Brand → Admin Reserve 2.5% → Sinking Fund 2.5% → Debt Service → Partners.</div></div>
+<p class="bc">Debt service was absent entirely. A waterfall that omits the senior claim shows a distributable figure that is not distributable.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-04</span><span class="c-s">TheCapital02feb_Good.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>MANAGEMENT FEE (AUM) 2.5% · Calculated on Asset Value</code>.</div>
+<div><b>Now</b>Admin Reserve, 2.5% of revenue, at stage 3 of the waterfall.</div></div>
+<p class="bc">A fee on asset value and a reserve on revenue are different instruments with different incentives. One rewards holding assets at a high mark; the other does not.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-04</span><span class="c-s">TheCapital02feb_Good.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>SPV (ASSET HOLDER) · 100% OWNERSHIP</code> with the platform in the chain.</div>
+<div><b>Now</b>Governance Without Ownership. The platform holds no equity in the vehicles it governs.</div></div>
+<p class="bc">§27, as amended. The prototype predates the reversal.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-05</span><span class="c-s">TheSteward_02Feb.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>VIEW CCTV FEED</code> and an <code>[ IMAGE FEED ]</code> panel on the asset widget.</div>
+<div><b>Now</b>Removed. Asset condition comes from inspection records and the maintenance reserve.</div></div>
+<p class="bc">The asset is a place people occupy. A live camera feed shipped to equity holders is surveillance of occupants, and no invariant permits it.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-06</span><span class="c-s">GC_Commit3.html</span></div>
+<div class="wn"><div><b>Was</b><code>STATUS: RESERVED</code> / <code>ALLOCATION RESERVED</code> on payment of the commitment amount.</div>
+<div><b>Now</b>The commitment state from the lifecycle, and settlement stated as the pending event.</div></div>
+<p class="bc"><code>Reserved</code> is not a state in the Investor Lifecycle. It reads as a completed act and the screen followed it with 'no further action is required', which was not true.</p></div>
+<h2 style="color:#C9A227">accessibility &mdash; 16</h2>
+<div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-01</span><span class="c-s">GC_onboardDoc.html</span></div>
+<div class="wn"><div><b>Was</b>Yield and availability revealed by <code>group-hover:opacity-100</code> only.</div>
+<div><b>Now</b>Revealed on hover, focus-visible, or tap. Present in the DOM at all times.</div></div>
+<p class="bc">On a phone there is no hover and on a keyboard there is no pointer, so the figure was unreachable for both. Progressive disclosure hides a value until asked; this hid it from anyone who could not ask with a mouse.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-01</span><span class="c-s">GC_onboardDoc.html</span></div>
+<div class="wn"><div><b>Was</b>Label tone <code>steel #4A4A4A</code> at 2.25:1 against its own void.</div>
+<div><b>Now</b>steel #6B6B6B at 3.72:1, or steelDim #8E8E8E at 7.04:1 where the text is body-sized.</div></div>
+<p class="bc">2.25:1 fails AA for any text size. It carried every label on the console screen.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-02</span><span class="c-s">GC_onboardDoc.html</span></div>
+<div class="wn"><div><b>Was</b>Live-status dot in <code>moss #123C32</code> at 1.63:1.</div>
+<div><b>Now</b>confirm at 6.55:1, with a text label beside it.</div></div>
+<p class="bc">1.63:1 is invisible, and a dot alone carries meaning by colour only. Both fail — the second one fails for anyone who cannot distinguish the hue at all.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-03</span><span class="c-s">Hero+tabs.html</span></div>
+<div class="wn"><div><b>Was</b><code>--color-guide: #111111</code> used both as the hairline AND as a section background on black.</div>
+<div><b>Now</b>Hairline stays a hairline; section grounds use the declared elevation step.</div></div>
+<p class="bc">1.11:1 — the section separation it was drawn to create was invisible. Depth is one background step, and that step has to be a step.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-03</span><span class="c-s">Hero+tabs.html</span></div>
+<div class="wn"><div><b>Was</b><code>--color-text-secondary: #666666</code> on pure black, carrying every caps-label.</div>
+<div><b>Now</b>steel #6B6B6B on void, which clears 3:1 at the label's size and weight.</div></div>
+<p class="bc">3.66:1 passes only for large text; these labels are 10px.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-04</span><span class="c-s">TheCapital02feb_Good.HTML</span></div>
+<div class="wn"><div><b>Was</b>Waterfall bars animate width from 0 on scroll, with a white flash.</div>
+<div><b>Now</b>Bars animate under <code>prefers-reduced-motion: no-preference</code>; otherwise they render final.</div></div>
+<p class="bc">A full-viewport flash is a migraine trigger, and 35% growing from zero reads as 35% growing.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-05</span><span class="c-s">TheSteward_02Feb.HTML</span></div>
+<div class="wn"><div><b>Was</b>A fixed scanline overlay at 10% opacity over the entire document.</div>
+<div><b>Now</b>Removed.</div></div>
+<p class="bc">It reduced the contrast of every figure beneath it by a margin nobody measured, and the figures underneath were already at 3.55:1.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-05</span><span class="c-s">TheSteward_02Feb.HTML</span></div>
+<div class="wn"><div><b>Was</b>Body and secondary text at <code>#666666</code> (3.55:1) and <code>#888888</code> on a #050505 ground.</div>
+<div><b>Now</b>steelDim for body-sized secondary text; steel only for micro labels.</div></div>
+<p class="bc">3.55:1 fails AA at body size. It carried the entire left column.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-06</span><span class="c-s">GC_Commit3.html</span></div>
+<div class="wn"><div><b>Was</b>Completed steps dimmed to <code>opacity: 0.35</code> with <code>pointer-events: none</code>.</div>
+<div><b>Now</b>Completed steps remain legible and re-openable until the piston fires.</div></div>
+<p class="bc">0.35 opacity on #EAEAEA lands near 2:1. Someone who wanted to check the name they typed could neither read it nor click back to it.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-06</span><span class="c-s">GC_Commit3.html</span></div>
+<div class="wn"><div><b>Was</b><code>maximum-scale=1.0, user-scalable=no</code> in the viewport meta.</div>
+<div><b>Now</b>Removed.</div></div>
+<p class="bc">It disables pinch zoom on a form collecting a PAN number. WCAG 1.4.4.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-07</span><span class="c-s">BO1.html</span></div>
+<div class="wn"><div><b>Was</b><code>--text-muted: #444444</code> at 2.09:1, used for eyebrow labels throughout.</div>
+<div><b>Now</b>steel, at 3.72:1, which clears AA for the label size and weight in use.</div></div>
+<p class="bc">2.09:1 fails at any size.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-07</span><span class="c-s">BO1.html</span></div>
+<div class="wn"><div><b>Was</b><code>::-webkit-scrollbar { display: none }</code> plus <code>scrollbar-width: none</code> globally.</div>
+<div><b>Now</b>Scrollbars visible.</div></div>
+<p class="bc">The scrollbar is the only indicator of how much page is left.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-08</span><span class="c-s">STORY GRID + PLAYBACK.html</span></div>
+<div class="wn"><div><b>Was</b>Auto-advance every 4000ms, with pause available only by holding a touch.</div>
+<div><b>Now</b>A visible pause control, plus Escape to exit. Auto-advance off under <code>prefers-reduced-motion</code>.</div></div>
+<p class="bc">WCAG 2.2.2: moving content lasting more than five seconds needs a mechanism to pause it. Touch-hold is not a mechanism a keyboard has.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-08</span><span class="c-s">STORY GRID + PLAYBACK.html</span></div>
+<div class="wn"><div><b>Was</b>Advance and reverse by tap zone and swipe only.</div>
+<div><b>Now</b>Arrow keys and focusable controls, in addition.</div></div>
+<p class="bc">The player was entirely unreachable by keyboard, including its exit.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-08</span><span class="c-s">GallerySection+GalleryFrame.html</span></div>
+<div class="wn"><div><b>Was</b>Card titles and manifesto text with <code>white-space: nowrap</code> and ellipsis truncation.</div>
+<div><b>Now</b>Titles wrap. Truncation with the full value in the accessible name, never silent.</div></div>
+<p class="bc">A truncated title on a 75vw card at 2.2rem loses words with no indication that anything was lost.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-08</span><span class="c-s">GallerySection+GalleryFrame.html</span></div>
+<div class="wn"><div><b>Was</b><code>--gc-moss: #4A7C59</code> on black at 4.32:1, carrying <code>STATE: NOMINAL</code>.</div>
+<div><b>Now</b>confirm, at 6.55:1.</div></div>
+<p class="bc">4.32:1 is below AA for the 0.65rem size the label actually used.</p></div>
+<h2 style="color:#4F8A6B">numeric &mdash; 6</h2>
+<div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-02</span><span class="c-s">GC_onboardDoc.html</span></div>
+<div class="wn"><div><b>Was</b>Placeholder cards generated with <code>Math.random()</code> and labelled <code>VOID</code> / <code>PENDING_KYC</code>.</div>
+<div><b>Now</b>An empty console states what is absent and the action that would fill it.</div></div>
+<p class="bc">Random figures in a console are indistinguishable from real ones at a glance, and the screenshot outlives the demo.</p></div><div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-03</span><span class="c-s">Hero+tabs.html</span></div>
+<div class="wn"><div><b>Was</b>Valuation ₹12,40,00,000 with fraction price ₹1,03,33,333 for 1/12.</div>
+<div><b>Now</b>Fraction price is derived from the valuation by largest-remainder, never stated separately.</div></div>
+<p class="bc">12 × ₹1,03,33,333 is ₹12,39,99,996 — four rupees short. Two independently-typed figures that must agree eventually will not.</p></div><div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-04</span><span class="c-s">TheCapital02feb_Good.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>AVG TIME TO EXIT: 14 DAYS</code> and <code>TARGET: 8-10%</code> as flat assertions.</div>
+<div><b>Now</b>Both carry confidence class and as-at date, or neither appears.</div></div>
+<p class="bc">An average with no window and no basis is a forecast wearing the typography of a fact.</p></div><div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-05</span><span class="c-s">TheSteward_02Feb.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>MAINTENANCE FUND: HEALTHY</code> as a bare word.</div>
+<div><b>Now</b>The reserve figure, its floor, and the band it sits in.</div></div>
+<p class="bc"><code>Healthy</code> is an assessment presented as an observation. The member cannot tell whether it means 'above floor' or 'someone thought it looked fine'.</p></div><div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-06</span><span class="c-s">GC_Commit3.html</span></div>
+<div class="wn"><div><b>Was</b><code>COMPLETION WINDOW: 14 WORKING DAYS</code>.</div>
+<div><b>Now</b>15 working days.</div></div>
+<p class="bc">§24b. A day short on a regulatory window is a breach, not a rounding.</p></div><div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-06</span><span class="c-s">GC_Commit3.html</span></div>
+<div class="wn"><div><b>Was</b><code>EST. YIELD 4.2%</code> in gold beside a hard commitment figure.</div>
+<div><b>Now</b>Forecast tone and confidence class, never the accent that marks settled money.</div></div>
+<p class="bc">Gold is the accent for value. An estimate wearing it, next to an exact rupee amount, borrows that figure's certainty.</p></div>
+<h2 style="color:#8E8E8E">vocabulary &mdash; 5</h2>
+<div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-03</span><span class="c-s">Hero+tabs.html</span></div>
+<div class="wn"><div><b>Was</b>Time tab: <code>Awaiting Console Synchronisation. Calendar availability pending Digital Custody lock.</code></div>
+<div><b>Now</b>Entitlement state from the Time vantage, or a plain statement that entitlement begins at settlement.</div></div>
+<p class="bc">The copy described a system failure in the voice of a system feature. Someone reading it cannot tell whether the calendar is broken or simply not yet theirs.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-04</span><span class="c-s">TheCapital02feb_Good.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>We do not sell membership. We sell Equity.</code></div>
+<div><b>Now</b>Removed. A Member is an equity holder; the two were never alternatives.</div></div>
+<p class="bc">The Member Law makes membership the consequence of holding equity. The sentence sets them against each other and contradicts the model it is introducing.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-05</span><span class="c-s">TheSteward_02Feb.HTML</span></div>
+<div class="wn"><div><b>Was</b>The screen, the badge and the role were all called <code>Steward</code>.</div>
+<div><b>Now</b>Member. <code>Stewardship</code> survives as philosophy; the actor noun does not.</div></div>
+<p class="bc">§25 forbids it as an actor noun or schema type. The whole file was named after it.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-05</span><span class="c-s">TheSteward_02Feb.HTML</span></div>
+<div class="wn"><div><b>Was</b>Sidebar items <code>CONCIERGE</code> and <code>BOOK / SWAP</code>.</div>
+<div><b>Now</b>Entitlement, and the operating partner's own surface for anything operational.</div></div>
+<p class="bc">§25. Both belong to the Operating Company, which is a different entity.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-07</span><span class="c-s">BO1.html</span></div>
+<div class="wn"><div><b>Was</b><code>mechanisms of extraction</code>, <code>manipulate space, silence and time</code>, <code>designing consciousness</code>.</div>
+<div><b>Now</b>Rewritten. Warm, confident, assertive, with pleasantness.</div></div>
+<p class="bc">The voice was cold and slightly menacing. Extraction and manipulation describe what is done TO someone; this is a platform people join.</p></div>
+<h2 style="color:#6B6B6B">interaction &mdash; 7</h2>
+<div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-01</span><span class="c-s">GC_onboardDoc.html</span></div>
+<div class="wn"><div><b>Was</b><code>cursor: none</code> on body, with a custom ring div following the pointer.</div>
+<div><b>Now</b>Ring on fine pointers only; native cursor on coarse and on <code>prefers-reduced-motion</code>.</div></div>
+<p class="bc">A page with no cursor and a ring that never arrives is a page you cannot click. The ring is an ornament; the pointer is the interface.</p></div><div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-02</span><span class="c-s">GC_onboardDoc.html</span></div>
+<div class="wn"><div><b>Was</b><code>scrambleText()</code> cycling random digits into the valuation for ~400ms on recalibrate.</div>
+<div><b>Now</b>Money counts from its previous value. Scramble stays permitted on identifiers.</div></div>
+<p class="bc">A scramble renders figures that were never the value, in the currency tone, at the currency's size. An identifier has no magnitude to misread; ₹12,4X,XX,XXX does.</p></div><div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-04</span><span class="c-s">TheCapital02feb_Good.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>cursor: crosshair</code> on the universal selector.</div>
+<div><b>Now</b>Default cursor; pointer on interactive elements only.</div></div>
+<p class="bc">A crosshair over every element removes the only cue distinguishing what can be clicked from what cannot.</p></div><div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-05</span><span class="c-s">TheSteward_02Feb.HTML</span></div>
+<div class="wn"><div><b>Was</b>A login gate with a hardcoded password field and a scripted <code>ACCESS GRANTED</code> sequence.</div>
+<div><b>Now</b>Real authentication. No simulated handshake, no fake hash.</div></div>
+<p class="bc">A theatrical security sequence teaches members that security theatre is what security looks like here.</p></div><div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-06</span><span class="c-s">GC_Commit3.html</span></div>
+<div class="wn"><div><b>Was</b><code>text-transform: uppercase</code> on every input, including the email field.</div>
+<div><b>Now</b>Uppercase on identifiers that are genuinely uppercase; never on email or name.</div></div>
+<p class="bc">It rendered what someone typed as something they did not type, on the screen where they check what they typed.</p></div><div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-07</span><span class="c-s">BO1.html</span></div>
+<div class="wn"><div><b>Was</b>Brand attributes scrambled on scroll via <code>data-val</code>.</div>
+<div><b>Now</b>Scramble permitted here — these are labels, not figures.</div></div>
+<p class="bc">This is the one place the effect is legitimate: <code>MISTY DAYDREAM</code> has no magnitude to misread. The rule was never about the animation, it was about currency.</p></div><div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-08</span><span class="c-s">GallerySection+GalleryFrame.html</span></div>
+<div class="wn"><div><b>Was</b><code>mix-blend-mode: difference</code> on a custom cursor ring, with <code>cursor: none</code> globally.</div>
+<div><b>Now</b>Ring on fine pointers only, native cursor otherwise.</div></div>
+<p class="bc">Same failure as AS-01: no pointer on touch, and nothing at all for a keyboard.</p></div>
+
+</div></body></html>

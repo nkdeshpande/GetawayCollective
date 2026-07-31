@@ -14,7 +14,7 @@
     "tokens": "node scripts/export-tokens.js",
     "schemas": "node scripts/gen-schemas.js",
     "schemas:check": "node scripts/gen-schemas.js --check",
-    "verify": "npm run lint:vocab && npm run lint:voice && npm run lint:ufr && npm run lint:rel && npm run lint:cap && npm run lint:sm && npm run lint:enum && npm run lint:organism && npm run lint:aperture && npm run lint:token && npm run schemas:check && npm run db:check && npm run fixtures:check && npm run tokens && npm run type-check && npm run test:run",
+    "verify": "npm run lint:vocab && npm run lint:voice && npm run lint:ufr && npm run lint:rel && npm run lint:cap && npm run lint:sm && npm run lint:enum && npm run lint:organism && npm run lint:aperture && npm run lint:assembly && npm run lint:token && npm run schemas:check && npm run db:check && npm run fixtures:check && npm run tokens && npm run type-check && npm run test:run",
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -30,10 +30,11 @@
     "lint:sm": "node scripts/sm-lint.js",
     "lint:enum": "node scripts/enum-lint.js",
     "lint:token": "node scripts/token-lint.js",
-    "design": "node scripts/gen-design-reference.js",
+    "design": "node scripts/gen-design-reference.js && node scripts/gen-assembly-reference.js",
     "lint:voice": "node scripts/voice-lint.js",
     "lint:organism": "node scripts/organism-lint.js",
-    "lint:aperture": "node scripts/aperture-lint.js"
+    "lint:aperture": "node scripts/aperture-lint.js",
+    "lint:assembly": "node scripts/assembly-lint.js"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",

@@ -117,6 +117,25 @@ console.log(
   `(${COMPOUNDS.length} declared compounds) from constants/vocabulary.ts\n`,
 );
 
+/**
+ * Is this occurrence inside a `backtick-quoted` span?
+ *
+ * The assemblies registry has to be able to record what a prototype
+ * ACTUALLY said in order to correct it — a correction reading "the source
+ * used a forbidden word" is not reviewable. Quoting the violation is the
+ * point of the record.
+ *
+ * Backticks are the narrow form of that permission. Everywhere in this
+ * codebase a backtick span is either quoted source material or a code
+ * token (`user-scalable=no` is a CSS attribute, not the actor noun). Prose
+ * outside them stays governed, which is the part that matters.
+ */
+function insideQuotation(line, index) {
+  let ticks = 0;
+  for (let i = 0; i < index; i++) if (line[i] === "`") ticks++;
+  return ticks % 2 === 1;
+}
+
 const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
 const violations = [];
 
@@ -132,6 +151,7 @@ for (const file of files) {
       let match;
       while ((match = rule.pattern.exec(line)) !== null) {
         if (insideCompound(line, match.index, match[0].length, COMPOUNDS)) continue;
+        if (insideQuotation(line, match.index)) continue;
         violations.push({
           file: rel,
           line: idx + 1,
