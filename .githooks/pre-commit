@@ -8,6 +8,7 @@ node scripts/rel-lint.js            || { echo "BLOCKED: relationship graph (E-05
 node scripts/cap-lint.js            || { echo "BLOCKED: capability registry (E-01)"; exit 1; }
 node scripts/sm-lint.js             || { echo "BLOCKED: state machines (A-05)"; exit 1; }
 node scripts/enum-lint.js           || { echo "BLOCKED: enum display"; exit 1; }
+node scripts/organism-lint.js       || { echo "BLOCKED: organism surface"; exit 1; }
 node scripts/token-lint.js          || { echo "BLOCKED: design literals / contrast (§29)"; exit 1; }
 node scripts/gen-schemas.js --check || { echo "BLOCKED: contracts diverged (E-06)"; exit 1; }
 node scripts/gen-db.js --check      || { echo "BLOCKED: db schema diverged (E-06)"; exit 1; }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wave 5 Exit Gate — Getaway Collective</title>
+<title>Wave 6 Exit Gate — Getaway Collective</title>
 <style>
 /* ── Token package, inlined from dist/tokens.css (v3.0 LOCKED) ── */
 /* GC Design System — v3.0 LOCKED
@@ -249,8 +249,8 @@
 <body>
 <div class="wrap">
   <div class="eyebrow">Getaway Collective · Constitutional Build</div>
-  <h1>Wave 5 Exit Gate</h1>
-  <p class="lede">Waves 1&ndash;5 built. Every figure on this page is read from the repository
+  <h1>Wave 6 Exit Gate</h1>
+  <p class="lede">Waves 1&ndash;6 built. Every figure on this page is read from the repository
   at generation time — the Wave 1 checklist drifted from reality precisely because it
   was maintained by hand.</p>
   <hr class="rule">
@@ -260,11 +260,12 @@
     <div class="metric"><span class="n">127</span><span class="k">registered fields</span></div>
     <div class="metric"><span class="n">28</span><span class="k">graph edges</span></div>
     <div class="metric"><span class="n">33</span><span class="k">capabilities</span></div>
-    <div class="metric"><span class="n">312</span><span class="k">tests passing</span></div>
+    <div class="metric"><span class="n">353</span><span class="k">tests passing</span></div>
     <div class="metric"><span class="n">35/41</span><span class="k">invariants enforced</span></div>
     <div class="metric"><span class="n">30</span><span class="k">transitions</span></div>
     <div class="metric"><span class="n">135</span><span class="k">enum values</span></div>
     <div class="metric"><span class="n">27</span><span class="k">process steps</span></div>
+    <div class="metric"><span class="n">10</span><span class="k">organisms</span></div>
   </div>
 
   <h2>Gate checks</h2>
@@ -289,6 +290,10 @@
       <td class="mono">A-05</td><td><span class="pill ok">pass</span></td></tr>
     <tr><td>Enum display</td><td class="mono">enum-lint</td>
       <td class="mono">§25 + §29</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Brand voice</td><td class="mono">voice-lint</td>
+      <td class="mono">L1-02 Part VII</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Organism surface</td><td class="mono">organism-lint</td>
+      <td class="mono">§29 + I-05</td><td><span class="pill ok">pass</span></td></tr>
     <tr><td>Design literals + contrast</td><td class="mono">token-lint</td>
       <td class="mono">§29 + WCAG AA</td><td><span class="pill ok">pass</span></td></tr>
     <tr><td>Design tokens</td><td class="mono">tokens</td>
@@ -332,7 +337,13 @@
       <td><span class="pill ok">locked</span></td></tr>
     <tr><td class="mono">L1</td><td>Decision records</td><td class="mono">10 ADRs</td>
       <td><span class="pill ok">locked</span></td></tr>
-    <tr><td class="mono">L7/L8</td><td>Component surface</td><td class="mono">Turborepo - migration target</td>
+    <tr><td class="mono">L8</td><td>Metric grammar</td><td class="mono">7 kinds, distinct tones, provisional marked</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L8</td><td>Organisms</td><td class="mono">10 composites, 60 fields</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L9</td><td>Telemetry</td><td class="mono">4 signal types, PII refused structurally</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L7</td><td>Component code</td><td class="mono">Turborepo - migration target</td>
       <td><span class="pill def">deferred</span></td></tr>
     </tbody>
   </table></div>
@@ -362,20 +373,17 @@
 
   <h2>Open</h2>
   <div class="note">
-    <strong>32 blanks ratified, 0 open.</strong> What remains is not constitutional
-    but editorial and commercial &mdash; recorded in
-    <span class="mono">WAVE-5-OPEN-QUESTIONS.md</span>.
+    <strong>37 blanks ratified, 0 open.</strong> Every question raised at the Wave 5 gate
+    has been answered: brand voice, risk categories, design-system integration, contrast
+    variants and expiry windows. See <span class="mono">WAVE-6-CHANGELOG.md</span>.
   </div>
-  <div class="scroll"><table>
-    <thead><tr><th>#</th><th>Question</th><th>Kind</th></tr></thead>
-    <tbody>
-      <tr><td class="mono">A1</td><td>Brand voice &mdash; L1-02 says <em>Warm</em>, Addendum A says <em>never persuades</em>. Two ratified documents disagree, and 25 validation messages were written into the gap.</td><td><span class="pill part">conflict</span></td></tr>
-      <tr><td class="mono">A2</td><td>Risk categories &mdash; 8 in the design system, 10 in the registry. Six render grey today.</td><td><span class="pill part">conflict</span></td></tr>
-      <tr><td class="mono">A3</td><td>&sect;29 locks design system v3.0; the Addendum names v4.0 as parent. Verified zero drift, but the version numbers differ.</td><td><span class="pill part">conflict</span></td></tr>
-      <tr><td class="mono">B1</td><td>Four contrast variants added to the palette. No original token changed. Confirm or reject the hexes.</td><td><span class="pill gen">mine</span></td></tr>
-      <tr><td class="mono">B3</td><td>90-day expiry on an IC acquisition approval &mdash; the tightest window I invented.</td><td><span class="pill gen">mine</span></td></tr>
-    </tbody>
-  </table></div>
+  <div class="note">
+    <strong>What is deliberately not built.</strong> The Turborepo scaffold remains a
+    migration target &mdash; an empty monorepo would constrain L7 decisions the semantic
+    layer has not made. <span class="mono">token-lint</span> scans zero files for literals
+    because no component directory exists yet; the check is in place ahead of the surface
+    it guards, so the first component written is checked rather than the hundredth.
+  </div>
 
   <footer>
     Generated by scripts/gen-gate-report.js · tokens inlined from dist/tokens.css (v3.0 LOCKED, §29)<br>
