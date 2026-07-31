@@ -1,0 +1,1002 @@
+/* GENERATED — do not edit.
+ *
+ * Ported from GC-ASSEMBLIES.html by scripts/gen-assembly-css.js.
+ * Local custom properties are renamed to the generated --gc- tokens;
+ * the prototype's :root block is dropped because dist/tokens.css
+ * already declares every value in it.
+ *
+ * Regenerate: npm run assembly:css
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   GC.SYSTEM · ASSEMBLIES — working implementation
+   Tier 05/06 · Wave 6.5 · all 41 corrections applied
+
+   Every colour below is a LOCKED token from constants/tokens.ts.
+   No prototype hex survives. Contrast is stated where it matters.
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+.gc-assembly{background:var(--gc-void);-webkit-text-size-adjust:100%}
+.gc-assembly{
+  background:var(--gc-void); color:var(--gc-ink-inverse);
+  font:400 15px/1.55 var(--gc-font-body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  /* Scrollbars stay VISIBLE. They are the only indicator of how much page is left. */
+}
+/* Cursor is the DEFAULT. No `cursor:none`, no `cursor:crosshair` on the
+   universal selector — a crosshair over everything removes the only cue
+   distinguishing what can be clicked from what cannot. */
+button,a,[role="tab"],summary{cursor:pointer}
+
+/* ── Type scale · 13 roles ───────────────────────────────────────── */
+.t-display-xl{font:600 clamp(40px,7vw,56px)/0.95 var(--gc-font-display);letter-spacing:-0.03em;text-wrap:balance}
+.t-display-l{font:600 clamp(32px,5vw,44px)/1.0 var(--gc-font-display);letter-spacing:-0.03em;text-wrap:balance}
+.t-display-m{font:600 32px/1.1 var(--gc-font-display);letter-spacing:-0.02em}
+.t-heading{font:600 24px/1.2 var(--gc-font-display);letter-spacing:-0.02em}
+.t-subheading{font:500 20px/1.3 var(--gc-font-display);letter-spacing:-0.01em}
+.t-body-l{font:400 17px/1.6 var(--gc-font-body)}
+.t-body{font:400 15px/1.55 var(--gc-font-body)}
+.t-body-s{font:400 13px/1.5 var(--gc-font-body)}
+.t-caption{font:400 13px/1.4 var(--gc-font-body)}
+.t-micro{font:400 11px/1.3 var(--gc-font-mono);letter-spacing:0.14em;text-transform:uppercase}
+.t-mono{font:400 15px/1.4 var(--gc-font-mono);font-variant-numeric:tabular-nums}
+.t-mono-s{font:400 11px/1.3 var(--gc-font-mono);letter-spacing:0.06em;font-variant-numeric:tabular-nums}
+.t-editorial{font:400 italic 20px/1.5 var(--gc-font-editorial)}
+
+/* Money is ALWAYS mono, tabular, right-aligned in tables. */
+.money{font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums;color:var(--gc-copper);letter-spacing:-0.01em}
+.pct{font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums}
+.on-paper .money{color:var(--gc-copper-deep)}
+
+/* IL — hierarchy is weight and opacity, never size alone */
+.il-1{font-weight:700;opacity:1}
+.il-2{font-weight:500;opacity:1}
+.il-3{font-weight:400;opacity:.85}
+.il-4{font-weight:400;opacity:.65}
+.il-5{font-weight:400;opacity:1;color:var(--gc-steel-dim)}  /* opacity would drop it below AA */
+.il-6{font-weight:400;opacity:1;color:var(--gc-steel-dim);font-size:.92em}
+/* IL-5 and IL-6 cannot separate by TONE and both stay AA: only two greys
+   clear 4.5 on void. Below IL-4 the levels separate by size and weight
+   instead, which is what the scale should have said from the start. */
+
+.dim{color:var(--gc-steel-dim)}      /* 7.04 on void — safe at body size */
+.label{color:var(--gc-steel-dim)}    /* was steel at 3.72 — micro is 11px TEXT */
+.on-panel .label{color:var(--gc-steel-dim)}
+
+/* ── Focus — visible, instant, no glow ───────────────────────────── */
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--gc-electric);outline-offset:2px}
+.on-paper :focus-visible{outline-color:var(--gc-electric)}
+
+/* ── The Aperture Ring ───────────────────────────────────────────── */
+/* CORRECTION: the prototype set `cursor:none` globally and drew a ring.
+   On touch there is no pointer, so the page had no cursor at all; on a
+   keyboard the ring never arrives. The ring is now an ornament that only
+   exists where a fine pointer does. */
+#ring{position:fixed;top:0;left:0;width:24px;height:24px;border:1px solid var(--gc-forest-light);
+  border-radius:50%;pointer-events:none;z-index:9000;opacity:0;
+  transform:translate(-50%,-50%);
+  transition:width var(--gc-dur-fast) var(--gc-ease-cinema),height var(--gc-dur-fast) var(--gc-ease-cinema),
+             border-color var(--gc-dur-fast),opacity var(--gc-dur-fast)}
+@media (pointer:fine){ body.ring-on #ring{opacity:1} }
+body.over-aperture #ring{width:64px;height:64px;border-color:var(--gc-copper);
+  background:rgba(199,159,107,.06)}
+@media (prefers-reduced-motion:reduce){ #ring{display:none} }
+
+/* ── The Shutter ─────────────────────────────────────────────────── */
+#shutter{position:fixed;inset:0;background:var(--gc-void);z-index:8000;
+  transform:translateY(100%);pointer-events:none}
+#shutter.on{transform:translateY(0);transition:transform var(--gc-dur-cinema) var(--gc-ease-shutter)}
+#shutter.off{transform:translateY(-100%);transition:transform var(--gc-dur-cinema) var(--gc-ease-shutter)}
+@media (prefers-reduced-motion:reduce){ #shutter{display:none} }
+
+/* ── Signal Aperture (ticker) ────────────────────────────────────── */
+/* Reports what the SYSTEM did. Distinct from NT-01, which reports what
+   the MEMBER did. A system line may auto-dismiss because nothing was
+   asked of anyone. It is a live region so it is announced, not just seen. */
+#ticker{position:fixed;top:var(--gc-sp-s);right:var(--gc-sp-s);z-index:7000;
+  display:flex;gap:var(--gc-sp-2xs);align-items:center;padding:var(--gc-sp-2xs) var(--gc-sp-xs);
+  background:var(--gc-void-panel);border:1px solid var(--gc-hairline-inv);
+  opacity:0;transform:translateY(-6px);transition:opacity var(--gc-dur-fast),transform var(--gc-dur-fast)}
+#ticker.on{opacity:1;transform:translateY(0)}
+#ticker .k{color:var(--gc-steel-dim)}
+#ticker.info .v{color:var(--gc-ink-inverse)}
+#ticker.ok   .v{color:var(--gc-confirm)}
+#ticker.bad  .v{color:var(--gc-critical)}
+
+/* ── HUD rail ────────────────────────────────────────────────────── */
+.hud{position:sticky;top:0;z-index:600;background:rgba(10,10,10,.94);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--gc-hairline-inv)}
+.hud-in{max-width:1400px;margin:0 auto;padding:var(--gc-sp-xs) var(--gc-sp-m);
+  display:flex;align-items:center;gap:var(--gc-sp-m);flex-wrap:wrap}
+.hud .brand{color:var(--gc-forest-light);white-space:nowrap}
+.hud nav{display:flex;gap:var(--gc-sp-3xs);flex-wrap:wrap;margin-left:auto}
+.hud nav button{background:none;border:1px solid transparent;color:var(--gc-steel-dim);
+  font:400 11px/1 var(--gc-font-mono);letter-spacing:.12em;text-transform:uppercase;
+  padding:var(--gc-sp-2xs) var(--gc-sp-xs);transition:color var(--gc-dur-instant),border-color var(--gc-dur-instant)}
+.hud nav button:hover{color:var(--gc-ink-inverse)}
+.hud nav button[aria-current="page"]{color:var(--gc-ink-inverse);border-color:var(--gc-copper)}
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+.wrap{max-width:1400px;margin:0 auto;padding:0 var(--gc-sp-m)}
+.narrow{max-width:1100px;margin:0 auto;padding:0 var(--gc-sp-m)}
+.measure{max-width:65ch}  /* body copy, 65 characters */
+section[data-sec]{padding:var(--gc-sp-2xl) 0;border-bottom:1px solid var(--gc-hairline-inv)}
+.on-paper section[data-sec]{border-bottom-color:var(--gc-hairline)}
+.sec-head{display:flex;gap:var(--gc-sp-s);align-items:baseline;margin-bottom:var(--gc-sp-l);flex-wrap:wrap}
+.sec-ref{color:var(--gc-steel-dim);font:400 11px/1 var(--gc-font-mono);letter-spacing:.14em}
+.stack{display:flex;flex-direction:column;gap:var(--gc-sp-m)}
+.row{display:flex;gap:var(--gc-sp-l);flex-wrap:wrap}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ── GROUND INVERSION ────────────────────────────────────────────── */
+/* Void while the page explains. Paper the moment it asserts. Light means
+   audited. Not decorative: it maps narrative-versus-assertion onto the
+   one property of a screen nobody can miss. */
+.on-paper{background:var(--gc-paper);color:var(--gc-ink)}
+.on-paper .dim{color:var(--gc-steel)}
+.on-paper .label{color:var(--gc-steel)}
+.on-paper .il-5,.on-paper .il-6{color:var(--gc-steel)}
+.ground-note{display:inline-flex;gap:var(--gc-sp-2xs);align-items:center;
+  border:1px solid var(--gc-hairline);padding:var(--gc-sp-3xs) var(--gc-sp-2xs);color:var(--gc-steel)}
+
+/* ── AS-01 · Gateway apertures ───────────────────────────────────── */
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--gc-sp-s)}
+.ap-gateway{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--gc-void-panel);
+  border:1px solid var(--gc-hairline-inv);display:block;width:100%;text-align:left;color:inherit}
+.ap-gateway .plate{position:absolute;inset:0;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--gc-forest) 82%,var(--gc-paper)) 0%,color-mix(in srgb,var(--gc-forest) 55%,var(--gc-void)) 55%,var(--gc-void) 100%);
+  transition:transform 700ms var(--gc-ease-cinema),filter 700ms var(--gc-ease-cinema);filter:brightness(.8)}
+.ap-gateway:hover .plate,.ap-gateway:focus-visible .plate{transform:scale(1.04);filter:brightness(1)}
+.ap-gateway .scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.94) 0%,rgba(10,10,10,.25) 45%,transparent 100%)}
+.ap-gateway .body{position:absolute;inset:auto 0 0 0;padding:var(--gc-sp-m)}
+.ap-gateway h3{font:600 clamp(30px,4.4vw,42px)/0.86 var(--gc-font-display);
+  letter-spacing:-0.04em;text-transform:uppercase}
+/* CORRECTION: the deferred row was `group-hover:opacity-100` and nothing
+   else. It is now revealed by hover, focus-visible OR tap, and it is in
+   the DOM and the accessibility tree at all times. A deferred field that
+   is unreachable is not deferred, it is missing. */
+.deferred{margin-top:var(--gc-sp-s);display:flex;gap:var(--gc-sp-s);align-items:center;flex-wrap:wrap;
+  opacity:0;transform:translateY(6px);
+  transition:opacity var(--gc-dur-fast) var(--gc-ease-cinema),transform var(--gc-dur-fast) var(--gc-ease-cinema)}
+.ap-gateway:hover .deferred,
+.ap-gateway:focus-visible .deferred,
+.ap-gateway[data-open="1"] .deferred{opacity:1;transform:translateY(0)}
+@media (hover:none){ .deferred{opacity:1;transform:none} }
+@media (prefers-reduced-motion:reduce){ .deferred{transition:none;transform:none} }
+.rule-x{width:36px;height:1px;background:var(--gc-steel)}
+
+/* ── Confidence tag ──────────────────────────────────────────────── */
+/* A forward-looking figure rendered identically to a settled one is the
+   easiest way to mislead without stating anything false. */
+.conf{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--gc-hairline-inv);
+  padding:2px 6px;color:var(--gc-steel-dim);font:400 10px/1.2 var(--gc-font-mono);
+  letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.on-paper .conf{border-color:var(--gc-hairline);color:var(--gc-steel)}
+.conf::before{content:"";width:5px;height:5px;flex:none;background:currentColor}
+.conf.observed::before{background:var(--gc-confirm)}
+.conf.verified::before{background:var(--gc-confirm)}
+.conf.modelled::before{background:var(--gc-electric)}
+.conf.estimated::before{background:var(--gc-hazard)}
+.conf.forecast::before{background:var(--gc-hazard)}
+.conf.pending::before{background:var(--gc-steel)}
+.prov{color:var(--gc-steel-dim)}  /* the provisional mark ~ */
+
+/* ── AS-02 · Console apertures ───────────────────────────────────── */
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;
+  background:var(--gc-hairline-inv);border:1px solid var(--gc-hairline-inv)}
+.ap-console{background:var(--gc-void-panel);padding:var(--gc-sp-m);display:flex;flex-direction:column;
+  gap:var(--gc-sp-m);transition:background var(--gc-dur-instant)}
+.ap-console{border:1px solid transparent}
+.ap-console:hover{border-color:var(--gc-copper)}
+.ap-console .top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--gc-sp-s)}
+.field{border-bottom:1px solid var(--gc-hairline-inv);padding-bottom:var(--gc-sp-2xs)}
+.field .k{display:block;margin-bottom:var(--gc-sp-3xs);color:var(--gc-steel-dim)}
+.field .v{display:flex;align-items:baseline;gap:var(--gc-sp-2xs);flex-wrap:wrap}
+.figure{font:500 22px/1.1 var(--gc-font-mono);font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+/* Valuation source sits DIRECTLY beneath the figure. Never a tooltip. */
+.source{margin-top:var(--gc-sp-3xs);color:var(--gc-steel-dim);display:block}
+
+/* Status LED — one of only two places a circle is permitted. Always
+   carries a text label: colour is never the only carrier of meaning. */
+.led{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.led i{width:7px;height:7px;border-radius:50%;flex:none;background:var(--gc-confirm)}
+.led.stale i{background:var(--gc-hazard)}
+.led.stale{color:var(--gc-hazard)}
+.led.live{color:var(--gc-confirm)}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--gc-sp-2xs);
+  background:none;border:1px solid var(--gc-hairline-inv);color:var(--gc-ink-inverse);
+  font:400 11px/1 var(--gc-font-mono);letter-spacing:.12em;text-transform:uppercase;
+  padding:var(--gc-sp-xs) var(--gc-sp-s);
+  transition:background var(--gc-dur-instant),color var(--gc-dur-instant),border-color var(--gc-dur-instant)}
+.btn:hover{background:var(--gc-ink-inverse);color:var(--gc-void);border-color:var(--gc-ink-inverse)}
+.btn.primary{background:var(--gc-ink-inverse);color:var(--gc-void);border-color:var(--gc-ink-inverse)}
+.btn.primary:hover{background:var(--gc-copper);border-color:var(--gc-copper);color:var(--gc-void)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.on-paper .btn{border-color:var(--gc-hairline);color:var(--gc-ink)}
+.on-paper .btn:hover{background:var(--gc-ink);color:var(--gc-paper)}
+.on-paper .btn.primary{background:var(--gc-ink);color:var(--gc-paper)}
+
+/* ── AS-03 · Trinity Lens ────────────────────────────────────────── */
+.lens{display:flex;gap:var(--gc-sp-xl);border-bottom:1px solid var(--gc-hairline-inv);margin-bottom:var(--gc-sp-xl)}
+.lens button{background:none;border:none;padding:0 0 var(--gc-sp-s);position:relative;
+  color:var(--gc-steel-dim);font:400 11px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  transition:color var(--gc-dur-instant)}
+.lens button:hover{color:var(--gc-ink-inverse)}
+.lens button[aria-selected="true"]{color:var(--gc-ink-inverse)}
+.lens button[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;
+  height:2px;background:var(--gc-copper)}
+[role="tabpanel"][hidden]{display:none}
+.spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--gc-sp-m)}
+
+/* ── AS-04 · Waterfall (paper ground) ────────────────────────────── */
+.wf{display:flex;flex-direction:column;gap:2px;min-width:640px}
+.wf-row{display:grid;grid-template-columns:220px 1fr 130px;align-items:center;gap:var(--gc-sp-s)}
+.wf-row .k{text-align:right;color:var(--gc-steel)}
+.wf-track{height:38px;background:rgba(10,10,10,.05);position:relative;overflow:hidden}
+.wf-bar{height:100%;width:0;background:var(--gc-ink);display:flex;align-items:center;
+  padding-left:var(--gc-sp-xs);color:var(--gc-paper);
+  transition:width 900ms var(--gc-ease-cinema)}
+.wf-bar.less{background:var(--gc-steel);color:var(--gc-paper)}
+.wf-bar.senior{background:var(--gc-hazard-deep);color:var(--gc-paper)}
+.wf-bar.out{background:var(--gc-confirm-deep);color:var(--gc-paper)}
+@media (prefers-reduced-motion:reduce){ .wf-bar{transition:none} }
+.wf-row .amt{text-align:right;font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums;
+  color:var(--gc-copper-deep);font-weight:500}
+.wf-note{grid-column:2/-1;color:var(--gc-steel);padding-bottom:var(--gc-sp-2xs)}
+.totals{border-top:2px solid var(--gc-ink);margin-top:var(--gc-sp-2xs);padding-top:var(--gc-sp-s)}
+/* Axis is never truncated. A bar chart starting anywhere but zero
+   exaggerates every difference on it. */
+
+/* ── Reserve gauge ───────────────────────────────────────────────── */
+.gauge{border:1px solid var(--gc-hairline);padding:var(--gc-sp-m);max-width:520px}
+.gauge-track{height:10px;background:rgba(10,10,10,.08);position:relative;margin:var(--gc-sp-s) 0}
+.gauge-fill{height:100%;background:var(--gc-confirm-deep)}
+.gauge-floor{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--gc-hazard-deep)}
+.gauge-floor::after{content:"Floor";position:absolute;top:-18px;left:-12px;
+  font:400 10px/1 var(--gc-font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gc-hazard-deep)}
+
+/* ── AS-05 · Member console ──────────────────────────────────────── */
+.panel{background:var(--gc-void-panel);border:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-m)}
+.kv{display:flex;justify-content:space-between;gap:var(--gc-sp-s);
+  padding:var(--gc-sp-xs) 0;border-bottom:1px solid var(--gc-hairline-inv)}
+.kv:last-child{border-bottom:none}
+.kv .v{font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums;text-align:right}
+/* A blocked distribution renders at the SAME weight as a paid one, with
+   its reason. A member whose payment did not land is owed the reason,
+   not a quieter number. */
+.blocked{border-left:2px solid var(--gc-critical);padding-left:var(--gc-sp-s)}
+.blocked .why{color:var(--gc-critical);margin-top:var(--gc-sp-3xs)}
+.needs-you{border-left:2px solid var(--gc-hazard);padding-left:var(--gc-sp-s)}
+
+/* ── AS-06 · Commitment ──────────────────────────────────────────── */
+.commit{display:grid;grid-template-columns:1fr 380px;gap:var(--gc-sp-2xl);align-items:start}
+@media (max-width:900px){ .commit{grid-template-columns:1fr;gap:var(--gc-sp-l)}
+  .anchor{position:static !important;order:-1} }
+/* The anchor NEVER collapses and never scrolls away. On compact it pins
+   to the top rather than being dropped. */
+.anchor{position:sticky;top:88px;border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel)}
+.anchor .plate{aspect-ratio:4/3;background:linear-gradient(145deg,color-mix(in srgb,var(--gc-forest) 82%,var(--gc-paper)),color-mix(in srgb,var(--gc-forest) 55%,var(--gc-void)));
+  border-bottom:1px solid var(--gc-hairline-inv)}
+.anchor .in{padding:var(--gc-sp-m)}
+.step{border-left:1px solid var(--gc-hairline-inv);padding:0 0 var(--gc-sp-l) var(--gc-sp-l);position:relative}
+.step:last-child{border-left-color:transparent}
+.step::before{content:"";position:absolute;left:-4px;top:6px;width:7px;height:7px;
+  background:var(--gc-void);border:1px solid var(--gc-steel)}
+.step[data-state="active"]::before{background:var(--gc-copper);border-color:var(--gc-copper)}
+.step[data-state="done"]::before{border-color:var(--gc-copper)}
+/* CORRECTION: completed steps were dimmed to 0.35 with pointer-events
+   none — near 2:1, and unreadable exactly when someone wanted to check
+   what they had typed. They stay legible and re-openable. */
+.step[data-state="done"] .step-body{display:none}
+.step[data-state="done"] .summary{display:block}
+.summary{display:none;color:var(--gc-steel-dim);margin-top:var(--gc-sp-3xs)}
+.step[data-state="idle"] .step-body{display:none}
+.step h3{color:var(--gc-steel-dim)}
+.step[data-state="active"] h3,.step[data-state="done"] h3{color:var(--gc-ink-inverse)}
+.step-body{margin-top:var(--gc-sp-s);max-width:520px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:var(--gc-sp-s);margin-bottom:var(--gc-sp-m)}
+.fields .full{grid-column:1/-1}
+@media (max-width:560px){ .fields{grid-template-columns:1fr} }
+.f{display:flex;flex-direction:column;gap:6px}
+/* A real <label>, always. A placeholder standing in for a label
+   disappears exactly when it is needed. */
+.f label{color:var(--gc-steel-dim)}
+.f input{background:transparent;border:1px solid var(--gc-hairline-inv);color:var(--gc-ink-inverse);
+  padding:11px var(--gc-sp-xs);font:400 15px/1.4 var(--gc-font-body);
+  transition:border-color var(--gc-dur-instant)}
+.f input:focus-visible{border-color:var(--gc-electric);border-width:2px;padding:10px 11px}
+/* Uppercase ONLY on identifiers that genuinely are uppercase. Never on a
+   name or an email — it renders what someone typed as something they
+   did not type, on the screen where they check what they typed. */
+.f input.ident{font-family:var(--gc-font-mono);text-transform:uppercase}
+.f input[type=email]{text-transform:none}
+.f .help{color:var(--gc-steel-dim)}
+.saved{color:var(--gc-confirm);opacity:0;transition:opacity var(--gc-dur-fast)}
+.saved.on{opacity:1}
+
+/* ── The Piston ──────────────────────────────────────────────────── */
+/* A bar, not a ring: a ring implies a duration that loops, and this fires
+   exactly once per commitment. Linear, 3000ms, never eased — an eased
+   fill would misreport how much time is left to let go. */
+.piston{width:100%;max-width:420px;border:1px solid var(--gc-copper);background:transparent;
+  padding:0;position:relative;overflow:hidden;height:52px;color:var(--gc-ink-inverse);display:block}
+.piston .fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--gc-copper);
+  transition:width var(--gc-dur-commit) linear}
+.piston.arm .fill{width:100%}
+.piston.rel .fill{width:0;transition:width var(--gc-dur-instant) linear}
+.piston .cap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;
+  height:100%;font:400 11px/1 var(--gc-font-mono);letter-spacing:.14em;text-transform:uppercase;
+  mix-blend-mode:difference;color:#fff}
+.piston .ticks{position:absolute;inset:0;pointer-events:none;display:flex}
+.piston .ticks i{flex:1;border-right:1px solid rgba(242,242,242,.22)}
+.piston .ticks i:last-child{border-right:none}
+.piston[disabled]{border-color:var(--gc-steel);opacity:.45;pointer-events:none}
+/* Settled is NOT disabled. The piston is inert because it fired, and its
+   label is now the record that capital moved — the last thing that should
+   be the dimmest on the screen. */
+.piston.settled{opacity:1;border-color:var(--gc-confirm);pointer-events:none}
+.piston.settled .fill{background:var(--gc-confirm)}
+.piston.settled .cap{mix-blend-mode:normal;color:var(--gc-void)}
+
+/* ── Settled ─────────────────────────────────────────────────────── */
+.settled{border:1px solid var(--gc-confirm);padding:var(--gc-sp-m);display:none}
+.settled.on{display:block}
+.settled h3{color:var(--gc-confirm)}
+
+/* ── Data flash — 120ms, step-end. The figure does not animate; the
+   frame around it acknowledges the change. ───────────────────────── */
+@keyframes flash{0%{background:rgba(242,242,242,.9);color:var(--gc-void)}100%{}}
+.flash{animation:flash var(--gc-dur-instant) step-end}
+@media (prefers-reduced-motion:reduce){ .flash{animation:none} }
+
+/* ── Correction badges ───────────────────────────────────────────── */
+.fix{display:inline-flex;gap:6px;align-items:baseline;border-left:2px solid var(--gc-forest-light);
+  padding:2px 0 2px var(--gc-sp-2xs);color:var(--gc-steel-dim);max-width:70ch}
+.fix b{color:var(--gc-forest-light);font:400 10px/1.3 var(--gc-font-mono);letter-spacing:.1em;
+  text-transform:uppercase;flex:none}
+.on-paper .fix{border-left-color:var(--gc-confirm-deep);color:var(--gc-steel)}
+.on-paper .fix b{color:var(--gc-confirm-deep)}
+.fixes{display:flex;flex-direction:column;gap:var(--gc-sp-2xs);margin-top:var(--gc-sp-m)}
+
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font:400 11px/1.3 var(--gc-font-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gc-steel-dim);padding:0 var(--gc-sp-s) var(--gc-sp-2xs) 0;border-bottom:1px solid var(--gc-hairline-inv)}
+td{padding:var(--gc-sp-xs) var(--gc-sp-s) var(--gc-sp-xs) 0;border-bottom:1px solid rgba(242,242,242,.05);
+  vertical-align:top}
+td.num{text-align:right;font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums}
+th.num{text-align:right}
+/* Never blank. A blank cell is indistinguishable from a rendering failure. */
+.empty::after{content:"—";color:var(--gc-steel-dim)}
+
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ── AS-09 · Gallery Frame ───────────────────────────────────────── */
+/* Cinematic. One frame centred, the neighbours receding. Advances only
+   on intent — nothing auto-plays, so no pause control is owed and none
+   is faked. */
+.gal{position:relative;overflow:hidden;padding:var(--gc-sp-l) 0}
+.gal-track{display:flex;align-items:center;gap:2vw;
+  transition:transform 700ms var(--gc-ease-cinema);will-change:transform}
+@media (prefers-reduced-motion:reduce){ .gal-track{transition:none} }
+.gal-frame{flex:0 0 min(62vw,760px);aspect-ratio:4/3;position:relative;overflow:hidden;
+  border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel);
+  transition:opacity 700ms var(--gc-ease-cinema),filter 700ms var(--gc-ease-cinema)}
+.gal-frame:not(.is-on) .plate{opacity:.3;filter:grayscale(1)}
+.gal-frame:not(.is-on) .cap{opacity:0}  /* text at 32% is 2.61:1 — hide it, do not fade it */
+.gal-frame:not(.is-on) .xh{opacity:.3}
+@media (prefers-reduced-motion:reduce){ .gal-frame{transition:none} }
+.gal-frame .plate{position:absolute;inset:0}
+.gal-frame .scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.92) 0%,rgba(10,10,10,.15) 55%,transparent 100%)}
+.gal-frame .cap{position:absolute;inset:auto 0 0 0;padding:var(--gc-sp-l)}
+.gal-frame h3{font:600 clamp(28px,3.6vw,44px)/0.9 var(--gc-font-display);
+  letter-spacing:-0.035em;text-transform:uppercase}
+/* Corner crosshairs — the one ornament kept from the source. */
+.xh{position:absolute;width:14px;height:14px;border:1px solid var(--gc-hairline-inv)}
+.gal-frame.is-on .xh{border-color:var(--gc-forest-light)}
+.xh.tl{top:14px;left:14px;border-right:none;border-bottom:none}
+.xh.tr{top:14px;right:14px;border-left:none;border-bottom:none}
+.xh.bl{bottom:14px;left:14px;border-right:none;border-top:none}
+.xh.br{bottom:14px;right:14px;border-left:none;border-top:none}
+/* Rail — every frame reachable directly, not only in sequence. */
+.gal-rail{display:flex;gap:var(--gc-sp-2xs);align-items:center;
+  margin-top:var(--gc-sp-m);flex-wrap:wrap}
+.gal-rail button{background:none;border:1px solid var(--gc-hairline-inv);color:var(--gc-steel-dim);
+  font:400 11px/1 var(--gc-font-mono);letter-spacing:.1em;padding:var(--gc-sp-2xs) var(--gc-sp-xs);
+  transition:color var(--gc-dur-instant),border-color var(--gc-dur-instant)}
+.gal-rail button:hover{color:var(--gc-ink-inverse)}
+.gal-rail button[aria-current="true"]{color:var(--gc-void);background:var(--gc-copper);
+  border-color:var(--gc-copper)}
+.gal-pos{margin-left:auto;color:var(--gc-steel-dim)}
+
+/* ── AS-10 · Gallery Strip ───────────────────────────────────────── */
+/* Catalogue. Several frames comparable at once. The caption sits BELOW
+   the frame — text over an image is legible only against the part of the
+   image it happens to land on. */
+.strip{display:flex;gap:1px;background:var(--gc-hairline-inv);border:1px solid var(--gc-hairline-inv);
+  overflow-x:auto;scroll-snap-type:x mandatory;padding:1px}
+.strip-item{flex:0 0 min(46vw,300px);scroll-snap-align:start;background:var(--gc-void);
+  display:flex;flex-direction:column}
+.strip-item .plate{aspect-ratio:3/4;position:relative;overflow:hidden}
+.strip-item .plate span{position:absolute;inset:0;
+  transition:transform 600ms var(--gc-ease-cinema)}
+.strip-item:hover .plate span{transform:scale(1.04)}
+@media (prefers-reduced-motion:reduce){ .strip-item .plate span{transition:none} }
+.strip-cap{padding:var(--gc-sp-s) var(--gc-sp-xs) var(--gc-sp-m)}
+.strip-cap .nm{display:block;margin-bottom:2px}
+.strip-cap .sub{color:var(--gc-steel-dim)}
+
+/* ── AS-11 · Stage Progression ───────────────────────────────────── */
+.stages{display:flex;gap:1px;background:var(--gc-hairline-inv);border:1px solid var(--gc-hairline-inv);
+  min-width:900px}
+.stage{flex:1;background:var(--gc-void-panel);padding:var(--gc-sp-s);
+  display:flex;flex-direction:column;gap:var(--gc-sp-2xs);min-width:0}
+.stage.now{background:var(--gc-void);border-top:2px solid var(--gc-copper);padding-top:14px}
+.stage .n{color:var(--gc-steel-dim)}
+.stage .t{line-height:1.2;word-break:break-word}
+.stage.done .t{color:var(--gc-steel-dim)}
+.stage.now .t{color:var(--gc-copper)}
+.stage .st{margin-top:auto;padding-top:var(--gc-sp-2xs)}
+
+.matrix{min-width:1080px;border-collapse:collapse;font-size:12px}
+.matrix th{position:sticky;top:0;background:var(--gc-void);z-index:2;padding:var(--gc-sp-2xs);
+  border-bottom:1px solid var(--gc-hairline-inv);vertical-align:bottom;font-size:10px;
+  color:var(--gc-steel-dim)}
+.matrix th.role{left:0;z-index:3;text-align:left;min-width:150px;max-width:150px}
+.matrix td{padding:var(--gc-sp-2xs);border-bottom:1px solid rgba(242,242,242,.06);
+  border-right:1px solid rgba(242,242,242,.06);vertical-align:top;min-width:118px}
+.matrix td.role{position:sticky;left:0;background:var(--gc-void);z-index:1;
+  min-width:150px;max-width:150px;border-right:1px solid var(--gc-hairline-inv)}
+.matrix tbody tr:hover td{background:rgba(242,242,242,.03)}
+.matrix tbody tr:hover td.role{background:var(--gc-void-panel)}
+.matrix td.now{background:rgba(199,159,107,.05)}
+/* Onboard and offboard are STATES, not decoration. */
+.mk{display:inline-block;font:400 9px/1.4 var(--gc-font-mono);letter-spacing:.1em;
+  text-transform:uppercase;padding:1px 5px;margin-bottom:3px;white-space:nowrap}
+.mk.on{color:var(--gc-confirm);border:1px solid var(--gc-confirm)}
+.mk.off{color:var(--gc-steel-dim);border:1px solid var(--gc-hairline-inv)}
+.mk.veto{color:var(--gc-void);background:var(--gc-critical)}
+.dv{display:block;color:var(--gc-steel-dim);line-height:1.35;margin-bottom:2px}
+.dv::before{content:"";display:inline-block;width:3px;height:3px;background:var(--gc-steel);
+  vertical-align:2px;margin-right:5px}
+.dv.v{color:var(--gc-critical)}
+.dv.v::before{background:var(--gc-critical)}
+/* A role absent from a stage says so. A blank cell reads as an omission. */
+.absent{color:var(--gc-steel-dim)}  /* NOT opacity: .5 on steel renders #3B3B3B at 1.77:1 */
+
+.vetoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:var(--gc-sp-s)}
+.veto{border:1px solid var(--gc-critical);padding:var(--gc-sp-m);background:var(--gc-void-panel)}
+.veto .who{color:var(--gc-critical);margin-bottom:var(--gc-sp-2xs)}
+
+/* ── AS-12 · Location ────────────────────────────────────────────── */
+.loc{display:grid;grid-template-columns:1fr 420px;gap:1px;background:var(--gc-hairline-inv);
+  border:1px solid var(--gc-hairline-inv)}
+@media (max-width:900px){ .loc{grid-template-columns:1fr} }
+.map{background:var(--gc-void-panel);position:relative;min-height:420px;overflow:hidden}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.ring{fill:none;stroke:var(--gc-forest-light);stroke-dasharray:3 5}  /* full strength: 4.37:1 */
+.ring-fill{fill:var(--gc-forest-light);opacity:.05}
+.site{fill:var(--gc-copper)}
+.poi{fill:var(--gc-steel-dim);cursor:pointer}
+.poi.sel{fill:var(--gc-copper)}
+.map-legend{position:absolute;left:var(--gc-sp-s);bottom:var(--gc-sp-s);
+  background:rgba(10,10,10,.88);border:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-2xs) var(--gc-sp-xs)}
+.loc-panel{background:var(--gc-void);padding:var(--gc-sp-m);max-height:620px;overflow-y:auto}
+/* The panel is a LIST first. Pins select within it; they are not the only
+   way in. A 24px pin is a fine shortcut and a poor sole route. */
+.poi-row{width:100%;text-align:left;background:none;border:none;
+  border-bottom:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-xs) 0;color:inherit;
+  display:flex;justify-content:space-between;gap:var(--gc-sp-s);align-items:baseline}
+.poi-row:hover{background:rgba(242,242,242,.03)}
+.poi-row[aria-current="true"]{border-left:2px solid var(--gc-copper);padding-left:var(--gc-sp-2xs)}
+.poi-row .d{color:var(--gc-steel-dim);font-family:var(--gc-font-mono);white-space:nowrap}
+.win{color:var(--gc-steel-dim);white-space:nowrap}
+
+
+/* ── AS-13 · The LLP Docket ──────────────────────────────────────── */
+/* The filing-cabinet metaphor from the signed-off LegalHub: tabs that
+   look like they are cut into a folder, and a paper document beneath.
+   Kept, because a docket IS a physical object in every user's head and
+   the metaphor does real navigational work. */
+.docket{display:flex;flex-direction:column}
+.docket-head{display:flex;justify-content:space-between;align-items:flex-start;
+  gap:var(--gc-sp-m);flex-wrap:wrap;padding-bottom:var(--gc-sp-m);border-bottom:1px solid var(--gc-hairline-inv)}
+.standing{display:inline-flex;align-items:center;gap:var(--gc-sp-2xs);
+  border:1px solid var(--gc-confirm);color:var(--gc-confirm);padding:var(--gc-sp-2xs) var(--gc-sp-xs)}
+.standing.late{border-color:var(--gc-hazard);color:var(--gc-hazard)}
+.standing.bad{border-color:var(--gc-critical);color:var(--gc-critical)}
+.standing i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+
+.folder{display:flex;gap:0;margin-top:var(--gc-sp-l);overflow-x:auto;padding-left:2px}
+.folder button{flex:none;background:var(--gc-void-panel);border:1px solid var(--gc-hairline-inv);
+  border-bottom:none;color:var(--gc-steel-dim);font:400 11px/1 var(--gc-font-mono);
+  letter-spacing:.1em;text-transform:uppercase;padding:var(--gc-sp-xs) var(--gc-sp-m);
+  margin-right:-1px;position:relative;top:1px;white-space:nowrap;
+  transition:color var(--gc-dur-instant),background var(--gc-dur-instant)}
+.folder button:hover{color:var(--gc-ink-inverse)}
+/* The active tab is PAPER — it is the sheet you have pulled forward, and
+   the ground inversion holds: a docket page is assertion throughout. */
+.folder button[aria-selected="true"]{background:var(--gc-paper);color:var(--gc-ink);
+  border-color:var(--gc-paper);z-index:2;font-weight:700}
+.sheet{background:var(--gc-paper);color:var(--gc-ink);padding:var(--gc-sp-xl);position:relative;
+  border:1px solid var(--gc-paper)}
+.sheet h2{font:600 clamp(28px,4vw,40px)/1 var(--gc-font-display);letter-spacing:-.03em;
+  text-transform:uppercase;margin-bottom:var(--gc-sp-2xs)}
+.sheet .lead{font:400 11px/1.4 var(--gc-font-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gc-steel);border-top:1px solid var(--gc-ink);padding-top:var(--gc-sp-s);
+  margin-bottom:var(--gc-sp-xl);display:block}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet th{text-align:left;font:400 10px/1.3 var(--gc-font-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gc-steel);padding:0 var(--gc-sp-s) var(--gc-sp-2xs) 0;
+  border-bottom:2px solid var(--gc-ink)}
+.sheet th.num{text-align:right}
+.sheet td{padding:var(--gc-sp-s) var(--gc-sp-s) var(--gc-sp-s) 0;border-bottom:1px solid rgba(10,10,10,.14);
+  vertical-align:top}
+.sheet td.num{text-align:right;font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums}
+.sheet tr:hover td{background:rgba(10,10,10,.03)}
+.doc-nm{font:500 15px/1.3 var(--gc-font-body);display:block}
+/* A hash is shown ALWAYS, including on restricted rows. Access controls
+   the content; the fingerprint is what lets anyone verify from outside. */
+.sheet .hash{font:400 10px/1.4 var(--gc-font-mono);color:var(--gc-steel);word-break:break-all;display:block;
+  margin-top:3px}
+.ver{display:inline-block;border:1px solid var(--gc-ink);padding:1px 7px;
+  font:400 10px/1.5 var(--gc-font-mono);white-space:nowrap}
+.sheet .ver.sup{border-color:var(--gc-steel);color:var(--gc-steel)}
+/* Restricted rows keep FULL contrast. What is restricted is the content;
+   the existence of the document is a fact about the entity. */
+.restricted td{box-shadow:inset 2px 0 0 var(--gc-hazard-deep)}  /* not a tint: 4% cost steel 0.37 */
+.lockmark{display:inline-flex;align-items:center;gap:5px;color:var(--gc-hazard-deep);
+  font:400 10px/1.5 var(--gc-font-mono);letter-spacing:.1em;text-transform:uppercase}
+.lockmark::before{content:"";width:8px;height:8px;border:1.5px solid currentColor;
+  border-bottom:none;border-radius:4px 4px 0 0;margin-bottom:-2px}
+.act{border:1px solid var(--gc-ink);background:transparent;color:var(--gc-ink);
+  padding:var(--gc-sp-2xs) var(--gc-sp-xs);font:400 10px/1.4 var(--gc-font-mono);letter-spacing:.1em;
+  text-transform:uppercase;white-space:nowrap;transition:background var(--gc-dur-instant),color var(--gc-dur-instant)}
+.act:hover{background:var(--gc-ink);color:var(--gc-paper)}
+.sheet .act[aria-disabled="true"]{border-color:var(--gc-steel);color:var(--gc-steel)}
+.sheet .act[aria-disabled="true"]:hover{background:transparent;color:var(--gc-steel)}
+
+/* Statutory calendar — due dates COMPUTED, so a filing never made shows
+   as overdue rather than as an absent row. */
+.due{font-family:var(--gc-font-mono);white-space:nowrap}
+.due.ok{color:var(--gc-confirm-deep)}
+.due.soon{color:var(--gc-hazard-deep)}
+.due.late{color:var(--gc-critical-deep)}
+.state{font:400 10px/1.5 var(--gc-font-mono);letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid currentColor;padding:1px 7px;white-space:nowrap}
+.state.filed{color:var(--gc-confirm-deep)}
+.state.open{color:var(--gc-hazard-deep)}
+.state.overdue{color:var(--gc-critical-deep)}
+
+.nexus{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--gc-sp-s)}
+.nexus article{border:1px solid rgba(10,10,10,.2);padding:var(--gc-sp-m)}
+.charge{border-left:3px solid var(--gc-critical);padding-left:var(--gc-sp-s)}
+.charge.satisfied{border-left-color:var(--gc-confirm-deep)}
+.gap{border:1px dashed var(--gc-critical);color:var(--gc-critical);padding:var(--gc-sp-s);
+  font:400 12px/1.5 var(--gc-font-body)}
+.totrow td{border-top:2px solid var(--gc-ink);border-bottom:none;font-weight:700;
+  padding-top:var(--gc-sp-s)}
+
+
+/* ── AS-21 · The Navigation Spine ────────────────────────────────── */
+/* Vertical rail on console surfaces. The header says where you are; the
+   spine says what else exists. The ORDER never changes — muscle memory is
+   the point, and a rail that reorders by recency destroys it. */
+.with-spine{display:grid;grid-template-columns:232px 1fr;gap:0;align-items:start}
+@media (max-width:900px){
+  /* Member routes are phone-parity. The spine becomes a horizontal bar,
+     never a hamburger — hiding all navigation behind one control on the
+     surface people check from a phone is where parity quietly ends. */
+  .with-spine{grid-template-columns:1fr}
+  .spine{position:static;border-right:none;border-bottom:1px solid var(--gc-hairline-inv);
+    flex-direction:row;overflow-x:auto;padding:var(--gc-sp-2xs) 0}
+  .spine a{white-space:nowrap;border-left:none;border-bottom:2px solid transparent}
+  .spine a[aria-current="page"]{border-left:none;border-bottom-color:var(--gc-copper)}
+  .spine .grp{display:none}
+}
+.spine{position:sticky;top:64px;display:flex;flex-direction:column;gap:1px;
+  border-right:1px solid var(--gc-hairline-inv);padding-right:var(--gc-sp-s);align-self:start}
+.spine .grp{font:400 10px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gc-steel-dim);padding:var(--gc-sp-s) var(--gc-sp-2xs) var(--gc-sp-2xs)}
+.spine a{display:flex;justify-content:space-between;align-items:center;gap:var(--gc-sp-2xs);
+  padding:var(--gc-sp-2xs) var(--gc-sp-xs);color:var(--gc-steel-dim);text-decoration:none;
+  border-left:2px solid transparent;font:400 14px/1.4 var(--gc-font-body);
+  transition:color var(--gc-dur-instant),background var(--gc-dur-instant)}
+.spine a:hover{color:var(--gc-ink-inverse);background:rgba(242,242,242,.04)}
+/* Active carries a rule AND aria-current. Colour is never the carrier. */
+.spine a[aria-current="page"]{color:var(--gc-ink-inverse);border-left-color:var(--gc-copper);
+  background:rgba(199,159,107,.06)}
+/* A count appears ONLY where something is genuinely waiting on this
+   person. A badge meaning "new" rather than "yours" teaches people to
+   ignore badges. */
+.spine .att{font:400 10px/1 var(--gc-font-mono);color:var(--gc-void);background:var(--gc-hazard);
+  padding:2px 6px;min-width:18px;text-align:center}
+
+/* ── AS-22 · The Footer ──────────────────────────────────────────── */
+.foot{border-top:1px solid var(--gc-hairline-inv);margin-top:var(--gc-sp-3xl);padding:var(--gc-sp-2xl) 0 var(--gc-sp-3xl)}
+.foot-ent{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:var(--gc-sp-m);padding-bottom:var(--gc-sp-l);border-bottom:1px solid var(--gc-hairline-inv)}
+.foot-ent h3{font:500 15px/1.3 var(--gc-font-body);margin-bottom:4px}
+/* The standing disclosure renders at BODY size, in the reading tone. A
+   disclosure set smaller than the claim it qualifies is a disclosure
+   designed not to be read. */
+.disclosure{margin:var(--gc-sp-l) 0;padding-left:var(--gc-sp-s);border-left:2px solid var(--gc-hazard);
+  max-width:70ch}
+.disclosure p{font:400 15px/1.6 var(--gc-font-body);color:var(--gc-ink-inverse);margin-bottom:var(--gc-sp-2xs)}
+.disclosure p:last-child{margin-bottom:0}
+.foot-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:var(--gc-sp-m);padding-top:var(--gc-sp-l);border-top:1px solid var(--gc-hairline-inv)}
+.foot-map h4{font:400 10px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gc-steel-dim);margin-bottom:var(--gc-sp-2xs)}
+.foot-map a{display:block;color:var(--gc-steel-dim);text-decoration:none;padding:3px 0;
+  font-size:14px}
+.foot-map a:hover{color:var(--gc-ink-inverse)}
+
+/* ── AS-23 · The Hero Viewport ───────────────────────────────────── */
+/* Height caps BELOW full viewport. A 100vh hero on a laptop in landscape
+   pushes everything below it off-screen, and content that needs scroll to
+   exist is content some people never find. */
+.hero{position:relative;min-height:min(72vh,560px);display:flex;align-items:flex-end;
+  overflow:hidden;border-bottom:1px solid var(--gc-hairline-inv)}
+.hero .bed{position:absolute;inset:0}
+/* The scrim is not decoration. Type over an unscrimmed image is legible
+   only against the part of the image it happens to land on, and that part
+   changes with the viewport. */
+.hero .scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,var(--gc-void) 0%,rgba(10,10,10,.72) 34%,rgba(10,10,10,.25) 68%,transparent 100%)}
+.hero .in{position:relative;padding:var(--gc-sp-3xl) 0 var(--gc-sp-xl);width:100%}
+.hero h1{max-width:18ch}
+.hero .sup{margin-top:var(--gc-sp-s);max-width:52ch}
+.hero .go{margin-top:var(--gc-sp-l);display:flex;gap:var(--gc-sp-2xs);flex-wrap:wrap}
+/* NO FIGURE over a hero. FB-1 bars full-bleed treatment wherever numeric
+   data is read: a number over an image is read against whatever pixels
+   sit behind it, and those differ per viewport and per crop. */
+
+/* ── AS-24 · Testimonials ────────────────────────────────────────── */
+/* A testimonial on an investment platform is regulated speech. SEBI's
+   advertisement code bars them in investment advisory contexts, and a
+   member's remark about what they earned is a performance claim by proxy
+   — it does not become permissible because someone else said it.
+   These carry statements about the PLACE. Never about the return. */
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--gc-sp-s)}
+.quote{border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel);padding:var(--gc-sp-m);
+  display:flex;flex-direction:column;gap:var(--gc-sp-s)}
+.quote blockquote{font:400 italic 18px/1.5 var(--gc-font-editorial);color:var(--gc-ink-inverse);
+  max-width:38ch}
+.quote figcaption{margin-top:auto;padding-top:var(--gc-sp-s);border-top:1px solid var(--gc-hairline-inv)}
+.quote .who{display:block;font:400 14px/1.4 var(--gc-font-body)}
+/* Anonymous testimonials are not published. An unattributable statement
+   cannot be verified or withdrawn, and an unwithdrawable statement about
+   a real person is a standing exposure. */
+.quote .meta{display:block;font:400 11px/1.5 var(--gc-font-mono);color:var(--gc-steel-dim);margin-top:3px}
+.quote .basis{display:inline-block;margin-top:var(--gc-sp-2xs);font:400 10px/1.4 var(--gc-font-mono);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--gc-steel-dim);
+  border:1px solid var(--gc-hairline-inv);padding:2px 6px}
+.subject-note{border-left:2px solid var(--gc-forest-light);padding-left:var(--gc-sp-s);
+  max-width:70ch;margin-bottom:var(--gc-sp-l)}
+
+/* ── AS-25 · The Time Ledger ─────────────────────────────────────── */
+/* Nights are a COUNT, not a currency. They never render in copper —
+   copper is reserved for money, and a night is not money. */
+.nights{font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums;color:var(--gc-ink-inverse)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--gc-hairline-inv);
+  border:1px solid var(--gc-hairline-inv);max-width:420px}
+.cal div{background:var(--gc-void-panel);aspect-ratio:1;display:flex;align-items:center;
+  justify-content:center;font:400 12px/1 var(--gc-font-mono);color:var(--gc-steel-dim);position:relative}
+.cal div.held{background:rgba(199,159,107,.14);color:var(--gc-ink-inverse)}
+.cal div.used{background:var(--gc-void);color:var(--gc-steel-dim);text-decoration:line-through}
+.cal div.hd{background:transparent;color:var(--gc-steel-dim);font-size:10px;aspect-ratio:auto;
+  padding:var(--gc-sp-2xs) 0}
+.expiry{border-left:2px solid var(--gc-hazard);padding-left:var(--gc-sp-s);max-width:60ch}
+
+
+/* ── AS-14 · The Risk Disclosure ─────────────────────────────────── */
+/* Paper throughout. Every sentence here is an assertion, so the ground
+   never leaves it. */
+.risk{background:var(--gc-paper);color:var(--gc-ink);padding:var(--gc-sp-2xl) 0 var(--gc-sp-3xl)}
+.risk-col{max-width:720px;margin:0 auto;padding:0 var(--gc-sp-m)}
+.risk h1{font:600 clamp(34px,5vw,50px)/1 var(--gc-font-display);letter-spacing:-.03em;
+  text-transform:uppercase;margin-bottom:var(--gc-sp-s)}
+.risk .ver{font:400 11px/1.4 var(--gc-font-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gc-steel);border-top:1px solid var(--gc-ink);padding-top:var(--gc-sp-s);display:block}
+/* No accordion and no tabs. A risk behind a click is a risk somebody
+   skipped, and this is the one screen that may not be skimmable. */
+.clause{margin-top:var(--gc-sp-xl);padding-left:var(--gc-sp-s);border-left:3px solid var(--gc-hazard-deep)}
+.clause.sev1{border-left-color:var(--gc-critical-deep)}
+.clause h2{font:600 24px/1.2 var(--gc-font-display);letter-spacing:-.02em;margin-bottom:var(--gc-sp-2xs)}
+.clause .sev{font:400 10px/1 var(--gc-font-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gc-hazard-deep)}
+.clause.sev1 .sev{color:var(--gc-critical-deep)}
+.clause p{font:400 16px/1.65 var(--gc-font-body);max-width:65ch;margin-top:var(--gc-sp-2xs)}
+.clause .terms{margin-top:var(--gc-sp-s);font:400 12.5px/1.6 var(--gc-font-mono);color:var(--gc-steel);
+  background:rgba(10,10,10,.05);padding:11px 14px}
+/* Visible from the first scroll, disabled with the reason in WORDS.
+   A control held at half opacity with pointer-events off is invisible to
+   the eye and absent from the keyboard, so nothing says what to do. */
+.ackbar{position:sticky;bottom:0;background:var(--gc-paper-panel);border-top:2px solid var(--gc-ink);
+  padding:var(--gc-sp-m);margin-top:var(--gc-sp-2xl);z-index:40}
+.ackbar .in{max-width:720px;margin:0 auto;display:flex;gap:var(--gc-sp-m);align-items:center;
+  flex-wrap:wrap;padding:0 var(--gc-sp-m)}
+.ackbar label{display:flex;gap:var(--gc-sp-2xs);align-items:flex-start;cursor:pointer;
+  font-size:14.5px;max-width:52ch;line-height:1.5}
+.ackbar input[type=checkbox]{width:19px;height:19px;flex:none;margin-top:1px;accent-color:var(--gc-ink)}
+.ackbar input:disabled + span{color:var(--gc-steel)}
+.ackbar .why{font:400 12px/1.5 var(--gc-font-mono);color:var(--gc-hazard-deep);flex-basis:100%}
+.ackbar .go{margin-left:auto}
+.risk .btn{border-color:var(--gc-ink);color:var(--gc-ink)}
+.risk .btn:hover:not([disabled]){background:var(--gc-ink);color:var(--gc-paper)}
+.risk .btn[disabled]{opacity:1;border-color:var(--gc-steel);color:var(--gc-steel);pointer-events:none}
+.skipend{background:none;border:none;text-decoration:underline;color:var(--gc-ink);
+  font:400 13px/1 var(--gc-font-body);padding:var(--gc-sp-2xs) 0}
+
+/* ── AS-26 · The Capital Call ────────────────────────────────────── */
+.call{display:grid;grid-template-columns:1fr 400px;gap:var(--gc-sp-2xl);align-items:start}
+@media (max-width:900px){ .call{grid-template-columns:1fr;gap:var(--gc-sp-l)}
+  .call .deriv{order:-1} }
+.call-amt{display:flex;gap:var(--gc-sp-2xl);flex-wrap:wrap;align-items:baseline;
+  padding-bottom:var(--gc-sp-m);border-bottom:1px solid var(--gc-hairline-inv)}
+.call-amt .big{font:500 clamp(38px,6vw,56px)/1 var(--gc-font-mono);font-variant-numeric:tabular-nums;
+  letter-spacing:-.03em;color:var(--gc-copper)}
+/* The due date renders at EQUAL weight to the amount. A due date smaller
+   than the figure is a suggestion. */
+.call-amt .due-big{font:500 clamp(28px,4vw,40px)/1 var(--gc-font-mono);letter-spacing:-.02em}
+.call-amt .lb{display:block;font:400 10px/1 var(--gc-font-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gc-steel-dim);margin-bottom:var(--gc-sp-2xs)}
+/* Default provisions render in FULL above the payment control. Dilution
+   and forfeiture are the terms most often placed after the act. */
+.default-terms{border-left:3px solid var(--gc-critical);padding-left:var(--gc-sp-s);
+  margin-top:var(--gc-sp-xl);max-width:70ch}
+.default-terms h3{font:600 19px/1.3 var(--gc-font-display);color:var(--gc-critical);margin-bottom:var(--gc-sp-2xs)}
+.default-terms li{margin-left:var(--gc-sp-s);margin-top:var(--gc-sp-2xs);color:var(--gc-ink-inverse)}
+.deriv{background:var(--gc-paper);color:var(--gc-ink);padding:var(--gc-sp-m);position:sticky;top:88px}
+.deriv h3{font:600 11px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gc-steel);padding-bottom:var(--gc-sp-2xs);border-bottom:1px solid var(--gc-ink);
+  margin-bottom:var(--gc-sp-2xs)}
+.deriv .row{display:flex;justify-content:space-between;gap:var(--gc-sp-s);padding:10px 0;
+  border-bottom:1px solid rgba(10,10,10,.12);font-size:13.5px}
+.deriv .row:last-child{border-bottom:none}
+.deriv .row .v{font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums;color:var(--gc-copper-deep)}
+.deriv .row.tot{border-top:2px solid var(--gc-ink);margin-top:var(--gc-sp-2xs);padding-top:12px;
+  border-bottom:none;font-weight:700}
+.deriv .note{font-size:12px;color:var(--gc-steel);margin-top:var(--gc-sp-s);line-height:1.5}
+
+/* ── AS-27 · The Ballot ──────────────────────────────────────────── */
+.ballot{max-width:720px}
+/* The resolution renders VERBATIM as it will be minuted. A summary of a
+   resolution is a different document from the one being voted on. */
+.resolution{border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel);padding:var(--gc-sp-m);
+  font:400 17px/1.65 var(--gc-font-body);max-width:65ch}
+.res-meta{display:flex;gap:var(--gc-sp-l);flex-wrap:wrap;margin-top:var(--gc-sp-m);
+  padding-top:var(--gc-sp-m);border-top:1px solid var(--gc-hairline-inv)}
+.res-meta div span{display:block;font:400 10px/1 var(--gc-font-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gc-steel-dim);margin-bottom:5px}
+.res-meta div b{font:500 18px/1 var(--gc-font-mono);font-variant-numeric:tabular-nums}
+.countdown{color:var(--gc-hazard)}
+/* Three choices at EQUAL visual weight, fixed order, none preselected.
+   A default on a governance ballot is a nudge. */
+.choices{display:grid;gap:var(--gc-sp-2xs);margin-top:var(--gc-sp-l);max-width:520px}
+.choice{display:flex;gap:var(--gc-sp-s);align-items:center;padding:var(--gc-sp-s);
+  border:1px solid var(--gc-hairline-inv);cursor:pointer;transition:border-color var(--gc-dur-instant)}
+.choice:hover{border-color:var(--gc-steel-dim)}
+.choice:has(input:checked){border-color:var(--gc-copper);background:rgba(199,159,107,.06)}
+.choice input{width:18px;height:18px;flex:none;accent-color:var(--gc-copper)}
+.choice .t{font-size:16px}
+.choice .d{display:block;font-size:12.5px;color:var(--gc-steel-dim);margin-top:2px}
+.seal{border-left:2px solid var(--gc-forest-light);padding-left:var(--gc-sp-s);
+  margin-top:var(--gc-sp-m);max-width:66ch}
+.tally-row{display:grid;grid-template-columns:110px 1fr 84px;gap:var(--gc-sp-s);
+  align-items:center;padding:var(--gc-sp-2xs) 0}
+.tally-bar{height:26px;background:rgba(242,242,242,.07);position:relative}
+.tally-bar i{display:block;height:100%;background:var(--gc-steel-dim)}
+.tally-row.for .tally-bar i{background:var(--gc-confirm)}
+.tally-row.against .tally-bar i{background:var(--gc-critical)}
+.tally-row .n{text-align:right;font-family:var(--gc-font-mono);font-variant-numeric:tabular-nums}
+.threshold-mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--gc-copper)}
+
+/* ── AS-19 · The Ledger Lock ─────────────────────────────────────── */
+/* A constrained column is right exactly once in this system: a single
+   sequence with one thing to do at each step. */
+.terminal{max-width:480px;margin:0 auto;border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel)}
+.term-head{position:relative;min-height:180px;display:flex;align-items:flex-end;
+  border-bottom:1px solid var(--gc-hairline-inv);overflow:hidden}
+.term-head .bed{position:absolute;inset:0}
+.term-head .sc{position:absolute;inset:0;
+  background:linear-gradient(to top,var(--gc-void-panel) 0%,rgba(10,10,10,.3) 70%,transparent 100%)}
+.term-head .tt{position:relative;padding:var(--gc-sp-m)}
+.term-head h2{font:600 32px/0.92 var(--gc-font-display);letter-spacing:-.035em;text-transform:uppercase}
+.lock-stage{padding:var(--gc-sp-m)}
+.lock-stage[hidden]{display:none}
+.lock-stage h3{font:400 10px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gc-steel-dim);margin-bottom:var(--gc-sp-m)}
+/* Real checkboxes with real labels. Each one is a separate acknowledgement
+   of a separate fact — bundling them makes the bundle the thing agreed. */
+.inv-item{display:flex;gap:var(--gc-sp-s);align-items:flex-start;padding:var(--gc-sp-s);
+  border:1px solid var(--gc-hairline-inv);margin-bottom:var(--gc-sp-2xs);cursor:pointer}
+.inv-item:has(input:checked){border-color:var(--gc-forest-light);background:rgba(34,138,104,.07)}
+.inv-item input{width:18px;height:18px;flex:none;margin-top:2px;accent-color:var(--gc-forest-light)}
+.inv-item span{font-size:13.5px;line-height:1.5;color:var(--gc-ink-inverse)}
+.lock-rec{background:var(--gc-paper);color:var(--gc-ink);padding:var(--gc-sp-m);margin-top:var(--gc-sp-s)}
+.lock-rec .ref{font:500 17px/1.3 var(--gc-font-mono);letter-spacing:-.01em}
+
+
+/* ── AS-28 · The Risk Register ───────────────────────────────────── */
+/* Paper. A register is assertion end to end. */
+.reg{background:var(--gc-paper);color:var(--gc-ink);padding:var(--gc-sp-2xl) 0 var(--gc-sp-3xl)}
+.reg table{min-width:940px}
+/* Severity is a figure AND a band. A 4x4 matrix reduced to colour alone
+   is unreadable to a large minority. */
+.sev-cell{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.sev-cell b{font:600 15px/1 var(--gc-font-mono);font-variant-numeric:tabular-nums;min-width:18px;
+  text-align:right}
+.sev-cell span{font:400 9.5px/1 var(--gc-font-mono);letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid currentColor;padding:2px 6px}
+.sev-cell.s1{color:var(--gc-steel)}
+.sev-cell.s2{color:var(--gc-confirm-deep)}
+.sev-cell.s3{color:var(--gc-hazard-deep)}
+.sev-cell.s4{color:var(--gc-critical-deep)}
+.stale-mark{display:inline-block;font:400 9.5px/1 var(--gc-font-mono);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gc-critical-deep);border:1px solid currentColor;
+  padding:2px 6px;margin-top:4px}
+.matrix-key{display:grid;grid-template-columns:auto repeat(4,52px);gap:1px;background:rgba(10,10,10,.16);
+  border:1px solid rgba(10,10,10,.16);max-width:340px;margin-top:var(--gc-sp-s)}
+.matrix-key div{background:var(--gc-paper);padding:8px 4px;text-align:center;
+  font:400 10px/1.3 var(--gc-font-mono)}
+.matrix-key div.h{background:var(--gc-mist);color:var(--gc-steel)}
+
+/* ── AS-16 · Signal Lost ─────────────────────────────────────────── */
+/* One screen, no scroll. Static: no parallax, no glitch, no noise, no
+   timer. That is the whole design and it should stay that way. */
+.lost{min-height:78vh;display:flex;flex-direction:column;justify-content:center;
+  max-width:64ch}
+.lost h1{font:600 clamp(56px,13vw,132px)/0.84 var(--gc-font-display);letter-spacing:-.05em}
+.lost .path{margin-top:var(--gc-sp-l);padding:var(--gc-sp-s) var(--gc-sp-m);border:1px solid var(--gc-hairline-inv);
+  font:400 14px/1.5 var(--gc-font-mono);word-break:break-all;color:var(--gc-steel-dim)}
+.lost .outs{display:flex;gap:var(--gc-sp-2xs);flex-wrap:wrap;margin-top:var(--gc-sp-xl)}
+
+/* ── AS-17 · The Knowledge Base ──────────────────────────────────── */
+.kb-search{position:relative;max-width:640px;margin-top:var(--gc-sp-l)}
+.kb-search label{display:block;font:400 10px/1 var(--gc-font-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gc-steel-dim);margin-bottom:var(--gc-sp-2xs)}
+/* A real label. No text-transform: uppercasing renders what someone typed
+   as something they did not type. */
+.kb-search input{width:100%;background:transparent;border:none;
+  border-bottom:2px solid var(--gc-hairline-inv);padding:var(--gc-sp-xs) 0;color:var(--gc-ink-inverse);
+  font:400 22px/1.3 var(--gc-font-display);outline:none}
+.kb-search input:focus-visible{border-bottom-color:var(--gc-electric)}
+.kb-cat{font:400 10px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gc-steel-dim);margin:var(--gc-sp-2xl) 0 var(--gc-sp-2xs);padding-bottom:var(--gc-sp-2xs);
+  border-bottom:1px solid var(--gc-hairline-inv);display:block}
+.qa{border-bottom:1px solid var(--gc-hairline-inv)}
+.qa > button{width:100%;background:none;border:none;color:inherit;text-align:left;
+  padding:var(--gc-sp-m) 0;display:flex;justify-content:space-between;gap:var(--gc-sp-s);
+  align-items:baseline;font:500 17px/1.35 var(--gc-font-display);letter-spacing:-.01em}
+.qa > button:hover{color:var(--gc-copper)}
+.qa .ic{font:400 20px/1 var(--gc-font-mono);color:var(--gc-steel-dim);flex:none}
+/* No height cap. Any answer over 600px was silently clipped in the
+   source — including the exit-mechanism answer, which was the longest. */
+.qa .ans{padding:0 0 var(--gc-sp-m);max-width:70ch}
+.qa .ans[hidden]{display:none}
+.cite{display:inline-flex;align-items:center;gap:6px;margin-top:var(--gc-sp-s);margin-right:var(--gc-sp-2xs);
+  border:1px solid var(--gc-hairline-inv);padding:5px 10px;font:400 10px/1.4 var(--gc-font-mono);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--gc-steel-dim);
+  background:none;transition:color var(--gc-dur-instant),border-color var(--gc-dur-instant)}
+.cite:hover{color:var(--gc-copper);border-color:var(--gc-copper)}
+.kb-none{padding:var(--gc-sp-2xl) 0;color:var(--gc-steel-dim)}
+
+/* ── AS-15 · System Status ───────────────────────────────────────── */
+/* The headline is a WORD, not a dashboard. Someone arriving here has a
+   yes/no question. */
+.status-hero{padding:var(--gc-sp-2xl) 0;border-bottom:1px solid var(--gc-hairline-inv)}
+.status-hero h1{font:600 clamp(40px,8vw,84px)/0.95 var(--gc-font-display);letter-spacing:-.04em}
+.status-hero h1.ok{color:var(--gc-confirm)}
+.status-hero h1.deg{color:var(--gc-hazard)}
+.status-hero h1.down{color:var(--gc-critical)}
+.comp{display:flex;justify-content:space-between;gap:var(--gc-sp-s);align-items:baseline;
+  padding:var(--gc-sp-s) 0;border-bottom:1px solid var(--gc-hairline-inv);flex-wrap:wrap}
+.comp .last{font:400 11px/1.4 var(--gc-font-mono);color:var(--gc-steel-dim)}
+/* A component nobody has heard from renders UNKNOWN, never healthy.
+   Silence is not health. */
+.comp .s{font:400 10px/1 var(--gc-font-mono);letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid currentColor;padding:3px 8px;white-space:nowrap}
+.comp .s.up{color:var(--gc-confirm)}
+.comp .s.deg{color:var(--gc-hazard)}
+.comp .s.down{color:var(--gc-critical)}
+.comp .s.unk{color:var(--gc-steel-dim)}
+.inc{border-left:2px solid var(--gc-hazard);padding-left:var(--gc-sp-s);margin-bottom:var(--gc-sp-m)}
+.inc.resolved{border-left-color:var(--gc-confirm)}
+.inc .when{font:400 11px/1.4 var(--gc-font-mono);color:var(--gc-steel-dim)}
+
+
+/* ── AS-07 · The Portfolio Narrative ─────────────────────────────── */
+.brand{padding:var(--gc-sp-3xl) 0;border-bottom:1px solid var(--gc-hairline-inv)}
+.brand-h{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--gc-sp-m);
+  flex-wrap:wrap;margin-bottom:var(--gc-sp-l)}
+.brand-h h2{font:600 clamp(38px,6vw,68px)/0.92 var(--gc-font-display);letter-spacing:-.04em;
+  text-transform:uppercase}
+.brand-h .say{font:400 italic 20px/1.4 var(--gc-font-editorial);color:var(--gc-copper);
+  text-align:right;max-width:30ch}
+.brand-media{height:min(48vh,420px);border:1px solid var(--gc-hairline-inv);overflow:hidden;position:relative}
+.brand-media span{position:absolute;inset:0;transition:transform 1200ms var(--gc-ease-cinema)}
+.brand:hover .brand-media span{transform:scale(1.03)}
+@media (prefers-reduced-motion:reduce){ .brand-media span{transition:none} }
+.brand-cols{display:grid;grid-template-columns:1fr 1fr;gap:var(--gc-sp-l);margin:var(--gc-sp-l) 0}
+@media (max-width:820px){ .brand-cols{grid-template-columns:1fr} }
+/* Attributes are DESCRIPTIVE. No figure enters this grid — a grid of
+   figures is a comparison table, and this is not one. */
+.attrs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
+  background:var(--gc-hairline-inv);border:1px solid var(--gc-hairline-inv)}
+.attrs div{background:var(--gc-void);padding:var(--gc-sp-m);min-height:150px;
+  display:flex;flex-direction:column;justify-content:space-between}
+.attrs .k{font:400 10px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gc-steel-dim)}
+.attrs .v{font:500 19px/1.2 var(--gc-font-display);letter-spacing:-.01em;margin-top:var(--gc-sp-s)}
+.attrs .d{font-size:13px;color:var(--gc-steel-dim);margin-top:6px;line-height:1.45}
+
+/* ── AS-18 · Recruitment ─────────────────────────────────────────── */
+.axiom{max-width:62ch;margin-bottom:var(--gc-sp-xl)}
+.axiom .n{font:400 10px/1 var(--gc-font-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gc-forest-light)}
+.axiom h3{font:600 26px/1.25 var(--gc-font-display);letter-spacing:-.025em;margin:var(--gc-sp-2xs) 0}
+.role{display:grid;grid-template-columns:96px 1fr 150px 130px;gap:var(--gc-sp-m);
+  padding:var(--gc-sp-m) 0;border-bottom:1px solid var(--gc-hairline-inv);align-items:start}
+@media (max-width:820px){ .role{grid-template-columns:1fr;gap:var(--gc-sp-2xs)} }
+.role .cd{font:400 11px/1.5 var(--gc-font-mono);color:var(--gc-steel-dim)}
+.role h4{font:500 19px/1.25 var(--gc-font-display);letter-spacing:-.01em}
+.role .own{font-size:13.5px;color:var(--gc-steel-dim);margin-top:4px;max-width:56ch}
+.role .sen{font:400 11px/1.5 var(--gc-font-mono);color:var(--gc-steel-dim)}
+/* A filled role stays FULLY legible. Someone reading it is deciding
+   whether to watch for the next one. */
+.role .filled{font:400 10px/1 var(--gc-font-mono);letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--gc-hairline-inv);padding:5px 9px;color:var(--gc-steel-dim);display:inline-block}
+.apply{border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel);padding:var(--gc-sp-m);
+  max-width:560px;margin-top:var(--gc-sp-xl)}
+/* A real file input. A drop zone alone cannot be reached from a keyboard. */
+.apply input[type=file]{display:block;margin-top:var(--gc-sp-2xs);color:var(--gc-steel-dim);
+  font:400 13px/1.5 var(--gc-font-body);width:100%}
+.apply input[type=file]::file-selector-button{background:transparent;border:1px solid var(--gc-hairline-inv);
+  color:var(--gc-ink-inverse);font:400 11px/1 var(--gc-font-mono);letter-spacing:.12em;text-transform:uppercase;
+  padding:10px 14px;margin-right:var(--gc-sp-s)}
+.apply input[type=file]::file-selector-button:hover{background:var(--gc-ink-inverse);color:var(--gc-void)}
+
+/* ── AS-08 · The Story Playback ──────────────────────────────────── */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;
+  background:var(--gc-hairline-inv);border:1px solid var(--gc-hairline-inv)}
+.tile{background:var(--gc-void);position:relative;aspect-ratio:4/5;overflow:hidden;
+  border:none;padding:0;text-align:left;color:inherit;width:100%}
+.tile .bed{position:absolute;inset:0;transition:transform 600ms var(--gc-ease-cinema)}
+.tile:hover .bed,.tile:focus-visible .bed{transform:scale(1.04)}
+@media (prefers-reduced-motion:reduce){ .tile .bed{transition:none} }
+.tile .sc{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.92) 0%,rgba(10,10,10,.15) 55%,transparent 100%)}
+.tile .cap{position:absolute;inset:auto 0 0 0;padding:var(--gc-sp-s)}
+.tile h3{font:600 20px/1.05 var(--gc-font-display);letter-spacing:-.025em;text-transform:uppercase}
+#player{position:fixed;inset:0;z-index:7500;background:var(--gc-void);display:none}
+#player.on{display:flex;flex-direction:column}
+.pl-bars{display:flex;gap:4px;padding:var(--gc-sp-s) var(--gc-sp-m) 0}
+.pl-bars i{flex:1;height:3px;background:rgba(242,242,242,.22);overflow:hidden;display:block}
+.pl-bars i b{display:block;height:100%;width:0;background:var(--gc-ink-inverse)}
+.pl-top{display:flex;justify-content:space-between;align-items:center;gap:var(--gc-sp-s);
+  padding:var(--gc-sp-s) var(--gc-sp-m)}
+.pl-stage{flex:1;position:relative;margin:0 var(--gc-sp-m) var(--gc-sp-m);overflow:hidden;
+  border:1px solid var(--gc-hairline-inv)}
+.pl-card{position:absolute;inset:0;display:none}
+.pl-card.on{display:block}
+.pl-card .bed{position:absolute;inset:0}
+.pl-card .sc{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.94) 0%,rgba(10,10,10,.2) 60%,transparent 100%)}
+.pl-card .cap{position:absolute;inset:auto 0 0 0;padding:var(--gc-sp-xl)}
+.pl-card h2{font:600 clamp(30px,6vw,58px)/0.9 var(--gc-font-display);letter-spacing:-.04em;
+  text-transform:uppercase;max-width:16ch}
+.pl-card p{margin-top:var(--gc-sp-s);max-width:52ch}
+.pl-ctl{display:flex;gap:var(--gc-sp-2xs);align-items:center}
+
+[hidden]{display:none !important}

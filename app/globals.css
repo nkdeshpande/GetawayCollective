@@ -1,0 +1,264 @@
+/**
+ * APPLICATION BASE — hand-written, not generated
+ *
+ * Wave 7 · Workspaces
+ *
+ * Tokens are imported from dist/tokens.css, which is generated from
+ * constants/tokens.ts and verified by export-tokens in the gate.
+ *
+ * Nothing below declares a colour, a spacing value or a radius. That is
+ * not stylistic tidiness — token-lint scans app/ and the first draft of
+ * this file failed it 21 times, including an invented mid-grey for body
+ * copy. Every value here is a --gc- token, so a literal cannot reach the
+ * application without the gate catching it.
+ */
+
+@import url("../dist/tokens.css");
+/* The real interface, ported from GC-ASSEMBLIES.html. */
+@import url("./_assemblies/assemblies.css");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Zero Radius Doctrine. Circles are permitted only for status LEDs and
+     the Trinity Lens, and both opt in explicitly. */
+  border-radius: var(--gc-radius);
+}
+
+html {
+  background: var(--gc-void);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--gc-void);
+  color: var(--gc-ink-inverse);
+  font: 400 15px/1.6 var(--gc-font-body);
+  -webkit-font-smoothing: antialiased;
+  /* Scrollbars stay visible. They are the only indicator of how much page
+     is left. */
+}
+
+/* The cursor is the default. No `cursor: none`, and no crosshair on the
+   universal selector — a crosshair over everything removes the only cue
+   distinguishing what can be clicked from what cannot. */
+button,
+a,
+summary,
+[role="tab"] {
+  cursor: pointer;
+}
+
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: var(--gc-stroke-active) solid var(--gc-electric);
+  outline-offset: var(--gc-sp-3xs);
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  font-family: var(--gc-font-mono);
+  font-size: 0.88em;
+  background: var(--gc-hairline-inv);
+  padding: 0 var(--gc-sp-3xs);
+}
+
+/* ── Shared atoms ──────────────────────────────────────────────────── */
+
+.eyebrow {
+  font: 400 11px/1 var(--gc-font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  /* steelDim, not steel. steel is 3.72:1 on void — AA for large text and
+     non-text UI, and this is 11px, which is neither. */
+  color: var(--gc-steel-dim);
+}
+
+.lede {
+  margin-top: var(--gc-sp-s);
+  max-width: 65ch;
+  color: var(--gc-steel-dim);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gc-sp-2xs);
+  background: none;
+  border: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  color: var(--gc-ink-inverse);
+  font: 400 11px/1 var(--gc-font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: var(--gc-sp-xs) var(--gc-sp-s);
+  text-decoration: none;
+  transition:
+    background var(--gc-dur-instant) linear,
+    color var(--gc-dur-instant) linear,
+    border-color var(--gc-dur-instant) linear;
+}
+.btn:hover {
+  background: var(--gc-ink-inverse);
+  color: var(--gc-void);
+  border-color: var(--gc-ink-inverse);
+}
+.btn.primary {
+  background: var(--gc-ink-inverse);
+  color: var(--gc-void);
+  border-color: var(--gc-ink-inverse);
+}
+.btn.primary:hover {
+  background: var(--gc-copper);
+  border-color: var(--gc-copper);
+}
+
+/* ── The guard ─────────────────────────────────────────────────────── */
+
+.gate {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--gc-sp-4xl) var(--gc-sp-m);
+}
+.gate h1 {
+  font: 600 clamp(34px, 5vw, 52px) / 1 var(--gc-font-display);
+  letter-spacing: -0.035em;
+  margin-top: var(--gc-sp-xs);
+  text-wrap: balance;
+}
+.gate-actions {
+  display: flex;
+  gap: var(--gc-sp-2xs);
+  flex-wrap: wrap;
+  margin-top: var(--gc-sp-l);
+}
+.gate-note {
+  margin-top: var(--gc-sp-xl);
+  padding-left: var(--gc-sp-s);
+  border-left: var(--gc-stroke-active) solid var(--gc-hazard);
+  max-width: 74ch;
+  font-size: 13.5px;
+  color: var(--gc-steel-dim);
+}
+
+/* ── The surface ───────────────────────────────────────────────────── */
+
+.surface {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 var(--gc-sp-m) var(--gc-sp-4xl);
+}
+.surface-head {
+  padding: var(--gc-sp-3xl) 0 var(--gc-sp-l);
+  border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+}
+.surface-head h1 {
+  font: 600 clamp(34px, 5.4vw, 54px) / 1 var(--gc-font-display);
+  letter-spacing: -0.035em;
+  margin-top: var(--gc-sp-xs);
+  text-wrap: balance;
+}
+.answers {
+  margin-top: var(--gc-sp-s);
+  font-size: 17px;
+  color: var(--gc-paper);
+  max-width: 62ch;
+}
+
+.params {
+  display: flex;
+  gap: var(--gc-sp-m);
+  flex-wrap: wrap;
+  margin-top: var(--gc-sp-m);
+}
+.params dt {
+  font: 400 10px/1 var(--gc-font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gc-steel-dim);
+}
+.params dd {
+  font-family: var(--gc-font-mono);
+  color: var(--gc-copper);
+  margin-top: var(--gc-sp-3xs);
+}
+
+.sections {
+  display: grid;
+  gap: var(--gc-stroke-idle);
+  background: var(--gc-hairline-inv);
+  border: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  margin-top: var(--gc-sp-xl);
+}
+.sec {
+  background: var(--gc-void-panel);
+  padding: var(--gc-sp-m);
+}
+.sec-ref {
+  font: 400 11px/1 var(--gc-font-mono);
+  letter-spacing: 0.06em;
+  color: var(--gc-steel-dim);
+}
+.sec-ref span {
+  color: var(--gc-copper);
+  margin-left: var(--gc-sp-2xs);
+}
+.sec h2 {
+  font: 500 20px/1.25 var(--gc-font-display);
+  letter-spacing: -0.015em;
+  margin: var(--gc-sp-2xs) 0 var(--gc-sp-3xs);
+}
+.sec-purpose {
+  color: var(--gc-steel-dim);
+  max-width: 74ch;
+  font-size: 14px;
+}
+.sec-renders {
+  margin-top: var(--gc-sp-xs);
+  font: 400 11px/1.5 var(--gc-font-mono);
+  color: var(--gc-copper);
+}
+.sec-routes {
+  margin-top: var(--gc-sp-3xs);
+  font: 400 11px/1.5 var(--gc-font-mono);
+  color: var(--gc-steel-dim);
+}
+.sec-rule {
+  margin-top: var(--gc-sp-xs);
+  padding-left: var(--gc-sp-xs);
+  border-left: var(--gc-stroke-active) solid var(--gc-hazard);
+  color: var(--gc-steel-dim);
+  font-size: 13.5px;
+  max-width: 74ch;
+}
+
+.shell-note,
+.surface-foot {
+  margin-top: var(--gc-sp-xl);
+  color: var(--gc-steel-dim);
+  font-size: 13.5px;
+  max-width: 78ch;
+}
+.surface-foot {
+  padding-top: var(--gc-sp-m);
+  border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* `none`, not the 0.01ms idiom. That idiom exists to keep
+     transitionend firing; nothing in this layer listens for it, so the
+     honest value is off — and it needs no duration token to say so. */
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

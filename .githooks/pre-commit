@@ -12,6 +12,7 @@ node scripts/organism-lint.js       || { echo "BLOCKED: organism surface"; exit 
 node scripts/aperture-lint.js       || { echo "BLOCKED: aperture laws"; exit 1; }
 node scripts/assembly-lint.js       || { echo "BLOCKED: assembly laws"; exit 1; }
 node scripts/route-lint.js          || { echo "BLOCKED: information architecture"; exit 1; }
+node scripts/gen-app.js --check     || { echo "BLOCKED: app tree has drifted from the route table"; exit 1; }
 node scripts/token-lint.js          || { echo "BLOCKED: design literals / contrast (§29)"; exit 1; }
 node scripts/gen-schemas.js --check || { echo "BLOCKED: contracts diverged (E-06)"; exit 1; }
 node scripts/gen-db.js --check      || { echo "BLOCKED: db schema diverged (E-06)"; exit 1; }

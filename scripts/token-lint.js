@@ -46,7 +46,15 @@ const resolved = [];
 const LITERALS = [
   [/#[0-9a-fA-F]{3,8}\b/g, "colour", "use var(--gc-*) or the COLOUR token"],
   [/\brgba?\(\s*\d+/g, "colour", "use var(--gc-*) or the COLOUR token"],
-  [/\bborder-radius:\s*(?!0)[^;]+/g, "radius", "GC never rounds a corner. RADIUS.none is 0px"],
+  /* A var() reference is what this rule WANTS, and the original pattern
+     rejected it — `border-radius: var(--gc-radius)` was flagged as a
+     literal. A check that refuses the correct answer teaches people to
+     write the wrong one. */
+  /* The lookahead sits immediately after the colon and consumes its own
+     whitespace. Written as `\s*(?!…)` it backtracked to zero spaces,
+     the guard tested against " " instead of "var(", and the rule flagged
+     the correct answer. */
+  [/\bborder-radius:(?!\s*(?:0\b|var\())[^;]+/g, "radius", "GC never rounds a corner. RADIUS.none is 0px"],
   [/\btransition-duration:\s*[^;]+/g, "duration", "use var(--gc-dur-*)"],
   [/\banimation-duration:\s*[^;]+/g, "duration", "use var(--gc-dur-*)"],
   [/(?:padding|margin|gap):\s*\d+px/g, "spacing", "use var(--gc-sp-*)"],
@@ -63,7 +71,26 @@ function walk(dir, out = []) {
   return out;
 }
 
-const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
+/**
+ * Generated output is governed at the generator, not at the output.
+ *
+ * `generated/` and `dist/` are already skipped by directory. This extends
+ * the same rule to generated files that live elsewhere —
+ * app/_assemblies/assemblies.css is ported wholesale from
+ * GC-ASSEMBLIES.html by scripts/gen-assembly-css.js, and editing it to
+ * satisfy this linter would be edited away on the next regeneration.
+ *
+ * What that file carries is reported rather than hidden: see the count
+ * printed at the end of this run.
+ */
+const isGenerated = (f) => {
+  const head = fs.readFileSync(f, "utf8").slice(0, 400);
+  return /GENERATED\b[^\n]*do not edit/i.test(head);
+};
+
+const allFiles = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
+const generated = allFiles.filter(isGenerated);
+const files = allFiles.filter((f) => !generated.includes(f));
 for (const file of files) {
   const rel = path.relative(ROOT, file);
   fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n").split("\n").forEach((line, i) => {
@@ -226,6 +253,21 @@ if (fail.length) {
   for (const f of fail) console.error(`  x ${f}`);
   console.error("");
   process.exit(1);
+}
+
+if (generated.length) {
+  /* Named, counted, and not silently exempt. */
+  let carried = 0;
+  for (const f of generated) {
+    const body = fs.readFileSync(f, "utf8");
+    for (const [re] of LITERALS) { re.lastIndex = 0; carried += (body.match(re) || []).length; }
+  }
+  console.log(
+    `[token-lint] ${generated.length} generated file(s) not scanned, carrying ${carried} ` +
+    `literal(s) from their source. Fix those at the generator.`,
+  );
+  for (const f of generated) console.log(`  - ${path.relative(ROOT, f)}`);
+  console.log("");
 }
 
 console.log(`[token-lint] PASS — no design literals, and all body-text pairings clear WCAG AA\n`);

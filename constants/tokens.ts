@@ -223,6 +223,17 @@ export const CSS_VARS = `
   --gc-stroke-active: 2px;
   --gc-radius: ${RADIUS.none};
 
+  /* FONT was declared in this file and never emitted to CSS.
+     Every \`var(--gc-font-*)\` therefore resolved to nothing, and an
+     undefined value inside a \`font:\` shorthand invalidates the WHOLE
+     declaration — so the application rendered in Times New Roman at
+     16px with every type role collapsed. Nothing reported it, because
+     no check reads a rendered page. */
+  --gc-font-display: var(--font-display), ${FONT.display};
+  --gc-font-body: var(--font-body), ${FONT.body};
+  --gc-font-mono: var(--font-mono), ${FONT.mono};
+  --gc-font-editorial: var(--font-editorial), ${FONT.editorial};
+
   --gc-ease-cinema: ${MOTION.ease.cinema};
   --gc-ease-shutter: ${MOTION.ease.shutter};
   --gc-dur-instant: ${MOTION.duration.instant};
