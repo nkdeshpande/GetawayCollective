@@ -37,6 +37,75 @@
  *    before it is a design problem.
  */
 
+/* ═══════════════════════════════════════════════════════════════════
+   FOUR SHAPES A PANE CAN TAKE
+
+   Every public page was a stack of prose panes, because that is all the
+   renderer could do. Four signed-off references arrange the same kinds
+   of information differently, and each arrangement earns its keep:
+
+     ledger   the syndicate row — who holds what, and its actual state
+     sequence a numbered run where the ORDER is the information
+     faq      questions, closed by default, opened one at a time
+     plates   a media grid where every plate declares what it IS
+
+   They are declared in the content, not built per page, so the remaining
+   scaffolds become content entries rather than hand-written screens.
+   Adding a fifth arrangement is a change here and in one renderer; it is
+   not a change to eleven pages.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/**
+ * A row in a ledger of engagements.
+ *
+ * From the_syndicate.html, with its verification theatre removed. The
+ * source ran a 1.2-second delay and then printed VERIFIED plus a random
+ * hex string as though a hash had been checked. Nothing was checked, and
+ * a fabricated receipt beside a real firm's name is the single most
+ * damaging thing on that page. `state` here is read from the record and
+ * `Vacant` is a legitimate value.
+ */
+export interface LedgerRow {
+  /** Stable reference. Displayed, so it can be quoted back. */
+  ref: string;
+  /** The function. Stated before anyone is named to it. */
+  role: string;
+  /** Withheld until the engagement is recorded. Absent is not a gap to fill with a plausible name. */
+  holder?: string;
+  what: string;
+  state: "Vacant" | "Recorded" | "In appointment" | "Under contract";
+  /** Only where `state` is not Vacant. */
+  since?: string;
+}
+
+export interface SequenceStep {
+  n: string;
+  t: string;
+  d: string;
+  /** Sub-items, where the step has parts worth naming. */
+  parts?: readonly string[];
+}
+
+export interface Question {
+  q: string;
+  a: string;
+}
+
+/**
+ * A plate in a media grid.
+ *
+ * `kind` is required and has no default. A portfolio of renders shown as
+ * photographs is the commonest misrepresentation in this industry, and
+ * the type of the image is the one field that prevents it — so it cannot
+ * be omitted.
+ */
+export interface Plate {
+  id: string;
+  kind: "Photograph" | "Render" | "Drawing" | "Diagram" | "Not yet made";
+  what: string;
+  spec: string;
+}
+
 export interface Pane {
   /** Two digits, as displayed. */
   n: string;
@@ -47,6 +116,10 @@ export interface Pane {
   lede?: string;
   body?: readonly string[];
   list?: readonly { k: string; v: string }[];
+  ledger?: readonly LedgerRow[];
+  sequence?: readonly SequenceStep[];
+  faq?: readonly Question[];
+  plates?: readonly Plate[];
   /** Shown only where a registry stands behind it. */
   note?: string;
   cta?: { label: string; href: string };
@@ -209,7 +282,7 @@ export const MANIFESTO: PublicPage = {
       lede: "A hard cut, because this part is arithmetic and should not feel like atmosphere.",
       list: [
         { k: "The vehicle", v: "One property, one Limited Liability Partnership. It owns the asset; you contract with it." },
-        { k: "The unit", v: "A contribution-weighted interest. Ten units are the whole equity layer, exactly." },
+        { k: "The unit", v: "A contribution-weighted interest, taken in units of 5%. Twenty units are the whole equity layer, exactly, and a position is a whole number of them — from one to ten." },
         { k: "The waterfall", v: "Six stages in order, closing to 100%. Debt service is stage five and stands on its own." },
         { k: "The entitlement", v: "Nights in proportion to contribution, beginning at handover and not before." },
       ],
@@ -218,11 +291,35 @@ export const MANIFESTO: PublicPage = {
     {
       n: "04", eyebrow: "The Execution", ground: "paper",
       title: "What happens, and when.",
-      list: [
-        { k: "Accreditation", v: "Identity, tax residency, source of funds. Fifteen working days, resumable." },
-        { k: "Deposit", v: "A fixed amount holds a unit. It buys nothing and makes nobody a partner." },
-        { k: "Completion", v: "The balance, the Agreement and the transfer complete off the platform." },
-        { k: "Settlement", v: "The Member Law fires when cleared funds reach the vehicle. Irreversible." },
+      lede:
+        "Numbered because the order is the information — none of these can be taken out of " +
+        "sequence, and the last one cannot be undone.",
+      /* The sequence arrangement, from how_it_works.html. Its five steps
+         were Discover / Understand / Become a Member / Reserve / Live,
+         which is a marketing arc rather than a sequence of events: the
+         moment a person becomes a partner is buried in the middle of it
+         and "Live" is not a step, it is what follows the last one. These
+         are the five events that actually occur, in the order they
+         occur, and step five is where the Member Law fires. */
+      sequence: [
+        { n: "01", t: "Choose a size", d:
+          "5% is the minimum and the increment, up to 50%. The figure you select carries through " +
+          "every screen that follows and can be changed until the commitment.",
+          parts: ["Commitment", "Distribution share", "Entitlement", "Voting weight"] },
+        { n: "02", t: "Accreditation", d:
+          "Identity, tax residency and source of funds. Fifteen working days from submission. " +
+          "Every field saves as you leave it, so it does not have to be done in one sitting." },
+        { n: "03", t: "The disclosure", d:
+          "The Hospitality Asset Disclosure for the specific property, acknowledged with your " +
+          "identity and the time. It states partial and total loss of capital in those words." },
+        { n: "04", t: "Deposit and commitment", d:
+          "A flat ₹50,000 holds the position — the same amount at every size. It buys nothing " +
+          "and makes nobody a partner. The balance, the Agreement and the transfer of funds all " +
+          "complete off the platform." },
+        { n: "05", t: "Settlement", d:
+          "The Member Law fires when cleared funds reach the vehicle — not on acceptance, not " +
+          "on the commitment. Governance rights and entitlement begin at that moment, and it is " +
+          "irreversible." },
       ],
       cta: { label: "Walk it end to end", href: "/flow" },
     },
@@ -248,6 +345,66 @@ export const MANIFESTO: PublicPage = {
         { k: "No unclassed figure", v: "A forward-looking number appears with its confidence class or it does not appear." },
       ],
       cta: { label: "The whole list, with reasons", href: "/journal/what-this-platform-does-not-do" },
+    },
+    {
+      n: "07", eyebrow: "Clarity", ground: "paper",
+      title: "The questions that get asked.",
+      /* The accordion, from how_it_works.html. That page listed ten
+         questions and gave all ten the SAME answer — a paragraph saying
+         the specifics are in the prospectus. Ten questions resolving to
+         "it is written down elsewhere" is a page that looks like it
+         answers things. Each of these has its own answer, and a question
+         we cannot answer is not on the list. */
+      faq: [
+        { q: "What am I actually buying?",
+          a: "A contribution-weighted interest in a Limited Liability Partnership that owns one " +
+             "property. Not a share in Getaway Collective, and not a right to a specific key in " +
+             "a specific building. The LLP holds the land title; you are one of its partners." },
+        { q: "How small a position can I take?",
+          a: "5% of the vehicle, which for SlowSpace Coastal is ₹20,00,000. Positions are taken " +
+             "in whole 5% units up to a ceiling of 50%." },
+        { q: "Why is 50% the ceiling?",
+          a: "An ordinary resolution carries on more than half of contribution, so a partner " +
+             "above 50% would carry every one of them alone and the rest of the register would " +
+             "vote for the record only. At exactly 50% that partner can block anything and carry " +
+             "nothing, which is the last point at which this is still a partnership." },
+        { q: "Does a bigger position earn a better rate?",
+          a: "No. Distribution and commitment scale by the same factor, so the rate is identical " +
+             "at every size — a larger holding is a larger share of the same pool at the same " +
+             "rate. Both figures are shown separately for exactly that reason." },
+        { q: "How many nights does a position carry?",
+          a: "Entitlement is a pool for the whole property, divided by contribution and rounded " +
+             "down, so the sum of every partner's nights can never exceed what the property can " +
+             "deliver. It begins at handover and not before — nothing is drawable against an " +
+             "asset that has not been built." },
+        { q: "Is the deposit a percentage of what I commit?",
+          a: "No. It is a flat ₹50,000 and it does not move with the size of the position. It " +
+             "reserves the position and is refundable in full until the Vehicle Agreement is " +
+             "signed." },
+        { q: "When do I become a partner?",
+          a: "When cleared funds reach the vehicle. Not when an application is accepted, and not " +
+             "when the commitment is made. Everything before that point says Committed, and the " +
+             "screens are explicit about the difference because the difference is the whole of " +
+             "it." },
+        { q: "Can I sell?",
+          a: "There is no public market, no market maker and no obligation on anyone to buy at " +
+             "any price. A position is locked for the period stated in the vehicle's Agreement. " +
+             "After that, an internal register of partners willing to buy and sell is operated " +
+             "as a noticeboard — it does not guarantee a counterparty and it does not establish " +
+             "a price." },
+        { q: "Who decides how the property is run?",
+          a: "The partners, weighted by contribution. More than 50% carries an ordinary " +
+             "resolution and a tie is not approval; 76% carries a special resolution; a small " +
+             "number of matters are entrenched and need all of it. Getaway Collective governs " +
+             "the vehicle and holds no equity in it, so it casts no vote." },
+        { q: "What happens if the property earns nothing?",
+          a: "Partners are stage six of six. Operating costs, the brand licence, the admin " +
+             "reserve, the sinking fund and debt service are all satisfied first, so a " +
+             "profitable period can still distribute nothing if the reserves or the facility " +
+             "require the cash to be retained. Capital is not protected by any guarantee, " +
+             "insurance or compensation scheme." },
+      ],
+      cta: { label: "The full risk disclosure", href: "/legal/risk-disclosure" },
     },
   ],
 };
@@ -284,15 +441,26 @@ export const PARTNERS: PublicPage = {
     {
       n: "02", eyebrow: "The Mesh", ground: "paper",
       title: "Who holds what.",
-      list: [
-        { k: "Principal architect", v: "Design and specification. Signs the drawings that are built from." },
-        { k: "Spatial strategy", v: "Siting, orientation and view corridors, before any structure is fixed." },
-        { k: "Governance counsel", v: "The LLP Agreement and the constitutional instruments. Advises the vehicle, not the platform." },
-        { k: "Sustainability", v: "Material selection and lifecycle. Reports findings whether or not they are convenient." },
-        { k: "Facility operations", v: "The operating partner, measured against a Service Level." },
-        { k: "Audit", v: "Statutory audit of each vehicle. Appointed by the partners, not by us." },
+      /* The ledger arrangement, from the_syndicate.html. Its three rows
+         named Khaitan & Co, Khosla Associates and CBRE India and offered
+         a button that printed VERIFIED plus a random hex string. The
+         arrangement is right and is kept; the names and the receipt are
+         not, and `state` below is the field that replaces them. */
+      ledger: [
+        { ref: "GC-ARC-01", role: "Architecture", state: "Vacant",
+          what: "Design and specification. Signs the drawings that are built from." },
+        { ref: "GC-SPA-02", role: "Spatial strategy", state: "Vacant",
+          what: "Siting, orientation and view corridors, fixed before any structure is." },
+        { ref: "GC-LEG-03", role: "Governance counsel", state: "Vacant",
+          what: "The LLP Agreement and the constitutional instruments. Advises the vehicle, not the platform." },
+        { ref: "GC-SUS-04", role: "Sustainability", state: "Vacant",
+          what: "Material selection and lifecycle. Reports findings whether or not they are convenient." },
+        { ref: "GC-OPS-05", role: "Facility operations", state: "Vacant",
+          what: "Runs the property under contract to the vehicle, measured against a Service Level." },
+        { ref: "GC-AUD-06", role: "Statutory audit", state: "Vacant",
+          what: "Audits each vehicle. Appointed by the partners, not by us." },
       ],
-      note: "Each role is a function, stated before anyone is named to it. A function with no holder is shown as vacant rather than omitted.",
+      note: "Each row is a function, stated before anyone is named to it. Six functions, six vacancies — a function with no holder is shown rather than omitted, and none of these states is changed by anything you can press on this page.",
     },
     {
       n: "03", eyebrow: "The Seal", ground: "paper",
@@ -324,14 +492,22 @@ export const OPERATORS: PublicPage = {
   panes: [
     {
       n: "01", eyebrow: "The System", ground: "void",
-      title: "Three layers, one accountable party.",
-      list: [
-        { k: "Intent", v: "What is asked for, however it is asked — a message, a schedule, or nothing at all." },
-        { k: "Core", v: "The logic that decides what that means for the property, and what it costs." },
-        { k: "Site", v: "The building itself: light, heat, water, access." },
-        { k: "Dispatch", v: "A person, sent only when the first three cannot resolve it." },
+      title: "Four layers, one accountable party.",
+      ledger: [
+        { ref: "OPS-L1", role: "Intent", state: "Under contract", since: "2026-06-19",
+          holder: "Sensory Getaways",
+          what: "What is asked for, however it is asked — a message, a schedule, or nothing at all." },
+        { ref: "OPS-L2", role: "Core", state: "Under contract", since: "2026-06-19",
+          holder: "Sensory Getaways",
+          what: "The logic that decides what that means for the property, and what it costs." },
+        { ref: "OPS-L3", role: "Site", state: "Under contract", since: "2026-06-19",
+          holder: "Sensory Getaways",
+          what: "The building itself: light, heat, water, access." },
+        { ref: "OPS-L4", role: "Dispatch", state: "Under contract", since: "2026-06-19",
+          holder: "Sensory Getaways",
+          what: "A person, sent only when the first three cannot resolve it." },
       ],
-      note: "Every layer is operated by the operating partner under contract to the vehicle. Getaway Collective operates none of it.",
+      note: "One holder across all four, which is the point: there is a single accountable party rather than a chain of them. Every layer runs under contract to the vehicle. Getaway Collective operates none of it and holds no equity in the vehicle it governs.",
     },
     {
       n: "02", eyebrow: "The Human Layer", ground: "void",
@@ -459,6 +635,29 @@ export const WIRE: PublicPage = {
         { k: "Context", v: "Whether it was commissioned, briefed, or written independently." },
       ],
       note: "A clipping with no link is an assertion. The distinction between a commissioned piece and an independent one is stated because it changes what the piece is worth.",
+    },
+    {
+      n: "02", eyebrow: "The Kit", ground: "paper",
+      title: "What a desk can use today.",
+      lede:
+        "Three of these exist and are generated from the palette rather than drawn, so they " +
+        "cannot drift from it. The rest are commissioned and are listed as absent.",
+      plates: [
+        { id: "GC/MARK-01", kind: "Diagram", what: "Monogram, for a favicon or a tab",
+          spec: "PNG · 1:1 · 512 × 512 · generated from app/icon.tsx" },
+        { id: "GC/MARK-02", kind: "Diagram", what: "Monogram, for a home-screen icon",
+          spec: "PNG · 1:1 · 180 × 180 · generated from app/apple-icon.tsx" },
+        { id: "GC/CARD-01", kind: "Diagram", what: "Share card, type only",
+          spec: "PNG · 1.91:1 · 1200 × 630 · generated from app/opengraph-image.tsx" },
+        { id: "GC/PORT-01", kind: "Not yet made", what: "Principals, for an editorial byline",
+          spec: "Photograph · 4:5 · 4000 × 5000 · not commissioned" },
+        { id: "GC/SITE-01", kind: "Not yet made", what: "The property, for a feature",
+          spec: "Photograph · 3:2 · 6000 × 4000 · nothing is built" },
+      ],
+      note:
+        "The media kit this was adapted from listed three 45 MB photographs at 8K and a secure " +
+        "PDF behind a download that scrambled its own label for eight hundred milliseconds. None " +
+        "of those files exists. What is here is what a desk can actually be sent.",
     },
   ],
 };
@@ -656,6 +855,37 @@ export const EVIDENCE: PublicPage = {
       ],
       cta: { label: "The property records", href: "/collection" },
     },
+    {
+      n: "03", eyebrow: "The Manifest", ground: "paper",
+      title: "What is required, and what exists.",
+      lede:
+        "The plate grid from the media kit, populated with the brief rather than with stock " +
+        "photography. Every entry states its kind, and every kind here is the same one.",
+      /* MediaKit.html rendered three Unsplash photographs as
+         DRIFT_EXTERIOR_01.RAW at 45MB and 8K resolution. That asserts a
+         photographic record of a built property. SlowSpace Coastal is at
+         pre-construction; there is nothing to photograph. The grid is
+         kept because a media kit is genuinely useful — but populated
+         with what has to be made, at the specification it has to be made
+         to, so the page is a commission rather than a claim. */
+      plates: [
+        { id: "PDB-01/EXT-01", kind: "Not yet made", what: "Approach from the sandbar, west elevation",
+          spec: "Photograph · 3:2 · 6000 × 4000 · after handover, Jan 2028" },
+        { id: "PDB-01/EXT-02", kind: "Not yet made", what: "Estuary frontage, east elevation at first light",
+          spec: "Photograph · 3:2 · 6000 × 4000 · after handover" },
+        { id: "PDB-01/INT-01", kind: "Not yet made", what: "A single key, interior, unstaged",
+          spec: "Photograph · 4:5 · 4000 × 5000 · after handover" },
+        { id: "PDB-01/PLN-01", kind: "Not yet made", what: "Site plan, 1.42 acres, dual frontage",
+          spec: "Drawing · vector · from the approved CRZ submission" },
+        { id: "PDB-01/SEC-01", kind: "Not yet made", what: "Long section through the modular grid",
+          spec: "Drawing · vector · from the IDO model" },
+        { id: "GC/WF-01", kind: "Diagram", what: "The six-stage waterfall, closing to 100%",
+          spec: "Generated in the page from the vehicle record · /how-capital-works" },
+      ],
+      note:
+        "Six required, one of which exists — and the one that exists is generated from the " +
+        "record rather than drawn. Nothing is shown as a photograph until it is one.",
+    },
   ],
 };
 
@@ -837,7 +1067,14 @@ export const pageByPath = (path: string): PublicPage | undefined =>
     if (new Set(ns).size !== ns.length) throw new Error(`${p.id} has a duplicate pane number`);
 
     for (const pane of p.panes) {
-      if (!(pane.lede || pane.body?.length || pane.list?.length)) {
+      /* Every arrangement counts as saying something, and each new one
+         has to be added here. That is deliberate: an omission makes a
+         populated pane throw at load rather than render empty, so the
+         failure is loud and immediate instead of a blank section nobody
+         notices. It caught the faq pane below on the first build. */
+      const said = pane.lede || pane.body?.length || pane.list?.length ||
+        pane.ledger?.length || pane.sequence?.length || pane.faq?.length || pane.plates?.length;
+      if (!said) {
         throw new Error(`${p.id} pane ${pane.n} says nothing`);
       }
     }

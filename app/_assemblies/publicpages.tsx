@@ -31,11 +31,213 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { pageByPath, BRIDGE, type PublicPage, type Pane } from "@/content/public";
+import {
+  pageByPath, BRIDGE,
+  type PublicPage, type Pane, type LedgerRow, type SequenceStep, type Question, type Plate,
+} from "@/content/public";
 import { PROPERTIES, inr } from "./data";
 import { ConfidenceTag, Footer } from "./atoms";
+
+/* ═══════════════════════════════════════════════════════════════════
+   FOUR ARRANGEMENTS
+
+   Adapted from the signed-off references. What each one dropped on the
+   way in is recorded at the component, because the dropped part is
+   usually the part someone will ask for again.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/**
+ * THE LEDGER — the_syndicate.html
+ *
+ * Kept: the three-column row (function · what · state) and the reference
+ * in the left column, so a row can be quoted back.
+ *
+ * CHANGED: the source isolated a row by dimming every other one to 40%.
+ * Measured on the rendered page, that puts five of six rows at 2.87:1
+ * whenever a pointer rests anywhere on the list — and the rows are the
+ * whole of the page. The hovered row is lifted instead, which takes
+ * nothing away from the others.
+ *
+ * DROPPED: the verification button and its receipt. The source waited
+ * 1.2 seconds and printed "VERIFIED // 0xA3F19C" from Math.random(). It
+ * is a fabricated audit trail rendered beside a real firm's name, and it
+ * is the reason this page ships with the names withheld rather than with
+ * the source's six.
+ *
+ * DROPPED: the hover image bleeding in behind the entity name. There is
+ * no photography, and a stock office interior behind an unfilled role
+ * would be inventing atmosphere for something that does not exist yet.
+ */
+function LedgerBlock({ rows }: { rows: readonly LedgerRow[] }) {
+  return (
+    <div className="ledger" style={{ marginTop: "var(--gc-sp-l)" }}>
+      {rows.map((r) => (
+        <div className="ledger-row" key={r.ref} data-state={r.state.toLowerCase().replace(/ /g, "-")}>
+          <div className="cell-meta">
+            <span className="a-pill t-mono-s">{r.role}</span>
+            <span className="t-mono-s dim">{r.ref}</span>
+          </div>
+          <div className="cell-entity">
+            {/* A vacant function still gets a heading. Rendering the role
+                as the name where no holder exists is how a placeholder
+                becomes a claim. */}
+            <h3 className="t-subheading">{r.holder ?? "Not yet appointed"}</h3>
+            <p className="t-body dim" style={{ marginTop: "var(--gc-sp-3xs)", maxWidth: "52ch" }}>
+              {r.what}
+            </p>
+          </div>
+          <div className="cell-state">
+            <span className={`state ${r.state === "Vacant" ? "vacant" : "held"}`}>{r.state}</span>
+            <span className="t-mono-s dim">
+              {r.since ? `Since ${r.since}` : "No engagement recorded"}
+            </span>
+          </div>
+        </div>
+      ))}
+      <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-s)", maxWidth: "70ch" }}>
+        State is read from the vehicle record. Nothing on this page is confirmed by pressing
+        anything on this page.
+      </p>
+    </div>
+  );
+}
+
+/**
+ * THE SEQUENCE — how_it_works.html
+ *
+ * Kept: the numbered spine with a fill that tracks reading position, and
+ * the node that fills as its step is reached. The order is the
+ * information here — these steps happen in sequence and cannot be taken
+ * out of it — which is the test for whether numbering is structure or
+ * decoration.
+ *
+ * The fill is driven by IntersectionObserver rather than a scroll
+ * handler doing getBoundingClientRect on every step on every frame,
+ * which is what the source did. Same result, without laying out the
+ * document sixty times a second.
+ */
+function SequenceBlock({ steps }: { steps: readonly SequenceStep[] }) {
+  const [reached, setReached] = useState(0);
+  const items = useRef<(HTMLLIElement | null)[]>([]);
+
+  /*
+   * ONE observer, in an effect, disconnected on unmount.
+   *
+   * The first version built an IntersectionObserver inside the ref
+   * callback. React invokes an inline ref with null and then the element
+   * on every render, and every state change here causes a render — so
+   * each step accumulated a fresh observer per frame of reading, none of
+   * them disconnected. It worked, which is the problem with it.
+   *
+   * The fill is decoration and the nodes only change weight, so nothing
+   * on this page is hidden until it is observed. If IntersectionObserver
+   * never runs at all, every step is still legible in its resting state.
+   */
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const i = items.current.indexOf(e.target as HTMLLIElement);
+        if (i >= 0) setReached((n) => Math.max(n, i + 1));
+      }),
+      { rootMargin: "0px 0px -40% 0px" },
+    );
+    items.current.forEach((el) => el && io.observe(el));
+    return () => io.disconnect();
+  }, [steps]);
+
+  return (
+    <div className="seq" style={{ marginTop: "var(--gc-sp-l)" }}>
+      <div className="seq-spine" aria-hidden="true">
+        <span className="seq-fill"
+              style={{ transform: `scaleY(${steps.length ? reached / steps.length : 0})` }} />
+      </div>
+      <ol className="seq-steps">
+        {steps.map((s, i) => (
+          <li
+            key={s.n}
+            className="seq-step"
+            data-on={i < reached ? "1" : "0"}
+            ref={(el) => { items.current[i] = el; }}
+          >
+            <span className="seq-node t-mono-s">{s.n}</span>
+            <div className="seq-body">
+              <h3 className="t-subheading">{s.t}</h3>
+              <p className="t-body dim" style={{ marginTop: "var(--gc-sp-3xs)", maxWidth: "52ch" }}>
+                {s.d}
+              </p>
+              {s.parts ? (
+                <ul className="seq-parts">
+                  {s.parts.map((x) => <li key={x} className="t-mono-s">{x}</li>)}
+                </ul>
+              ) : null}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/**
+ * THE QUESTIONS — how_it_works.html
+ *
+ * The source generated ten questions and gave every one of them the
+ * SAME answer: a paragraph saying the specifics are in the prospectus.
+ * Ten questions that resolve to "it is written down somewhere else" is
+ * a page that looks like it answers things.
+ *
+ * Every question here has its own answer or it is not on the page.
+ * <details>/<summary>, so it opens without JavaScript, is searchable by
+ * the browser's own find, and needs no aria wiring to be correct.
+ */
+function FaqBlock({ qs }: { qs: readonly Question[] }) {
+  return (
+    <div className="qa-set" style={{ marginTop: "var(--gc-sp-l)" }}>
+      {qs.map((q) => (
+        <details key={q.q}>
+          <summary className="t-body-l">{q.q}</summary>
+          <p className="t-body dim measure">{q.a}</p>
+        </details>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * THE PLATES — MediaKit.html
+ *
+ * Kept: the grid, the reference, and the specification beneath each
+ * plate — a media kit is used by someone who needs to know the file
+ * before they need to see it.
+ *
+ * CHANGED: `kind` is mandatory and is rendered ON the plate rather than
+ * in a caption. The source's grid was three stock photographs labelled
+ * DRIFT_EXTERIOR_01.RAW at 45MB and 8K, which asserts that photography
+ * of a built property exists. None does — the asset is at
+ * pre-construction — so every plate here states what it actually is, and
+ * "Not yet made" is a value.
+ */
+function PlateBlock({ plates }: { plates: readonly Plate[] }) {
+  return (
+    <div className="plates" style={{ marginTop: "var(--gc-sp-l)" }}>
+      {plates.map((pl) => (
+        <figure className="plate" key={pl.id} data-kind={pl.kind === "Not yet made" ? "absent" : "present"}>
+          <div className="plate-bed" aria-hidden="true">
+            <span className="t-micro">{pl.kind}</span>
+          </div>
+          <figcaption>
+            <span className="t-mono-s">{pl.id}</span>
+            <span className="t-body-s">{pl.what}</span>
+            <span className="t-mono-s dim">{pl.spec}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  );
+}
 
 /* ── One pane ─────────────────────────────────────────────────────── */
 
@@ -72,6 +274,11 @@ function PaneBlock({ p }: { p: Pane }) {
             ))}
           </div>
         ) : null}
+
+        {p.ledger ? <LedgerBlock rows={p.ledger} /> : null}
+        {p.sequence ? <SequenceBlock steps={p.sequence} /> : null}
+        {p.faq ? <FaqBlock qs={p.faq} /> : null}
+        {p.plates ? <PlateBlock plates={p.plates} /> : null}
 
         {p.note ? (
           <p className="t-body-s dim measure"
