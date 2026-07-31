@@ -29,6 +29,13 @@ export type Right =
   | "committee.constitute"
   | "authority.grant"
   | "authority.revoke"
+  /* Publishing. Content and media change what the public is shown, which
+     is an act of the Organization rather than of any vehicle. Both are
+     enterprise-scoped and both require a reason: a document revised with
+     no recorded reason cannot be explained to the person who relied on
+     the version it replaced. */
+  | "content.publish"
+  | "media.manage"
   // Vehicles
   | "vehicle.form"
   | "vehicle.stabilise"
@@ -65,6 +72,7 @@ export type Right =
 
 export const ALL_RIGHTS: readonly Right[] = [
   "organization.register", "committee.constitute", "authority.grant", "authority.revoke",
+  "content.publish", "media.manage",
   "vehicle.form", "vehicle.stabilise", "vehicle.dissolve", "portfolio.manage",
   "property.register", "property.advance_lifecycle", "acquisition.complete",
   "valuation.record", "disposition.complete",
@@ -121,9 +129,22 @@ export const ROLE_RIGHTS: Record<Role, readonly Right[]> = {
     "distribution.execute", "property.advance_lifecycle", "report.publish",
     // Capital formation sits with the Executive Office (EP-01 §2.5).
     "commitment.accept",
+    /* Media, but NOT content. Registering an asset and stating its kind
+       is operational. Putting a standing document in force is not, and
+       it sits with the Governance Office below — a page that binds
+       should not be publishable by whoever commissioned the photograph
+       on it. */
+    "media.manage",
     "conflict.disclose",
   ],
-  governance_office: ["resolution.table", "authority.grant", "authority.revoke", "conflict.disclose"],
+  /* content.publish sits here rather than with the Executive Office.
+     The standing documents are the instruments a partner relies on, and
+     the office that tables resolutions is the one accountable for what
+     they say. */
+  governance_office: [
+    "resolution.table", "authority.grant", "authority.revoke",
+    "content.publish", "conflict.disclose",
+  ],
   compliance_office: ["accreditation.grant", "compliance.record", "conflict.disclose"],
   member: ["vote.cast", "conflict.disclose"],
 };

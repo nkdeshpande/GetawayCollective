@@ -314,6 +314,20 @@ export const CAPITAL_ROUTES: readonly Route[] = [
 export const ADMIN_ROUTES: readonly Route[] = [
   R("/admin", "Administration", "admin", null, { rights: ["organization.register"] }),
   R("/admin/vehicles", "Vehicles", "admin", "AS-13", { rights: ["vehicle.form"] }),
+  R("/admin/vehicles/new", "Form a Vehicle", "admin", "AS-34",
+    { rights: ["vehicle.form"],
+      notes: "Eight stages. Two irreversible, two gated on Board approval. §24a: the LLP is the " +
+             "default and any other legal form needs a resolution naming the specific property." }),
+
+  /* Publishing. content.publish sits with the Governance Office and
+     media.manage with the Executive Office — see lib/authority.ts. */
+  R("/admin/content", "Content", "admin", "AS-34",
+    { rights: ["content.publish"],
+      notes: "Every content class, its source, whether it binds and whether it is versioned." }),
+  R("/admin/media", "Media", "admin", "AS-34",
+    { rights: ["media.manage"],
+      notes: "Three kinds, required at registration with no default. A render registered as a " +
+             "photograph is a misrepresentation that needs no words." }),
   R("/admin/vehicles/[llpin]", "Docket", "admin", "AS-13",
     { params: ["llpin"], rights: ["vehicle.form"] }),
   R("/admin/vehicles/[llpin]/formation", "Formation", "admin", "AS-13",

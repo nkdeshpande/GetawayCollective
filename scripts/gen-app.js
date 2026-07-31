@@ -186,6 +186,11 @@ const BY_PATH = {
   "/communique/request": { component: "Dossier", from: "@/app/_assemblies/publicpages" },
   "/signal": { component: "Signal", from: "@/app/_assemblies/publicpages" },
   "/roles/[code]": { component: "RoleDetail", from: "@/app/_assemblies/gatewaypages", param: "code" },
+  /* Administration. */
+  "/admin/vehicles/new": { component: "VehicleFormation", from: "@/app/_assemblies/adminpages" },
+  "/admin/content": { component: "ContentAdmin", from: "@/app/_assemblies/adminpages" },
+  "/admin/media": { component: "MediaAdmin", from: "@/app/_assemblies/adminpages" },
+
   "/space": { component: "Space", from: "@/app/_assemblies/publicpages" },
   "/time": { component: "Time", from: "@/app/_assemblies/publicpages" },
   "/collective/gallery": { component: "Evidence", from: "@/app/_assemblies/publicpages" },

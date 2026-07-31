@@ -31,6 +31,11 @@ export type EventType =
   | "OrganizationRegistered"
   | "CommitteeConstituted"
   | "CommitteeAuthorityDelegated"
+  // Publishing
+  | "ContentVersionPublished"
+  | "ContentVersionWithdrawn"
+  | "MediaAssetRegistered"
+  | "MediaAssetReclassified"
   // Vehicles & portfolio
   | "InvestmentVehicleFormed"
   | "InvestmentVehicleStabilised"

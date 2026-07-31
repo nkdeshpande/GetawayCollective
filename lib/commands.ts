@@ -65,7 +65,9 @@ export type CommandName =
   | "DeclareReserveBreach"
   | "PublishPerformanceReport"
   | "VersionInvestmentThesis"
-  | "CompleteDueDiligence";
+  | "CompleteDueDiligence"
+  | "PublishContentVersion"
+  | "RegisterMediaAsset";
 
 export interface CapabilityDefinition {
   name: CommandName;
@@ -102,6 +104,21 @@ export const CAPABILITIES: readonly CapabilityDefinition[] = [
       scopeKind: "enterprise", emits: ["AuthorityRevoked"], requiresReason: true,
       conflictSensitive: false,
       description: "Withdraw a grant. Revocation is immediate; historical actions taken under it remain valid." }),
+
+  /* ── Publishing ────────────────────────────────────────────────────
+     Scoped to the enterprise, not to a vehicle: a legal document or a
+     media asset belongs to the Organization that published it. Both
+     require a reason, because the question asked six months later is
+     always "why did this change", and the answer has to be in the
+     record rather than in somebody's memory. */
+  C({ name: "PublishContentVersion", object: BO.Organization, requiredRight: "content.publish",
+      scopeKind: "enterprise", emits: ["ContentVersionPublished", "ContentVersionWithdrawn"],
+      requiresReason: true, conflictSensitive: false,
+      description: "Put a version of a standing document, journal entry or public page in force, and withdraw the one it replaces. The withdrawn version stays retrievable." }),
+  C({ name: "RegisterMediaAsset", object: BO.Organization, requiredRight: "media.manage",
+      scopeKind: "enterprise", emits: ["MediaAssetRegistered", "MediaAssetReclassified"],
+      requiresReason: true, conflictSensitive: false,
+      description: "Register a media asset with its KIND - photograph, render or drawing - and the date it was made. Reclassifying one requires a reason because a render relabelled as a photograph is a misrepresentation." }),
 
   // ── Vehicles & portfolio ──────────────────────────────────────────
   C({ name: "FormInvestmentVehicle", object: BO.InvestmentVehicle, requiredRight: "vehicle.form",

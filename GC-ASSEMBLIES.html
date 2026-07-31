@@ -4151,6 +4151,77 @@ A["AS-33"] = { vantage:"member", render: () => {
 </div>` } };
 
 
+/* AS-34 - THE ADMIN SURFACE
+   ---------------------------------------------------------------
+   Forming a vehicle, the content register, the media register.
+
+   Formation is a SEQUENCE, not a form. Eight stages, two irreversible,
+   two gated on somebody else's approval. A long form invites an operator
+   to complete it and press save, which is exactly the shape that
+   registers a vehicle with a legal form nobody approved.
+   --------------------------------------------------------------- */
+A["AS-34"] = { vantage:"admin", render: () => {
+  const STAGES = [
+    { n:"01", t:"The property", g:"property.register" },
+    { n:"02", t:"The legal form", g:"vehicle.form + Board resolution (&sect;24a)" },
+    { n:"03", t:"Registration", g:"stage 02 &middot; IRREVERSIBLE" },
+    { n:"04", t:"The Agreement", g:"stage 03" },
+    { n:"05", t:"The capital stack", g:"units &times; unit size = equity, exactly" },
+    { n:"06", t:"The waterfall", g:"six stages sum to 100%" },
+    { n:"07", t:"The reserve floor", g:"stage 06" },
+    { n:"08", t:"Formation", g:"vehicle.form + reason &middot; IRREVERSIBLE" },
+  ];
+  return `
+<div class="wrap">
+  <span class="t-micro" style="color:var(--steel)">AS-34 &middot; Admin vantage</span>
+  <h1 class="t-display-l" style="margin:var(--s-2xs) 0 var(--s-s)">The Admin Surface</h1>
+  <p class="t-body-l" style="color:var(--steel);max-width:65ch">
+    Three surfaces: /admin/vehicles/new, /admin/content and /admin/media.
+  </p>
+
+  <div class="panel on-paper" style="margin-top:var(--s-l);max-width:74ch;
+       border-left:2px solid var(--critical-deep)">
+    <span class="t-micro" style="color:var(--critical-deep)">Nothing on these screens writes</span>
+    <p class="t-body" style="margin-top:var(--s-2xs)">
+      There is no persistence layer yet. These are the sequences, their gates and their
+      arithmetic, so the shape can be reviewed before it can be executed. Every screen says so
+      on itself &mdash; a prototype that is silent about being a prototype gets signed off as
+      finished.
+    </p>
+  </div>
+
+  <span class="t-micro" style="color:var(--steel);display:block;margin-top:var(--s-xl)">
+    Forming a vehicle
+  </span>
+  <div class="stack" style="margin-top:var(--s-s)">
+    ${STAGES.map(x => `<div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:var(--s-s);flex-wrap:wrap">
+        <span class="t-mono-s" style="color:var(--steel)">${x.n}</span>
+        <span class="t-mono-s" style="color:var(--steel)">${x.g}</span>
+      </div>
+      <h2 class="t-display-s" style="margin-top:var(--s-2xs)">${esc(x.t)}</h2>
+    </div>`).join("")}
+  </div>
+
+  <div class="fixes">
+    <span class="fix"><b>Rule</b> Gates are DISPLAYED, not merely enforced. A disabled control
+      that says nothing sends an operator to ask in a chat channel, and that answer is recorded
+      nowhere.</span>
+    <span class="fix"><b>Rule</b> &sect;24a: the LLP is the constitutional default and any other
+      legal form needs Board approval for the SPECIFIC property. A load-time check refuses to let
+      that gate be removed &mdash; it is the one most likely to be worked around under time
+      pressure.</span>
+    <span class="fix"><b>Rule</b> content.publish sits with the Governance Office; media.manage
+      with the Executive Office. Registering an asset is operational; putting a standing document
+      in force is not, and a page that binds should not be publishable by whoever commissioned
+      the photograph on it.</span>
+    <span class="fix"><b>Rule</b> Media kind is required at registration with no default. A render
+      registered as a photograph is a misrepresentation that needs no words to commit, and a
+      default is how it happens.</span>
+  </div>
+</div>` } };
+
+
 /* ═══════════════════════════════════════════════════════════════════
    AS-16 · SIGNAL LOST
 

@@ -2549,6 +2549,78 @@ export const MEMBER_SURFACE: Assembly = {
 };
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   AS-34 · THE ADMIN SURFACE
+
+   Forming a vehicle, the content register, the media register.
+   ═══════════════════════════════════════════════════════════════════ */
+export const ADMIN_SURFACE: Assembly = {
+  id: "AS-34",
+  name: "The Admin Surface",
+  scope: "screen",
+  route: "admin",
+  vantage: "admin",
+  intent: "Let an operator form a vehicle, and govern what the platform says and shows.",
+  answers: "What has to be true before I can do this, and who clears it?",
+  sections: [
+    S("AS-34.a", "Formation", "action",
+      "Eight stages, each stating what it writes and what blocks it.",
+      [],
+      "Gates are DISPLAYED, not merely enforced. A disabled control that says nothing sends an " +
+      "operator to ask in a chat channel, and that answer is recorded nowhere."),
+    S("AS-34.b", "Content", "ledger",
+      "Every content class, its source, whether it binds and whether it is versioned.",
+      [],
+      "content.publish sits with the Governance Office, not the Executive Office. A page that " +
+      "binds should not be publishable by whoever commissioned the photograph on it."),
+    S("AS-34.c", "Media", "ledger",
+      "The three kinds, the registration rules, and what is registered.",
+      [],
+      "Kind is required with no default. A render registered as a photograph is a " +
+      "misrepresentation that needs no words to commit, and a default is how it happens."),
+  ],
+  corrections: [
+    {
+      source: "AS-34 design",
+      was: "A single form for forming a vehicle.",
+      now: "Eight stages, two of them irreversible and two gated on somebody else's approval.",
+      because:
+        "Forming a vehicle is a series of acts, not a record. A long form invites an operator to " +
+        "complete it and press save, which is exactly the shape that registers a vehicle with a " +
+        "legal form nobody approved.",
+      kind: "interaction",
+    },
+    {
+      source: "L1-01 §24a",
+      now: "The legal-form stage carries a Board approval gate, and a load-time check refuses to let it be removed.",
+      because:
+        "The LLP is the constitutional default and any other form needs Board approval for the " +
+        "SPECIFIC property. It is the gate most likely to be worked around under time pressure, " +
+        "so removing it fails the build rather than quietly permitting an unapproved form.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-34 design",
+      now: "Every screen states that nothing on it writes.",
+      because:
+        "There is no persistence layer. A screen that appeared to form a vehicle and did not " +
+        "would be the worst thing in this system, and a prototype that is silent about being a " +
+        "prototype gets signed off as finished.",
+      kind: "interaction",
+    },
+    {
+      source: "GP-06 Separation of Powers",
+      now: "content.publish sits with the Governance Office; media.manage with the Executive Office.",
+      because:
+        "Registering an asset is operational. Putting a standing document in force is not — it " +
+        "is the instrument a partner relies on, and it belongs with the office that tables " +
+        "resolutions.",
+      kind: "constitutional",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -2583,6 +2655,7 @@ export const ASSEMBLIES: readonly Assembly[] = [
   VEHICLE_CONSOLE,
   PUBLIC_SURFACE,
   MEMBER_SURFACE,
+  ADMIN_SURFACE,
 ];
 
 /**
