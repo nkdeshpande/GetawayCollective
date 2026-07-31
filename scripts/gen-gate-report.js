@@ -25,7 +25,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
-const OUT = path.join(ROOT, "WAVE-2-EXIT-GATE.html");
+const OUT = path.join(ROOT, "WAVE-5-EXIT-GATE.html");
 
 const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
 const exists = (p) => fs.existsSync(path.join(ROOT, p));
@@ -39,6 +39,10 @@ const cmd = read("lib/commands.ts");
 const ev = read("lib/events.ts");
 const auth = read("lib/authority.ts");
 const l1 = read("constitution/L1-01-ENTERPRISE-CONSTITUTION.md");
+const sm = read("lib/state-machines.ts");
+const enums = read("constants/enums.ts");
+const proc = read("lib/processes.ts");
+const val = read("constants/validation.ts");
 
 const objects = count(bo.match(/export enum BusinessObjectType \{([\s\S]*?)\n\}/)[1], /^\s*\w+\s*=\s*"/gm);
 const fields = count(ufr, /F\(\{/g);
@@ -48,6 +52,15 @@ const caps = count(cmd, /C\(\{/g);
 const events = count(ev.match(/export type EventType\s*=([\s\S]*?);/)[1], /"[^"]+"/g);
 const rights = count(auth.match(/export type Right\s*=([\s\S]*?);/)[1], /"[^"]+"/g);
 const roles = count(auth.match(/export type Role\s*=([\s\S]*?);/)[1], /"[^"]+"/g);
+const machines = count(sm, /: StateMachine = \{/g);
+const transitions = count(sm, /T\(\{/g);
+const irreversible = count(sm, /reversible: false/g);
+const enumSets = count(enums, /"[\w.]+":\s*\{/g);
+const enumValues = count(enums, /:\s*D\(/g);
+const processes = count(proc, /: Process = \{/g);
+const procSteps = count(proc, /S\(\{/g);
+const validationRules = count(val, /:\s*V\(/g);
+const adrs = (() => { try { return require("node:fs").readdirSync(path.join(ROOT,"docs/adr")).filter(f=>/^\d{4}-/.test(f)).length; } catch { return 0; } })();
 
 const invariantIds = [...new Set([...l1.matchAll(/^\|\s*\*{0,2}([EAIF]-\d{2})\*{0,2}\s*\|/gm)].map((m) => m[1]))];
 const enforcedInUfr = new Set([...ufr.matchAll(/"([EAIF]-\d{2})"/g)].map((m) => m[1]));
@@ -100,6 +113,9 @@ const GATES = [
   ["Zod contracts", "schemas:check", "E-06", true],
   ["Database schema", "db:check", "E-06", true],
   ["Fixtures", "fixtures:check", "—", true],
+  ["State machines", "sm-lint", "A-05", true],
+  ["Enum display", "enum-lint", "§25 + §29", true],
+  ["Design literals + contrast", "token-lint", "§29 + WCAG AA", true],
   ["Design tokens", "tokens", "§29", true],
   ["Types + tests", "type-check, test:run", "—", testsPassing],
 ];
@@ -113,7 +129,14 @@ const LAYERS = [
   ["L5", "Authority", `${rights} rights, ${roles} roles`, "locked"],
   ["L10", "Persistence", `${tables} tables, ${fks} foreign keys`, "generated"],
   ["L7/L8", "Application & UX", "GC.SYSTEM v3.0 — migration target", "deferred"],
-  ["L9", "Analytics", "event log in place, projections pending", "partial"],
+  ["L9", "Analytics", `IRR, MOIC, NAV, coverage - one formula each`, "locked"],
+  ["L4", "State machines", `${machines} lifecycles, ${transitions} transitions, ${irreversible} irreversible`, "locked"],
+  ["L4", "Provenance spine", "6 confidence classes, decay, filing gate", "locked"],
+  ["L8", "Enumeration display", `${enumSets} sets, ${enumValues} values, tone + a11y`, "locked"],
+  ["L8", "Validation messages", `${validationRules} rules, message + help + a11y`, "locked"],
+  ["L5", "Processes", `${processes} flows, ${procSteps} steps, resume + expiry`, "locked"],
+  ["L1", "Decision records", `${adrs} ADRs`, "locked"],
+  ["L7/L8", "Component surface", "Turborepo - migration target", "deferred"],
 ];
 
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -142,7 +165,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wave 2 Exit Gate — Getaway Collective</title>
+<title>Wave 5 Exit Gate — Getaway Collective</title>
 <style>
 /* ── Token package, inlined from dist/tokens.css (v3.0 LOCKED) ── */
 ${tokenCss}
@@ -216,8 +239,8 @@ ${tokenCss}
 <body>
 <div class="wrap">
   <div class="eyebrow">Getaway Collective · Constitutional Build</div>
-  <h1>Wave 2 Exit Gate</h1>
-  <p class="lede">Semantic Core. Every figure on this page is read from the repository
+  <h1>Wave 5 Exit Gate</h1>
+  <p class="lede">Waves 1&ndash;5 built. Every figure on this page is read from the repository
   at generation time — the Wave 1 checklist drifted from reality precisely because it
   was maintained by hand.</p>
   <hr class="rule">
@@ -229,6 +252,9 @@ ${tokenCss}
     <div class="metric"><span class="n">${caps}</span><span class="k">capabilities</span></div>
     <div class="metric"><span class="n">${tests}</span><span class="k">tests ${testsPassing ? "passing" : "declared"}</span></div>
     <div class="metric"><span class="n">${enforced.length}/${invariantIds.length}</span><span class="k">invariants enforced</span></div>
+    <div class="metric"><span class="n">${transitions}</span><span class="k">transitions</span></div>
+    <div class="metric"><span class="n">${enumValues}</span><span class="k">enum values</span></div>
+    <div class="metric"><span class="n">${procSteps}</span><span class="k">process steps</span></div>
   </div>
 
   <h2>Gate checks</h2>
@@ -277,11 +303,20 @@ ${tokenCss}
 
   <h2>Open</h2>
   <div class="note">
-    <strong>No open constitutional questions.</strong> 32 blanks ratified, 0 open.
-    Remaining work is execution: L7/L8 wait on the GC.SYSTEM migration, correctly
-    held as a target rather than scaffolded into an empty monorepo before the
-    semantic layer had made its decisions.
+    <strong>32 blanks ratified, 0 open.</strong> What remains is not constitutional
+    but editorial and commercial &mdash; recorded in
+    <span class="mono">WAVE-5-OPEN-QUESTIONS.md</span>.
   </div>
+  <div class="scroll"><table>
+    <thead><tr><th>#</th><th>Question</th><th>Kind</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">A1</td><td>Brand voice &mdash; L1-02 says <em>Warm</em>, Addendum A says <em>never persuades</em>. Two ratified documents disagree, and 25 validation messages were written into the gap.</td><td><span class="pill part">conflict</span></td></tr>
+      <tr><td class="mono">A2</td><td>Risk categories &mdash; 8 in the design system, 10 in the registry. Six render grey today.</td><td><span class="pill part">conflict</span></td></tr>
+      <tr><td class="mono">A3</td><td>&sect;29 locks design system v3.0; the Addendum names v4.0 as parent. Verified zero drift, but the version numbers differ.</td><td><span class="pill part">conflict</span></td></tr>
+      <tr><td class="mono">B1</td><td>Four contrast variants added to the palette. No original token changed. Confirm or reject the hexes.</td><td><span class="pill gen">mine</span></td></tr>
+      <tr><td class="mono">B3</td><td>90-day expiry on an IC acquisition approval &mdash; the tightest window I invented.</td><td><span class="pill gen">mine</span></td></tr>
+    </tbody>
+  </table></div>
 
   <footer>
     Generated by scripts/gen-gate-report.js · tokens inlined from dist/tokens.css (v3.0 LOCKED, §29)<br>
@@ -293,7 +328,7 @@ ${tokenCss}
 `;
 
 fs.writeFileSync(OUT, html, "utf8");
-console.log(`[gate] wrote WAVE-2-EXIT-GATE.html`);
+console.log(`[gate] wrote WAVE-5-EXIT-GATE.html`);
 console.log(`  ${objects} objects · ${fields} fields · ${edges} edges · ${caps} capabilities · ${tests} tests`);
 console.log(`  invariants enforced: ${enforced.length}/${invariantIds.length}`);
 console.log(`  persistence: ${tables} tables · ${fks} FKs · ${floatCols} float columns\n`);

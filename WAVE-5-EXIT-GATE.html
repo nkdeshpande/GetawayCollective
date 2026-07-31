@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wave 2 Exit Gate — Getaway Collective</title>
+<title>Wave 5 Exit Gate — Getaway Collective</title>
 <style>
 /* ── Token package, inlined from dist/tokens.css (v3.0 LOCKED) ── */
 /* GC Design System — v3.0 LOCKED
@@ -29,6 +29,11 @@
   --gc-hazard: #E8672E;
   --gc-critical: #FF3B30;
   --gc-confirm: #1FAA59;
+
+  --gc-forest-light: #228A68;
+  --gc-copper-deep: #8C6635;
+  --gc-confirm-deep: #177F43;
+  --gc-hazard-deep: #BE4915;
 
   --gc-hairline: rgba(10,10,10,0.12);
   --gc-hairline-inv: rgba(242,242,242,0.14);
@@ -67,6 +72,13 @@
     --gc-bg-panel: var(--gc-void-panel);
     --gc-fg: var(--gc-ink-inverse);
     --gc-fg-dim: var(--gc-steel-dim);
+
+    /* Ground-aware semantic aliases. A component uses --gc-currency and is
+       legible on whichever ground it lands on, without choosing a hex. */
+    --gc-heritage: var(--gc-forest-light);
+    --gc-currency: var(--gc-copper);
+    --gc-settled: var(--gc-confirm);
+    --gc-risk: var(--gc-hazard);
   }
 }
 
@@ -76,6 +88,82 @@
     --gc-bg-panel: var(--gc-paper-panel);
     --gc-fg: var(--gc-ink);
     --gc-fg-dim: var(--gc-steel);
+
+    --gc-heritage: var(--gc-forest);
+    --gc-currency: var(--gc-copper-deep);
+    --gc-settled: var(--gc-confirm-deep);
+    --gc-risk: var(--gc-hazard-deep);
+  }
+}
+
+/* ── ADDENDUM A · motion · overlays · notifications · brand ── */
+:root {
+  /* A · Motion */
+  --gc-ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --gc-ease-alert: cubic-bezier(0.68, -0.4, 0.32, 1.4);
+  --gc-dur-press: 80ms;
+  --gc-dur-alert: 280ms;
+  --gc-dur-settle: 320ms;
+  --gc-dur-toast: 4200ms;
+
+  /* B · Overlays */
+  --gc-backdrop-dim: rgba(10,10,10,0.55);
+  --gc-backdrop-blur: 10px;
+  --gc-blur-glass: 12px;
+
+  /* Semantic state — notifications use these, never Signal colours */
+  --state-error: #FF3B30;
+  --state-success: #1FAA59;
+  --state-info: #2061DE;
+  --state-warning: #D9A15C;
+  --state-matrix: #39FF6A;
+
+  --surface-quiet: #F2F2F2;
+  --surface-neutral: #E8E8E6;
+  --surface-decision: #FFFFFF;
+  --surface-alert: #FBEAE3;
+
+  /* Provenance */
+  --conf-observed: #1FAA59;
+  --conf-verified: #1FAA59;
+  --conf-modelled: #C79F6B;
+  --conf-estimated: #2061DE;
+  --conf-forecast: #2061DE;
+  --conf-pending: #6B6B6B;
+
+  --health-strong: #1FAA59;
+  --health-adequate: #C79F6B;
+  --health-weak: #E8672E;
+  --health-critical: #FF3B30;
+
+  /* Density */
+  --density-compact-row: 28px;
+  --density-comfortable-row: 40px;
+  --density-presentation-row: 64px;
+  --density-audit-row: 22px;
+  --density-audit-size: 10px;
+
+  /* Stacking */
+  --z-grid: 1;
+  --z-content: 10;
+  --z-hud: 100;
+  --z-overlay: 500;
+  --z-cursor: 999;
+}
+
+/* The Piston keeps its full duration. Capital commitment is never shortened. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --gc-ease-cinema: linear;
+    --gc-ease-shutter: linear;
+    --gc-ease-settle: linear;
+    --gc-ease-alert: linear;
+    --gc-dur-instant: 1ms;
+    --gc-dur-fast: 1ms;
+    --gc-dur-settle: 1ms;
+    --gc-dur-alert: 1ms;
+    --gc-dur-cinema: 1ms;
+    --gc-dur-commit: 3000ms;
   }
 }
 
@@ -149,8 +237,8 @@
 <body>
 <div class="wrap">
   <div class="eyebrow">Getaway Collective · Constitutional Build</div>
-  <h1>Wave 2 Exit Gate</h1>
-  <p class="lede">Semantic Core. Every figure on this page is read from the repository
+  <h1>Wave 5 Exit Gate</h1>
+  <p class="lede">Waves 1&ndash;5 built. Every figure on this page is read from the repository
   at generation time — the Wave 1 checklist drifted from reality precisely because it
   was maintained by hand.</p>
   <hr class="rule">
@@ -160,8 +248,11 @@
     <div class="metric"><span class="n">127</span><span class="k">registered fields</span></div>
     <div class="metric"><span class="n">28</span><span class="k">graph edges</span></div>
     <div class="metric"><span class="n">33</span><span class="k">capabilities</span></div>
-    <div class="metric"><span class="n">270</span><span class="k">tests passing</span></div>
+    <div class="metric"><span class="n">305</span><span class="k">tests passing</span></div>
     <div class="metric"><span class="n">35/41</span><span class="k">invariants enforced</span></div>
+    <div class="metric"><span class="n">30</span><span class="k">transitions</span></div>
+    <div class="metric"><span class="n">135</span><span class="k">enum values</span></div>
+    <div class="metric"><span class="n">27</span><span class="k">process steps</span></div>
   </div>
 
   <h2>Gate checks</h2>
@@ -182,6 +273,12 @@
       <td class="mono">E-06</td><td><span class="pill ok">pass</span></td></tr>
     <tr><td>Fixtures</td><td class="mono">fixtures:check</td>
       <td class="mono">—</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>State machines</td><td class="mono">sm-lint</td>
+      <td class="mono">A-05</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Enum display</td><td class="mono">enum-lint</td>
+      <td class="mono">§25 + §29</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Design literals + contrast</td><td class="mono">token-lint</td>
+      <td class="mono">§29 + WCAG AA</td><td><span class="pill ok">pass</span></td></tr>
     <tr><td>Design tokens</td><td class="mono">tokens</td>
       <td class="mono">§29</td><td><span class="pill ok">pass</span></td></tr>
     <tr><td>Types + tests</td><td class="mono">type-check, test:run</td>
@@ -209,8 +306,22 @@
       <td><span class="pill gen">generated</span></td></tr>
     <tr><td class="mono">L7/L8</td><td>Application &amp; UX</td><td class="mono">GC.SYSTEM v3.0 — migration target</td>
       <td><span class="pill def">deferred</span></td></tr>
-    <tr><td class="mono">L9</td><td>Analytics</td><td class="mono">event log in place, projections pending</td>
-      <td><span class="pill part">partial</span></td></tr>
+    <tr><td class="mono">L9</td><td>Analytics</td><td class="mono">IRR, MOIC, NAV, coverage - one formula each</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L4</td><td>State machines</td><td class="mono">6 lifecycles, 30 transitions, 14 irreversible</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L4</td><td>Provenance spine</td><td class="mono">6 confidence classes, decay, filing gate</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L8</td><td>Enumeration display</td><td class="mono">26 sets, 135 values, tone + a11y</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L8</td><td>Validation messages</td><td class="mono">25 rules, message + help + a11y</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L5</td><td>Processes</td><td class="mono">5 flows, 27 steps, resume + expiry</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L1</td><td>Decision records</td><td class="mono">10 ADRs</td>
+      <td><span class="pill ok">locked</span></td></tr>
+    <tr><td class="mono">L7/L8</td><td>Component surface</td><td class="mono">Turborepo - migration target</td>
+      <td><span class="pill def">deferred</span></td></tr>
     </tbody>
   </table></div>
 
@@ -239,11 +350,20 @@
 
   <h2>Open</h2>
   <div class="note">
-    <strong>No open constitutional questions.</strong> 32 blanks ratified, 0 open.
-    Remaining work is execution: L7/L8 wait on the GC.SYSTEM migration, correctly
-    held as a target rather than scaffolded into an empty monorepo before the
-    semantic layer had made its decisions.
+    <strong>32 blanks ratified, 0 open.</strong> What remains is not constitutional
+    but editorial and commercial &mdash; recorded in
+    <span class="mono">WAVE-5-OPEN-QUESTIONS.md</span>.
   </div>
+  <div class="scroll"><table>
+    <thead><tr><th>#</th><th>Question</th><th>Kind</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">A1</td><td>Brand voice &mdash; L1-02 says <em>Warm</em>, Addendum A says <em>never persuades</em>. Two ratified documents disagree, and 25 validation messages were written into the gap.</td><td><span class="pill part">conflict</span></td></tr>
+      <tr><td class="mono">A2</td><td>Risk categories &mdash; 8 in the design system, 10 in the registry. Six render grey today.</td><td><span class="pill part">conflict</span></td></tr>
+      <tr><td class="mono">A3</td><td>&sect;29 locks design system v3.0; the Addendum names v4.0 as parent. Verified zero drift, but the version numbers differ.</td><td><span class="pill part">conflict</span></td></tr>
+      <tr><td class="mono">B1</td><td>Four contrast variants added to the palette. No original token changed. Confirm or reject the hexes.</td><td><span class="pill gen">mine</span></td></tr>
+      <tr><td class="mono">B3</td><td>90-day expiry on an IC acquisition approval &mdash; the tightest window I invented.</td><td><span class="pill gen">mine</span></td></tr>
+    </tbody>
+  </table></div>
 
   <footer>
     Generated by scripts/gen-gate-report.js · tokens inlined from dist/tokens.css (v3.0 LOCKED, §29)<br>
