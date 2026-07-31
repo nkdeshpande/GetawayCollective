@@ -144,20 +144,28 @@ Ordered by dependency. No step may begin before the one above it lands.
 
 ---
 
-# 6. ONE ITEM NEEDING A DECISION
+# 6. GEMINI.md — RESOLVED 31 Jul 2026
 
-**`GEMINI.md` — "The Project Constitution / AI Brain"**
+**Ruling: `GEMINI.md` is REFERENCE ONLY. The ratified L1 corpus supersedes it.**
 
-GC.SYSTEM places this at the monorepo root as the project constitution. There is already a constitution: five ratified L1 documents totalling ~270KB, with an amendment procedure (§32a), entrenched principles (§32b), and a failure regime (§31).
+GC.SYSTEM placed a `GEMINI.md` at the monorepo root labelled "The Project Constitution / AI Brain". It is a Gemini CLI context file — the same convention as `CLAUDE.md` for Claude Code, with `AGENTS.md` as the tool-neutral form.
 
-A second file claiming the title "Project Constitution" is a §14 Naming Authority problem and, more practically, a place where a divergent copy of the rules will accumulate — the exact failure the vocabulary linter and the UFR were built to prevent.
+It does not hold constitutional authority. There is already a constitution: five ratified L1 documents with an amendment procedure (§32a), entrenched principles requiring unanimity (§32b), and a failure regime (§31). A second file claiming that title would be a §14 Naming Authority collision and, more practically, the place a divergent copy of the rules accumulates — the exact failure vocab-lint and the UFR exist to prevent.
 
-**Recommendation:** rename to `AGENTS.md` or `CLAUDE.md` and scope it to *agent operating instructions* — how a coding agent should navigate the repo, which checks to run, where authority lives. It should **point at** the L1 corpus, never restate it.
+**Actioned:** `AGENTS.md` written at the repo root. It is scoped to *how to work here*, not *what is true here*:
 
-Not actioned. Flagged for your call.
+- the nine gate checks and what each enforces
+- where constitutional authority actually lives, and that editing it is an amendment
+- which files are generated and must never be hand-edited
+- the rules that bite in practice — money is never a `number`, voting is equity-weighted, rights attach to ownership not accreditation
+- what to do on finding a constitutional gap: record it, do not fill it silently
+
+It **points at** the L1 corpus and restates nothing. Its opening line says so: *"This file is not the constitution. Where the two appear to disagree, the constitution wins and this file is the bug."*
+
+If `GEMINI.md` is retained for another toolchain, it should be reduced to the same shape and carry the same disclaimer. Two files may describe how to work in the repo. Only one set of documents says what is true.
 
 ---
 
 **Document:** `WAVE-2-ARCHITECTURE-TARGET.md`
 **Status:** Target ratified · migration not started
-**Open:** BLANK-25 (Consumer) · GEMINI.md naming
+**Open:** none
