@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Story } from "@/app/_assemblies/gatewaypages";
 
 export const metadata: Metadata = {
   title: "Story · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pstory() {
-  return (
-    <Surface
-      path="/story"
-      assembly={"AS-08"}
-    />
-  );
+  return <Story />;
 }

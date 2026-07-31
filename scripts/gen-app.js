@@ -165,6 +165,13 @@ const PORTED = {
   "AS-04": { component: "CapitalExplainer", from: "@/app/_assemblies/gateway" },
   "AS-23": { component: "Home", from: "@/app/_assemblies/gateway" },
   "AS-24": { component: "Testimonials", from: "@/app/_assemblies/gateway" },
+
+  /* Wave 8 — the five footer targets that rendered the scaffold. */
+  "AS-07": { component: "Portfolio", from: "@/app/_assemblies/gatewaypages" },
+  "AS-08": { component: "Story", from: "@/app/_assemblies/gatewaypages" },
+  "AS-09": { component: "Gallery", from: "@/app/_assemblies/gatewaypages" },
+  "AS-17": { component: "Answers", from: "@/app/_assemblies/gatewaypages" },
+  "AS-18": { component: "Roles", from: "@/app/_assemblies/gatewaypages" },
 };
 
 /* Routes whose component is chosen by PATH, not by assembly. The worked
@@ -178,6 +185,7 @@ const BY_PATH = {
   "/collective/press": { component: "Wire", from: "@/app/_assemblies/publicpages" },
   "/communique/request": { component: "Dossier", from: "@/app/_assemblies/publicpages" },
   "/signal": { component: "Signal", from: "@/app/_assemblies/publicpages" },
+  "/roles/[code]": { component: "RoleDetail", from: "@/app/_assemblies/gatewaypages", param: "code" },
   "/space": { component: "Space", from: "@/app/_assemblies/publicpages" },
   "/time": { component: "Time", from: "@/app/_assemblies/publicpages" },
   "/collective/gallery": { component: "Evidence", from: "@/app/_assemblies/publicpages" },

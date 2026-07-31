@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { RoleDetail } from "@/app/_assemblies/gatewaypages";
 
 export const metadata: Metadata = {
   title: "Role · Getaway Collective",
@@ -20,11 +20,5 @@ export const metadata: Metadata = {
 
 export default async function Proles_code(props: { params: Promise<{ code: string }> }) {
   const params = await props.params;
-  return (
-    <Surface
-      path="/roles/[code]"
-      assembly={"AS-18"}
-      params={params}
-    />
-  );
+  return <RoleDetail code={params.code} />;
 }

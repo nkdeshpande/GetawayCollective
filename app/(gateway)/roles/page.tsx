@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Roles } from "@/app/_assemblies/gatewaypages";
 
 export const metadata: Metadata = {
   title: "Open Roles · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Proles() {
-  return (
-    <Surface
-      path="/roles"
-      assembly={"AS-18"}
-    />
-  );
+  return <Roles />;
 }

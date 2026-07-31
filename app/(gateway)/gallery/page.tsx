@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Gallery } from "@/app/_assemblies/gatewaypages";
 
 export const metadata: Metadata = {
   title: "Gallery · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pgallery() {
-  return (
-    <Surface
-      path="/gallery"
-      assembly={"AS-09"}
-    />
-  );
+  return <Gallery />;
 }

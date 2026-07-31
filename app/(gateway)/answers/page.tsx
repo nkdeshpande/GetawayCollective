@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Answers } from "@/app/_assemblies/gatewaypages";
 
 export const metadata: Metadata = {
   title: "Answers · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Panswers() {
-  return (
-    <Surface
-      path="/answers"
-      assembly={"AS-17"}
-    />
-  );
+  return <Answers />;
 }

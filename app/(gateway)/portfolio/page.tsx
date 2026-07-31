@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Portfolio } from "@/app/_assemblies/gatewaypages";
 
 export const metadata: Metadata = {
   title: "The Portfolio · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pportfolio() {
-  return (
-    <Surface
-      path="/portfolio"
-      assembly={"AS-07"}
-    />
-  );
+  return <Portfolio />;
 }
