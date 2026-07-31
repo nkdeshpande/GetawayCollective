@@ -8,6 +8,7 @@ import { describe, it, expect } from "vitest";
 import {
   LLP, SITE, STACK, EQUITY, PROJECT, UNIT, GROSS_REVENUE, DEBT_SERVICE,
   WATERFALL_SLOWSPACE, MY_DISTRIBUTION, MY_YIELD_BPS, DSCR, RISKS_SLOWSPACE,
+  MATERIAL_RISK, ACKNOWLEDGEMENT,
   PARTNER_DISTRIBUTION,
   GOVERNANCE, RISK_TERMS,
 } from "../app/_assemblies/slowspace";
@@ -91,27 +92,75 @@ describe("the two claims that cannot both hold", () => {
   });
 });
 
-describe("the risk disclosure", () => {
-  it("leads with total loss and an unbuilt asset", () => {
-    expect(RISKS_SLOWSPACE[0].sev).toBe(1);
-    expect(RISKS_SLOWSPACE[0].t).toContain("lose");
-    expect(RISKS_SLOWSPACE[0].p).toContain("does not exist yet");
-    expect(RISKS_SLOWSPACE[1].t).toContain("unbuilt");
+describe("the asset disclosure", () => {
+  /*
+   * The register was toned down; the SUBSTANCE was not. These tests hold
+   * the substance, so a future edit that softens the language cannot
+   * quietly soften what is disclosed. That is the whole risk of rewriting
+   * a disclosure to read better.
+   */
+
+  it("still states total loss, in those words", () => {
+    expect(MATERIAL_RISK.outcomes).toContain("total loss of capital");
+    expect(MATERIAL_RISK.outcomes).toContain("partial loss of capital");
+    expect(MATERIAL_RISK.close).toContain("not protected by any guarantee");
   });
 
-  it("reads commercial terms from the vehicle record, not the prose", () => {
-    // A disclosure that restates terms in prose drifts from the
-    // instrument it describes, and the prose is what people rely on.
+  it("keeps total loss out of the numbered sequence", () => {
+    // A numbered item invites comparison with its neighbours. This one is
+    // not comparable, and standing outside the list is how that is said.
     for (const r of RISKS_SLOWSPACE) {
-      for (const t of r.terms ?? []) expect(RISK_TERMS[t], t).toBeDefined();
+      expect(r.t, r.n).not.toContain("Important Investment Risk");
     }
+    expect(RISKS_SLOWSPACE.some((r) => r.n === "08")).toBe(false);
+  });
+
+  it("numbers every item, uniquely and in order", () => {
+    const ns = RISKS_SLOWSPACE.map((r) => r.n);
+    expect(new Set(ns).size).toBe(ns.length);
+    expect(ns).toEqual([...ns].sort());
+    for (const n of ns) expect(n).toMatch(/^\d{2}$/);
+  });
+
+  it("names illiquidity, construction, financing and regulation", () => {
+    const titles = RISKS_SLOWSPACE.map((r) => r.t).join(" | ");
+    expect(titles).toContain("Long-Term Hospitality Ownership");
+    expect(titles).toContain("Development & Construction");
+    expect(titles).toContain("Financing");
+    expect(titles).toContain("Planning & Regulation");
+  });
+
+  it("says a profitable period may still distribute nothing", () => {
+    const cash = RISKS_SLOWSPACE.find((r) => r.t === "Cash Distribution")!;
+    expect(cash).toBeDefined();
+    expect(cash.p.join(" ")).toContain("may still result in no investor distribution");
+  });
+
+  it("reads its figures from the vehicle record, not the prose", () => {
+    // Every fact shown beside a section is derived from the record. A
+    // disclosure that restates commercial terms in prose drifts from the
+    // instrument it describes, and the prose is what people rely on.
+    const facts = RISKS_SLOWSPACE.flatMap((r) => r.facts ?? []);
+    expect(facts.length).toBeGreaterThan(0);
+    for (const f of facts) {
+      expect(f.v, f.k).toBeTruthy();
+      expect(f.v, f.k).not.toContain("undefined");
+    }
+    expect(facts.some((f) => f.v.includes("5,50,00,000"))).toBe(true);
+    expect(facts.some((f) => f.v === UNIT.lockIn)).toBe(true);
     expect(RISK_TERMS.debt).toContain("5,50,00,000");
   });
 
-  it("discloses its own inconsistency rather than hiding it", () => {
-    const r = RISKS_SLOWSPACE.find((x) => x.p.includes("2.4x"))!;
-    expect(r).toBeDefined();
-    expect(r.p).toContain("cannot");
+  it("states the conservative-figure rule that reconciled the dossier", () => {
+    const fin = RISKS_SLOWSPACE.find((r) => r.t === "Financial Information")!;
+    expect(fin).toBeDefined();
+    expect(fin.p.join(" ")).toContain("more conservative calculation");
+    expect(fin.p.join(" ")).toContain("confidence level");
+  });
+
+  it("asks for an acknowledgement that names the loss", () => {
+    expect(ACKNOWLEDGEMENT.statement).toContain("partial or total loss of invested capital");
+    expect(ACKNOWLEDGEMENT.statement).toContain(LLP.name);
   });
 });
 

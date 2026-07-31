@@ -632,6 +632,29 @@ th.num{text-align:right}
   padding:2px 6px;min-width:18px;text-align:center}
 
 /* ── AS-22 · The Footer ──────────────────────────────────────────── */
+/* AS-31 · THE VEHICLE CONSOLE
+   One module holding every view of a vehicle. It replaced four loose
+   links that navigated away from each other, so the border is drawn
+   around the whole thing: the box IS the claim that this is one surface.
+   The tab strip is a real tablist — roving tabindex, arrow keys — because
+   a row of buttons that swaps content without them works only with a
+   pointer. */
+.console{border:1px solid var(--gc-hairline-inv);background:var(--gc-void-panel)}
+.console-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--gc-sp-m);
+  padding:var(--gc-sp-m);border-bottom:1px solid var(--gc-hairline-inv);flex-wrap:wrap}
+.console-tabs{display:flex;gap:0;border-bottom:1px solid var(--gc-hairline-inv);overflow-x:auto}
+.console-tabs button{appearance:none;background:transparent;border:0;
+  border-bottom:2px solid transparent;color:var(--gc-steel-dim);
+  font:400 12px/1 var(--gc-font-mono);letter-spacing:.1em;text-transform:uppercase;
+  padding:var(--gc-sp-s) var(--gc-sp-m);cursor:pointer;white-space:nowrap}
+.console-tabs button:hover{color:var(--gc-ink-inverse)}
+.console-tabs button.on{color:var(--gc-copper);border-bottom-color:var(--gc-copper)}
+.console-tabs button:focus-visible{outline:2px solid var(--gc-electric);outline-offset:-2px}
+.console-panel{padding:var(--gc-sp-m)}
+.console-panel:focus-visible{outline:2px solid var(--gc-electric);outline-offset:-2px}
+.console-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-m);
+  padding:var(--gc-sp-m);border-top:1px solid var(--gc-hairline-inv);flex-wrap:wrap}
+
 /* The terms dialog (AS-06 / the accreditation step).
    The binding text is shown OVER the form rather than linked away from
    it: the form is resumable, but a person who leaves to read twelve
@@ -747,8 +770,30 @@ th.num{text-align:right}
   color:var(--gc-hazard-deep)}
 .clause.sev1 .sev{color:var(--gc-critical-deep)}
 .clause p{font:400 16px/1.65 var(--gc-font-body);max-width:65ch;margin-top:var(--gc-sp-2xs)}
+/* The section number, set apart from the title.
+   It was rendered inline with no spacing, so "01Long-Term Hospitality
+   Ownership" ran together as one word. A number that has to be read as
+   part of the title is not a number, it is a typo. */
+.clause h2 .num{font:400 13px/1 var(--gc-font-mono);letter-spacing:.14em;color:var(--gc-steel);
+  display:block;margin-bottom:var(--gc-sp-2xs)}
+
 .clause .terms{margin-top:var(--gc-sp-s);font:400 12.5px/1.6 var(--gc-font-mono);color:var(--gc-steel);
   background:rgba(10,10,10,.05);padding:11px 14px}
+/* Key and value on one line, separated. They were two spans with no
+   layout, so "Minimum holding period36 months from financial close"
+   rendered as a single run. */
+.clause .terms > div{display:flex;gap:var(--gc-sp-s);justify-content:space-between;flex-wrap:wrap;
+  padding:2px 0}
+.clause .terms .k{flex:0 1 auto}
+.clause .terms .v{flex:0 1 auto;text-align:right;color:var(--gc-ink)}
+.clause .terms .src{margin-top:var(--gc-sp-2xs);padding-top:var(--gc-sp-2xs);
+  border-top:1px solid var(--gc-hairline);display:block;opacity:.8}
+
+/* Total loss stands outside the numbered sequence, and is marked as
+   standing outside it. */
+.clause.material{border-left-color:var(--gc-critical-deep);
+  background:rgba(10,10,10,.04);padding:var(--gc-sp-m);margin-top:var(--gc-sp-2xl)}
+.clause.material .outcomes{margin:var(--gc-sp-s) 0 var(--gc-sp-s) 1.1em;font:400 16px/1.8 var(--gc-font-body)}
 /* Visible from the first scroll, disabled with the reason in WORDS.
    A control held at half opacity with pointer-events off is invisible to
    the eye and absent from the keyboard, so nothing says what to do. */

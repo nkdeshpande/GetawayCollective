@@ -194,50 +194,149 @@ export const GOVERNANCE = [
   { k: "Transfer", v: "Internal register first; external buyer needs consent" },
 ];
 
-/* ── The risk disclosure, specific to this offering ───────────────── */
-export const RISKS_SLOWSPACE = [
-  { sev: 1, t: "You can lose the whole of it",
-    p: "This is contribution to an LLP that will own a building that does not exist yet. Construction " +
-       "has not started. If the vehicle cannot meet its obligations, partners are paid last and may " +
-       "be paid nothing. There is no capital protection and no compensation scheme behind this." },
-  { sev: 1, t: "The asset is unbuilt, and the debt is real",
-    p: "₹5.5 Cr of facility is drawn during construction against an asset that is not yet earning. " +
-       "A delay past January 2028 means servicing that debt from a property with no revenue, and " +
-       "the reserve is sized for six months, not for an open-ended overrun.",
-    terms: ["debt", "moratorium"] },
-  { sev: 1, t: "You cannot get out for three years, and possibly longer",
-    p: "There is no public market. Your position is locked for 36 months from financial close, and " +
-       "after that a transfer needs a buyer and consent. An internal register is operated, not " +
-       "guaranteed.",
-    terms: ["lockIn"] },
-  { sev: 2, t: "The yield depends on a coastal season",
-    p: "The model assumes 50% blended occupancy at ₹15,000. Monsoon months on this coast run far " +
-       "below that, and the annual figure carries a peak season that has not happened yet. A weak " +
-       "winter takes the distribution down with it.",
-    terms: ["occupancy"] },
-  { sev: 2, t: "Distribution can be blocked while the vehicle is healthy",
-    p: "Stage six does not run if paying it would take the reserve below its floor, or if stage five " +
-       "was unmet. That is the mechanism working as designed, and it means a profitable quarter can " +
-       "still pay you nothing." },
-  { sev: 2, t: "Coastal regulation can change what can be built",
-    p: "The site sits inside a Coastal Regulation Zone. Approvals held today are not a forecast of " +
-       "approvals tomorrow, and a CRZ amendment can alter what is permitted on the land after the " +
-       "land has been bought." },
-  { sev: 3, t: "The returns shown are modelled, and one of them was inconsistent",
-    p: "Every forward figure here carries its confidence class. The source dossier claimed both a " +
-       "2.4x debt service cover and an 18% cash yield; computed from its own inputs those cannot " +
-       "both hold. The conservative one is carried and the cover ratio is stated as what falls out." },
+/* -- The Asset Disclosure, specific to this property ---------------- */
+/*
+ * REGISTER.
+ *
+ * An earlier version opened "How this loses money" and led with "You can
+ * lose the whole of it". That was written to be impossible to skim, and
+ * it succeeded at the cost of two things.
+ *
+ * It read as a warning from an adversary rather than a disclosure from a
+ * counterparty, which invites the reader to discount it. And it put the
+ * severity of the language ahead of the specificity of the facts, so the
+ * one item carrying an actual figure -- the facility, the moratorium, the
+ * assumed occupancy -- looked like more of the same.
+ *
+ * The register here is measured and the content is unchanged in
+ * substance: total loss is still stated, in Part 08, in those words. What
+ * moved is the emphasis. Facts do the work; the adjectives are gone.
+ */
+
+export interface DisclosureItem {
+  /** Two digits, as displayed. Stable across versions. */
+  n: string;
+  t: string;
+  p: readonly string[];
+  /** Figures read from the vehicle record, never typed into the prose. */
+  facts?: readonly { k: string; v: string }[];
+}
+
+export const RISKS_SLOWSPACE: readonly DisclosureItem[] = [
+  {
+    n: "01",
+    t: "Long-Term Hospitality Ownership",
+    p: ["Your commitment acquires an ownership interest in a single hospitality property through " +
+        LLP.name + ".",
+        "Unlike listed securities, this investment is intended for long-term ownership and should " +
+        "not be considered immediately liquid.",
+        "Transfers are restricted during the initial investment period and thereafter depend upon " +
+        "an approved transfer process and the availability of a willing purchaser."],
+    facts: [{ k: "Minimum holding period", v: UNIT.lockIn }],
+  },
+  {
+    n: "02",
+    t: "Development & Construction",
+    p: ["This hospitality asset is currently in its development phase.",
+        "Construction, statutory approvals and commissioning must all be completed before the " +
+        "property begins generating operating income.",
+        "Development projects may be subject to delays, cost increases or programme revisions " +
+        "that affect the timing of operations."],
+    facts: [
+      { k: "Construction finance", v: inr(STACK.debt) + " senior facility" },
+      { k: "Moratorium", v: "Interest-only during months 1\u201318" },
+    ],
+  },
+  {
+    n: "03",
+    t: "Hospitality Performance",
+    p: ["Future distributions depend upon the property's operational performance.",
+        "Revenue is influenced by occupancy, average daily rate, visitor demand, seasonality and " +
+        "operating efficiency.",
+        "These assumptions are modelled estimates rather than guaranteed outcomes."],
+    facts: [
+      { k: "Assumed occupancy", v: (OPERATING.occupancy / 100).toFixed(0) + "% blended" },
+      { k: "Assumed rate", v: inr(OPERATING.adr) + " average daily rate" },
+    ],
+  },
+  {
+    n: "04",
+    t: "Cash Distribution",
+    p: ["Investor distributions occur only after operating expenses, debt obligations, reserve " +
+        "requirements and the constitutional waterfall priorities have all been satisfied.",
+        "Accordingly, a profitable operating period may still result in no investor distribution " +
+        "if reserves or financing obligations require available cash to be retained.",
+        "This is a normal feature of the distribution framework."],
+  },
+  {
+    n: "05",
+    t: "Financing",
+    p: ["The property utilises development finance during construction.",
+        "Debt enhances development capability but introduces financing obligations that rank " +
+        "ahead of investor distributions.",
+        "Extended construction delays, increased financing costs or covenant events may " +
+        "materially affect projected returns."],
+  },
+  {
+    n: "06",
+    t: "Planning & Regulation",
+    p: ["The property is located within a Coastal Regulation Zone.",
+        "Future regulatory amendments, planning decisions or environmental requirements may " +
+        "affect future development, operation or expansion of the asset.",
+        "Current approvals do not guarantee future regulatory outcomes."],
+  },
+  {
+    n: "07",
+    t: "Financial Information",
+    p: ["Financial forecasts, occupancy projections, valuations and yield estimates throughout " +
+        "this platform are modelled using current assumptions.",
+        "Where source information contains differing assumptions, Getaway Collective adopts the " +
+        "more conservative calculation and identifies the applicable confidence level for every " +
+        "forward-looking figure.",
+        "Modelled performance should not be interpreted as a guarantee of future returns."],
+  },
 ];
+
+/**
+ * Stated separately, and last.
+ *
+ * It is not item 08 in the list. A numbered item invites the reader to
+ * weigh it against the other seven; this one is not comparable to them,
+ * and the layout says so by standing outside the sequence.
+ */
+export const MATERIAL_RISK = {
+  t: "Important Investment Risk",
+  p: ["Hospitality investments involve material business, operational and market risk.",
+      "Depending upon future performance, investors may see:"],
+  outcomes: [
+    "reduced distributions",
+    "delayed distributions",
+    "lower capital value",
+    "partial loss of capital",
+    "total loss of capital",
+  ],
+  close: "Capital invested is not protected by any guarantee, insurance or compensation scheme.",
+} as const;
+
+export const ACKNOWLEDGEMENT = {
+  intro:
+    "By continuing, you confirm that you have reviewed this disclosure and understand the " +
+    "principal characteristics and risks of this hospitality investment.",
+  statement:
+    "I acknowledge that I have read and understood the Hospitality Asset Disclosure for " +
+    LLP.name + ", including the possibility of partial or total loss of invested capital.",
+} as const;
 
 /** Read from the vehicle record. Never retyped into the prose above. */
 export const RISK_TERMS: Record<string, string> = {
-  debt: "₹5,50,00,000 facility · drawn during construction only",
-  moratorium: "Interest-only for months 1–18",
+  debt: inr(STACK.debt) + " facility \u00b7 drawn during construction only",
+  moratorium: "Interest-only for months 1\u201318",
   lockIn: UNIT.lockIn,
-  occupancy: "50% blended occupancy assumed · ₹15,000 ADR",
+  occupancy: (OPERATING.occupancy / 100).toFixed(0) + "% blended occupancy assumed \u00b7 " +
+    inr(OPERATING.adr) + " average daily rate",
 };
 
-export const DISCLOSURE = { version: "1.0", dated: "2026-07-24" };
+export const DISCLOSURE = { version: "2.0", dated: "2026-07-31" };
 
 /* ── The programme ────────────────────────────────────────────────── */
 export const PROGRAMME = [

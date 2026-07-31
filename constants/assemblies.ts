@@ -2294,6 +2294,77 @@ export const JOURNAL_ASSEMBLY: Assembly = {
 };
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   AS-31 · THE VEHICLE CONSOLE
+
+   Every view of one vehicle, in one module. Position, entitlement,
+   documents, resolutions, distributions and the acknowledged disclosure
+   are panels switched in place, not destinations.
+   ═══════════════════════════════════════════════════════════════════ */
+export const VEHICLE_CONSOLE: Assembly = {
+  id: "AS-31",
+  name: "The Vehicle Console",
+  scope: "region",
+  route: "member",
+  vantage: "member",
+  intent: "Hold every view of one vehicle in a single surface that is never left.",
+  answers: "What do I hold here, what has been decided, and what have I been paid?",
+  sections: [
+    S("AS-31.a", "Head", "masthead",
+      "Vehicle name, LLPIN, property, lifecycle state and the share held.",
+      [],
+      "The identity of the vehicle stays visible while every panel changes beneath it. A module " +
+      "whose header changes with its content is several screens wearing one border."),
+    S("AS-31.b", "Views", "onward",
+      "Position, Entitlement, Documents, Resolutions, Distributions, Disclosure.",
+      [],
+      "A real tablist: roving tabindex, arrow keys, Home and End. A row of buttons that swaps " +
+      "content without them looks like tabs and works only with a pointer."),
+    S("AS-31.c", "Panel", "ledger",
+      "The active view, rendered in place.",
+      ["O-03", "O-06"],
+      "Switching a panel never navigates. A partner reading a resolution and then wanting the " +
+      "document it refers to should not lose the resolution to get it."),
+    S("AS-31.d", "Absence", "figure",
+      "What is not there yet, why, and the date it will be.",
+      [],
+      "An empty panel reads as a page that failed to load, and a zero reads as a fact. Neither is " +
+      "true of a vehicle at pre-construction, where the honest answer is 'not yet, and here is " +
+      "the date'."),
+  ],
+  corrections: [
+    {
+      source: "Settled screen review",
+      was: "Four links in a row — Your position, Documents, Resolutions, Walk the flow again.",
+      now: "One console with six panels; the demonstration link is separated into the foot.",
+      because:
+        "Three of the four were views of one vehicle and the fourth restarted a demonstration. " +
+        "Rendering them as peers said they were peers, and each one navigated away, so reading a " +
+        "resolution and then wanting the document it refers to meant going back and out again.",
+      kind: "interaction",
+    },
+    {
+      source: "AS-31 design",
+      now: "Absence is rendered with a reason and a date.",
+      because:
+        "A vehicle at pre-construction has no distributions and no resolutions. Rendering nothing " +
+        "reads as a failure and rendering zero reads as a fact; both are wrong, and the second is " +
+        "worse because it looks deliberate.",
+      kind: "numeric",
+    },
+    {
+      source: "Accessibility",
+      now: "The tab strip implements the tablist pattern in full.",
+      because:
+        "Roving tabindex and arrow-key movement are what someone navigating by keyboard expects " +
+        "from something shaped like this. Without them the module is pointer-only, and it does " +
+        "not look it.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -2325,6 +2396,7 @@ export const ASSEMBLIES: readonly Assembly[] = [
   RISK_REGISTER,
   STANDING_DOCUMENT,
   JOURNAL_ASSEMBLY,
+  VEHICLE_CONSOLE,
 ];
 
 /**

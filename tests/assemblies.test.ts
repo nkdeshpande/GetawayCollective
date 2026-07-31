@@ -666,7 +666,7 @@ describe("assembly scope", () => {
     // header appears on every screen and had no stated rule about what
     // it may show.
     expect(CHROME.map((a) => a.id)).toEqual(["AS-20", "AS-21", "AS-22"]);
-    expect(REGIONS.map((a) => a.id)).toEqual(["AS-23", "AS-24"]);
+    expect(REGIONS.map((a) => a.id)).toEqual(["AS-23", "AS-24", "AS-31"]);
     expect(SCREENS.length + CHROME.length + REGIONS.length).toBe(ASSEMBLIES.length);
   });
 

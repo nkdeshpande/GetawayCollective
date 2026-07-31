@@ -11,7 +11,7 @@ import {
   ACCESS_RANK, ACCESS_FOR_VANTAGE, GROUP_VANTAGE, IA_LAWS,
   accessOf, isIndexable, routeByPath, routesFor, allParams,
 } from "../constants/routes";
-import { ASSEMBLIES } from "../constants/assemblies";
+import { ASSEMBLIES, scopeOf } from "../constants/assemblies";
 import { APERTURES } from "../constants/apertures";
 
 const assemblyById = (id: string) => ASSEMBLIES.find((a) => a.id === id);
@@ -53,11 +53,13 @@ describe("the route table", () => {
 
   it("makes every assembly reachable", () => {
     // An assembly nobody can navigate to is a screen that was built and
-    // lost. Chrome composes into other screens rather than routing.
-    const COMPOSED = new Set(["AS-20", "AS-21", "AS-22"]);
+    // lost. Chrome and regions compose into other screens rather than
+    // routing, and which those are is DERIVED from scope — this was a
+    // hardcoded list of three ids, so every region added afterwards
+    // failed for the wrong reason and got appended to silence it.
     const rendered = new Set(ROUTES.map((r) => r.assembly).filter(Boolean));
     const orphan = ASSEMBLIES
-      .filter((a) => !rendered.has(a.id) && !COMPOSED.has(a.id))
+      .filter((a) => !rendered.has(a.id) && scopeOf(a) === "screen")
       .map((a) => a.id);
     expect(orphan, `unreachable: ${orphan.join(" ")}`).toEqual([]);
   });

@@ -660,6 +660,29 @@ th.num{text-align:right}
   padding:2px 6px;min-width:18px;text-align:center}
 
 /* ── AS-22 · The Footer ──────────────────────────────────────────── */
+/* AS-31 · THE VEHICLE CONSOLE
+   One module holding every view of a vehicle. It replaced four loose
+   links that navigated away from each other, so the border is drawn
+   around the whole thing: the box IS the claim that this is one surface.
+   The tab strip is a real tablist — roving tabindex, arrow keys — because
+   a row of buttons that swaps content without them works only with a
+   pointer. */
+.console{border:1px solid var(--hair);background:var(--void-panel)}
+.console-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-m);
+  padding:var(--s-m);border-bottom:1px solid var(--hair);flex-wrap:wrap}
+.console-tabs{display:flex;gap:0;border-bottom:1px solid var(--hair);overflow-x:auto}
+.console-tabs button{appearance:none;background:transparent;border:0;
+  border-bottom:2px solid transparent;color:var(--steel-dim);
+  font:400 12px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;
+  padding:var(--s-s) var(--s-m);cursor:pointer;white-space:nowrap}
+.console-tabs button:hover{color:var(--ink-inv)}
+.console-tabs button.on{color:var(--copper);border-bottom-color:var(--copper)}
+.console-tabs button:focus-visible{outline:2px solid var(--electric);outline-offset:-2px}
+.console-panel{padding:var(--s-m)}
+.console-panel:focus-visible{outline:2px solid var(--electric);outline-offset:-2px}
+.console-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--s-m);
+  padding:var(--s-m);border-top:1px solid var(--hair);flex-wrap:wrap}
+
 /* The terms dialog (AS-06 / the accreditation step).
    The binding text is shown OVER the form rather than linked away from
    it: the form is resumable, but a person who leaves to read twelve
@@ -775,8 +798,30 @@ th.num{text-align:right}
   color:var(--hazard-deep)}
 .clause.sev1 .sev{color:var(--critical-deep)}
 .clause p{font:400 16px/1.65 var(--f-body);max-width:65ch;margin-top:var(--s-2xs)}
+/* The section number, set apart from the title.
+   It was rendered inline with no spacing, so "01Long-Term Hospitality
+   Ownership" ran together as one word. A number that has to be read as
+   part of the title is not a number, it is a typo. */
+.clause h2 .num{font:400 13px/1 var(--f-mono);letter-spacing:.14em;color:var(--steel);
+  display:block;margin-bottom:var(--s-2xs)}
+
 .clause .terms{margin-top:var(--s-s);font:400 12.5px/1.6 var(--f-mono);color:var(--steel);
   background:rgba(10,10,10,.05);padding:11px 14px}
+/* Key and value on one line, separated. They were two spans with no
+   layout, so "Minimum holding period36 months from financial close"
+   rendered as a single run. */
+.clause .terms > div{display:flex;gap:var(--s-s);justify-content:space-between;flex-wrap:wrap;
+  padding:2px 0}
+.clause .terms .k{flex:0 1 auto}
+.clause .terms .v{flex:0 1 auto;text-align:right;color:var(--ink)}
+.clause .terms .src{margin-top:var(--s-2xs);padding-top:var(--s-2xs);
+  border-top:1px solid var(--hair-lt);display:block;opacity:.8}
+
+/* Total loss stands outside the numbered sequence, and is marked as
+   standing outside it. */
+.clause.material{border-left-color:var(--critical-deep);
+  background:rgba(10,10,10,.04);padding:var(--s-m);margin-top:var(--s-2xl)}
+.clause.material .outcomes{margin:var(--s-s) 0 var(--s-s) 1.1em;font:400 16px/1.8 var(--f-body)}
 /* Visible from the first scroll, disabled with the reason in WORDS.
    A control held at half opacity with pointer-events off is invisible to
    the eye and absent from the keyboard, so nothing says what to do. */
@@ -3875,6 +3920,98 @@ A["AS-30"] = { vantage:"gateway", render: () => {
       listing only their benefits is marketing in the clothes of a record.</span>
     <span class="fix"><b>Rule</b> Entries are ordered by date and the order is checked at load. A
       published date out of sequence would silently reorder the index.</span>
+  </div>
+</div>` } };
+
+
+/* AS-31 - THE VEHICLE CONSOLE
+   ---------------------------------------------------------------
+   Every view of one vehicle in a single surface that is never left.
+
+   It replaced four loose links on the settled screen - Your position,
+   Documents, Resolutions, Walk the flow again - which sat side by side
+   as though all four were peers. Three were views of ONE vehicle and the
+   fourth restarted a demonstration. Each also navigated away, so reading
+   a resolution and then wanting the document it refers to meant going
+   back and out again.
+
+   The tab strip is a real tablist: roving tabindex, arrow keys, Home and
+   End. A row of buttons that swaps content without them looks like tabs
+   and works only with a pointer.
+   --------------------------------------------------------------- */
+A["AS-31"] = { vantage:"member", render: () => {
+  const PANELS = [
+    { id:"position", l:"Position", n:"What you hold, and what it is worth." },
+    { id:"entitlement", l:"Entitlement", n:"Nights, and when they begin." },
+    { id:"documents", l:"Documents", n:"The instruments that bind." },
+    { id:"resolutions", l:"Resolutions", n:"What has been put to partners." },
+    { id:"distributions", l:"Distributions", n:"What has been paid, and what has not." },
+    { id:"disclosure", l:"Disclosure", n:"The version you acknowledged." },
+  ];
+  return `
+<div class="wrap">
+  <span class="t-micro" style="color:var(--steel)">AS-31 &middot; Region &middot; composed into the member surfaces</span>
+  <h1 class="t-display-l" style="margin:var(--s-2xs) 0 var(--s-s)">The Vehicle Console</h1>
+  <p class="t-body-l" style="color:var(--steel);max-width:65ch">
+    One module. Every view of a vehicle is a panel inside it, switched in place, and nothing about
+    the vehicle is reached by leaving.
+  </p>
+
+  <section class="console" style="margin-top:var(--s-xl)">
+    <div class="console-head">
+      <div>
+        <span class="t-micro" style="color:var(--steel)">Vehicle console</span>
+        <h2 class="t-display-s" style="margin-top:var(--s-3xs)">SlowSpace Coastal LLP</h2>
+        <span class="t-mono-s" style="color:var(--steel)">LLPIN AAC-4471 &middot; SlowSpace Coastal &middot; Pre-construction</span>
+      </div>
+      <span class="t-mono-s" style="color:var(--steel)">10% held</span>
+    </div>
+
+    <div class="console-tabs" role="tablist" aria-label="Vehicle views">
+      ${PANELS.map((p, i) => `<button role="tab" class="${i === 0 ? "on" : ""}"
+        aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(p.l)}</button>`).join("")}
+    </div>
+
+    <div class="console-panel" role="tabpanel">
+      <p class="t-body-s" style="color:var(--steel);margin-bottom:var(--s-m)">${esc(PANELS[0].n)}</p>
+      <div class="row" style="gap:var(--s-s)">
+        <div class="panel" style="flex:1 1 240px">
+          <span class="t-micro" style="color:var(--steel)">Contributed</span>
+          <div class="t-display-m money" style="margin-top:var(--s-2xs)">&#8377;40,00,000</div>
+          <span class="t-mono-s" style="color:var(--steel)">10% of SlowSpace Coastal LLP</span>
+        </div>
+        <div class="panel" style="flex:1 1 240px">
+          <span class="t-micro" style="color:var(--steel)">Indicative annual distribution</span>
+          <div class="t-display-m money" style="margin-top:var(--s-2xs)">&#8377;7,20,000</div>
+          <span class="t-mono-s" style="color:var(--steel)">18.0% once stabilised &middot; modelled</span>
+        </div>
+        <div class="panel" style="flex:1 1 220px">
+          <span class="t-micro" style="color:var(--steel)">Voting weight</span>
+          <div class="t-display-m" style="margin-top:var(--s-2xs)">10%</div>
+          <span class="t-mono-s" style="color:var(--steel)">contribution-weighted &middot; &sect;24a</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="console-foot">
+      <span class="t-body-s" style="color:var(--steel)">
+        Every view of this vehicle is in this module. Nothing about it is reached by leaving.
+      </span>
+      <a class="btn" href="#" data-go="AS-01">Walk the flow again</a>
+    </div>
+  </section>
+
+  <div class="fixes">
+    <span class="fix"><b>Fixed</b> Four links in a row became one console with six panels. Three of
+      the four were views of one vehicle and the fourth restarted a demonstration; rendering them
+      as peers said they were peers.</span>
+    <span class="fix"><b>Rule</b> Switching a panel never navigates. A partner reading a resolution
+      and then wanting the document it refers to should not lose the resolution to get it.</span>
+    <span class="fix"><b>Rule</b> Absence renders with a reason and a date. An empty panel reads as
+      a page that failed to load and a zero reads as a fact; neither is true of a vehicle at
+      pre-construction.</span>
+    <span class="fix"><b>Rule</b> The tab strip implements the tablist pattern in full &mdash;
+      roving tabindex, arrow keys, Home and End.</span>
   </div>
 </div>` } };
 

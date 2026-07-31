@@ -56,10 +56,14 @@ const authSrc = read("lib", "authority.ts");
 
 // ── Registries, parsed from their own canon ──────────────────────────
 const assemblyVantage = new Map();
+/* Scope decides whether an assembly needs a route of its own. Parsed
+   here rather than assumed — see check 2 below. */
+const assemblyScope = new Map();
 for (const m of asmSrc.matchAll(/export const \w+: Assembly = \{([\s\S]*?)\n\};/g)) {
   const id = (m[1].match(/\bid:\s*"([^"]+)"/) || [])[1];
   const v = (m[1].match(/\bvantage:\s*"([^"]+)"/) || [])[1];
-  if (id) assemblyVantage.set(id, v);
+  const sc = (m[1].match(/\bscope:\s*"([^"]+)"/) || [])[1] || "screen";
+  if (id) { assemblyVantage.set(id, v); assemblyScope.set(id, sc); }
 }
 /* Which apertures each assembly RENDERS. routesTo is deliberately excluded:
    routing to a wider aperture is the narrow one saying where the rest is
@@ -263,9 +267,29 @@ for (const r of ROUTES) {
 {
   const rendered = new Set(ROUTES.map((r) => r.assembly).filter(Boolean));
   const orphan = [...assemblyVantage.keys()].filter((id) => !rendered.has(id));
-  // Chrome and regions are composed into other screens rather than routed.
-  const COMPOSED = new Set(["AS-20", "AS-21", "AS-22"]);
-  const real = orphan.filter((id) => !COMPOSED.has(id));
+  /*
+   * Chrome and regions are composed into other screens rather than
+   * routed, so an orphan among them is not a fault.
+   *
+   * This was a hardcoded list of three ids, which meant every region
+   * added afterwards failed the check for the wrong reason and got
+   * added to the list to shut it up. AS-31 was the first, and adding it
+   * would have been the third id nobody could later justify. It is
+   * derived from `scope` now: the registry already states which
+   * assemblies are composed, and stating it twice is how the two drift.
+   */
+  const composed = (id) => assemblyScope.get(id) !== "screen";
+  const real = orphan.filter((id) => !composed(id));
+  const exempt = orphan.filter(composed);
+  if (exempt.length) {
+    /* Named, not silent. A composed assembly still has to be rendered by
+       SOMETHING, and this linter cannot see components — so it says which
+       ones it declined to check rather than passing over them quietly. */
+    warn.push(
+      `composed into other screens, so not routed: ${exempt.join(", ")}. ` +
+        `That each is actually rendered is not something this checker can see.`,
+    );
+  }
   if (real.length) {
     fail.push(
       `No route renders ${real.join(", ")}. An assembly nobody can navigate to is a screen that ` +

@@ -15,11 +15,13 @@ import Link from "next/link";
 import {
   LLP, SITE, STACK, EQUITY, PROJECT, UNIT, GROSS_REVENUE,
   WATERFALL_SLOWSPACE, MY_DISTRIBUTION, MY_YIELD_BPS, DSCR, RETURNS,
-  GOVERNANCE, RISKS_SLOWSPACE, RISK_TERMS, DISCLOSURE, PROGRAMME, DEPOSIT,
+  GOVERNANCE, RISKS_SLOWSPACE, MATERIAL_RISK, ACKNOWLEDGEMENT, DISCLOSURE, DEPOSIT,
+  PROGRAMME,
 } from "./slowspace";
 import { inr, rate, plate } from "./data";
 import { documentByPath } from "@/content/legal";
 import { ConfidenceTag, Pct, Footer } from "./atoms";
+import { VehicleConsole, Programme } from "./console";
 
 const pct = (bps: number) => (bps / 100).toFixed(2) + "%";
 
@@ -608,52 +610,71 @@ export function RiskDisclosure() {
     <div className="risk on-paper">
       <div className="risk-col">
         <span className="t-micro" style={{ color: "var(--gc-steel)" }}>
-          Step 3 of 5 · mandatory before commitment
+          Step 3 of 5 &middot; before commitment
         </span>
-        <h1>
-          How this
-          <br />
-          loses money.
-        </h1>
+        {/* The heading names the document rather than editorialising on
+            it. The previous one read "How this loses money", which was
+            written to stop a reader skimming and succeeded at the cost of
+            sounding like a warning from an adversary rather than a
+            disclosure from a counterparty. Section 08 still says total
+            loss, in those words. */}
+        <h1>Hospitality Asset Disclosure</h1>
         <span className="ver">
-          {LLP.name} · disclosure v{DISCLOSURE.version} · {DISCLOSURE.dated}
+          {LLP.name} &middot; Asset Disclosure v{DISCLOSURE.version} &middot; {DISCLOSURE.dated}
         </span>
 
         <p className="t-body-l" style={{ maxWidth: "65ch", marginTop: "var(--gc-sp-l)" }}>
-          Seven ways, in order of how badly. None of them is unlikely enough to leave out.
+          Before committing capital, please understand how ownership in this hospitality asset
+          works, how returns are generated, and the principal considerations that may affect your
+          investment.
+        </p>
+        <p className="t-body" style={{ maxWidth: "65ch", marginTop: "var(--gc-sp-s)" }}>
+          The following reflects the most significant factors for this specific property.
         </p>
 
         <button className="skipend" onClick={() => setReached(true)}>
-          Skip to the acknowledgement ↓
+          Skip to the acknowledgement &darr;
         </button>
 
-        {RISKS_SLOWSPACE.map((c, i) => (
-          <section className={`clause ${c.sev === 1 ? "sev1" : ""}`} key={c.t}>
-            <span className="sev">
-              {c.sev === 1 ? "Severity 1 · total loss possible"
-                : c.sev === 2 ? "Severity 2 · material" : "Severity 3"}
-            </span>
+        {RISKS_SLOWSPACE.map((c) => (
+          <section className="clause" key={c.n}>
             <h2>
-              {String(i + 1).padStart(2, "0")}&nbsp;&nbsp;{c.t}
+              <span className="num">{c.n}</span>
+              {c.t}
             </h2>
-            <p>{c.p}</p>
-            {c.terms ? (
+            {c.p.map((para, k) => <p key={k}>{para}</p>)}
+            {c.facts ? (
               <div className="terms">
-                {c.terms.map((k) => (
-                  <div key={k}>{RISK_TERMS[k]}</div>
+                {c.facts.map((f) => (
+                  <div key={f.k}>
+                    <span className="k">{f.k}</span>
+                    <span className="v">{f.v}</span>
+                  </div>
                 ))}
-                <div style={{ opacity: 0.75 }}>
-                  Read from the vehicle record, not written here.
-                </div>
+                <div className="src">Read from the Vehicle Record.</div>
               </div>
             ) : null}
           </section>
         ))}
 
-        <p className="t-body" style={{ maxWidth: "65ch", marginTop: "var(--gc-sp-2xl)" }}>
-          By acknowledging, you confirm you have read this and can sustain a total loss of{" "}
-          {inr(UNIT.commitment)}.
-        </p>
+        {/* Stated outside the numbered sequence. A numbered item invites
+            the reader to weigh it against the other seven; this is not
+            comparable to them, and standing outside the sequence is how
+            the layout says so. */}
+        <section className="clause material">
+          <h2>{MATERIAL_RISK.t}</h2>
+          {MATERIAL_RISK.p.map((para, k) => <p key={k}>{para}</p>)}
+          <ul className="outcomes">
+            {MATERIAL_RISK.outcomes.map((o) => <li key={o}>{o}</li>)}
+          </ul>
+          <p><strong>{MATERIAL_RISK.close}</strong></p>
+        </section>
+
+        <section className="clause">
+          <h2>Acknowledgement</h2>
+          <p>{ACKNOWLEDGEMENT.intro}</p>
+        </section>
+
         <span
           tabIndex={-1}
           onFocus={() => setReached(true)}
@@ -674,21 +695,18 @@ export function RiskDisclosure() {
           <label>
             <input type="checkbox" disabled={!reached} checked={ack}
                    onChange={(e) => setAck(e.target.checked)} />
-            <span>
-              I have read the risk disclosure v{DISCLOSURE.version} for {LLP.name} and understand I
-              can lose the whole of my capital.
-            </span>
+            <span>{ACKNOWLEDGEMENT.statement}</span>
           </label>
           <span className="go">
             <Link className="btn" href="/flow/commit"
                   aria-disabled={!ack}
                   style={ack ? undefined : { pointerEvents: "none", opacity: 1, borderColor: "var(--gc-steel)", color: "var(--gc-steel)" }}>
-              Continue to commitment
+              Continue to Commitment
             </Link>
           </span>
           <span className="why">
             {!reached
-              ? "Reach the end of the statement to enable this — scroll, tab, or use the skip link above."
+              ? "Reach the end of the disclosure to enable this \u2014 scroll, tab, or use the skip link above."
               : ack
                 ? `Acknowledgement of v${DISCLOSURE.version} will be recorded with your identity and the time.`
                 : "Acknowledge to continue."}
@@ -918,11 +936,20 @@ export function Settled() {
             </p>
           </div>
 
-          <div className="row" style={{ marginTop: "var(--gc-sp-xl)", gap: "var(--gc-sp-2xs)" }}>
-            <Link className="btn" href="/member">Your position</Link>
-            <Link className="btn" href="/member/documents">Documents</Link>
-            <Link className="btn" href="/member/resolutions">Resolutions</Link>
-            <Link className="btn" href="/flow">Walk the flow again</Link>
+          {/* ONE MODULE, NOT FOUR LINKS.
+              Position, Documents and Resolutions were three buttons in a
+              row beside "Walk the flow again", as though all four were
+              peers. Three are views of one vehicle; the fourth restarts a
+              demonstration. Each also navigated away, so reading a
+              resolution and then wanting the document it refers to meant
+              going back and out again. They are panels of one console
+              now, switched in place. */}
+          <div style={{ marginTop: "var(--gc-sp-xl)" }}>
+            <VehicleConsole />
+          </div>
+
+          <div style={{ marginTop: "var(--gc-sp-l)" }}>
+            <Programme />
           </div>
         </div>
       </section>
