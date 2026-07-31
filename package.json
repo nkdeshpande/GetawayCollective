@@ -23,7 +23,9 @@
     "fixtures": "node scripts/gen-fixtures.js",
     "fixtures:check": "node scripts/gen-fixtures.js --check",
     "test:run": "vitest run",
-    "lint:cap": "node scripts/cap-lint.js"
+    "lint:cap": "node scripts/cap-lint.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
@@ -37,6 +39,7 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^8.55.0",
     "eslint-config-next": "^15.0.0",
     "typescript": "^5.3.0",
