@@ -26,6 +26,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const SM = path.join(ROOT, "lib", "state-machines.ts");
 const CMD = path.join(ROOT, "lib", "commands.ts");
@@ -35,14 +40,14 @@ const fail = [];
 const warn = [];
 
 function unionMembers(file, typeName) {
-  const src = fs.readFileSync(file, "utf8");
+  const src = fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n");
   const m = src.match(new RegExp(`export type ${typeName}\\s*=([\\s\\S]*?);`));
   return m ? [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]) : null;
 }
 
 /** Capability name -> declared events. */
 function capabilities() {
-  const src = fs.readFileSync(CMD, "utf8");
+  const src = fs.readFileSync(CMD, "utf8").replace(/\r\n/g, "\n");
   const out = new Map();
   for (const m of src.matchAll(/C\(\{([\s\S]*?)\}\),/g)) {
     const b = m[1];
@@ -54,7 +59,7 @@ function capabilities() {
 }
 
 function machines() {
-  const src = fs.readFileSync(SM, "utf8");
+  const src = fs.readFileSync(SM, "utf8").replace(/\r\n/g, "\n");
   const out = [];
   // Each machine is `export const X: StateMachine = { ... };`
   for (const m of src.matchAll(/export const (\w+): StateMachine = \{([\s\S]*?)\n\};/g)) {

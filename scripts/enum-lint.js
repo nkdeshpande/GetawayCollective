@@ -25,6 +25,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const UFR = path.join(ROOT, "constants", "ufr.ts");
 const ENUMS = path.join(ROOT, "constants", "enums.ts");
@@ -37,7 +42,7 @@ const MAX_DESCRIPTION = 60;
 
 /** `Object.field` -> [values] from the registry. */
 function registryEnums() {
-  const src = fs.readFileSync(UFR, "utf8");
+  const src = fs.readFileSync(UFR, "utf8").replace(/\r\n/g, "\n");
   const out = new Map();
   for (const m of src.matchAll(/F\(\{([\s\S]*?)\}\),/g)) {
     const b = m[1];
@@ -52,7 +57,7 @@ function registryEnums() {
 
 /** `Object.field` -> { value: {label, description, tone} } from the display file. */
 function displayEnums() {
-  const src = fs.readFileSync(ENUMS, "utf8");
+  const src = fs.readFileSync(ENUMS, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/export const ENUM_DISPLAY[^=]*=\s*\{([\s\S]*?)\n\};/);
   if (!block) {
     console.error("[enum-lint] Could not parse ENUM_DISPLAY. Refusing to run.");
@@ -154,7 +159,7 @@ for (const [key, values] of DISP) {
 
 // 5. critical budget
 const BUDGET = (() => {
-  const m = fs.readFileSync(ENUMS, "utf8").match(/CRITICAL_TONE_BUDGET\s*=\s*(\d+)/);
+  const m = fs.readFileSync(ENUMS, "utf8").replace(/\r\n/g, "\n").match(/CRITICAL_TONE_BUDGET\s*=\s*(\d+)/);
   return m ? Number(m[1]) : 12;
 })();
 if (criticalCount > BUDGET) {

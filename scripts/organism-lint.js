@@ -25,6 +25,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const ORG = path.join(ROOT, "constants", "organisms.ts");
 const UFR = path.join(ROOT, "constants", "ufr.ts");
@@ -35,19 +40,19 @@ const fail = [];
 const warn = [];
 
 const ufrIds = new Set(
-  [...fs.readFileSync(UFR, "utf8").matchAll(/ufr:\s*"([^"]+)"/g)].map((m) => m[1]),
+  [...fs.readFileSync(UFR, "utf8").replace(/\r\n/g, "\n").matchAll(/ufr:\s*"([^"]+)"/g)].map((m) => m[1]),
 );
 const enumKeys = new Set(
-  [...fs.readFileSync(ENUMS, "utf8").matchAll(/"([\w]+\.[\w]+)":\s*\{/g)].map((m) => m[1]),
+  [...fs.readFileSync(ENUMS, "utf8").replace(/\r\n/g, "\n").matchAll(/"([\w]+\.[\w]+)":\s*\{/g)].map((m) => m[1]),
 );
 const metricKinds = new Set(
-  (fs.readFileSync(GRAMMAR, "utf8").match(/export type MetricKind\s*=([\s\S]*?);/) || [, ""])[1]
+  (fs.readFileSync(GRAMMAR, "utf8").replace(/\r\n/g, "\n").match(/export type MetricKind\s*=([\s\S]*?);/) || [, ""])[1]
     .match(/"[^"]+"/g)?.map((s) => s.replace(/"/g, "")) ?? [],
 );
 
 /** Parse organisms. Each is an object literal with a fields array of F(...) calls. */
 function organisms() {
-  const src = fs.readFileSync(ORG, "utf8");
+  const src = fs.readFileSync(ORG, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/export const ORGANISMS[^=]*=\s*\[([\s\S]*?)\n\];/);
   if (!block) { console.error("[organism-lint] Could not parse ORGANISMS. Refusing to run."); process.exit(2); }
   const out = [];

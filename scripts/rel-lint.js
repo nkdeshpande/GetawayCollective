@@ -22,6 +22,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const UFR_SRC = path.join(ROOT, "constants", "ufr.ts");
 const REL_SRC = path.join(ROOT, "constants", "relationships.ts");
@@ -31,7 +36,7 @@ const fail = [];
 const warn = [];
 
 function objects() {
-  const src = fs.readFileSync(BO_SRC, "utf8");
+  const src = fs.readFileSync(BO_SRC, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/export enum BusinessObjectType \{([\s\S]*?)\n\}/);
   if (!block) { console.error("[rel-lint] cannot parse BusinessObjectType"); process.exit(2); }
   return [...block[1].matchAll(/^\s*(\w+)\s*=\s*"/gm)].map((m) => m[1]);
@@ -39,7 +44,7 @@ function objects() {
 
 /** Reference fields declared in the UFR. */
 function ufrReferences() {
-  const src = fs.readFileSync(UFR_SRC, "utf8");
+  const src = fs.readFileSync(UFR_SRC, "utf8").replace(/\r\n/g, "\n");
   const out = [];
   for (const m of src.matchAll(/F\(\{([\s\S]*?)\}\),/g)) {
     const b = m[1];
@@ -57,7 +62,7 @@ function ufrReferences() {
 }
 
 function relationships() {
-  const src = fs.readFileSync(REL_SRC, "utf8");
+  const src = fs.readFileSync(REL_SRC, "utf8").replace(/\r\n/g, "\n");
   const out = [];
   for (const m of src.matchAll(/R\(\{([\s\S]*?)\}\),/g)) {
     const b = m[1];
@@ -75,7 +80,7 @@ function relationships() {
 }
 
 function roots() {
-  const src = fs.readFileSync(REL_SRC, "utf8");
+  const src = fs.readFileSync(REL_SRC, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/ROOT_OBJECTS[^=]*=\s*\[([\s\S]*?)\]/);
   if (!block) { console.error("[rel-lint] cannot parse ROOT_OBJECTS"); process.exit(2); }
   return [...block[1].matchAll(/BO\.(\w+)/g)].map((m) => m[1]);

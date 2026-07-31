@@ -1,0 +1,823 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GC.SYSTEM · Information Architecture</title><style>
+:root{--void:#0A0A0A;--panel:#121212;--paper:#F2F2F2;--inv:#F2F2F2;--dim:#9A9A9A;
+--steel:#6B6B6B;--copper:#C79F6B;--confirm:#1FAA59;--hazard:#E8672E;--critical:#FF3B30;
+--blue:#7FA4EE;--hair:rgba(242,242,242,.10);
+--fd:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
+--fb:'Inter','Segoe UI Variable',-apple-system,system-ui,sans-serif;
+--fm:'Space Mono',ui-monospace,Consolas,'SFMono-Regular',monospace}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+body{background:var(--void);color:var(--inv);font:400 15px/1.6 var(--fb);-webkit-font-smoothing:antialiased}
+.w{max-width:1240px;margin:0 auto;padding:0 24px 120px}
+header{padding:72px 0 36px;border-bottom:1px solid var(--hair)}
+.eb{font:400 11px/1 var(--fm);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+h1{font:600 clamp(36px,5.6vw,58px)/1 var(--fd);letter-spacing:-.035em;margin:14px 0 0;text-wrap:balance}
+.lede{margin-top:22px;max-width:76ch;font-size:17px;color:#D8D8D8}
+.lede strong{color:var(--inv)}
+.tally{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:1px;
+background:var(--hair);border:1px solid var(--hair);margin-top:34px}
+.tally div{background:var(--panel);padding:18px}
+.tally b{display:block;font:600 27px/1 var(--fm);font-variant-numeric:tabular-nums}
+.tally span{display:block;font:400 10px/1.4 var(--fm);letter-spacing:.14em;
+text-transform:uppercase;color:var(--dim);margin-top:6px}
+.grp{margin-top:56px}
+.grp-h{padding-bottom:14px;border-bottom:1px solid var(--hair);margin-bottom:4px}
+.grp-h h2{font:600 21px/1.2 var(--fd);letter-spacing:-.02em}
+.grp-h p{font-size:13.5px;color:var(--dim);margin-top:6px;max-width:82ch}
+.grp-h .n{float:right;font:400 11px/1 var(--fm);color:var(--steel)}
+.rt{display:grid;grid-template-columns:minmax(240px,1.3fr) 1fr 96px 190px;gap:16px;
+padding:13px 0;border-bottom:1px solid rgba(242,242,242,.055);align-items:baseline}
+@media(max-width:900px){.rt{grid-template-columns:1fr;gap:5px;padding:16px 0}}
+.rt:hover{background:rgba(242,242,242,.03)}
+.pth{font:400 13.5px/1.5 var(--fm);word-break:break-all}
+.pth em{color:var(--copper);font-style:normal}
+.nm{font-size:14px}
+.asm{font:400 11.5px/1.5 var(--fm);color:var(--dim)}
+.ac{font:400 10px/1 var(--fm);letter-spacing:.12em;text-transform:uppercase;
+border:1px solid currentColor;padding:4px 8px;white-space:nowrap;justify-self:start}
+.rg{font:400 11px/1.5 var(--fm);color:var(--copper)}
+.nt{grid-column:1/-1;font-size:12.5px;color:var(--dim);padding-left:14px;
+border-left:2px solid var(--hair);max-width:88ch;margin-top:2px}
+.ov{grid-column:1/-1;font-size:12.5px;color:#CFCFCF;padding-left:14px;
+border-left:2px solid var(--hazard);max-width:88ch;margin-top:2px}
+.ov b{color:var(--hazard);font:400 9.5px/1.6 var(--fm);letter-spacing:.14em;text-transform:uppercase;
+display:block;margin-bottom:3px}
+.stages{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:1px;
+background:var(--hair);border:1px solid var(--hair);margin-top:14px}
+.stages div{background:var(--panel);padding:12px 14px}
+.stages .i{font:400 10px/1 var(--fm);color:var(--steel)}
+.stages .t{display:block;font-size:13px;margin-top:5px;text-transform:capitalize}
+.laws{margin-top:64px;padding-top:36px;border-top:1px solid var(--hair)}
+.law{border-left:2px solid var(--copper);padding-left:18px;margin-bottom:22px;max-width:84ch}
+.law b{display:block;font:400 10px/1 var(--fm);letter-spacing:.16em;text-transform:uppercase;
+color:var(--copper);margin-bottom:7px}
+.law p{color:#D6D6D6}
+footer{margin-top:72px;padding-top:26px;border-top:1px solid var(--hair);
+color:var(--dim);font:400 12px/1.7 var(--fm)}
+code{font-family:var(--fm);font-size:.88em;background:rgba(242,242,242,.07);padding:1px 5px}
+</style></head><body><div class="w">
+
+<header>
+<div class="eb">GC.SYSTEM · Wave 7 · Information Architecture</div>
+<h1>Every URL<br>in the system.</h1>
+<p class="lede">
+<strong>96 routes</strong> across seven sections, plus 16 generated passport
+stages. Access is <strong>derived from the assembly's vantage</strong> rather than declared — the
+aperture tier already decided what each vantage may see, and a route restating it would be a second
+source of truth. 8 routes override that derivation, and every
+one states why.
+</p>
+<div class="tally">
+<div><b style="color:#1FAA59">34</b><span>public</span></div><div><b style="color:#7FA4EE">3</b><span>identified</span></div><div><b style="color:#C79F6B">3</b><span>accredited</span></div><div><b style="color:#E8672E">22</b><span>member</span></div><div><b style="color:#FF3B30">34</b><span>office</span></div>
+<div><b>8</b><span>Overrides</span></div>
+<div><b>21</b><span>Rights used</span></div>
+</div>
+</header>
+
+<section class="grp">
+<div class="grp-h"><span class="n">17 routes</span>
+<h2>Public</h2><p>The gateway. Anyone, indexable.</p></div>
+<div class="rt">
+<span class="pth">/</span>
+<span><span class="nm">Home</span><br><span class="asm">AS-23 · The Hero Viewport</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Hero region, then routes into the collection. No figure above the fold.</span>
+</div><div class="rt">
+<span class="pth">/collection</span>
+<span><span class="nm">The Collection</span><br><span class="asm">AS-01 · The Gateway Grid</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/collection/<em>[property]</em></span>
+<span><span class="nm">Property</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/collection/<em>[property]</em>/space</span>
+<span><span class="nm">Space</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/collection/<em>[property]</em>/capital</span>
+<span><span class="nm">Capital</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">The Capital LENS at the space vantage. Renders AP-03 and routes to the console; it does not render console disclosure because a tab is labelled Capital.</span>
+</div><div class="rt">
+<span class="pth">/collection/<em>[property]</em>/time</span>
+<span><span class="nm">Time</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/collection/<em>[property]</em>/location</span>
+<span><span class="nm">Location</span><br><span class="asm">AS-12 · Location Intelligence</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/collection/<em>[property]</em>/gallery</span>
+<span><span class="nm">Gallery</span><br><span class="asm">AS-10 · The Gallery Strip</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/gallery</span>
+<span><span class="nm">Gallery</span><br><span class="asm">AS-09 · The Gallery Frame</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/story</span>
+<span><span class="nm">Story</span><br><span class="asm">AS-08 · The Story Playback</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/portfolio</span>
+<span><span class="nm">The Portfolio</span><br><span class="asm">AS-07 · The Portfolio Narrative</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/how-capital-works</span>
+<span><span class="nm">How Capital Works</span><br><span class="asm">AS-04 · The Capital Explainer</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → public</b>The waterfall explainer is the single most important thing a prospective investor can read before committing, and putting it behind a sign-in would mean the disclosure only reaches people who have already decided.</span>
+
+</div><div class="rt">
+<span class="pth">/voices</span>
+<span><span class="nm">Voices</span><br><span class="asm">AS-24 · Testimonials</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Testimonials. No figure, no return, no performance reference — regulated speech.</span>
+</div><div class="rt">
+<span class="pth">/answers</span>
+<span><span class="nm">Answers</span><br><span class="asm">AS-17 · The Knowledge Base</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/status</span>
+<span><span class="nm">System Status</span><br><span class="asm">AS-15 · System Status</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/roles</span>
+<span><span class="nm">Open Roles</span><br><span class="asm">AS-18 · Recruitment</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/roles/<em>[code]</em></span>
+<span><span class="nm">Role</span><br><span class="asm">AS-18 · Recruitment</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div>
+
+</section><section class="grp">
+<div class="grp-h"><span class="n">8 routes</span>
+<h2>Legal</h2><p>Standing statements. All public — a document behind a sign-in is one nobody can rely on before they sign in.</p></div>
+<div class="rt">
+<span class="pth">/legal</span>
+<span><span class="nm">Legal</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Index of the standing documents.</span>
+</div><div class="rt">
+<span class="pth">/legal/terms</span>
+<span><span class="nm">Terms of Use</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/legal/privacy</span>
+<span><span class="nm">Privacy Notice</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/legal/cookies</span>
+<span><span class="nm">Cookie Notice</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/legal/risk-disclosure</span>
+<span><span class="nm">Risk Disclosure</span><br><span class="asm">AS-14 · The Risk Disclosure</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → public</b>It gates commitment, and it is also the document a prospective investor most needs to read before deciding whether to start. Public to read; the ACKNOWLEDGEMENT still requires identity and is recorded against a version.</span>
+
+</div><div class="rt">
+<span class="pth">/legal/disclosures</span>
+<span><span class="nm">Standing Disclosures</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Capital at risk, past performance, no guarantee. Body size, reading tone.</span>
+</div><div class="rt">
+<span class="pth">/legal/complaints</span>
+<span><span class="nm">Complaints Procedure</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/legal/accessibility</span>
+<span><span class="nm">Accessibility Statement</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">States what has been tested and what has not. Currently: contrast computed, no assistive-technology testing performed.</span>
+</div>
+
+</section><section class="grp">
+<div class="grp-h"><span class="n">5 routes</span>
+<h2>Identity &amp; Passport</h2><p>Sixteen accreditation stages, each its own URL so a partial application is returnable by link.</p></div>
+<div class="rt">
+<span class="pth">/auth/sign-in</span>
+<span><span class="nm">Sign In</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">No password is ever handled by the design system. Delegated.</span>
+</div><div class="rt">
+<span class="pth">/auth/verify</span>
+<span><span class="nm">Verify</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">The token arrives as a QUERY parameter, not a path segment, and it is not declared as a param for that reason. It is in the URL at all only because an email link has no other carrier — so it is single-use, short-lived, and stripped from the address bar on arrival. A URL is written to server logs, browser history and referrer headers.</span>
+</div><div class="rt">
+<span class="pth">/auth/sign-out</span>
+<span><span class="nm">Sign Out</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/passport</span>
+<span><span class="nm">Your Passport</span></span>
+<span class="ac" style="color:#7FA4EE">identified</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → identified</b>The passport is how someone BECOMES a member. Requiring membership to reach it would close the only door into the system.</span>
+
+</div><div class="rt">
+<span class="pth">/passport/${st}</span>
+<span><span class="nm">Passport · ${st.replace(/-/g, " ")}</span><br><span class="asm">AS-06 · The Commitment Flow</span></span>
+<span class="ac" style="color:#7FA4EE">identified</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → identified</b>Accreditation is reached before membership exists, by definition — the Member Law fires on settlement, and settlement cannot happen until accreditation has. Requiring member access here would close the only door into the system.</span>
+
+</div>
+<div class="stages">
+<div><span class="i">01</span>
+<span class="t">discover</span></div><div><span class="i">02</span>
+<span class="t">eligibility</span></div><div><span class="i">03</span>
+<span class="t">profile</span></div><div><span class="i">04</span>
+<span class="t">identity</span></div><div><span class="i">05</span>
+<span class="t">address</span></div><div><span class="i">06</span>
+<span class="t">tax residency</span></div><div><span class="i">07</span>
+<span class="t">screening</span></div><div><span class="i">08</span>
+<span class="t">accreditation</span></div><div><span class="i">09</span>
+<span class="t">suitability</span></div><div><span class="i">10</span>
+<span class="t">source of funds</span></div><div><span class="i">11</span>
+<span class="t">documents</span></div><div><span class="i">12</span>
+<span class="t">risk profile</span></div><div><span class="i">13</span>
+<span class="t">review</span></div><div><span class="i">14</span>
+<span class="t">decision</span></div><div><span class="i">15</span>
+<span class="t">issued</span></div><div><span class="i">16</span>
+<span class="t">annual review</span></div>
+</div>
+</section><section class="grp">
+<div class="grp-h"><span class="n">21 routes</span>
+<h2>Member Workspace</h2><p>Requires a settled position. The Member Law has fired.</p></div>
+<div class="rt">
+<span class="pth">/member</span>
+<span><span class="nm">Your Position</span><br><span class="asm">AS-05 · The Member Console</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/position</span>
+<span><span class="nm">Position</span><br><span class="asm">AS-05 · The Member Console</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/holdings</span>
+<span><span class="nm">Holdings</span><br><span class="asm">AS-10 · The Gallery Strip</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/holdings/<em>[property]</em></span>
+<span><span class="nm">Holding</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/distributions</span>
+<span><span class="nm">Distributions</span><br><span class="asm">AS-05 · The Member Console</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/distributions/<em>[ref]</em></span>
+<span><span class="nm">Distribution</span><br><span class="asm">AS-05 · The Member Console</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/calls</span>
+<span><span class="nm">Capital Calls</span><br><span class="asm">AS-26 · The Capital Call</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/calls/<em>[ref]</em></span>
+<span><span class="nm">Capital Call</span><br><span class="asm">AS-26 · The Capital Call</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+<span class="nt">Default consequences render in full above the payment control.</span>
+</div><div class="rt">
+<span class="pth">/member/entitlement</span>
+<span><span class="nm">Entitlement</span><br><span class="asm">AS-25 · The Time Ledger</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/entitlement/<em>[year]</em></span>
+<span><span class="nm">Entitlement Year</span><br><span class="asm">AS-25 · The Time Ledger</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/resolutions</span>
+<span><span class="nm">Resolutions</span><br><span class="asm">AS-27 · The Ballot</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/resolutions/<em>[ref]</em></span>
+<span><span class="nm">Ballot</span><br><span class="asm">AS-27 · The Ballot</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+<span class="nt">Sealed at every vantage. The confirmation never echoes the choice.</span>
+</div><div class="rt">
+<span class="pth">/member/documents</span>
+<span><span class="nm">Documents</span><br><span class="asm">AS-05 · The Member Console</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/documents/<em>[id]</em></span>
+<span><span class="nm">Document</span><br><span class="asm">AS-05 · The Member Console</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/reports</span>
+<span><span class="nm">Reports</span><br><span class="asm">AS-05 · The Member Console</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/notifications</span>
+<span><span class="nm">Notifications</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+<span class="nt">The alert centre. A system ticker (SIGNAL_APERTURE) never lands here; only things asked of the member do.</span>
+</div><div class="rt">
+<span class="pth">/member/profile</span>
+<span><span class="nm">Profile</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/settings</span>
+<span><span class="nm">Settings</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/settings/notifications</span>
+<span><span class="nm">Notification Settings</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/settings/security</span>
+<span><span class="nm">Security</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/member/settings/tax</span>
+<span><span class="nm">Tax Details</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+
+</div>
+
+</section><section class="grp">
+<div class="grp-h"><span class="n">14 routes</span>
+<h2>Capital Workspace</h2><p>Operational. Carries data about people other than the viewer.</p></div>
+<div class="rt">
+<span class="pth">/capital</span>
+<span><span class="nm">Capital Console</span><br><span class="asm">AS-02 · The Property Console</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">portfolio.manage</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/properties</span>
+<span><span class="nm">Properties</span><br><span class="asm">AS-02 · The Property Console</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">portfolio.manage</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/properties/<em>[id]</em></span>
+<span><span class="nm">Property Console</span><br><span class="asm">AS-02 · The Property Console</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">portfolio.manage</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/properties/<em>[id]</em>/programme</span>
+<span><span class="nm">Programme</span><br><span class="asm">AS-11 · The Stage Progression</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">property.advance_lifecycle</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/properties/<em>[id]</em>/valuations</span>
+<span><span class="nm">Valuations</span><br><span class="asm">AS-02 · The Property Console</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">valuation.record</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/waterfall</span>
+<span><span class="nm">Waterfall</span><br><span class="asm">AS-04 · The Capital Explainer</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">distribution.execute</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/distributions</span>
+<span><span class="nm">Distributions</span><br><span class="asm">AS-02 · The Property Console</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">distribution.execute</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/distributions/<em>[ref]</em></span>
+<span><span class="nm">Distribution</span><br><span class="asm">AS-02 · The Property Console</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">distribution.execute</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/calls</span>
+<span><span class="nm">Capital Calls</span><br><span class="asm">AS-26 · The Capital Call</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg">capital.call</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/risk</span>
+<span><span class="nm">Risk Register</span><br><span class="asm">AS-28 · The Risk Register</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">compliance.record</span>
+
+
+</div><div class="rt">
+<span class="pth">/capital/offerings</span>
+<span><span class="nm">Offerings</span><br><span class="asm">AS-02 · The Property Console</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">offering.open</span>
+
+
+</div><div class="rt">
+<span class="pth">/commit/<em>[offering]</em></span>
+<span><span class="nm">Commit</span><br><span class="asm">AS-06 · The Commitment Flow</span></span>
+<span class="ac" style="color:#C79F6B">accredited</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → accredited</b>An Investor commits BEFORE membership exists — the Member Law fires on settlement, not here. Requiring member access would make it unreachable by anyone who could use it.</span>
+
+</div><div class="rt">
+<span class="pth">/commit/<em>[offering]</em>/risk</span>
+<span><span class="nm">Risk Disclosure</span><br><span class="asm">AS-14 · The Risk Disclosure</span></span>
+<span class="ac" style="color:#C79F6B">accredited</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → accredited</b>The gate immediately before commitment, on the same path and for the same reason.</span>
+
+</div><div class="rt">
+<span class="pth">/commit/<em>[offering]</em>/execute</span>
+<span><span class="nm">Execute</span><br><span class="asm">AS-19 · The Ledger Lock</span></span>
+<span class="ac" style="color:#C79F6B">accredited</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → accredited</b>The execution sequence for a commitment made before membership exists.</span>
+
+</div>
+
+</section><section class="grp">
+<div class="grp-h"><span class="n">26 routes</span>
+<h2>Administration</h2><p>Every route names the RIGHT it requires, never the role that holds it.</p></div>
+<div class="rt">
+<span class="pth">/admin</span>
+<span><span class="nm">Administration</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">organization.register</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles</span>
+<span><span class="nm">Vehicles</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">vehicle.form</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles/<em>[llpin]</em></span>
+<span><span class="nm">Docket</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">vehicle.form</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles/<em>[llpin]</em>/formation</span>
+<span><span class="nm">Formation</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">vehicle.form</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles/<em>[llpin]</em>/partners</span>
+<span><span class="nm">Register of Partners</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">vehicle.form</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles/<em>[llpin]</em>/filings</span>
+<span><span class="nm">Statutory Calendar</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">compliance.record</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles/<em>[llpin]</em>/charges</span>
+<span><span class="nm">Charges</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">vehicle.form</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles/<em>[llpin]</em>/resolutions</span>
+<span><span class="nm">Resolutions</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">resolution.table</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/vehicles/<em>[llpin]</em>/audit</span>
+<span><span class="nm">Docket Audit</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">compliance.record</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/governance</span>
+<span><span class="nm">Governance</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">resolution.table</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/governance/committees</span>
+<span><span class="nm">Committees</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">committee.constitute</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/governance/resolutions</span>
+<span><span class="nm">Resolutions</span><br><span class="asm">AS-27 · The Ballot</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg">resolution.table</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/governance/resolutions/<em>[ref]</em></span>
+<span><span class="nm">Resolution</span><br><span class="asm">AS-27 · The Ballot</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg">resolution.resolve</span>
+
+<span class="nt">Results only. Admin is NOT an exception to I-05 — it is the vantage most likely to assume it is.</span>
+</div><div class="rt">
+<span class="pth">/admin/governance/policies</span>
+<span><span class="nm">Policies</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">policy.approve</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/compliance</span>
+<span><span class="nm">Compliance</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">compliance.record</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/compliance/events</span>
+<span><span class="nm">Compliance Events</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">compliance.record</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/compliance/accreditation</span>
+<span><span class="nm">Accreditation Queue</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">accreditation.grant</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/compliance/conflicts</span>
+<span><span class="nm">Conflict Register</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">conflict.disclose</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/ledger</span>
+<span><span class="nm">Ledger</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">capital.deploy</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/telemetry</span>
+<span><span class="nm">Telemetry</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">portfolio.manage</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/authority</span>
+<span><span class="nm">Authority</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">authority.grant</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/authority/grants</span>
+<span><span class="nm">Grants</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">authority.grant</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/authority/revocations</span>
+<span><span class="nm">Revocations</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">authority.revoke</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/reports</span>
+<span><span class="nm">Reports</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">report.publish</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/research</span>
+<span><span class="nm">Research</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">diligence.complete</span>
+
+
+</div><div class="rt">
+<span class="pth">/admin/failure</span>
+<span><span class="nm">Constitutional Failure</span></span>
+<span class="ac" style="color:#FF3B30">office</span>
+<span class="rg">constitutional_failure.declare</span>
+
+<span class="nt">CF-01..CF-06. The gravest surface in the system and the least used. Declaring a failure requires a resolution reference, not a role — there is no login that can do this alone.</span>
+</div>
+
+</section><section class="grp">
+<div class="grp-h"><span class="n">5 routes</span>
+<h2>System States</h2><p>Places that are really states.</p></div>
+<div class="rt">
+<span class="pth">/404</span>
+<span><span class="nm">Not Found</span><br><span class="asm">AS-16 · Signal Lost</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">No stack trace, no exception name, no auto-redirect.</span>
+</div><div class="rt">
+<span class="pth">/403</span>
+<span><span class="nm">Not Permitted</span><br><span class="asm">AS-16 · Signal Lost</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Says the viewer may not see it. Never says whether it EXISTS — that distinction leaks the shape of the system to anyone probing it.</span>
+</div><div class="rt">
+<span class="pth">/500</span>
+<span><span class="nm">System Error</span><br><span class="asm">AS-16 · Signal Lost</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/maintenance</span>
+<span><span class="nm">Maintenance</span><br><span class="asm">AS-15 · System Status</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+
+</div><div class="rt">
+<span class="pth">/search</span>
+<span><span class="nm">Search</span></span>
+<span class="ac" style="color:#7FA4EE">identified</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → identified</b>Results are scoped to what the viewer may see, which requires knowing who they are. An anonymous search would either return nothing or leak the index.</span>
+
+</div>
+
+</section>
+
+<section class="laws">
+<div class="eb">The rules this table runs on</div>
+<h1 style="font-size:clamp(28px,4vw,40px);margin:12px 0 32px">Six laws.</h1>
+<div class="law"><b>access Is Derived</b>
+<p>A route's access comes from its assembly's vantage. The aperture tier already decided what each vantage may see, and a route restating it would be a second source of truth.</p></div><div class="law"><b>overrides State Their Reason</b>
+<p>An override without a reason is a permission granted by whoever edited the file last.</p></div><div class="law"><b>no Super Admin</b>
+<p>The eight roles are offices and committees, not tiers. A super-admin holds every right, which is the exact condition separationViolations() exists to detect. Where the highest authority is genuinely needed, the route requires a resolution reference rather than a role.</p></div><div class="law"><b>rights Not Roles</b>
+<p>Admin routes name the RIGHT they require, never the role that holds it. Rights are granted and revoked; a route bound to a role would survive the revocation.</p></div><div class="law"><b>index Only Public</b>
+<p>An indexed URL behind authentication leaks its existence and usually its title. Only public routes are indexable, and the linter enforces it rather than trusting the default.</p></div><div class="law"><b>not Found Never Confirms</b>
+<p>403 says the viewer may not see it and never says whether it exists. The difference between 'no' and 'not for you' is the shape of the system, handed to anyone probing it.</p></div>
+</section>
+
+<footer>
+Generated from constants/routes.ts · paths, access, assemblies, rights and reasons are parsed, not retyped.<br>
+route-lint enforces nine checks over this table, each proven to fire against a deliberately broken copy.<br>
+There is no super-admin. The eight roles are offices and committees; a role holding every right is
+the condition separationViolations() exists to detect.
+</footer>
+</div></body></html>

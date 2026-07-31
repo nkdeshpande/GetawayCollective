@@ -28,6 +28,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const AP = path.join(ROOT, "constants", "apertures.ts");
 const UFR = path.join(ROOT, "constants", "ufr.ts");
@@ -37,15 +42,15 @@ const fail = [];
 const warn = [];
 
 const ufrIds = new Set(
-  [...fs.readFileSync(UFR, "utf8").matchAll(/ufr:\s*"([^"]+)"/g)].map((m) => m[1]),
+  [...fs.readFileSync(UFR, "utf8").replace(/\r\n/g, "\n").matchAll(/ufr:\s*"([^"]+)"/g)].map((m) => m[1]),
 );
 const routeGroups = new Set(
-  [...(fs.readFileSync(LAYOUT, "utf8").match(/export const SURFACE_STRATEGY[^=]*=\s*\{([\s\S]*?)\n\};/) || [, ""])[1]
+  [...(fs.readFileSync(LAYOUT, "utf8").replace(/\r\n/g, "\n").match(/export const SURFACE_STRATEGY[^=]*=\s*\{([\s\S]*?)\n\};/) || [, ""])[1]
     .matchAll(/(\w+):\s*"/g)].map((m) => m[1]),
 );
 
 function apertures() {
-  const src = fs.readFileSync(AP, "utf8");
+  const src = fs.readFileSync(AP, "utf8").replace(/\r\n/g, "\n");
   const out = [];
   for (const m of src.matchAll(/export const (\w+): Aperture = \{([\s\S]*?)\n\};/g)) {
     const b = m[2];

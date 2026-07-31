@@ -24,6 +24,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const CMD = path.join(ROOT, "lib", "commands.ts");
 const EV = path.join(ROOT, "lib", "events.ts");
@@ -35,20 +40,20 @@ const warn = [];
 
 /** Members of a union type declared as `| "x"` lines. */
 function unionMembers(file, typeName) {
-  const src = fs.readFileSync(file, "utf8");
+  const src = fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n");
   const m = src.match(new RegExp(`export type ${typeName}\\s*=([\\s\\S]*?);`));
   if (!m) return null;
   return [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]);
 }
 
 function objects() {
-  const src = fs.readFileSync(BO, "utf8");
+  const src = fs.readFileSync(BO, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/export enum BusinessObjectType \{([\s\S]*?)\n\}/);
   return block ? [...block[1].matchAll(/^\s*(\w+)\s*=\s*"/gm)].map((x) => x[1]) : [];
 }
 
 function capabilities() {
-  const src = fs.readFileSync(CMD, "utf8");
+  const src = fs.readFileSync(CMD, "utf8").replace(/\r\n/g, "\n");
   const out = [];
   for (const m of src.matchAll(/C\(\{([\s\S]*?)\}\),/g)) {
     const b = m[1];
@@ -72,13 +77,13 @@ function capabilities() {
 }
 
 function decisionEvents() {
-  const src = fs.readFileSync(EV, "utf8");
+  const src = fs.readFileSync(EV, "utf8").replace(/\r\n/g, "\n");
   const m = src.match(/DECISION_EVENTS[^=]*=\s*new Set<EventType>\(\[([\s\S]*?)\]\)/);
   return m ? [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]) : [];
 }
 
 function roleRights() {
-  const src = fs.readFileSync(AUTH, "utf8");
+  const src = fs.readFileSync(AUTH, "utf8").replace(/\r\n/g, "\n");
   const m = src.match(/ROLE_RIGHTS[^=]*=\s*\{([\s\S]*?)\n\};/);
   if (!m) return {};
   const out = {};

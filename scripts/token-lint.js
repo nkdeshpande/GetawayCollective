@@ -25,6 +25,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const TOKENS = path.join(ROOT, "constants", "tokens.ts");
 
@@ -61,7 +66,7 @@ function walk(dir, out = []) {
 const files = SCAN_DIRS.flatMap((d) => walk(path.join(ROOT, d)));
 for (const file of files) {
   const rel = path.relative(ROOT, file);
-  fs.readFileSync(file, "utf8").split("\n").forEach((line, i) => {
+  fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n").split("\n").forEach((line, i) => {
     if (line.includes(PRAGMA)) return;
     for (const [re, kind, advice] of LITERALS) {
       re.lastIndex = 0;
@@ -75,7 +80,7 @@ for (const file of files) {
 
 // ── Contrast ──────────────────────────────────────────────────────────
 function palette() {
-  const src = fs.readFileSync(TOKENS, "utf8");
+  const src = fs.readFileSync(TOKENS, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/export const COLOUR = \{([\s\S]*?)\n\}/);
   if (!block) { console.error("[token-lint] Could not parse COLOUR. Refusing to run."); process.exit(2); }
   const out = {};

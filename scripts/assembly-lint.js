@@ -28,7 +28,14 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
-const read = (...p) => fs.readFileSync(path.join(ROOT, ...p), "utf8");
+
+/* Line endings are normalised at the read. A pattern ending in a newline
+   silently stops matching the moment a carriage return appears before it,
+   and the failure mode is a parser returning ZERO — which reads as
+   "nothing to check" rather than "the check is broken". ufr-lint shipped
+   exactly that bug, and route-lint hit it again in Wave 7. */
+const read = (...p) =>
+  fs.readFileSync(path.join(ROOT, ...p), "utf8").replace(/\r\n/g, "\n");
 
 const fail = [];
 const warn = [];

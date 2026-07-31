@@ -26,6 +26,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const ADDENDUM = path.join(ROOT, "constants", "tokens-addendum.ts");
 const VALIDATION = path.join(ROOT, "constants", "validation.ts");
@@ -39,7 +44,7 @@ function listFrom(src, name) {
   return m ? [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]) : [];
 }
 
-const addendum = fs.readFileSync(ADDENDUM, "utf8");
+const addendum = fs.readFileSync(ADDENDUM, "utf8").replace(/\r\n/g, "\n");
 const PROHIBITED = listFrom(addendum, "VOICE_PROHIBITIONS");
 const SOFTENERS = listFrom(addendum, "VOICE_SOFTENERS");
 
@@ -51,7 +56,7 @@ if (PROHIBITED.length === 0) {
 // ── Collect member-facing strings ─────────────────────────────────────
 /** Validation messages: message, help and a11y are all read by a person. */
 function validationStrings() {
-  const src = fs.readFileSync(VALIDATION, "utf8");
+  const src = fs.readFileSync(VALIDATION, "utf8").replace(/\r\n/g, "\n");
   const out = [];
   for (const m of src.matchAll(/V\(\s*"([^"]+)",\s*"(?:[^"\\]|\\.)*",\s*"((?:[^"\\]|\\.)*)",\s*"((?:[^"\\]|\\.)*)",\s*"((?:[^"\\]|\\.)*)"/g)) {
     out.push({ where: `VALIDATION.${m[1]}`, field: "message", text: m[2] });
@@ -63,7 +68,7 @@ function validationStrings() {
 
 /** Enum labels and descriptions appear on screen. */
 function enumStrings() {
-  const src = fs.readFileSync(ENUMS, "utf8");
+  const src = fs.readFileSync(ENUMS, "utf8").replace(/\r\n/g, "\n");
   const out = [];
   for (const m of src.matchAll(/D\(\s*"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"/g)) {
     out.push({ where: "ENUM_DISPLAY", field: "label", text: m[1] });

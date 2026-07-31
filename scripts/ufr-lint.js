@@ -26,6 +26,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const UFR_SRC = path.join(ROOT, "constants", "ufr.ts");
 const BO_SRC = path.join(ROOT, "constants", "business-objects.ts");
@@ -36,7 +41,7 @@ const warn = [];
 
 // ── Parse the constitution for canonical invariant ids ────────────────
 function canonicalInvariants() {
-  const src = fs.readFileSync(L1, "utf8");
+  const src = fs.readFileSync(L1, "utf8").replace(/\r\n/g, "\n");
   const ids = new Set();
   const re = /^\|\s*\*{0,2}([EAIF]-\d{2})\*{0,2}\s*\|/gm;
   let m;
@@ -46,7 +51,7 @@ function canonicalInvariants() {
 
 // ── Parse the ratified object enum ────────────────────────────────────
 function ratifiedObjects() {
-  const src = fs.readFileSync(BO_SRC, "utf8");
+  const src = fs.readFileSync(BO_SRC, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/export enum BusinessObjectType \{([\s\S]*?)\n\}/);
   if (!block) {
     console.error("[ufr-lint] Could not parse BusinessObjectType. Refusing to run.");
@@ -61,7 +66,7 @@ function ratifiedObjects() {
 
 // ── Parse the registry ────────────────────────────────────────────────
 function parseRegistry() {
-  const src = fs.readFileSync(UFR_SRC, "utf8");
+  const src = fs.readFileSync(UFR_SRC, "utf8").replace(/\r\n/g, "\n");
   const entries = [];
   // Each entry is an F({ ... }) call. Line-ending agnostic on purpose:
   // an earlier version anchored on "}),\n" and silently parsed zero entries

@@ -22,6 +22,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+/* Line endings normalised at the read. A pattern ending `\n` silently
+   stops matching the moment a `\r` appears before it, and the failure
+   mode is a parser returning ZERO — which reads as "nothing to check"
+   rather than "the check is broken". ufr-lint shipped exactly that bug. */
+
 const ROOT = path.resolve(__dirname, "..");
 const VOCAB_SRC = path.join(ROOT, "constants", "vocabulary.ts");
 
@@ -35,7 +40,7 @@ const SELF_REFERENTIAL = new Set([path.join("constants", "vocabulary.ts")]);
 
 // ── Derive the forbidden list from the single source ──────────────────
 function loadForbidden() {
-  const src = fs.readFileSync(VOCAB_SRC, "utf8");
+  const src = fs.readFileSync(VOCAB_SRC, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/forbidden:\s*\{([\s\S]*?)\n\s*\},/);
   if (!block) {
     console.error(`[vocab-lint] Could not parse the 'forbidden' block in ${path.relative(ROOT, VOCAB_SRC)}.`);
@@ -65,7 +70,7 @@ function loadForbidden() {
  * Agreement"). Parsed from the same single source as the forbidden list.
  */
 function loadCompounds() {
-  const src = fs.readFileSync(VOCAB_SRC, "utf8");
+  const src = fs.readFileSync(VOCAB_SRC, "utf8").replace(/\r\n/g, "\n");
   const block = src.match(/ALLOWED_COMPOUNDS[^=]*=\s*\{([\s\S]*?)\n\};/);
   if (!block) return [];
   return [...block[1].matchAll(/"([^"]+)"\s*:/g)].map((m) => m[1]);
@@ -143,7 +148,7 @@ for (const file of files) {
   const rel = path.relative(ROOT, file);
   if (SELF_REFERENTIAL.has(rel)) continue;
 
-  const lines = fs.readFileSync(file, "utf8").split("\n");
+  const lines = fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n").split("\n");
   lines.forEach((line, idx) => {
     if (line.includes(IGNORE_PRAGMA)) return;
     for (const rule of FORBIDDEN) {
