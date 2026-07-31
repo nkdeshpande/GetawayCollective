@@ -19,8 +19,13 @@
   --void:#0A0A0A; --void-panel:#121212; --paper:#F2F2F2; --paper-panel:#FFFFFF; --mist:#E8E8E6;
   /* Text */
   --ink:#0A0A0A; --ink-inv:#F2F2F2;
-  --steel:#6B6B6B;      /* 3.72 on void — UI/large only, NEVER body */
-  --steel-dim:#9A9A9A;  /* 7.04 on void — the body-size secondary tone */
+  /* steel is 3.72 on void and 3.52 on panel. That clears AA for LARGE
+     text and for non-text UI, and micro type is 11px, which is neither.
+     Four separate labels in this file reached for it before the sweep
+     caught them, so the rule is now structural: steel is for rules,
+     hairlines, LEDs and borders. It does not carry words. */
+  --steel:#6B6B6B;      /* NON-TEXT ONLY — rules, borders, LEDs */
+  --steel-dim:#9A9A9A;  /* 7.04 on void — every secondary text tone */
   /* Semantic */
   --forest:#0C3024; --forest-light:#228A68;   /* forest is 1.38 on void; the variant is 4.62 */
   --copper:#C79F6B; --copper-deep:#8C6635;    /* copper is 2.18 on paper; the variant is 4.61 */
@@ -81,11 +86,14 @@ button,a,[role="tab"],summary{cursor:pointer}
 .il-3{font-weight:400;opacity:.85}
 .il-4{font-weight:400;opacity:.65}
 .il-5{font-weight:400;opacity:1;color:var(--steel-dim)}  /* opacity would drop it below AA */
-.il-6{font-weight:400;opacity:1;color:var(--steel)}
+.il-6{font-weight:400;opacity:1;color:var(--steel-dim);font-size:.92em}
+/* IL-5 and IL-6 cannot separate by TONE and both stay AA: only two greys
+   clear 4.5 on void. Below IL-4 the levels separate by size and weight
+   instead, which is what the scale should have said from the start. */
 
 .dim{color:var(--steel-dim)}      /* 7.04 on void — safe at body size */
-.label{color:var(--steel)}        /* 3.72 — micro/UI only */
-.on-panel .label{color:var(--steel-dim)}  /* steel is 3.52 on panel. Body text gets the dim. */
+.label{color:var(--steel-dim)}    /* was steel at 3.72 — micro is 11px TEXT */
+.on-panel .label{color:var(--steel-dim)}
 
 /* ── Focus — visible, instant, no glow ───────────────────────────── */
 :focus{outline:none}
@@ -148,7 +156,7 @@ body.over-aperture #ring{width:64px;height:64px;border-color:var(--copper);
 section[data-sec]{padding:var(--s-2xl) 0;border-bottom:1px solid var(--hair)}
 .on-paper section[data-sec]{border-bottom-color:var(--hair-lt)}
 .sec-head{display:flex;gap:var(--s-s);align-items:baseline;margin-bottom:var(--s-l);flex-wrap:wrap}
-.sec-ref{color:var(--steel);font:400 11px/1 var(--f-mono);letter-spacing:.14em}
+.sec-ref{color:var(--steel-dim);font:400 11px/1 var(--f-mono);letter-spacing:.14em}
 .stack{display:flex;flex-direction:column;gap:var(--s-m)}
 .row{display:flex;gap:var(--s-l);flex-wrap:wrap}
 .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -388,13 +396,13 @@ section[data-sec]{padding:var(--s-2xl) 0;border-bottom:1px solid var(--hair)}
 
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font:400 11px/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
-  color:var(--steel);padding:0 var(--s-s) var(--s-2xs) 0;border-bottom:1px solid var(--hair)}
+  color:var(--steel-dim);padding:0 var(--s-s) var(--s-2xs) 0;border-bottom:1px solid var(--hair)}
 td{padding:var(--s-xs) var(--s-s) var(--s-xs) 0;border-bottom:1px solid rgba(242,242,242,.05);
   vertical-align:top}
 td.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 th.num{text-align:right}
 /* Never blank. A blank cell is indistinguishable from a rendering failure. */
-.empty::after{content:"—";color:var(--steel)}
+.empty::after{content:"—";color:var(--steel-dim)}
 
 .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -461,7 +469,7 @@ th.num{text-align:right}
 .stage{flex:1;background:var(--void-panel);padding:var(--s-s);
   display:flex;flex-direction:column;gap:var(--s-2xs);min-width:0}
 .stage.now{background:var(--void);border-top:2px solid var(--copper);padding-top:14px}
-.stage .n{color:var(--steel)}
+.stage .n{color:var(--steel-dim)}
 .stage .t{line-height:1.2;word-break:break-word}
 .stage.done .t{color:var(--steel-dim)}
 .stage.now .t{color:var(--copper)}
@@ -470,7 +478,7 @@ th.num{text-align:right}
 .matrix{min-width:1080px;border-collapse:collapse;font-size:12px}
 .matrix th{position:sticky;top:0;background:var(--void);z-index:2;padding:var(--s-2xs);
   border-bottom:1px solid var(--hair);vertical-align:bottom;font-size:10px;
-  color:var(--steel-dim)}  /* steel is 3.72 — below AA at 10px */
+  color:var(--steel-dim)}
 .matrix th.role{left:0;z-index:3;text-align:left;min-width:150px;max-width:150px}
 .matrix td{padding:var(--s-2xs);border-bottom:1px solid rgba(242,242,242,.06);
   border-right:1px solid rgba(242,242,242,.06);vertical-align:top;min-width:118px}
@@ -566,11 +574,11 @@ th.num{text-align:right}
 .doc-nm{font:500 15px/1.3 var(--f-body);display:block}
 /* A hash is shown ALWAYS, including on restricted rows. Access controls
    the content; the fingerprint is what lets anyone verify from outside. */
-.hash{font:400 10px/1.4 var(--f-mono);color:var(--steel);word-break:break-all;display:block;
+.sheet .hash{font:400 10px/1.4 var(--f-mono);color:var(--steel);word-break:break-all;display:block;
   margin-top:3px}
 .ver{display:inline-block;border:1px solid var(--ink);padding:1px 7px;
   font:400 10px/1.5 var(--f-mono);white-space:nowrap}
-.ver.sup{border-color:var(--steel);color:var(--steel)}
+.sheet .ver.sup{border-color:var(--steel);color:var(--steel)}
 /* Restricted rows keep FULL contrast. What is restricted is the content;
    the existence of the document is a fact about the entity. */
 .restricted td{box-shadow:inset 2px 0 0 var(--hazard-deep)}  /* not a tint: 4% cost steel 0.37 */
@@ -582,8 +590,8 @@ th.num{text-align:right}
   padding:var(--s-2xs) var(--s-xs);font:400 10px/1.4 var(--f-mono);letter-spacing:.1em;
   text-transform:uppercase;white-space:nowrap;transition:background var(--d-instant),color var(--d-instant)}
 .act:hover{background:var(--ink);color:var(--paper)}
-.act[aria-disabled="true"]{border-color:var(--steel);color:var(--steel)}
-.act[aria-disabled="true"]:hover{background:transparent;color:var(--steel)}
+.sheet .act[aria-disabled="true"]{border-color:var(--steel);color:var(--steel)}
+.sheet .act[aria-disabled="true"]:hover{background:transparent;color:var(--steel)}
 
 /* Statutory calendar — due dates COMPUTED, so a filing never made shows
    as overdue rather than as an absent row. */
@@ -605,6 +613,118 @@ th.num{text-align:right}
   font:400 12px/1.5 var(--f-body)}
 .totrow td{border-top:2px solid var(--ink);border-bottom:none;font-weight:700;
   padding-top:var(--s-s)}
+
+
+/* ── AS-21 · The Navigation Spine ────────────────────────────────── */
+/* Vertical rail on console surfaces. The header says where you are; the
+   spine says what else exists. The ORDER never changes — muscle memory is
+   the point, and a rail that reorders by recency destroys it. */
+.with-spine{display:grid;grid-template-columns:232px 1fr;gap:0;align-items:start}
+@media (max-width:900px){
+  /* Member routes are phone-parity. The spine becomes a horizontal bar,
+     never a hamburger — hiding all navigation behind one control on the
+     surface people check from a phone is where parity quietly ends. */
+  .with-spine{grid-template-columns:1fr}
+  .spine{position:static;border-right:none;border-bottom:1px solid var(--hair);
+    flex-direction:row;overflow-x:auto;padding:var(--s-2xs) 0}
+  .spine a{white-space:nowrap;border-left:none;border-bottom:2px solid transparent}
+  .spine a[aria-current="page"]{border-left:none;border-bottom-color:var(--copper)}
+  .spine .grp{display:none}
+}
+.spine{position:sticky;top:64px;display:flex;flex-direction:column;gap:1px;
+  border-right:1px solid var(--hair);padding-right:var(--s-s);align-self:start}
+.spine .grp{font:400 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--steel-dim);padding:var(--s-s) var(--s-2xs) var(--s-2xs)}
+.spine a{display:flex;justify-content:space-between;align-items:center;gap:var(--s-2xs);
+  padding:var(--s-2xs) var(--s-xs);color:var(--steel-dim);text-decoration:none;
+  border-left:2px solid transparent;font:400 14px/1.4 var(--f-body);
+  transition:color var(--d-instant),background var(--d-instant)}
+.spine a:hover{color:var(--ink-inv);background:rgba(242,242,242,.04)}
+/* Active carries a rule AND aria-current. Colour is never the carrier. */
+.spine a[aria-current="page"]{color:var(--ink-inv);border-left-color:var(--copper);
+  background:rgba(199,159,107,.06)}
+/* A count appears ONLY where something is genuinely waiting on this
+   person. A badge meaning "new" rather than "yours" teaches people to
+   ignore badges. */
+.spine .att{font:400 10px/1 var(--f-mono);color:var(--void);background:var(--hazard);
+  padding:2px 6px;min-width:18px;text-align:center}
+
+/* ── AS-22 · The Footer ──────────────────────────────────────────── */
+.foot{border-top:1px solid var(--hair);margin-top:var(--s-3xl);padding:var(--s-2xl) 0 var(--s-3xl)}
+.foot-ent{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:var(--s-m);padding-bottom:var(--s-l);border-bottom:1px solid var(--hair)}
+.foot-ent h3{font:500 15px/1.3 var(--f-body);margin-bottom:4px}
+/* The standing disclosure renders at BODY size, in the reading tone. A
+   disclosure set smaller than the claim it qualifies is a disclosure
+   designed not to be read. */
+.disclosure{margin:var(--s-l) 0;padding-left:var(--s-s);border-left:2px solid var(--hazard);
+  max-width:70ch}
+.disclosure p{font:400 15px/1.6 var(--f-body);color:var(--ink-inv);margin-bottom:var(--s-2xs)}
+.disclosure p:last-child{margin-bottom:0}
+.foot-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:var(--s-m);padding-top:var(--s-l);border-top:1px solid var(--hair)}
+.foot-map h4{font:400 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--steel-dim);margin-bottom:var(--s-2xs)}
+.foot-map a{display:block;color:var(--steel-dim);text-decoration:none;padding:3px 0;
+  font-size:14px}
+.foot-map a:hover{color:var(--ink-inv)}
+
+/* ── AS-23 · The Hero Viewport ───────────────────────────────────── */
+/* Height caps BELOW full viewport. A 100vh hero on a laptop in landscape
+   pushes everything below it off-screen, and content that needs scroll to
+   exist is content some people never find. */
+.hero{position:relative;min-height:min(72vh,560px);display:flex;align-items:flex-end;
+  overflow:hidden;border-bottom:1px solid var(--hair)}
+.hero .bed{position:absolute;inset:0}
+/* The scrim is not decoration. Type over an unscrimmed image is legible
+   only against the part of the image it happens to land on, and that part
+   changes with the viewport. */
+.hero .scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,var(--void) 0%,rgba(10,10,10,.72) 34%,rgba(10,10,10,.25) 68%,transparent 100%)}
+.hero .in{position:relative;padding:var(--s-3xl) 0 var(--s-xl);width:100%}
+.hero h1{max-width:18ch}
+.hero .sup{margin-top:var(--s-s);max-width:52ch}
+.hero .go{margin-top:var(--s-l);display:flex;gap:var(--s-2xs);flex-wrap:wrap}
+/* NO FIGURE over a hero. FB-1 bars full-bleed treatment wherever numeric
+   data is read: a number over an image is read against whatever pixels
+   sit behind it, and those differ per viewport and per crop. */
+
+/* ── AS-24 · Testimonials ────────────────────────────────────────── */
+/* A testimonial on an investment platform is regulated speech. SEBI's
+   advertisement code bars them in investment advisory contexts, and a
+   member's remark about what they earned is a performance claim by proxy
+   — it does not become permissible because someone else said it.
+   These carry statements about the PLACE. Never about the return. */
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--s-s)}
+.quote{border:1px solid var(--hair);background:var(--void-panel);padding:var(--s-m);
+  display:flex;flex-direction:column;gap:var(--s-s)}
+.quote blockquote{font:400 italic 18px/1.5 var(--f-editorial);color:var(--ink-inv);
+  max-width:38ch}
+.quote figcaption{margin-top:auto;padding-top:var(--s-s);border-top:1px solid var(--hair)}
+.quote .who{display:block;font:400 14px/1.4 var(--f-body)}
+/* Anonymous testimonials are not published. An unattributable statement
+   cannot be verified or withdrawn, and an unwithdrawable statement about
+   a real person is a standing exposure. */
+.quote .meta{display:block;font:400 11px/1.5 var(--f-mono);color:var(--steel-dim);margin-top:3px}
+.quote .basis{display:inline-block;margin-top:var(--s-2xs);font:400 10px/1.4 var(--f-mono);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--steel-dim);
+  border:1px solid var(--hair);padding:2px 6px}
+.subject-note{border-left:2px solid var(--forest-light);padding-left:var(--s-s);
+  max-width:70ch;margin-bottom:var(--s-l)}
+
+/* ── AS-25 · The Time Ledger ─────────────────────────────────────── */
+/* Nights are a COUNT, not a currency. They never render in copper —
+   copper is reserved for money, and a night is not money. */
+.nights{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink-inv)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--hair);
+  border:1px solid var(--hair);max-width:420px}
+.cal div{background:var(--void-panel);aspect-ratio:1;display:flex;align-items:center;
+  justify-content:center;font:400 12px/1 var(--f-mono);color:var(--steel-dim);position:relative}
+.cal div.held{background:rgba(199,159,107,.14);color:var(--ink-inv)}
+.cal div.used{background:var(--void);color:var(--steel-dim);text-decoration:line-through}
+.cal div.hd{background:transparent;color:var(--steel-dim);font-size:10px;aspect-ratio:auto;
+  padding:var(--s-2xs) 0}
+.expiry{border-left:2px solid var(--hazard);padding-left:var(--s-s);max-width:60ch}
 
 [hidden]{display:none !important}
 </style>
@@ -633,6 +753,8 @@ th.num{text-align:right}
       <button data-go="AS-11">AS-11 Stages</button>
       <button data-go="AS-12">AS-12 Location</button>
       <button data-go="AS-13">AS-13 Docket</button>
+      <button data-go="AS-25">AS-25 Time</button>
+      <button data-go="AS-24">AS-24 Voices</button>
     </nav>
   </div>
 </header>
@@ -2362,6 +2484,269 @@ A["AS-13"] = { vantage:"admin", render: () => {
     </div>
   </div>
 </section>` } };
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-20..AS-24 · CHROME AND REGIONS
+
+   Registering only whole screens left the furniture ungoverned. A header
+   appears on every screen in the product and had no stated rule about
+   what it may show — which matters more than it sounds, because the
+   header renders at the GATEWAY, where the viewer may be anyone.
+
+   Chrome is bound by its NARROWEST vantage. Regions inherit the
+   disclosure of whatever hosts them.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* AS-23 · Hero Viewport — a region, used by four screens. */
+function hero({ eyebrow, claim, sup, go = [], hue = 158 }){
+  return `
+  <div class="hero">
+    <span class="bed" style="${plate(hue)}" aria-hidden="true"></span>
+    <span class="scrim" aria-hidden="true"></span>
+    <div class="wrap in">
+      ${eyebrow ? `<span class="t-micro label">${esc(eyebrow)}</span>` : ""}
+      <h1 class="t-display-xl" style="margin-top:var(--s-2xs)">${claim}</h1>
+      ${sup ? `<p class="sup t-body-l dim">${esc(sup)}</p>` : ""}
+      ${go.length ? `<div class="go">${go.map((g,i)=>
+        `<button class="btn ${i===0?"primary":""}" ${g.to?`data-go="${g.to}"`:""}>${esc(g.t)}</button>`
+      ).join("")}</div>` : ""}
+    </div>
+  </div>`;
+  /* No figure appears here. FB-1 bars full-bleed treatment wherever
+     numeric data is read — nobody can guarantee the contrast of a number
+     rendered over a photograph. */
+}
+
+/* AS-21 · Navigation Spine — fixed order, never reordered by recency. */
+const SPINE = [
+  { g:"Position", items:[
+    { t:"Overview",      to:"AS-05" },
+    { t:"Distributions", to:"AS-05" },
+    { t:"Capital calls", to:"AS-05", att:1 },
+  ]},
+  { g:"Assets", items:[
+    { t:"Properties", to:"AS-10" },
+    { t:"Location",   to:"AS-12" },
+  ]},
+  { g:"Time", items:[
+    { t:"Entitlement", to:"AS-25" },
+  ]},
+  { g:"Governance", items:[
+    { t:"Resolutions", to:"AS-13", att:2 },
+    { t:"Documents",   to:"AS-13" },
+  ]},
+];
+
+function spine(current){
+  return `
+  <nav class="spine" aria-label="Member navigation">
+    ${SPINE.map(g=>`
+      <span class="grp">${esc(g.g)}</span>
+      ${g.items.map(i=>`
+        <a href="#" data-go="${i.to}" ${i.t===current?'aria-current="page"':""}>
+          <span>${esc(i.t)}</span>
+          ${i.att?`<span class="att" aria-label="${i.att} awaiting you">${i.att}</span>`:""}
+        </a>`).join("")}
+    `).join("")}
+  </nav>`;
+}
+
+/* AS-22 · Footer — where the standing statements live. */
+function footer(){
+  return `
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-ent">
+        <div><h3>Getaway Collective</h3>
+          <p class="t-body-s dim">Governs the vehicles. Holds no equity in them.</p></div>
+        <div><h3>Coastal Collection I LLP</h3>
+          <p class="t-body-s dim">Holds the land title. Owned by its partners.</p></div>
+        <div><h3>Sensory Getaways</h3>
+          <p class="t-body-s dim">Operates the properties under contract.</p></div>
+      </div>
+
+      <!-- Body size, reading tone. A disclosure set smaller than the claim
+           it qualifies is a disclosure designed not to be read. -->
+      <div class="disclosure">
+        <p><strong>Capital is at risk.</strong> Investments of this kind are illiquid and are not
+        traded on any public exchange. You may lose some or all of the capital you commit.</p>
+        <p>Past performance is not a guide to future performance. Yields shown anywhere on this
+        platform are modelled or estimated unless expressly marked otherwise, and no return is
+        guaranteed by any party.</p>
+        <p class="dim">Nothing here is investment advice. Getaway Collective does not provide
+        personalised financial advice and is not a registered investment adviser.</p>
+      </div>
+
+      <div class="foot-map">
+        <div><h4>Places</h4>
+          <a href="#" data-go="AS-01">Collection</a>
+          <a href="#" data-go="AS-09">Gallery</a>
+          <a href="#" data-go="AS-12">Location</a></div>
+        <div><h4>Capital</h4>
+          <a href="#" data-go="AS-04">How it works</a>
+          <a href="#" data-go="AS-02">Console</a>
+          <a href="#" data-go="AS-06">Commit</a></div>
+        <div><h4>Legal</h4>
+          <a href="#" data-go="AS-13">Docket</a>
+          <a href="#">Risk disclosure</a>
+          <a href="#">Privacy</a></div>
+        <div><h4>Collective</h4>
+          <a href="#" data-go="AS-24">Voices</a>
+          <a href="#">Roles</a>
+          <a href="#">Status</a></div>
+      </div>
+    </div>
+  </footer>`;
+}
+
+/* ═══ AS-24 · TESTIMONIALS ═══════════════════════════════════════════
+   Every quote below is about the PLACE. Not one names a figure, a yield,
+   a return or a gain — and the linter refuses the section if the rule
+   barring them is ever removed.
+
+   This is not editorial restraint. A member's remark about what they
+   earned is a performance claim made by proxy, and SEBI's advertisement
+   code bars testimonials in investment advisory contexts outright. It
+   does not become permissible because a member said it. */
+const VOICES = [
+  { q:"The first morning I woke up before the alarm and then realised I had not set one.",
+    who:"R. Menon", role:"Partner since 2024", on:"2026-03-11",
+    basis:"Written consent · renewable annually" },
+  { q:"Four hours from the office and the phone had nothing to say to me. That was the whole point and I did not expect it to work.",
+    who:"A. D'Souza", role:"Partner since 2025", on:"2026-05-02",
+    basis:"Written consent · renewable annually" },
+  { q:"My daughter learned to identify six birds. I learned that the roof is made from the trees they cleared to build it.",
+    who:"S. Kulkarni", role:"Partner since 2024", on:"2026-06-19",
+    basis:"Written consent · renewable annually" },
+];
+
+A["AS-24"] = { vantage:"gateway", render: () => `
+${hero({ eyebrow:"Voices · AS-24", claim:"What it is<br>actually like.",
+  sup:"Statements from partners about the properties. Not about the investment.", hue:172 })}
+
+<section data-sec="AS-24.a">
+  <div class="wrap">
+    <div class="subject-note">
+      <p class="t-body-s dim">
+        These describe time at the property, arranged by <strong>Sensory Getaways</strong>, the
+        operating partner. They are not statements about the investment, and none of them names a
+        figure — a partner's remark about what they earned is a performance claim by proxy, and it
+        is barred whoever says it.
+      </p>
+    </div>
+
+    <div class="quotes">
+      ${VOICES.map(v=>`
+        <figure class="quote">
+          <blockquote>&ldquo;${esc(v.q)}&rdquo;</blockquote>
+          <figcaption>
+            <span class="who">${esc(v.who)}</span>
+            <span class="meta">${esc(v.role)} · ${esc(v.on)}</span>
+            <span class="basis">${esc(v.basis)}</span>
+          </figcaption>
+        </figure>`).join("")}
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> No figure, no yield, no return, no performance reference. SEBI's
+        advertisement code bars testimonials in investment advisory contexts, and a quote naming a
+        return is a performance claim wearing quotation marks.</span>
+      <span class="fix"><b>Rule</b> Every statement carries a name, a date and a recorded consent
+        basis. Anonymous testimonials are not published: an unattributable statement cannot be
+        verified or withdrawn, and an unwithdrawable statement about a real person is a standing
+        exposure.</span>
+      <span class="fix"><b>Rule</b> The subject is the operating partner, not the platform.
+        Attributing it to the investment platform reads as a claim about the investment.</span>
+    </div>
+  </div>
+</section>
+
+${footer()}` };
+
+/* ═══ AS-25 · THE TIME LEDGER ═══════════════════════════════════════
+   The Trinity is Space, Capital and Time. Time had no screen at all —
+   a lens onto nothing is not a lens. */
+const ENTITLEMENT = {
+  year: "2026-04-01 → 2027-03-31",
+  held: 30, used: 11, scheduled: 4,
+  expires: "2027-03-31",
+  carryOver: 0,
+  ledger: [
+    { on:"2026-07-14", w:"Draw · Kyoto House", n:-4, bal:19 },
+    { on:"2026-06-02", w:"Return · cancelled within window", n:+3, bal:23 },
+    { on:"2026-05-28", w:"Draw · Kyoto House", n:-3, bal:20 },
+    { on:"2026-04-19", w:"Draw · Coorg Ridge", n:-7, bal:23 },
+    { on:"2026-04-01", w:"Opening entitlement", n:+30, bal:30 },
+  ],
+};
+
+A["AS-25"] = { vantage:"time", render: () => {
+  const e = ENTITLEMENT, left = e.held - e.used - e.scheduled;
+  return `
+<section data-sec="AS-25.a">
+  <div class="wrap with-spine">
+    ${spine("Entitlement")}
+    <div style="padding-left:var(--s-l);min-width:0">
+      <div class="sec-head"><span class="sec-ref">AS-25.a</span>
+        <span class="t-micro label">Time Ledger · ${esc(e.year)}</span></div>
+      <h1 class="t-display-l">Your nights</h1>
+
+      <div class="row" style="margin-top:var(--s-m);gap:var(--s-s);align-items:stretch">
+        ${[["Held",e.held],["Used",e.used],["Scheduled",e.scheduled],["Remaining",left]]
+          .map(([k,v],i)=>`<div class="panel on-panel" style="flex:1 1 130px">
+            <span class="t-micro label">${k}</span>
+            <div class="t-display-m nights" style="margin-top:var(--s-2xs)">${v}</div>
+            <span class="t-mono-s dim">nights</span>
+          </div>`).join("")}
+      </div>
+
+      <div class="expiry" style="margin-top:var(--s-m)">
+        <p class="t-body">
+          <strong class="nights">${left}</strong> nights lapse on <strong>${esc(e.expires)}</strong>.
+          ${e.carryOver === 0 ? "None carry over." : `${e.carryOver} carry over.`}
+        </p>
+        <p class="t-body-s dim" style="margin-top:4px">
+          A balance shown without its expiry is a larger number than the true one, so the expiry
+          renders at the same weight as the balance.
+        </p>
+      </div>
+
+      <div style="margin-top:var(--s-xl)">
+        <span class="t-micro label">Ledger · append-only</span>
+        <div class="panel on-panel scroll-x" style="margin-top:var(--s-2xs)">
+          <table>
+            <thead><tr><th>Date</th><th>Entry</th><th class="num">Nights</th>
+              <th class="num">Balance</th></tr></thead>
+            <tbody>${e.ledger.map(r=>`<tr>
+              <td class="t-mono-s">${esc(r.on)}</td>
+              <td class="t-body-s">${esc(r.w)}</td>
+              <td class="num" style="color:${r.n>0?"var(--confirm)":"var(--ink-inv)"}">
+                ${r.n>0?"+":""}${r.n}</td>
+              <td class="num nights">${r.bal}</td></tr>`).join("")}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="fixes">
+        <span class="fix"><b>Fixed</b> The <code>time</code> route group had no assembly. Space,
+          Capital and Time are declared as peers throughout the system and the third had no screen —
+          a lens onto nothing is not a lens.</span>
+        <span class="fix"><b>Rule</b> Nights are a <strong>count</strong>, not a currency. They never
+          render in copper. If a night reads like a rupee, a balance of 30 sits visually beside a
+          balance of ₹1,24,00,000 as though they were the same kind of thing.</span>
+        <span class="fix"><b>Rule</b> A cancelled night returns as a <em>new</em> ledger entry — see
+          02 Jun — never by deleting the draw. The ledger records what happened, not what is
+          currently true.</span>
+        <span class="fix"><b>Fixed</b> The source showed <code>12 NIGHTS LEFT</code> with no year, no
+          expiry and no ledger behind it. A balance with no expiry overstates what someone has, and
+          one with no ledger cannot be checked when it is wrong.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+${footer()}` } };
 
 /* ═══════════════════════════════════════════════════════════════════
    NAVIGATION

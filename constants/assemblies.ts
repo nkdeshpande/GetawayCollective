@@ -88,9 +88,31 @@ export interface Correction {
   kind: "constitutional" | "accessibility" | "vocabulary" | "numeric" | "interaction";
 }
 
+/**
+ * What KIND of thing this assembly is.
+ *
+ * Registering only whole screens left the persistent furniture
+ * unregistered and therefore ungoverned — a header appears on every
+ * screen in the product and had no stated rule about what it may show.
+ *
+ * The three are not interchangeable and the difference is load-bearing:
+ *
+ *   screen  — occupies a route. Has a URL. AS-01..AS-19.
+ *   chrome  — persists ACROSS screens. Appears at more than one vantage,
+ *             so it may only ever show what is safe at the NARROWEST one
+ *             it appears at. This is the constraint that matters: a header
+ *             carrying a member's position would leak it at the gateway.
+ *   region  — a repeatable block used INSIDE screens. Has no route of its
+ *             own and inherits the disclosure of whatever hosts it.
+ */
+export type AssemblyScope = "screen" | "chrome" | "region";
+
 export interface Assembly {
   id: string;
   name: string;
+  /** Defaults to "screen" where absent. */
+  scope?: AssemblyScope;
+  /** For chrome, the NARROWEST vantage it appears at. */
   route: RouteGroup;
   vantage: Vantage;
   /** What this screen is for. */
@@ -1628,6 +1650,508 @@ export const LEDGER_LOCK: Assembly = {
 };
 
 
+
+// -----------------------------------------------------------------
+// CHROME - the furniture that persists across screens
+// -----------------------------------------------------------------
+
+/**
+ * AS-20 - THE HEADER
+ *
+ * Present on every screen at every vantage, which is exactly why it is
+ * the most dangerous surface in the product: anything it shows, it shows
+ * to everyone.
+ */
+export const HEADER: Assembly = {
+  id: "AS-20",
+  name: "The Header",
+  scope: "chrome",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Say where you are, and offer the routes out, without asserting anything.",
+  answers: "Where am I, and where else can I go?",
+  sections: [
+    S("AS-20.a", "Identity", "masthead",
+      "The mark, and the current vantage.",
+      [],
+      "The vantage is named in words. Someone who cannot tell whether they are looking at public " +
+      "or private data will assume whichever is worse for them."),
+    S("AS-20.b", "Routes", "onward",
+      "The route groups available to whoever is looking.",
+      [],
+      "A route the viewer cannot enter is not shown greyed - it is absent. A disabled control " +
+      "invites a question nobody can answer for them."),
+    S("AS-20.c", "Session", "action",
+      "Who is signed in, and how to leave.",
+      [],
+      "NO FIGURE. Not a position, not a balance, not a count of anything owned. The header renders " +
+      "at the gateway, where the viewer may be anyone."),
+  ],
+  corrections: [
+    {
+      source: "Prototype set (several)",
+      was: "Headers carrying live figures - latency, session counts, portfolio value.",
+      now: "No figure in the header, at any vantage.",
+      because:
+        "The header is the one component that renders at every vantage. A figure placed in it is a " +
+        "figure shown to whoever is looking, and the narrowest vantage decides what is safe.",
+      kind: "constitutional",
+    },
+    {
+      source: "Prototype set (several)",
+      was: "Navigation links rendered at roughly 3.6:1, uppercase, 10px.",
+      now: "steelDim at 7.04:1, with the current route named rather than only underlined.",
+      because:
+        "Navigation is the one thing on a page that has to work before anything else does, and it " +
+        "was the least legible thing on the page.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/**
+ * AS-21 - THE NAVIGATION SPINE
+ *
+ * The vertical rail on console surfaces. Where the header says where you
+ * are, the spine says what else exists.
+ */
+export const NAV_SPINE: Assembly = {
+  id: "AS-21",
+  name: "The Navigation Spine",
+  scope: "chrome",
+  route: "member",
+  vantage: "member",
+  intent: "Show the whole of what a signed-in person can reach, and where they are within it.",
+  answers: "What else is there, and what needs me?",
+  sections: [
+    S("AS-21.a", "Spine", "onward",
+      "Every destination available at this vantage, in a fixed order.",
+      [],
+      "The order NEVER reorders by recency or frequency. Muscle memory is the point of a spine, " +
+      "and a rail that rearranges itself destroys it."),
+    S("AS-21.b", "Attention", "feature",
+      "Counts against destinations that need the viewer.",
+      [],
+      "A count appears only where something is genuinely waiting on this person. A badge that " +
+      "means 'new' rather than 'yours' teaches people to ignore badges."),
+  ],
+  corrections: [
+    {
+      source: "TheSteward_02Feb.HTML",
+      was: "Sidebar items at #666 (3.55:1) with the active state carried by colour alone.",
+      now: "steelDim throughout, with the active item carrying a rule and aria-current.",
+      because: "Colour alone is never the carrier, and 3.55:1 fails AA at that size regardless.",
+      kind: "accessibility",
+    },
+    {
+      source: "AS-21 design",
+      now: "The spine collapses to a bar on compact, and never to a hamburger on member surfaces.",
+      because:
+        "Member routes are phone-parity. Hiding the whole of navigation behind one control on the " +
+        "surface someone checks from a phone is where parity quietly stops being parity.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/**
+ * AS-22 - THE FOOTER
+ *
+ * Where the regulated statements live. On an investment platform this is
+ * not a decorative sitemap - it is the standing disclosure.
+ */
+export const FOOTER: Assembly = {
+  id: "AS-22",
+  name: "The Footer",
+  scope: "chrome",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Carry the standing statements the platform must make wherever it speaks.",
+  answers: "Who is this, what are they registered as, and what are they not promising?",
+  sections: [
+    S("AS-22.a", "Entities", "narrative",
+      "The three entities, named, with what each one is.",
+      [],
+      "All three are named wherever any one of them speaks. A visitor who cannot tell which entity " +
+      "is addressing them cannot tell who is accountable for the sentence."),
+    S("AS-22.b", "Standing Disclosure", "narrative",
+      "Capital at risk, past performance, and the absence of any guarantee.",
+      [],
+      "Rendered at body size, not micro. A disclosure set smaller than the claim it qualifies is " +
+      "a disclosure designed not to be read."),
+    S("AS-22.c", "Sitemap", "onward", "Routes, grouped.", []),
+  ],
+  corrections: [
+    {
+      source: "Prototype set (several)",
+      now: "The standing disclosure renders at body size, in the reading tone.",
+      because:
+        "Every prototype either omitted it or set it in micro grey. A platform offering securities " +
+        "makes this statement wherever it makes a claim, and legibility is the whole substance of " +
+        "the obligation.",
+      kind: "constitutional",
+    },
+    {
+      source: "Prototype set (several)",
+      now: "All three entities are named: platform, vehicle, operating partner.",
+      because:
+        "The prototypes signed everything `Getaway Collective`, including sentences that were " +
+        "commitments of the operating partner or the vehicle. Attribution is not branding here.",
+      kind: "constitutional",
+    },
+  ],
+};
+
+// -----------------------------------------------------------------
+// REGIONS - repeatable blocks used inside screens
+// -----------------------------------------------------------------
+
+/**
+ * AS-23 - THE HERO VIEWPORT
+ *
+ * The full-bleed opening block. Used by AS-01, AS-03, AS-07 and AS-09,
+ * which is why it is a region rather than being rewritten four times.
+ */
+export const HERO_VIEWPORT: Assembly = {
+  id: "AS-23",
+  name: "The Hero Viewport",
+  scope: "region",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Open a screen with its subject, at full bleed, in one claim.",
+  answers: "What is this about?",
+  sections: [
+    S("AS-23.a", "Ground", "masthead",
+      "Image or moving image, with the scrim that makes type survivable over it.",
+      [],
+      "The scrim is not decoration. Type over an unscrimmed image is legible only against the part " +
+      "of the image it happens to land on, and that part changes with the viewport."),
+    S("AS-23.b", "Claim", "masthead",
+      "One line, display-xl. Optionally one supporting line.",
+      [],
+      "ONE claim. A hero carrying three is a contents list set in large type."),
+    S("AS-23.c", "Entry", "onward", "At most two routes onward, one of them primary.", []),
+  ],
+  corrections: [
+    {
+      source: "Prototype set (several)",
+      was: "Figures placed over hero imagery - yields, valuations, counts.",
+      now: "No figure over a hero. FB-1 bars full-bleed treatment wherever numeric data is read.",
+      because:
+        "A figure over an image is read against whatever pixels sit behind it, which differ per " +
+        "viewport and per crop. Nobody can guarantee the contrast of a number on a photograph.",
+      kind: "accessibility",
+    },
+    {
+      source: "BO1.html",
+      was: "A 100vh hero with the claim revealed only on scroll.",
+      now: "The claim is present at load. Height caps below full viewport on short screens.",
+      because:
+        "A full-viewport hero on a laptop in landscape pushes everything below it off-screen, and " +
+        "content that needs scroll to exist is content some people never find.",
+      kind: "interaction",
+    },
+    {
+      source: "Prototype set (several)",
+      was: "Autoplaying background video with no control.",
+      now: "Paused under `prefers-reduced-motion`, with a visible pause control where it plays.",
+      because: "WCAG 2.2.2: motion over five seconds needs a mechanism to stop it.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/**
+ * AS-24 - TESTIMONIALS
+ *
+ * -- READ THIS BEFORE USING IT ------------------------------------
+ * A testimonial on an investment platform is not a marketing block. It
+ * is a statement by an investor about an investment, and in India that
+ * is regulated speech: SEBI's advertisement code bars testimonials in
+ * investment advisory contexts outright, and a member's remark about
+ * what they earned is a performance claim made by proxy - it does not
+ * become permissible because someone else said it.
+ *
+ * So this region exists with the narrowest possible scope: it carries
+ * statements about the PLACE, never about the return. A quote mentioning
+ * a figure, a yield, a gain, or the word "returns" does not belong here,
+ * and the linter refuses it.
+ *
+ * That is not a stylistic preference. It is the only version of this
+ * region that can be published.
+ */
+export const TESTIMONIALS: Assembly = {
+  id: "AS-24",
+  name: "Testimonials",
+  scope: "region",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Let people describe the place in their own words, without making a claim about returns.",
+  answers: "What is it like to actually be there?",
+  sections: [
+    S("AS-24.a", "Statements", "grid",
+      "Attributed quotes about the property, and about occupying it.",
+      [],
+      "NO FIGURE, NO RETURN, NO PERFORMANCE. A quote mentioning what someone earned is a " +
+      "performance claim wearing quotation marks, and it is barred whoever said it."),
+    S("AS-24.b", "Attribution", "narrative",
+      "Name or initials, role, date, and the consent basis.",
+      [],
+      "Anonymous testimonials are not published. An unattributable statement cannot be verified " +
+      "or withdrawn, and an unwithdrawable statement about a real person is a standing exposure."),
+  ],
+  corrections: [
+    {
+      source: "AS-24 design",
+      now: "Testimonials carry no figure, no yield, no return and no performance reference.",
+      because:
+        "SEBI's advertisement code bars testimonials in investment advisory contexts, and a " +
+        "member quote about what they earned is a performance claim by proxy. It does not become " +
+        "permissible because a member said it rather than the platform.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-24 design",
+      now: "Every statement carries a name, a date and a recorded consent basis.",
+      because:
+        "A quote from a real person, published indefinitely, is their data. Without a consent " +
+        "record there is no basis to keep it and no route to remove it.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-24 design",
+      now: "The region names the operating partner as the subject, not the platform.",
+      because:
+        "What someone is describing is time at the property, arranged by the operating partner. " +
+        "Attributing it to the investment platform reads as a claim about the investment.",
+      kind: "vocabulary",
+    },
+  ],
+};
+
+// -----------------------------------------------------------------
+// THE STRUCTURAL GAPS
+// -----------------------------------------------------------------
+
+/**
+ * AS-25 - THE TIME LEDGER
+ *
+ * The Trinity is Space, Capital and Time. Time had no screen.
+ *
+ * Entitlement is the only part of the product a member touches that is
+ * not money, and it is the part they will touch most often.
+ */
+export const TIME_LEDGER: Assembly = {
+  id: "AS-25",
+  name: "The Time Ledger",
+  scope: "screen",
+  route: "time",
+  vantage: "time",
+  intent: "Show a member what nights they hold, what they have used, and what is scheduled.",
+  answers: "How many nights do I have left, and when?",
+  sections: [
+    S("AS-25.a", "Balance", "feature",
+      "Nights held, used, scheduled and remaining, for the current entitlement year.",
+      [],
+      "Nights are a COUNT, not a currency. They render in the count grammar and never in copper - " +
+      "copper is reserved for money, and a night is not money."),
+    S("AS-25.b", "Calendar", "figure",
+      "The entitlement year, with what is held and what is available.",
+      [],
+      "Phone-parity. Someone checks this from a phone far more often than from a desk."),
+    S("AS-25.c", "Ledger", "ledger",
+      "Every draw and return against the entitlement, append-only.",
+      ["O-08"],
+      "A cancelled night returns to the balance as a NEW entry, never by deleting the draw. The " +
+      "ledger records what happened, not what is currently true."),
+    S("AS-25.d", "Expiry", "feature",
+      "What lapses, and when.",
+      [],
+      "Anything that expires says so at the same weight as the balance itself. A balance shown " +
+      "without its expiry is a larger number than the true one."),
+  ],
+  corrections: [
+    {
+      source: "Registry audit",
+      now: "The time route group has an assembly.",
+      because:
+        "Space, Capital and Time are declared as peers throughout the system and the third had no " +
+        "screen. A lens onto nothing is not a lens.",
+      kind: "constitutional",
+    },
+    {
+      source: "TheSteward_02Feb.HTML",
+      was: "`12 NIGHTS LEFT` with no year, no expiry and no ledger behind it.",
+      now: "Balance, entitlement year, expiry, and the ledger that produced the number.",
+      because:
+        "A balance with no expiry overstates what someone has, and a balance with no ledger cannot " +
+        "be checked when it is wrong.",
+      kind: "numeric",
+    },
+    {
+      source: "TheSteward_02Feb.HTML",
+      was: "Nights rendered in the same tone as capital figures.",
+      now: "Count grammar. Copper is reserved for money.",
+      because:
+        "If a night reads like a rupee, a balance of 12 sits visually alongside a balance of " +
+        "1,24,00,000 as though they were the same kind of thing.",
+      kind: "numeric",
+    },
+  ],
+};
+
+/**
+ * AS-26 - THE CAPITAL CALL
+ *
+ * "We need Rs X by date Y." The highest-stakes thing the platform ever
+ * sends a member, and it had no screen.
+ */
+export const CAPITAL_CALL: Assembly = {
+  id: "AS-26",
+  name: "The Capital Call",
+  scope: "screen",
+  route: "member",
+  vantage: "member",
+  intent: "Tell a member exactly what is being called, by when, and what happens if it is not met.",
+  answers: "How much, by when, and what if I cannot?",
+  sections: [
+    S("AS-26.a", "The Call", "feature",
+      "Amount, due date, and the commitment it draws against.",
+      [],
+      "The amount, the date and the consequence render together. A due date without its " +
+      "consequence is a suggestion."),
+    S("AS-26.b", "Basis", "ledger",
+      "How the amount was computed from the commitment and the drawn-to-date.",
+      [],
+      "Fully derived and shown. A capital call is the one figure a member is most entitled to " +
+      "reconstruct for themselves."),
+    S("AS-26.c", "Default", "narrative",
+      "What happens if the call is not met, stated plainly.",
+      [],
+      "In full, before the payment control. Default provisions disclosed after payment have not " +
+      "been disclosed."),
+    S("AS-26.d", "Settlement", "action", "Payment, and the record of it.", ["M-04"]),
+  ],
+  corrections: [
+    {
+      source: "Registry audit",
+      now: "Capital Call has a screen.",
+      because:
+        "It is a declared term of the vocabulary and one of the six lifecycles, and it is the " +
+        "single most consequential message the platform sends. It had no surface.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-26 design",
+      now: "Default consequences render in full above the payment control.",
+      because:
+        "Dilution, forfeiture and interest on a late call are the terms that matter most and are " +
+        "the ones most often placed after the act they apply to.",
+      kind: "constitutional",
+    },
+  ],
+};
+
+/**
+ * AS-27 - THE BALLOT
+ *
+ * AS-13 shows resolution RESULTS. Nowhere could a member actually vote.
+ */
+export const BALLOT: Assembly = {
+  id: "AS-27",
+  name: "The Ballot",
+  scope: "screen",
+  route: "member",
+  vantage: "member",
+  intent: "Let a member read a resolution and cast a weighted vote on it.",
+  answers: "What am I deciding, what does it mean, and what is my weight?",
+  sections: [
+    S("AS-27.a", "Resolution", "feature",
+      "The text as it will be minuted, its threshold, and the closing time.",
+      ["O-06"],
+      "The exact text. A summary of a resolution is not the resolution, and the minute will record " +
+      "the latter."),
+    S("AS-27.b", "Weight", "feature",
+      "The viewer's own voting weight, and how it was derived.",
+      [],
+      "Contribution-weighted per §24a, never per-capita. The weight is stated before the vote is " +
+      "cast, not after."),
+    S("AS-27.c", "Cast", "action",
+      "For, against, abstain. Irreversible once the window closes.",
+      [],
+      "SEALED. What was cast is never rendered back at any vantage including admin, and the " +
+      "confirmation says only that a vote was recorded."),
+    S("AS-27.d", "Outcome", "feature",
+      "The aggregate, once the window closes.",
+      [],
+      "A tie is NOT APPROVED. There is no deferral state and the screen offers none."),
+  ],
+  corrections: [
+    {
+      source: "Registry audit",
+      now: "Members can cast a vote.",
+      because:
+        "Governance rights are the substance of the Member Law and the system could display " +
+        "results without ever letting anyone produce one.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-27 design",
+      now: "The confirmation states that a vote was recorded, never which vote.",
+      because:
+        "I-05 seals the ballot at every vantage. A confirmation screen echoing the choice back " +
+        "leaves it in a screenshot, a cache and a support transcript.",
+      kind: "constitutional",
+    },
+  ],
+};
+
+/**
+ * AS-28 - THE RISK REGISTER
+ *
+ * O-09 Risk Register Row existed with no screen to sit on.
+ */
+export const RISK_REGISTER: Assembly = {
+  id: "AS-28",
+  name: "The Risk Register",
+  scope: "screen",
+  route: "capital",
+  vantage: "capital",
+  intent: "Hold every identified risk, its severity, its owner and what is being done.",
+  answers: "What could go wrong here, and who is on it?",
+  sections: [
+    S("AS-28.a", "Register", "ledger",
+      "Every risk with category, likelihood, impact, owner and mitigation.",
+      ["O-09"],
+      "Severity is a COMPUTED product of likelihood and impact, never typed. A hand-set severity " +
+      "drifts from its own inputs the moment either one changes."),
+    S("AS-28.b", "Movement", "figure",
+      "What has changed since the last review, and when the next one falls.",
+      [],
+      "A register nobody has reviewed renders its staleness. An unreviewed risk register is more " +
+      "dangerous than none, because it looks like oversight."),
+  ],
+  corrections: [
+    {
+      source: "Registry audit",
+      now: "The risk register has a screen.",
+      because:
+        "O-09 existed as an organism with nowhere to appear, and Risk is a declared root object of " +
+        "the registry.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-28 design",
+      now: "Severity is computed from likelihood and impact.",
+      because:
+        "A typed severity is a fourth independent field that must agree with two others, and " +
+        "nothing on the screen would show it when it stopped agreeing.",
+      kind: "numeric",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -1648,6 +2172,15 @@ export const ASSEMBLIES: readonly Assembly[] = [
   KNOWLEDGE_BASE,
   RECRUITMENT,
   LEDGER_LOCK,
+  HEADER,
+  NAV_SPINE,
+  FOOTER,
+  HERO_VIEWPORT,
+  TESTIMONIALS,
+  TIME_LEDGER,
+  CAPITAL_CALL,
+  BALLOT,
+  RISK_REGISTER,
 ];
 
 /**
@@ -1698,6 +2231,12 @@ export const assemblyById = (id: string): Assembly | undefined =>
 
 export const assembliesFor = (route: RouteGroup): Assembly[] =>
   ASSEMBLIES.filter((a) => a.route === route);
+
+export const scopeOf = (a: Assembly): AssemblyScope => a.scope ?? "screen";
+
+export const SCREENS = ASSEMBLIES.filter((a) => scopeOf(a) === "screen");
+export const CHROME = ASSEMBLIES.filter((a) => scopeOf(a) === "chrome");
+export const REGIONS = ASSEMBLIES.filter((a) => scopeOf(a) === "region");
 
 /** Every correction, flattened, for the design reference and the changelog. */
 export const CORRECTIONS: readonly (Correction & { assembly: string })[] =

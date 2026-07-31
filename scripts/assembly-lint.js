@@ -67,14 +67,26 @@ function assemblies() {
   for (const m of src.matchAll(/export const (\w+): Assembly = \{([\s\S]*?)\n\};/g)) {
     const b = m[2];
     const g = (k) => (b.match(new RegExp(`\\b${k}:\\s*\\n?\\s*"((?:[^"\\\\]|\\\\.)*)"`)) || [])[1];
+    // Captures purpose (4th arg) and rule (the trailing string, in either
+    // the bare or the `{ rule }` form). They were omitted originally, which
+    // meant any check reading them silently compared against undefined —
+    // the exact vacuous-pass failure ADR-0006 exists to prevent.
+    const join = (chunk) => [...chunk.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]).join("");
     const sections = [...b.matchAll(
-      /S\(\s*"([^"]+)",\s*"([^"]+)",\s*"(\w+)",[\s\S]*?\[([^\]]*)\]([\s\S]*?)(?=\n\s*(?:S\(|\],))/g,
-    )].map((s) => ({
-      ref: s[1], name: s[2], kind: s[3],
-      contains: [...s[4].matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-      routesTo: [...((s[5].match(/routesTo:\s*\[([^\]]*)\]/) || [, ""])[1])
-        .matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-    }));
+      /S\(\s*"([^"]+)",\s*"([^"]+)",\s*"(\w+)",\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+),\s*\[([^\]]*)\]([\s\S]*?)(?=\n\s*(?:S\(|\],))/g,
+    )].map((s) => {
+      const tail = s[6];
+      const keyed = tail.match(/rule:\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+)/);
+      const bare = tail.match(/^\s*,\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+)\)/);
+      return {
+        ref: s[1], name: s[2], kind: s[3],
+        purpose: join(s[4]),
+        contains: [...s[5].matchAll(/"([^"]+)"/g)].map((x) => x[1]),
+        routesTo: [...((tail.match(/routesTo:\s*\[([^\]]*)\]/) || [, ""])[1])
+          .matchAll(/"([^"]+)"/g)].map((x) => x[1]),
+        rule: keyed ? join(keyed[1]) : bare ? join(bare[1]) : "",
+      };
+    });
     const corrections = [...b.matchAll(/\{\s*\n\s*source:[\s\S]*?kind:\s*"(\w+)",\s*\n\s*\}/g)]
       .map((c) => ({ kind: c[1], body: c[0] }));
     out.push({
@@ -92,6 +104,23 @@ const ASSEMBLIES = assemblies();
 
 if (ASSEMBLIES.length === 0 || organismIds.size === 0 || apertureVantage.size === 0) {
   console.error("[assembly-lint] Parsed zero assemblies, organisms or apertures. Refusing to pass vacuously.");
+  process.exit(2);
+}
+
+// ADR-0006, extended to the FIELDS and not just the records.
+//
+// The section parser originally captured neither `purpose` nor `rule`, so
+// every check reading them compared against undefined and reported on
+// nothing. That is a vacuous pass wearing a green tick — the same failure
+// as parsing zero records, one level down and much harder to notice.
+const parsedSections = ASSEMBLIES.flatMap((a) => a.sections);
+const withRule = parsedSections.filter((s) => s.rule && s.rule.length > 10).length;
+const withPurpose = parsedSections.filter((s) => s.purpose && s.purpose.length > 10).length;
+if (parsedSections.length === 0 || withPurpose < parsedSections.length * 0.9 || withRule < 30) {
+  console.error(
+    `[assembly-lint] Thin parse: ${parsedSections.length} sections, ${withPurpose} purposes, ` +
+      `${withRule} rules. Checks that read these would report on nothing. Refusing to pass.`,
+  );
   process.exit(2);
 }
 
@@ -184,6 +213,64 @@ for (const a of ASSEMBLIES) {
     }
     if (!/^(constitutional|accessibility|vocabulary|numeric|interaction)$/.test(c.kind)) {
       fail.push(`${a.id}: correction kind "${c.kind}" is not one of the five.`);
+    }
+  }
+}
+
+// 9. SCOPE — chrome is bound by its narrowest vantage
+//
+// Chrome renders on every screen, so anything it shows it shows at every
+// vantage those screens sit at. A header carrying a member's position
+// leaks it at the gateway. The declared vantage of a chrome assembly is
+// therefore its NARROWEST, and it may render nothing above it.
+//
+// Regions inherit their host's disclosure and so declare none of their own.
+for (const a of ASSEMBLIES) {
+  const scope = (src.match(
+    new RegExp(`id:\\s*"${a.id}",[\\s\\S]{0,240}?scope:\\s*"(\\w+)"`),
+  ) || [, "screen"])[1];
+  a.scope = scope;
+
+  if (!["screen", "chrome", "region"].includes(scope)) {
+    fail.push(`${a.id}: scope "${scope}" is not screen/chrome/region`);
+  }
+
+  if (scope === "chrome") {
+    const rendered = a.sections.flatMap((s) => s.contains).filter((r) => /^AP-\d+$/.test(r));
+    for (const ref of rendered) {
+      const v = apertureVantage.get(ref);
+      if (v && VANTAGE_RANK[v] > VANTAGE_RANK[a.vantage]) {
+        fail.push(
+          `${a.id} is chrome at the "${a.vantage}" vantage but renders ${ref} from "${v}". ` +
+            `Chrome shows what it shows to everyone.`,
+        );
+      }
+    }
+  }
+}
+
+// 10. TESTIMONIALS carry no figure
+//
+// A member quote about what they earned is a performance claim by proxy,
+// and SEBI's advertisement code bars testimonials in investment advisory
+// contexts outright. It does not become permissible because a member said
+// it rather than the platform. This is the one region where the rule is
+// legal rather than editorial, so it is checked rather than trusted.
+{
+  const t = ASSEMBLIES.find((a) => a.id === "AS-24");
+  if (t) {
+    const rules = t.sections.map((s) => s.rule || "").join(" ");
+    if (!/NO FIGURE/.test(rules)) {
+      fail.push(
+        "AS-24 does not bar figures from a testimonial. A quote naming a return is a performance " +
+          "claim wearing quotation marks.",
+      );
+    }
+    const banned = /\b(yield|return|profit|gain|%|₹)\b/i;
+    for (const s of t.sections) {
+      if (banned.test(s.purpose)) {
+        fail.push(`${s.ref} describes a testimonial carrying a performance term.`);
+      }
     }
   }
 }

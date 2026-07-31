@@ -9,9 +9,10 @@ import {
   ASSEMBLIES, ASSEMBLY_LAWS, CORRECTIONS, GROUND_INVERSION,
   GATEWAY_GRID, PROPERTY_CONSOLE_SCREEN, PROPERTY_MASTHEAD,
   CAPITAL_EXPLAINER, MEMBER_CONSOLE, COMMITMENT_FLOW, STORY_PLAYBACK,
-  assemblyById, assembliesFor, strategyOf,
+  assemblyById, assembliesFor, strategyOf, scopeOf, SCREENS, CHROME, REGIONS,
 } from "../constants/assemblies";
 import { APERTURES, OPENING_RANK } from "../constants/apertures";
+import type { RouteGroup } from "../constants/layout";
 import { ORGANISMS } from "../constants/organisms";
 import { COMPONENTS } from "../constants/components";
 import { COLOUR } from "../constants/tokens";
@@ -650,5 +651,174 @@ describe("criticalDeep", () => {
     expect(COLOUR.hazard).toBe("#E8672E");
     expect(COLOUR.forest).toBe("#0C3024");
     expect(COLOUR.copper).toBe("#C79F6B");
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────
+// Wave 6.8 — chrome, regions, and the structural gaps
+// ─────────────────────────────────────────────────────────────────────
+
+describe("assembly scope", () => {
+  it("separates screens, chrome and regions", () => {
+    // Registering only whole screens left the furniture ungoverned: a
+    // header appears on every screen and had no stated rule about what
+    // it may show.
+    expect(CHROME.map((a) => a.id)).toEqual(["AS-20", "AS-21", "AS-22"]);
+    expect(REGIONS.map((a) => a.id)).toEqual(["AS-23", "AS-24"]);
+    expect(SCREENS.length + CHROME.length + REGIONS.length).toBe(ASSEMBLIES.length);
+  });
+
+  it("defaults to screen where scope is absent", () => {
+    expect(scopeOf(assemblyById("AS-01")!)).toBe("screen");
+  });
+
+  it("binds chrome to its narrowest vantage", () => {
+    // Chrome shows what it shows to everyone. A header carrying a
+    // member's position would leak it at the gateway.
+    const RANK: Record<string, number> =
+      { gateway: 0, space: 1, time: 1, member: 2, capital: 3, admin: 4 };
+    for (const c of CHROME) {
+      for (const s of c.sections) {
+        for (const ref of s.contains) {
+          const ap = APERTURES.find((x) => x.id === ref);
+          if (ap) expect(RANK[ap.vantage], s.ref).toBeLessThanOrEqual(RANK[c.vantage]);
+        }
+      }
+    }
+  });
+
+  it("keeps every figure out of the header", () => {
+    const c = assemblyById("AS-20")!.corrections!.find((x) => x.now.startsWith("No figure"))!;
+    expect(c.because).toContain("narrowest vantage decides");
+    expect(assemblyById("AS-20")!.sections.find((s) => s.ref === "AS-20.c")!.rule)
+      .toContain("NO FIGURE");
+  });
+
+  it("shows no route the viewer cannot enter", () => {
+    expect(assemblyById("AS-20")!.sections.find((s) => s.ref === "AS-20.b")!.rule)
+      .toContain("it is absent");
+  });
+
+  it("never reorders the spine by recency", () => {
+    expect(assemblyById("AS-21")!.sections[0].rule).toContain("NEVER reorders");
+  });
+
+  it("keeps the spine visible on phones rather than behind a hamburger", () => {
+    const c = assemblyById("AS-21")!.corrections!.find((x) => x.now.includes("hamburger"))!;
+    expect(c.because).toContain("parity quietly stops being parity");
+  });
+
+  it("sets the footer disclosure at body size", () => {
+    // A disclosure set smaller than the claim it qualifies is a
+    // disclosure designed not to be read.
+    const s = assemblyById("AS-22")!.sections.find((x) => x.ref === "AS-22.b")!;
+    expect(s.rule).toContain("body size, not micro");
+  });
+
+  it("names all three entities wherever any one of them speaks", () => {
+    const c = assemblyById("AS-22")!.corrections!.find((x) => x.now.includes("three entities"))!;
+    expect(c.because).toContain("Attribution is not branding");
+  });
+});
+
+describe("the hero viewport", () => {
+  it("bars figures over full-bleed imagery", () => {
+    const c = assemblyById("AS-23")!.corrections!.find((x) => x.now.includes("No figure over a hero"))!;
+    expect(c.because).toContain("differ per viewport");
+    expect(c.kind).toBe("accessibility");
+  });
+
+  it("treats the scrim as structural, not decorative", () => {
+    expect(assemblyById("AS-23")!.sections[0].rule).toContain("not decoration");
+  });
+
+  it("caps below full viewport height", () => {
+    const c = assemblyById("AS-23")!.corrections!.find((x) => x.was?.includes("100vh"))!;
+    expect(c.because).toContain("content some people never find");
+  });
+
+  it("carries exactly one claim", () => {
+    expect(assemblyById("AS-23")!.sections.find((s) => s.ref === "AS-23.b")!.rule)
+      .toContain("ONE claim");
+  });
+});
+
+describe("testimonials as regulated speech", () => {
+  const as24 = () => assemblyById("AS-24")!;
+
+  it("bars every figure, yield, return and performance reference", () => {
+    const rule = as24().sections.find((s) => s.ref === "AS-24.a")!.rule!;
+    expect(rule).toContain("NO FIGURE, NO RETURN, NO PERFORMANCE");
+    expect(rule).toContain("wearing quotation marks");
+  });
+
+  it("cites the regulatory basis rather than calling it taste", () => {
+    const c = as24().corrections!.find((x) => x.now.includes("no performance reference"))!;
+    expect(c.because).toContain("SEBI");
+    expect(c.kind).toBe("constitutional");
+  });
+
+  it("publishes nothing anonymous", () => {
+    const s = as24().sections.find((x) => x.ref === "AS-24.b")!;
+    expect(s.rule).toContain("not published");
+    expect(s.rule).toContain("standing exposure");
+  });
+
+  it("names the operating partner as the subject, not the platform", () => {
+    const c = as24().corrections!.find((x) => x.kind === "vocabulary")!;
+    expect(c.because).toContain("claim about the investment");
+  });
+});
+
+describe("the structural gaps", () => {
+  it("fills the empty time route group", () => {
+    expect(assembliesFor("time").map((a) => a.id)).toEqual(["AS-25"]);
+  });
+
+  it("gives every route group at least one assembly", () => {
+    const groups: RouteGroup[] = ["gateway", "space", "capital", "time", "member", "admin"];
+    for (const g of groups) {
+      expect(assembliesFor(g).length, g + " has no assembly").toBeGreaterThan(0);
+    }
+  });
+
+  it("keeps nights out of the currency grammar", () => {
+    expect(assemblyById("AS-25")!.sections[0].rule).toContain("never in copper");
+  });
+
+  it("returns a cancelled night as a new entry, never by deletion", () => {
+    const s = assemblyById("AS-25")!.sections.find((x) => x.ref === "AS-25.c")!;
+    expect(s.rule).toContain("never by deleting");
+    expect(s.rule).toContain("records what happened");
+  });
+
+  it("renders expiry at the same weight as the balance", () => {
+    expect(assemblyById("AS-25")!.sections.find((x) => x.ref === "AS-25.d")!.rule)
+      .toContain("same weight as the balance");
+  });
+
+  it("gives Capital Call a screen, with default consequences before payment", () => {
+    const as26 = assemblyById("AS-26")!;
+    expect(as26.sections.find((s) => s.ref === "AS-26.c")!.rule).toContain("before the payment control");
+    const c = as26.corrections!.find((x) => x.now.includes("Default consequences"))!;
+    expect(c.because).toContain("after the act they apply to");
+  });
+
+  it("lets a member actually vote, and seals what they cast", () => {
+    const as27 = assemblyById("AS-27")!;
+    expect(as27.sections.find((s) => s.ref === "AS-27.c")!.rule).toContain("SEALED");
+    const c = as27.corrections!.find((x) => x.now.includes("never which vote"))!;
+    expect(c.because).toContain("screenshot");
+  });
+
+  it("computes risk severity rather than storing it", () => {
+    const s = assemblyById("AS-28")!.sections[0];
+    expect(s.rule).toContain("COMPUTED");
+    expect(s.rule).toContain("never typed");
+  });
+
+  it("renders the staleness of an unreviewed register", () => {
+    expect(assemblyById("AS-28")!.sections.find((x) => x.ref === "AS-28.b")!.rule)
+      .toContain("looks like oversight");
   });
 });
