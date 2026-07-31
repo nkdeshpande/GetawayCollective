@@ -352,8 +352,20 @@ for (const [ground, map] of Object.entries(VARIANTS)) {
   const groundHex = ground === "void" ? P.void : P.paper;
   for (const [orig, variant] of Object.entries(map)) {
     if (!P[variant] || !P[orig]) continue;
+    const otherGround = ground === "void" ? "paper" : "void";
     const other = ground === "void" ? P.paper : P.void;
-    if (contrast(P[orig], other) < AA_UI) {
+    /*
+     * Only warn if the OTHER ground has no variant of its own. Every
+     * remap now lives in ON_GROUND, so "weak on both grounds" is only
+     * news when both are still resting on the bare token — otherwise it
+     * fires on colours that were fixed on both sides, which is a warning
+     * nobody can act on, and those are the ones that teach people to
+     * stop reading the output.
+     */
+    const otherVariant = VARIANTS[otherGround]?.[orig];
+    const otherCovered = otherVariant && otherVariant !== orig &&
+      P[otherVariant] && contrast(P[otherVariant], other) >= AA_UI;
+    if (contrast(P[orig], other) < AA_UI && !otherCovered) {
       warn.push(`${orig} is weak on BOTH grounds; a single variant may not be enough`);
     }
     void groundHex;
