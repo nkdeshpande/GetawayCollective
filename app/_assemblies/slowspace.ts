@@ -88,6 +88,28 @@ export const UNIT = {
   lockIn: "36 months from financial close",
 };
 
+/**
+ * THE INITIAL DEPOSIT.
+ *
+ * ₹50,000 is taken on the platform to reserve a unit. The balance of the
+ * commitment, the Vehicle Agreement and the transfer of funds are all
+ * completed off the platform, in person or by instructed transfer.
+ *
+ * This is why the deposit is stated separately rather than as a
+ * percentage: it is a fixed amount that does not move with unit size, and
+ * a screen that showed "1.25%" would imply it scales.
+ *
+ * It HOLDS a unit; it does not buy one. The Member Law still fires on
+ * settlement of the full commitment and on nothing else — paying the
+ * deposit makes nobody a partner, and the screens say so.
+ */
+export const DEPOSIT = {
+  amount: 50000_0000n,          // ₹50,000
+  refundable: "Refundable in full until the Vehicle Agreement is signed.",
+  balance: UNIT.commitment - 50000_0000n,
+  window: "15 working days from the deposit",
+} as const;
+
 /* Ten units of 10% must be the whole equity layer, exactly. */
 {
   const units = allocate(EQUITY, Array(10).fill(1n));

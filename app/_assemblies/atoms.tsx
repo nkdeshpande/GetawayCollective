@@ -77,10 +77,11 @@ export function Hero({
 /**
  * The footer (AS-22).
  *
- * The standing disclosure renders at BODY size in the reading tone. A
- * disclosure set smaller than the claim it qualifies is a disclosure
- * designed not to be read — every prototype either omitted it or set it
- * in micro grey.
+ * It carries NO disclosure text of any kind — see the note in the body.
+ * The original argument for putting it here was that a disclosure set
+ * smaller than the claim it qualifies is designed not to be read, and
+ * that holds; the error was concluding it should therefore appear under
+ * every page. Set at any size, under every page, it is furniture.
  *
  * All three entities are named wherever any one of them speaks.
  */
@@ -104,36 +105,23 @@ export function Footer() {
         </div>
 
         {/*
-          THE STANDING DISCLOSURE IS NOT REPEATED HERE.
+          NO DISCLOSURE BLOCK HERE, IN ANY FORM.
 
-          It used to be, in full, on all 25 pages that render this footer.
-          It now lives in content/legal.ts and is rendered by exactly two
-          documents: the Terms and Conditions at Part L, and the Risk
-          Factors at Part A.
+          This footer carried the standing disclosure in full on all 25
+          pages that render it. That was replaced with a two-sentence
+          summary pointing at the documents, and the summary has now been
+          removed too.
 
-          The reason is not brevity. Wording repeated in twenty-five
-          places becomes twenty-five wordings the moment one is revised,
-          and which one a reader was shown then depends on which screen
-          they happened to be on. A disclosure that varies by screen is
-          not a disclosure. It is also the case that text appearing under
-          every page is text nobody reads, so the repetition was buying
-          the appearance of disclosure rather than the fact of it.
+          Both were the same mistake at different lengths. Text under
+          every page is text nobody reads, so it bought the APPEARANCE of
+          disclosure rather than the fact of it — and a summary that
+          paraphrases a binding document is a second wording that drifts
+          from the first the moment either is revised.
 
-          A load-time check in content/legal.ts enforces the count, and a
-          check in scripts/vocab-lint.js catches the wording reappearing
-          anywhere outside those two documents.
+          The disclosure lives in the standing documents, which are
+          linked from the map below like everything else. Nothing on this
+          platform paraphrases them.
         */}
-        <div className="disclosure">
-          <p>
-            Capital is at risk and these positions are illiquid. What that means in full — including
-            what happens to your position when things go wrong — is set out in the{" "}
-            <Link href="/legal/risk-disclosure">Risk Factors</Link> and in Part L of the{" "}
-            <Link href="/legal/terms">Terms and Conditions</Link>.
-          </p>
-          <p className="dim">
-            Those two documents state it once, so that it can be revised once.
-          </p>
-        </div>
 
         <div className="foot-map">
           <div>

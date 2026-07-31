@@ -15,9 +15,10 @@ import Link from "next/link";
 import {
   LLP, SITE, STACK, EQUITY, PROJECT, UNIT, GROSS_REVENUE,
   WATERFALL_SLOWSPACE, MY_DISTRIBUTION, MY_YIELD_BPS, DSCR, RETURNS,
-  GOVERNANCE, RISKS_SLOWSPACE, RISK_TERMS, DISCLOSURE, PROGRAMME,
+  GOVERNANCE, RISKS_SLOWSPACE, RISK_TERMS, DISCLOSURE, PROGRAMME, DEPOSIT,
 } from "./slowspace";
 import { inr, rate, plate } from "./data";
+import { documentByPath } from "@/content/legal";
 import { ConfidenceTag, Pct, Footer } from "./atoms";
 
 const pct = (bps: number) => (bps / 100).toFixed(2) + "%";
@@ -318,13 +319,35 @@ export function Offering() {
 const STEPS = [
   { id: "identity", t: "Identity", d: "Legal name and contact, for the register." },
   { id: "verification", t: "Verification", d: "PAN and address, for regulatory compliance." },
-  { id: "suitability", t: "Suitability", d: "Whether this instrument is appropriate for you." },
+  { id: "terms", t: "Terms and deposit", d: "The agreement you are entering, and the ₹50,000 that reserves a unit." },
 ] as const;
 
 export function Accreditation() {
   const [step, setStep] = useState(0);
   const [saved, setSaved] = useState<string | null>(null);
   const [vals, setVals] = useState<Record<string, string>>({});
+
+  /*
+   * The terms are shown IN PLACE rather than as a link away.
+   *
+   * A link to /legal/terms loses the half-filled application — the form
+   * is resumable, but a person who navigates away and reads twelve
+   * minutes of clauses does not reliably come back. So the document
+   * opens over the form and the form is still there behind it.
+   *
+   * `readTerms` latches on open and never resets. It gates the checkbox,
+   * because agreeing to a document that was never put in front of you is
+   * not agreement. It does NOT require scrolling to the end: scroll
+   * position is not reading, and someone who tabs through never fires a
+   * scroll handler at all.
+   */
+  const [showTerms, setShowTerms] = useState(false);
+  const [readTerms, setReadTerms] = useState(false);
+  const setTerms = (open: boolean) => {
+    setShowTerms(open);
+    if (open) setReadTerms(true);
+  };
+  const terms = documentByPath("/legal/terms");
 
   const set = (k: string, v: string) => setVals((p) => ({ ...p, [k]: v }));
   const blur = (k: string) => {
@@ -404,25 +427,69 @@ export function Accreditation() {
                       </div>
                     ) : (
                       <div style={{ marginBottom: "var(--gc-sp-m)" }}>
-                        <p className="t-body" style={{ maxWidth: "60ch" }}>
-                          This instrument is illiquid, locked for {UNIT.lockIn.toLowerCase()}, and can
-                          lose its whole value. Confirming that you can sustain a total loss of{" "}
-                          <span className="money">{inr(UNIT.commitment)}</span> is a condition of
-                          proceeding, not a formality.
+                        {/* What is actually taken here, and what is not.
+                            ₹50,000 reserves a unit; the balance, the
+                            Agreement and the transfer happen off the
+                            platform. Stating the balance beside the
+                            deposit is the point — a screen showing only
+                            the smaller number implies the smaller
+                            number is the commitment. */}
+                        <div className="panel on-panel" style={{ maxWidth: "560px" }}>
+                          <div className="kv">
+                            <span className="label t-micro">Payable now</span>
+                            <span className="v money">{inr(DEPOSIT.amount)}</span>
+                          </div>
+                          <div className="kv">
+                            <span className="label t-micro">Balance, completed offline</span>
+                            <span className="v money">{inr(DEPOSIT.balance)}</span>
+                          </div>
+                          <div className="kv">
+                            <span className="label t-micro">Total commitment</span>
+                            <span className="v money">{inr(UNIT.commitment)}</span>
+                          </div>
+                          <div className="kv">
+                            <span className="label t-micro">Deposit is</span>
+                            <span className="v t-body-s">{DEPOSIT.refundable}</span>
+                          </div>
+                        </div>
+
+                        <p className="t-body measure" style={{ marginTop: "var(--gc-sp-m)" }}>
+                          The {inr(DEPOSIT.amount)} reserves a unit. The remaining{" "}
+                          <span className="money">{inr(DEPOSIT.balance)}</span>, the Vehicle
+                          Agreement and the transfer of funds are completed off the platform,
+                          within {DEPOSIT.window}.
                         </p>
+                        <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+                          Paying the deposit does not make you a partner. The Member Law fires on
+                          settlement of the full commitment and on nothing else.
+                        </p>
+
+                        <button className="btn" type="button"
+                                onClick={() => setTerms(true)}
+                                style={{ marginTop: "var(--gc-sp-m)" }}>
+                          Read the Terms and Conditions
+                        </button>
+
                         <label className="inv-item" style={{ marginTop: "var(--gc-sp-s)" }}>
-                          <input type="checkbox" checked={vals.suit === "y"}
-                                 onChange={(e) => set("suit", e.target.checked ? "y" : "")} />
+                          <input type="checkbox" checked={vals.terms === "y"}
+                                 disabled={!readTerms}
+                                 onChange={(e) => set("terms", e.target.checked ? "y" : "")} />
                           <span>
-                            I can sustain a total loss of the capital I commit, and this is not
-                            capital I need within {UNIT.lockIn.toLowerCase()}.
+                            I have read the Terms and Conditions (version {terms?.version ?? "—"})
+                            and agree to them.
                           </span>
                         </label>
+                        {!readTerms ? (
+                          <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+                            The box enables once the terms have been opened. Agreeing to a document
+                            that was never put in front of you is not agreement.
+                          </p>
+                        ) : null}
                       </div>
                     )}
 
                     <button className="btn primary"
-                            disabled={s.id === "suitability" && vals.suit !== "y"}
+                            disabled={s.id === "terms" && vals.terms !== "y"}
                             onClick={() => setStep((n) => n + 1)}>
                       {i === STEPS.length - 1 ? "Submit for review" : "Continue"}
                     </button>
@@ -451,6 +518,75 @@ export function Accreditation() {
           </div>
         </div>
       </section>
+
+      {/* The terms, over the form.
+
+          Paper ground: this is the binding text, not narrative. Closes on
+          Escape and on the backdrop, and the close control says Close
+          rather than Agree — agreement is the checkbox underneath, and a
+          dialog whose only exit is "I agree" is a dialog that collects
+          consent from people trying to get rid of it. */}
+      {showTerms && terms ? (
+        <div className="modal-back" role="presentation"
+             onClick={(e) => { if (e.target === e.currentTarget) setTerms(false); }}>
+          <div className="modal on-paper" role="dialog" aria-modal="true"
+               aria-labelledby="termsTitle"
+               onKeyDown={(e) => { if (e.key === "Escape") setTerms(false); }}>
+            <div className="modal-head">
+              <div>
+                <span className="t-mono-s dim">
+                  {terms.id} · Version {terms.version} · In force from {terms.effective}
+                </span>
+                <h2 id="termsTitle" className="t-display-s">{terms.title}</h2>
+              </div>
+              <button className="btn" type="button" onClick={() => setTerms(false)} autoFocus>
+                Close
+              </button>
+            </div>
+
+            <div className="modal-body">
+              {terms.parts.map((part) => (
+                <div key={part.ref} style={{ marginBottom: "var(--gc-sp-l)" }}>
+                  <h3 className="t-body-l" style={{ fontWeight: 600 }}>
+                    <span className="t-mono-s dim" style={{ marginRight: "var(--gc-sp-xs)" }}>
+                      {part.ref}
+                    </span>
+                    {part.title}
+                  </h3>
+                  {part.clauses.map((c) => (
+                    <div key={c.n} style={{ marginTop: "var(--gc-sp-s)" }}>
+                      <span className="t-mono-s dim">{c.n}</span>
+                      {c.h ? (
+                        <div className="t-body" style={{ fontWeight: 600 }}>{c.h}</div>
+                      ) : null}
+                      {(c.p ?? []).map((para, k) => (
+                        <p key={k} className="t-body-s measure" style={{ marginTop: "var(--gc-sp-3xs)" }}>
+                          {para}
+                        </p>
+                      ))}
+                      {c.list ? (
+                        <ul className="t-body-s measure"
+                            style={{ marginTop: "var(--gc-sp-3xs)", paddingLeft: "1.1em" }}>
+                          {c.list.map((item, k) => <li key={k}>{item}</li>)}
+                        </ul>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            <div className="modal-foot">
+              <span className="t-body-s dim">
+                The full document is also at /legal/terms. Closing this leaves your application
+                exactly as it was.
+              </span>
+              <button className="btn" type="button" onClick={() => setTerms(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <Footer />
     </>
   );

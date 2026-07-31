@@ -253,7 +253,20 @@ for (const file of files) {
     process.exit(2);
   }
 
-  for (const file of files) {
+  /*
+   * Files outside the scanned tree that can still carry the wording.
+   *
+   * The first version of this check reused `files`, which is .ts/.tsx/
+   * .js/.json inside SCAN_DIRS. GC-ASSEMBLIES.html is a root-level HTML
+   * file, so a full copy of the disclosure sat in the reference footer
+   * and this check reported PASS over it — the same blind spot as the
+   * directory allowlist, one axis across.
+   */
+  const ALSO = ["GC-ASSEMBLIES.html"]
+    .map((f) => path.join(ROOT, f))
+    .filter((f) => fs.existsSync(f));
+
+  for (const file of [...files, ...ALSO]) {
     const rel = path.relative(ROOT, file);
     if (rel === HOME) continue;
     const lines = normalise(fs.readFileSync(file, "utf8")).split("\n");

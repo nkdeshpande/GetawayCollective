@@ -632,6 +632,26 @@ th.num{text-align:right}
   padding:2px 6px;min-width:18px;text-align:center}
 
 /* ── AS-22 · The Footer ──────────────────────────────────────────── */
+/* The terms dialog (AS-06 / the accreditation step).
+   The binding text is shown OVER the form rather than linked away from
+   it: the form is resumable, but a person who leaves to read twelve
+   minutes of clauses does not reliably come back, and the half-filled
+   application is still behind this. Paper ground, because it is the
+   binding document and not narrative. */
+.modal-back{position:fixed;inset:0;background:rgba(10,10,10,.72);z-index:60;
+  display:flex;align-items:center;justify-content:center;padding:var(--gc-sp-m)}
+.modal{background:var(--gc-paper);color:var(--gc-ink);width:min(760px,100%);max-height:86vh;
+  display:flex;flex-direction:column;border:1px solid var(--gc-hairline)}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--gc-sp-m);
+  padding:var(--gc-sp-m);border-bottom:1px solid var(--gc-hairline);flex:none}
+.modal-body{overflow-y:auto;padding:var(--gc-sp-m);flex:1 1 auto}
+.modal-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-m);
+  padding:var(--gc-sp-m);border-top:1px solid var(--gc-hairline);flex:none;flex-wrap:wrap}
+@media (prefers-reduced-motion:no-preference){
+  .modal{animation:modal-in var(--gc-dur-fast) var(--gc-ease-shutter)}
+}
+@keyframes modal-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
 .foot{border-top:1px solid var(--gc-hairline-inv);margin-top:var(--gc-sp-3xl);padding:var(--gc-sp-2xl) 0 var(--gc-sp-3xl)}
 .foot-ent{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
   gap:var(--gc-sp-m);padding-bottom:var(--gc-sp-l);border-bottom:1px solid var(--gc-hairline-inv)}

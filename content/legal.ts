@@ -23,16 +23,21 @@
  *
  * ── ON THE STANDING DISCLOSURE ───────────────────────────────────────
  * The three paragraphs in STANDING_DISCLOSURE are stated ONCE, here, and
- * rendered in exactly two documents: the Terms and Conditions (Part L)
- * and the Risk Factors (Part A, first). Nothing else in the application
- * restates them. /legal/disclosures cites them and links; it does not
- * carry its own copy.
+ * rendered by ONE document: the Terms and Conditions, at Part L.
  *
- * That is a deliberate constraint and it is enforced by a check. Wording
- * repeated in five places becomes five wordings the moment one is
- * revised, and the one a reader was shown is then a question of which
- * screen they happened to be on. A disclosure that varies by screen is
- * not a disclosure.
+ * It was two. DOC-02 was replaced with the Hospitality Asset Disclosure,
+ * which makes the same three statements in its own words at Part A
+ * ("Returns are never guaranteed", "Nothing contained within this
+ * platform constitutes personalised investment advice") and again at
+ * Part L. Rendering our three paragraphs on top of those would put two
+ * wordings of one disclosure in a single document, which is the precise
+ * failure this arrangement exists to prevent — worse inside one document
+ * than across two.
+ *
+ * So: one home. Nothing else in the application restates the wording,
+ * and /legal/disclosures cites and links rather than carrying a copy.
+ * A check at the foot of this file enforces the count, and vocab-lint
+ * catches the phrasing appearing anywhere else in the tree.
  */
 
 export type Confidence = "observed" | "verified" | "modelled" | "estimated" | "forecast" | "pending";
@@ -71,8 +76,8 @@ export interface StandingDocument {
 /* ═══════════════════════════════════════════════════════════════════
    THE STANDING DISCLOSURE
 
-   Stated once. Rendered in the Terms and Conditions and in the Risk
-   Factors, and nowhere else.
+   Stated once. Rendered by the Terms and Conditions at Part L, and
+   nowhere else. See the note at the head of this file.
    ═══════════════════════════════════════════════════════════════════ */
 
 export const STANDING_DISCLOSURE: readonly string[] = [
@@ -87,8 +92,8 @@ export const STANDING_DISCLOSURE: readonly string[] = [
     "advice and is not a registered investment adviser.",
 ];
 
-/** The two documents permitted to render STANDING_DISCLOSURE verbatim. */
-export const DISCLOSURE_HOME = ["/legal/terms", "/legal/risk-disclosure"] as const;
+/** The documents permitted to render STANDING_DISCLOSURE verbatim. */
+export const DISCLOSURE_HOME = ["/legal/terms"] as const;
 
 /* ═══════════════════════════════════════════════════════════════════
    TERMS AND CONDITIONS
@@ -104,8 +109,9 @@ const TERMS: StandingDocument = {
   version: "2.0",
   effective: "2026-07-31",
   alongside: [
-    { path: "/legal/risk-disclosure", title: "Risk Factors",
-      why: "The risks summarised in Part L are set out in full there. Part L is not a substitute for it." },
+    { path: "/legal/risk-disclosure", title: "Hospitality Asset Disclosure",
+      why: "How ownership, operations and returns actually work, and the principal risks in full. " +
+           "Part L of these terms is not a substitute for it." },
     { path: "/legal/privacy", title: "Privacy Notice",
       why: "What is collected about you, why, and how long it is held." },
   ],
@@ -474,8 +480,8 @@ const TERMS: StandingDocument = {
         { n: "L.1", h: "Capital at risk, past performance, and advice",
           p: STANDING_DISCLOSURE, assertion: true },
         { n: "L.2", h: "This is a summary",
-          p: ["Part L states the position shortly. The Risk Factors document sets out in full what " +
-              "can go wrong, why, and what happens to your position when it does. Read it before " +
+          p: ["Part L states the position shortly. The Hospitality Asset Disclosure sets out in " +
+              "full how ownership and operations work, and what can go wrong. Read it before " +
               "committing rather than after."] },
       ],
     },
@@ -489,281 +495,289 @@ const TERMS: StandingDocument = {
 const RISK_FACTORS: StandingDocument = {
   id: "DOC-02",
   path: "/legal/risk-disclosure",
-  title: "Risk Factors",
+  title: "Hospitality Asset Disclosure",
   purpose:
-    "What can go wrong with a commitment made through this platform, in the order of how much it " +
-    "would cost you, and what happens to your position in each case.",
-  version: "2.0",
+    "Understanding ownership, operations, returns and risks \u2014 how ownership in a Getaway " +
+    "Collective hospitality asset works, what rights accompany it, how the property is operated, " +
+    "how returns are generated, and the principal risks that may affect your investment.",
+  version: "3.0",
   effective: "2026-07-31",
   alongside: [
     { path: "/legal/terms", title: "Terms and Conditions",
-      why: "The rights and obligations these risks act upon." },
+      why: "The rights and obligations these risks act upon, and the standing disclosure at Part L." },
     { path: "/how-capital-works", title: "How capital works",
-      why: "The waterfall in full, with worked figures." },
+      why: "The distribution waterfall in full, with worked figures." },
   ],
   parts: [
-    /* Part A renders STANDING_DISCLOSURE — first, before any specific
-       risk, because a reader who stops after one screen should have read
-       this one. */
     {
       ref: "A",
-      title: "Read this first",
+      title: "Before You Commit",
       clauses: [
-        { n: "A.1", h: "Standing disclosure",
-          p: STANDING_DISCLOSURE, assertion: true },
-        { n: "A.2", h: "How this document is ordered",
-          p: ["Risks are set out worst first, not in the order that flatters. Part B can cost you " +
-              "everything. Part J costs you inconvenience. The ordering is the point.",
-              "This document is not exhaustive. It describes the risks known at the version date. " +
-              "A property may carry risks specific to it, and those are stated on the property's " +
-              "own record and in the vehicle's Agreement."] },
+        { n: "A.1",
+          p: ["This disclosure explains how ownership in a Getaway Collective hospitality asset " +
+              "works, what rights accompany that ownership, how the property is operated, how " +
+              "financial returns are generated, and the principal risks that may affect your " +
+              "investment.",
+              "Every hospitality asset is different. Property-specific matters are disclosed " +
+              "within the individual Asset Record and the governing Vehicle Agreement."] },
+        { n: "A.2",
+          p: ["Nothing contained within this platform constitutes personalised investment advice. " +
+              "Investors should obtain independent legal, taxation and financial advice before " +
+              "making any commitment.",
+              "Capital invested in hospitality assets is exposed to market, operational, " +
+              "regulatory and business risks. Returns are never guaranteed."],
+          assertion: true },
       ],
     },
 
     {
       ref: "B",
-      title: "You can lose everything",
+      title: "Understanding the Asset",
       clauses: [
-        { n: "B.1", h: "Total loss is possible",
-          p: ["A commitment is a contribution to a body corporate that owns, or intends to own, a " +
-              "single property. If that body corporate cannot meet its obligations, partners rank " +
-              "last. You may receive nothing.",
-              "There is no capital protection, no guarantee from Getaway Collective or from any " +
-              "operating partner, and no compensation scheme standing behind a loss."],
-          assertion: true },
-
-        { n: "B.2", h: "One asset, one place",
-          p: ["Each vehicle holds one property. There is no diversification inside a vehicle. A " +
-              "fire, a title dispute, a change in coastal regulation, or a road that stops carrying " +
-              "traffic can impair the whole of it.",
-              "Holding positions in several vehicles reduces this. It does not remove it, because " +
-              "properties in one region share weather, regulation and demand."] },
-
-        { n: "B.3", h: "The asset may not exist yet",
-          p: ["Many vehicles are formed before construction begins. Between formation and handover " +
-              "the vehicle owns land and a plan, and has an obligation to build.",
-              "Construction can overrun, cost more than budgeted, or fail approval. A delay past " +
-              "the programmed handover means an asset that is not earning while its costs " +
-              "continue."] },
+        { n: "B.1",
+          p: ["Each investment represents an ownership interest in a single hospitality property " +
+              "held through its own dedicated legal vehicle.",
+              "The underlying asset may include:"] },
+        { n: "B.2",
+          list: ["Land",
+                 "Hospitality buildings",
+                 "Visitor accommodation",
+                 "Infrastructure",
+                 "Operational systems",
+                 "Brand assets",
+                 "Operating licences"] },
+        { n: "B.3",
+          p: ["The property's value depends upon both the quality of the real estate and the " +
+              "success of its hospitality operations.",
+              "Unlike listed securities, these investments are directly linked to the long-term " +
+              "performance of a physical hospitality asset."] },
       ],
     },
 
     {
       ref: "C",
-      title: "You cannot get out",
+      title: "Ownership Structure",
       clauses: [
-        { n: "C.1", h: "Illiquidity is structural, not temporary",
-          p: ["These positions are not traded on any exchange. There is no daily price, no " +
-              "redemption, and no obligation on anyone to buy from you.",
-              "Do not commit capital you may need. Assume you cannot access it for the life of the " +
-              "property, and treat any earlier exit as a fortunate outcome rather than a plan."],
+        { n: "C.1",
+          p: ["Every hospitality property is legally independent. Each vehicle owns only one " +
+              "asset. Investors participate through contribution-weighted ownership interests.",
+              "The platform governs the structure but does not guarantee financial performance."],
           assertion: true },
-
-        { n: "C.2", h: "Lock-in",
-          p: ["A position is locked for the period in the vehicle's Agreement, typically " +
-              "thirty-six months from financial close. During that period it cannot be transferred " +
-              "except on death or by unanimous consent."] },
-
-        { n: "C.3", h: "After lock-in it is still hard",
-          p: ["A transfer needs a willing buyer, a price you both accept, and the consent of a " +
-              "majority by contribution. The internal register makes finding a buyer possible. It " +
-              "does not make it likely, and it establishes no price."] },
-
-        { n: "C.4", h: "Valuation is not liquidity",
-          p: ["A valuation shown against your position is an estimate of what the underlying asset " +
-              "might be worth, not an amount anyone has offered. Valuations are periodic, are " +
-              "modelled, and have been wrong before."] },
+        { n: "C.2",
+          p: ["Each property has:"],
+          list: ["its own financial statements",
+                 "its own liabilities",
+                 "its own operating performance",
+                 "its own distribution waterfall"] },
+        { n: "C.3",
+          p: ["No property financially supports another."],
+          assertion: true },
       ],
     },
 
     {
       ref: "D",
-      title: "Debt",
+      title: "Development & Construction",
       clauses: [
-        { n: "D.1", h: "Leverage cuts both ways",
-          p: ["Where a vehicle borrows, the lender ranks ahead of every partner. Debt service is " +
-              "stage five of the waterfall and partners are stage six.",
-              "Borrowing raises the return on equity when the property performs and destroys it " +
-              "when the property does not. A property that covers its debt and nothing more " +
-              "distributes nothing, indefinitely, while remaining solvent."],
+        { n: "D.1",
+          p: ["Some hospitality assets are already operating. Others may still be under " +
+              "development.",
+              "Where construction is involved, investors should understand that:"] },
+        { n: "D.2",
+          list: ["approvals may take longer than expected",
+                 "construction costs may increase",
+                 "completion dates may move",
+                 "commissioning may require additional time",
+                 "revenue normally begins only after practical completion and stabilisation"] },
+        { n: "D.3",
+          p: ["Development programmes shown throughout the platform represent current " +
+              "expectations rather than contractual guarantees."],
           assertion: true },
-
-        { n: "D.2", h: "Drawn against an asset that is not earning",
-          p: ["Facilities are typically drawn during construction, when there is no revenue. " +
-              "Interest accrues from drawdown. A moratorium defers the payment; it does not remove " +
-              "the obligation."] },
-
-        { n: "D.3", h: "Covenant breach",
-          p: ["A facility carries covenants — cover ratios, valuation tests, completion dates. A " +
-              "breach can accelerate the whole facility, force a sale at a time not of the " +
-              "vehicle's choosing, and leave partners with the residue after the lender is paid.",
-              "The residue after a forced sale is frequently nothing."] },
-
-        { n: "D.4", h: "Refinancing is not assured",
-          p: ["Where a facility matures before the property is sold it must be refinanced. The " +
-              "terms available then depend on rates, on lender appetite, and on the property's " +
-              "record. None of these can be fixed in advance."] },
       ],
     },
 
     {
       ref: "E",
-      title: "Revenue",
+      title: "Hospitality Operations",
       clauses: [
-        { n: "E.1", h: "Occupancy is an assumption",
-          p: ["Every modelled distribution rests on an assumed occupancy and an assumed rate. Both " +
-              "are estimates made before the property has traded.",
-              "A property that assumes fifty per cent blended occupancy and achieves forty " +
-              "distributes materially less than modelled, and the shortfall lands entirely on stage " +
-              "six because the stages above it are fixed or senior."] },
-
-        { n: "E.2", h: "Seasonality",
-          p: ["Annual figures average a peak and a trough. On the Karnataka coast the monsoon runs " +
-              "far below the annual average, and a weak winter cannot be made up.",
-              "A quarterly distribution will vary substantially through the year even where the " +
-              "annual figure is met."] },
-
-        { n: "E.3", h: "Demand can move",
-          p: ["Demand depends on access, on the region remaining somewhere people wish to go, and " +
-              "on competing supply. New supply nearby can take occupancy, rate, or both."] },
-
-        { n: "E.4", h: "The operating partner",
-          p: ["Revenue depends on how well the property is run, and it is not run by Getaway " +
-              "Collective. A poor operating partner can be replaced, but replacement takes time and " +
-              "the property earns less while it happens."] },
+        { n: "E.1",
+          p: ["Financial performance depends upon successful operation of the property.",
+              "Operational performance is influenced by factors including:"] },
+        { n: "E.2",
+          list: ["visitor demand",
+                 "occupancy",
+                 "average daily rate",
+                 "operating efficiency",
+                 "visitor satisfaction",
+                 "maintenance standards",
+                 "regional tourism trends"] },
+        { n: "E.3",
+          p: ["Hospitality assets differ from passive commercial real estate because operational " +
+              "excellence materially affects long-term value.",
+              "Operating partners are selected, monitored and may be replaced where required, " +
+              "although transitions may temporarily affect performance."] },
       ],
     },
 
     {
       ref: "F",
-      title: "Distributions",
+      title: "Revenue & Distributions",
       clauses: [
-        { n: "F.1", h: "Distribution is not automatic",
-          p: ["Stage six runs only when the five stages above it are satisfied and the reserve is " +
-              "at or above its floor. A quarter in which the property was profitable can still pay " +
-              "nothing."],
+        { n: "F.1",
+          p: ["Hospitality income is generated through visitor operations.",
+              "After operating expenses, reserves and financial obligations are satisfied, " +
+              "available cash may be distributed according to the Vehicle Agreement.",
+              "Distributions are therefore influenced by:"] },
+        { n: "F.2",
+          list: ["occupancy",
+                 "pricing",
+                 "operating costs",
+                 "financing obligations",
+                 "reserve requirements",
+                 "capital expenditure"] },
+        { n: "F.3",
+          p: ["Distributions are neither fixed nor guaranteed.",
+              "Modelled yields, forecasts and estimated returns are planning assumptions rather " +
+              "than commitments."],
           assertion: true },
-
-        { n: "F.2", h: "Timing",
-          p: ["Distributions follow stabilisation, which for a property under construction is years " +
-              "after commitment. The first distribution date shown in a programme is a forecast."] },
-
-        { n: "F.3", h: "Capital calls",
-          p: ["Where a vehicle needs further capital its Agreement may permit a call on partners. A " +
-              "partner who does not meet a call may be diluted, and dilution is permanent."] },
       ],
     },
 
     {
       ref: "G",
-      title: "Regulation",
+      title: "Ownership Duration & Liquidity",
       clauses: [
-        { n: "G.1", h: "Coastal regulation",
-          p: ["Properties on the coast sit inside a Coastal Regulation Zone. Approvals held today " +
-              "are not a forecast of approvals tomorrow, and an amendment can change what may be " +
-              "built on land after the land has been bought."] },
-
-        { n: "G.2", h: "The structure could be recharacterised",
-          p: ["The structure is a body corporate holding a single asset, with partners holding " +
-              "contribution-weighted interests. If a regulator were to treat an arrangement of this " +
-              "kind as a collective investment scheme, compliance could become materially more " +
-              "expensive or the structure could require alteration."] },
-
-        { n: "G.3", h: "Tax law changes",
-          p: ["The tax treatment of a Limited Liability Partnership, of distributions from one, and " +
-              "of gains on transfer, can change. Changes are not always prospective."] },
-
-        { n: "G.4", h: "Cross-border",
-          p: ["Where you are not resident in India, exchange control, reporting obligations and " +
-              "double-tax treatment apply to you and are yours to manage."] },
+        { n: "G.1",
+          p: ["Hospitality ownership is intended as a long-term investment.",
+              "Ownership interests are generally not traded on public exchanges.",
+              "Transfers may only occur under the conditions described within the governing " +
+              "Vehicle Agreement."],
+          assertion: true },
+        { n: "G.2",
+          p: ["A valuation represents an estimate of asset value rather than an indication that a " +
+              "buyer exists.",
+              "Investors should therefore commit capital that they are comfortable holding for " +
+              "the expected investment period."] },
       ],
     },
 
     {
       ref: "H",
-      title: "Governance and conflicts",
+      title: "Financing",
       clauses: [
-        { n: "H.1", h: "You may be outvoted",
-          p: ["Voting is weighted by contribution. A partner with a small share can be outvoted on " +
-              "every resolution that is not entrenched, including on matters that affect the value " +
-              "of the position."] },
-
-        { n: "H.2", h: "Conflicts",
-          p: ["Getaway Collective governs vehicles in which it holds no equity, which removes the " +
-              "commonest conflict. It does not remove all of them: the same operating partner may " +
-              "run several properties, and a person may be a partner in more than one vehicle.",
-              "Conflicts are recorded on a register, and a conflicted party does not vote on the " +
-              "matter concerned."] },
-
-        { n: "H.3", h: "Key people",
-          p: ["The platform depends on a small number of people. Their departure would be " +
-              "disruptive, and continuity is not guaranteed by any contract."] },
+        { n: "H.1",
+          p: ["Some hospitality assets may utilise external debt.",
+              "Where borrowing exists:"] },
+        { n: "H.2",
+          list: ["lenders have priority over equity holders",
+                 "financing obligations must be serviced before investor distributions",
+                 "refinancing conditions depend upon future market circumstances"],
+          assertion: true },
+        { n: "H.3",
+          p: ["Debt can enhance returns during strong operating performance but may reduce " +
+              "returns during weaker trading periods."] },
       ],
     },
 
     {
       ref: "I",
-      title: "Figures",
+      title: "Governance",
       clauses: [
-        { n: "I.1", h: "Modelled means modelled",
-          p: ["A figure marked modelled, estimated or forecast is the output of assumptions. It is " +
-              "not a prediction, a target, or a commitment by anyone.",
-              "Every such figure carries its confidence class wherever it appears. Where a figure " +
-              "has no class it has not been assessed and should be treated as the weakest."],
-          assertion: true },
-
-        { n: "I.2", h: "Source documents can be inconsistent",
-          p: ["Material prepared by a promoter or an operating partner can contain figures that " +
-              "cannot all hold at once. Where such an inconsistency is found, the conservative " +
-              "figure is carried, the inconsistency is stated on the property's record, and the " +
-              "dependent figures are computed rather than restated so they cannot disagree again."] },
-
-        { n: "I.3", h: "Valuations are periodic",
-          p: ["A valuation is a point-in-time estimate on stated assumptions. Between valuations " +
-              "the figure shown is the last one, not the current one."] },
+        { n: "I.1",
+          p: ["Each property operates under defined governance arrangements.",
+              "Voting rights are generally proportional to ownership contributions unless " +
+              "otherwise specified."] },
+        { n: "I.2",
+          p: ["Conflicts of interest are formally declared and managed through governance " +
+              "procedures.",
+              "Certain decisions require enhanced approval thresholds as defined within the " +
+              "governing constitutional documents."] },
       ],
     },
 
     {
       ref: "J",
-      title: "The platform",
+      title: "Regulation & Compliance",
       clauses: [
-        { n: "J.1", h: "Technology",
-          p: ["The platform can be unavailable. Records are backed up and reconciled, and a period " +
-              "of unavailability extends any deadline that falls inside it, but access to " +
-              "information is not continuous."] },
-
-        { n: "J.2", h: "Data",
-          p: ["Accreditation requires identity documents and financial information. That data is " +
-              "held under the Privacy Notice. No holder of personal data can promise it will never " +
-              "be reached by someone who should not reach it."] },
-
-        { n: "J.3", h: "Entitlement is not guaranteed on chosen dates",
-          p: ["Entitlement is a number of nights, not particular nights. Popular dates are " +
-              "allocated by the precedence rule in the Terms, and a partner may be unable to take " +
-              "the dates preferred."] },
+        { n: "J.1",
+          p: ["Hospitality assets operate within changing legal and regulatory environments.",
+              "These may include:"] },
+        { n: "J.2",
+          list: ["planning regulations",
+                 "environmental approvals",
+                 "tourism regulations",
+                 "taxation",
+                 "coastal development controls",
+                 "corporate law"] },
+        { n: "J.3",
+          p: ["Future regulatory changes may affect development, operation or financial " +
+              "performance."] },
       ],
     },
 
     {
       ref: "K",
-      title: "If you take one thing from this document",
+      title: "The Platform",
       clauses: [
         { n: "K.1",
-          p: ["Commit only capital you can lose in full and will not need back. Assume the money is " +
-              "gone for the life of the property and treat every distribution as a surprise rather " +
-              "than an income.",
-              "If that framing makes the commitment unattractive, the commitment is not suitable, " +
-              "and no figure elsewhere on this platform should change that conclusion."],
+          p: ["The Getaway Collective platform provides governance, records, reporting and " +
+              "investor support.",
+              "While reasonable measures are taken to ensure platform reliability, technology " +
+              "interruptions may occasionally occur."] },
+        { n: "K.2",
+          p: ["Investor information is managed under the Privacy Notice using commercially " +
+              "reasonable security practices."] },
+      ],
+    },
+
+    {
+      ref: "L",
+      title: "Principal Investment Risks",
+      clauses: [
+        { n: "L.1",
+          p: ["Like all hospitality real estate investments, ownership carries material risks.",
+              "These include, but are not limited to:"] },
+        { n: "L.2",
+          list: ["reduction in occupancy",
+                 "changes in tourism demand",
+                 "operating partner performance",
+                 "construction delays",
+                 "financing risk",
+                 "refinancing risk",
+                 "regulatory change",
+                 "valuation movements",
+                 "illiquidity",
+                 "dilution following capital calls",
+                 "force majeure events",
+                 "property-specific events",
+                 "regional economic conditions"] },
+        { n: "L.3",
+          p: ["In adverse circumstances, these factors may significantly reduce investment " +
+              "returns and may result in partial or complete loss of invested capital.",
+              "There is no guarantee of profit, income, capital appreciation or liquidity."],
+          assertion: true },
+      ],
+    },
+
+    {
+      ref: "M",
+      title: "Important Reminder",
+      clauses: [
+        { n: "M.1",
+          p: ["Hospitality investments are designed for long-term ownership.",
+              "They should be evaluated on the quality of the underlying asset, the strength of " +
+              "governance, operational excellence, and long-term performance rather than " +
+              "short-term market movements."] },
+        { n: "M.2",
+          p: ["Only commit capital that aligns with your financial objectives, investment horizon " +
+              "and capacity to absorb investment risk.",
+              "If uncertainty remains after reading this disclosure, obtain independent " +
+              "professional advice before investing."],
           assertion: true },
       ],
     },
   ],
 };
-
-/* ═══════════════════════════════════════════════════════════════════
-   THE REMAINING STANDING DOCUMENTS
-   ═══════════════════════════════════════════════════════════════════ */
 
 const PRIVACY: StandingDocument = {
   id: "DOC-03",
@@ -893,8 +907,8 @@ const DISCLOSURES: StandingDocument = {
   alongside: [
     { path: "/legal/terms", title: "Terms and Conditions",
       why: "Part L carries the standing disclosure in full." },
-    { path: "/legal/risk-disclosure", title: "Risk Factors",
-      why: "Part A carries it, before any specific risk." },
+    { path: "/legal/risk-disclosure", title: "Hospitality Asset Disclosure",
+      why: "Makes the same three statements in its own words, at Part A and again at Part L." },
   ],
   parts: [
     {
@@ -903,9 +917,10 @@ const DISCLOSURES: StandingDocument = {
         "This page does not restate the standing disclosure. It tells you where it is stated, and " +
         "links there.",
       clauses: [
-        { n: "A.1", h: "One wording, two documents",
+        { n: "A.1", h: "One wording, one document",
           p: ["The standing disclosure on capital at risk, past performance and advice is stated in " +
-              "the Terms and Conditions at Part L, and in the Risk Factors at Part A.",
+              "the Terms and Conditions at Part L. The Hospitality Asset Disclosure makes the same " +
+              "three statements in its own words, at Part A and again at Part L.",
               "It is deliberately not repeated here, or on a banner, or in a footer. Wording " +
               "repeated in five places becomes five wordings the moment one is revised, and which " +
               "one you were shown then depends on which screen you were on. It is stated once so " +
