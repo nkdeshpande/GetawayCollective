@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GC.SYSTEM · Wave 6 Exit — Critical Assessment</title>
+<style>
+:root{
+  --void:#0A0A0A; --panel:#121212; --panel-2:#171717; --paper:#F2F2F2;
+  --ink-inv:#F2F2F2; --steel:#6B6B6B; --dim:#9A9A9A;
+  --confirm:#1FAA59; --hazard:#E8672E; --critical:#FF3B30; --electric:#2061DE;
+  --copper:#C79F6B; --forest-light:#228A68;
+  --hair:rgba(242,242,242,.10);
+  --f-d:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
+  --f-b:'Inter','Segoe UI Variable',-apple-system,system-ui,sans-serif;
+  --f-m:'Space Mono',ui-monospace,Consolas,'SFMono-Regular',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+body{background:var(--void);color:var(--ink-inv);
+  font:400 15px/1.55 var(--f-b);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1500px;margin:0 auto;padding:0 24px 120px}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+header{padding:72px 0 40px;border-bottom:1px solid var(--hair)}
+.eyebrow{font:400 11px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+h1{font:600 clamp(38px,6vw,62px)/0.98 var(--f-d);letter-spacing:-.035em;
+  margin:14px 0 0;text-wrap:balance}
+.verdict{margin-top:24px;max-width:76ch;font-size:17px;line-height:1.6;color:#D8D8D8}
+.verdict strong{color:var(--ink-inv)}
+
+/* ── Scoreboard ─────────────────────────────────────────────────── */
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:40px}
+.score div{background:var(--panel);padding:20px 18px}
+.score b{display:block;font:600 30px/1 var(--f-m);font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em}
+.score span{display:block;font:400 10px/1.4 var(--f-m);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);margin-top:7px}
+.score .ok b{color:var(--confirm)} .score .warn b{color:var(--hazard)}
+.score .bad b{color:var(--critical)} .score .unk b{color:var(--dim)}
+
+/* ── Legend ─────────────────────────────────────────────────────── */
+.legend{display:flex;gap:26px;flex-wrap:wrap;margin:44px 0 8px;
+  padding-bottom:20px;border-bottom:1px solid var(--hair)}
+.lg{display:flex;gap:9px;align-items:flex-start;max-width:290px}
+.chip{width:15px;height:15px;flex:none;margin-top:3px;border:2px solid}
+.chip.lk{border-color:var(--confirm);background:rgba(31,170,89,.18)}
+.chip.pt{border-color:var(--hazard);background:rgba(232,103,46,.18)}
+.chip.ab{border-color:var(--critical);background:rgba(255,59,48,.18)}
+.chip.uv{border-color:var(--electric);background:rgba(32,97,222,.22);
+  border-style:dashed}
+.lg b{display:block;font:400 11px/1.3 var(--f-m);letter-spacing:.12em;text-transform:uppercase}
+.lg span{display:block;font-size:12.5px;color:var(--dim);line-height:1.45;margin-top:3px}
+.lg.lk b{color:var(--confirm)} .lg.pt b{color:var(--hazard)}
+.lg.ab b{color:var(--critical)} .lg.uv b{color:#7FA4EE}
+
+/* ── Groups ─────────────────────────────────────────────────────── */
+.grp{margin-top:48px}
+.grp-h{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.grp-h .n{font:400 11px/1 var(--f-m);letter-spacing:.16em;color:var(--copper)}
+.grp-h h2{font:600 20px/1.2 var(--f-d);letter-spacing:-.02em}
+.grp-h .t{margin-left:auto;font:400 11px/1 var(--f-m);color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair)}
+
+/* ── Element ────────────────────────────────────────────────────── */
+.el{background:var(--panel);padding:14px 14px 13px;min-height:152px;
+  display:flex;flex-direction:column;position:relative;
+  border-top:3px solid transparent;transition:background 120ms linear}
+.el:hover{background:var(--panel-2)}
+/* steel is 3.52 on this panel — below AA at 10px. Fifth time in this
+   build I reached for it on small text; it separates from the metric by
+   position and size, not by tone. */
+.el .z{font:400 10px/1 var(--f-m);color:var(--dim);letter-spacing:.06em}
+.el .sym{font:600 30px/1 var(--f-d);letter-spacing:-.03em;margin:9px 0 6px}
+.el .nm{font-size:12.5px;line-height:1.35;color:var(--ink-inv)}
+.el .mt{margin-top:auto;padding-top:10px;font:400 10.5px/1.45 var(--f-m);
+  color:var(--dim);font-variant-numeric:tabular-nums}
+.el .st{margin-top:7px;font:400 9.5px/1 var(--f-m);letter-spacing:.14em;
+  text-transform:uppercase}
+/* State is carried by border, background tint, AND the status word.
+   Colour is never the only carrier. */
+.el.lk{border-top-color:var(--confirm)}   .el.lk .st{color:var(--confirm)}
+.el.pt{border-top-color:var(--hazard)}    .el.pt .st{color:var(--hazard)}
+.el.ab{border-top-color:var(--critical);background:#161011} .el.ab .st{color:var(--critical)}
+.el.ab:hover{background:#1B1314}
+.el.uv{border-top-style:dashed;border-top-color:var(--electric);background:#101218}
+.el.uv .st{color:#7FA4EE} .el.uv:hover{background:#141722}
+
+/* ── Findings ───────────────────────────────────────────────────── */
+.findings{margin-top:80px;padding-top:40px;border-top:1px solid var(--hair)}
+.finding{border-left:3px solid var(--critical);padding:0 0 26px 22px;margin-bottom:26px}
+.finding.warn{border-left-color:var(--hazard)}
+.finding.note{border-left-color:var(--electric)}
+.finding .rk{font:400 10px/1 var(--f-m);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--critical)}
+.finding.warn .rk{color:var(--hazard)} .finding.note .rk{color:#7FA4EE}
+.finding h3{font:600 19px/1.3 var(--f-d);letter-spacing:-.02em;margin:8px 0 9px}
+.finding p{max-width:78ch;color:#D2D2D2;margin-bottom:8px}
+.finding .ev{font:400 12px/1.6 var(--f-m);color:var(--dim);
+  background:rgba(242,242,242,.04);padding:11px 14px;margin-top:11px;
+  overflow-x:auto;white-space:pre}
+.finding p:last-child{margin-bottom:0}
+
+table{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}
+th{text-align:left;font:400 10px/1.3 var(--f-m);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);padding:0 14px 9px 0;border-bottom:1px solid var(--hair)}
+td{padding:10px 14px 10px 0;border-bottom:1px solid rgba(242,242,242,.05);vertical-align:top}
+td.m{font-family:var(--f-m);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--dim)}
+.scroll{overflow-x:auto}
+
+footer{margin-top:80px;padding-top:28px;border-top:1px solid var(--hair);
+  color:var(--dim);font:400 12px/1.7 var(--f-m)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">GC.SYSTEM · Wave 6 Exit · 31 Jul 2026</div>
+  <h1>The Composite Surface,<br>assessed against itself.</h1>
+  <p class="verdict">
+    Fifty-five elements across nine layers. <strong>Thirty-two are locked and provable.</strong>
+    The spine runs unbroken from the constitution through the registry to SQL, and eleven linters
+    each parse their own canon rather than copying it. But this is an exit assessment, so the
+    useful half is the other twenty-three: <strong>eleven subsystems declared and never
+    built</strong>, <strong>eight only partly delivered</strong>, and <strong>four things that
+    exist but have never been independently verified</strong> — including a 155 KB interface that
+    no browser has ever rendered.
+  </p>
+
+  <div class="score">
+    <div class="ok"><b>32</b><span>Locked</span></div>
+    <div class="warn"><b>8</b><span>Partial</span></div>
+    <div class="bad"><b>11</b><span>Absent</span></div>
+    <div class="unk"><b>4</b><span>Unverified</span></div>
+    <div><b>542</b><span>Tests</span></div>
+    <div><b>17</b><span>Gate checks</span></div>
+    <div><b>35<span style="color:var(--dim)">/41</span></b><span>Invariants held</span></div>
+  </div>
+</header>
+
+<div class="legend">
+  <div class="lg lk"><span class="chip lk"></span><div><b>Locked</b>
+    <span>Built, generated or proven, and guarded by a check that fails without it.</span></div></div>
+  <div class="lg pt"><span class="chip pt"></span><div><b>Partial</b>
+    <span>Real but incomplete. The shape is right; the coverage is not.</span></div></div>
+  <div class="lg ab"><span class="chip ab"></span><div><b>Absent</b>
+    <span>Declared in the system and never built. The declaration is the whole of it.</span></div></div>
+  <div class="lg uv"><span class="chip uv"></span><div><b>Unverified</b>
+    <span>Exists and may well be correct — but nothing independent has confirmed it.</span></div></div>
+</div>
+
+<!-- ═══ L1 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L1</span><h2>Constitution</h2>
+    <span class="t">5 elements · 5 locked</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">01</span><span class="sym">Cn</span>
+      <span class="nm">Enterprise Constitution</span>
+      <span class="mt">5 documents<br>4,378 lines</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">02</span><span class="sym">Br</span>
+      <span class="nm">Brand Constitution</span>
+      <span class="mt">voice-lint passing<br>4 voice attributes</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">03</span><span class="sym">Vo</span>
+      <span class="nm">Vocabulary</span>
+      <span class="mt">16 forbidden<br>27 approved · linted</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">04</span><span class="sym">Po</span>
+      <span class="nm">Policy Framework</span>
+      <span class="mt">L1-13<br>ratified</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">05</span><span class="sym">Fi</span>
+      <span class="nm">Financial Constitution</span>
+      <span class="mt">L1-16<br>F-15…F-18 added</span><span class="st">Locked</span></div>
+  </div>
+</section>
+
+<!-- ═══ L2.5 ═════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L2.5</span><h2>Semantic Core</h2>
+    <span class="t">6 elements · 4 locked · 2 partial</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">06</span><span class="sym">Ur</span>
+      <span class="nm">Unified Field Registry</span>
+      <span class="mt">127 fields<br>permanent ids</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">07</span><span class="sym">Bo</span>
+      <span class="nm">Business Objects</span>
+      <span class="mt">27 objects<br>all have fields</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">08</span><span class="sym">Rg</span>
+      <span class="nm">Relationship Graph</span>
+      <span class="mt">28 edges · 4 roots<br>zero orphans</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">09</span><span class="sym">En</span>
+      <span class="nm">Enum Registry</span>
+      <span class="mt">135 values<br>all labelled</span><span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">10</span><span class="sym">Iv</span>
+      <span class="nm">Invariant Enforcement</span>
+      <span class="mt">35 of 41 held<br>6 unenforced</span><span class="st">Partial</span></div>
+    <div class="el pt"><span class="z">11</span><span class="sym">Fc</span>
+      <span class="nm">Field→Invariant Link</span>
+      <span class="mt">62 of 127 fields<br>cite an invariant</span><span class="st">Partial</span></div>
+  </div>
+</section>
+
+<!-- ═══ L3 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L3</span><h2>Persistence</h2>
+    <span class="t">5 elements · 4 locked · 1 absent</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">12</span><span class="sym">Zd</span>
+      <span class="nm">Zod Contracts</span>
+      <span class="mt">generated<br>--check in gate</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">13</span><span class="sym">Sc</span>
+      <span class="nm">Drizzle Schema</span>
+      <span class="mt">27 tables<br>0 float columns</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">14</span><span class="sym">Mg</span>
+      <span class="nm">SQL Migrations</span>
+      <span class="mt">396 lines DDL<br>28 foreign keys</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">15</span><span class="sym">Fx</span>
+      <span class="nm">Fixtures</span>
+      <span class="mt">27 objects<br>generated</span><span class="st">Locked</span></div>
+    <div class="el ab"><span class="z">16</span><span class="sym">Db</span>
+      <span class="nm">Live Database</span>
+      <span class="mt">never provisioned<br>never seeded</span><span class="st">Absent</span></div>
+  </div>
+</section>
+
+<!-- ═══ L4 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L4</span><h2>Domain Logic</h2>
+    <span class="t">7 elements · 5 locked · 2 partial</span></div>
+  <div class="grid">
+    <div class="el pt"><span class="z">17</span><span class="sym">Mn</span>
+      <span class="nm">Money</span>
+      <span class="mt">bigint ×10⁴ exact<br>allocate() edges untested</span><span class="st">Partial</span></div>
+    <div class="el lk"><span class="z">18</span><span class="sym">Wf</span>
+      <span class="nm">Waterfall</span>
+      <span class="mt">6 stages · 3 hard stops<br>conserves() proof</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">19</span><span class="sym">Rs</span>
+      <span class="nm">Reserve Floor</span>
+      <span class="mt">not NAV-linked<br>blocks stage 6</span><span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">20</span><span class="sym">Sm</span>
+      <span class="nm">State Machines</span>
+      <span class="mt">30 transitions · 14 one-way<br>table not iterated</span><span class="st">Partial</span></div>
+    <div class="el lk"><span class="z">21</span><span class="sym">Pv</span>
+      <span class="nm">Provenance Spine</span>
+      <span class="mt">6 classes<br>weakest-input + decay</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">22</span><span class="sym">Mt</span>
+      <span class="nm">Metric Grammar</span>
+      <span class="mt">Indian grouping<br>provisional mark</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">23</span><span class="sym">Tl</span>
+      <span class="nm">Telemetry Scrub</span>
+      <span class="mt">rejects keys, nesting<br>and value shapes</span><span class="st">Locked</span></div>
+  </div>
+</section>
+
+<!-- ═══ L5 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L5</span><h2>Capability &amp; Nervous System</h2>
+    <span class="t">6 elements · 6 locked</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">24</span><span class="sym">Cp</span>
+      <span class="nm">Capabilities</span>
+      <span class="mt">33 declared<br>all publish events</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">25</span><span class="sym">Ev</span>
+      <span class="nm">Event Spine</span>
+      <span class="mt">E-01 enforced<br>by cap-lint</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">26</span><span class="sym">Cm</span>
+      <span class="nm">Commands</span>
+      <span class="mt">typed<br>contract-checked</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">27</span><span class="sym">Hd</span>
+      <span class="nm">Handlers</span>
+      <span class="mt">end-to-end lifecycle<br>proof in tests</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">28</span><span class="sym">Pc</span>
+      <span class="nm">Processes</span>
+      <span class="mt">PR-01 accreditation<br>resumable</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">29</span><span class="sym">Ay</span>
+      <span class="nm">Authority</span>
+      <span class="mt">thresholds<br>equity-weighted</span><span class="st">Locked</span></div>
+  </div>
+</section>
+
+<!-- ═══ L6 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L6</span><h2>Design System</h2>
+    <span class="t">9 elements · 3 locked · 1 partial · 5 absent</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">30</span><span class="sym">Tk</span>
+      <span class="nm">Colour Tokens</span>
+      <span class="mt">20 + 5 ground variants<br>every pairing AA</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">31</span><span class="sym">Ty</span>
+      <span class="nm">Typography</span>
+      <span class="mt">13 roles<br>grid + optical split</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">32</span><span class="sym">Ly</span>
+      <span class="nm">Layout</span>
+      <span class="mt">4 breakpoints<br>surface strategy</span><span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">33</span><span class="sym">Cx</span>
+      <span class="nm">Components</span>
+      <span class="mt">7 declared<br>3 ever placed</span><span class="st">Partial</span></div>
+    <div class="el ab"><span class="z">34</span><span class="sym">Ch</span>
+      <span class="nm">Charts</span>
+      <span class="mt">6 declared<br>0 built</span><span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">35</span><span class="sym">Ds</span>
+      <span class="nm">Density Modes</span>
+      <span class="mt">4 modes declared<br>no implementation</span><span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">36</span><span class="sym">Tm</span>
+      <span class="nm">Terminal Mode</span>
+      <span class="mt">declared admin-only<br>never built</span><span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">37</span><span class="sym">Pt</span>
+      <span class="nm">Print &amp; PDF</span>
+      <span class="mt">PRINT + PDF_REPORT<br>no stylesheet exists</span><span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">38</span><span class="sym">Em</span>
+      <span class="nm">Email Templates</span>
+      <span class="mt">EMAILS declared<br>never built</span><span class="st">Absent</span></div>
+  </div>
+</section>
+
+<!-- ═══ L7 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L7</span><h2>Surface</h2>
+    <span class="t">6 elements · 3 locked · 2 partial · 1 absent</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">39</span><span class="sym">Og</span>
+      <span class="nm">Organisms</span>
+      <span class="mt">10 declared<br>10 placed</span><span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">40</span><span class="sym">Ap</span>
+      <span class="nm">Apertures</span>
+      <span class="mt">3 of 27 objects<br>11% coverage</span><span class="st">Partial</span></div>
+    <div class="el pt"><span class="z">41</span><span class="sym">Am</span>
+      <span class="nm">Assemblies</span>
+      <span class="mt">28 registered<br>13 built · 46%</span><span class="st">Partial</span></div>
+    <div class="el lk"><span class="z">42</span><span class="sym">Cr</span>
+      <span class="nm">Correction Record</span>
+      <span class="mt">109 recorded<br>each with a reason</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">43</span><span class="sym">Gi</span>
+      <span class="nm">Ground Inversion</span>
+      <span class="mt">no per-screen override<br>tested</span><span class="st">Locked</span></div>
+    <div class="el ab"><span class="z">44</span><span class="sym">Av</span>
+      <span class="nm">Aperture Vantages</span>
+      <span class="mt">time + admin have<br>no aperture at all</span><span class="st">Absent</span></div>
+  </div>
+</section>
+
+<!-- ═══ L8 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L8</span><h2>Delivery</h2>
+    <span class="t">4 elements · 4 absent</span></div>
+  <div class="grid">
+    <div class="el ab"><span class="z">45</span><span class="sym">Rt</span>
+      <span class="nm">Routes</span>
+      <span class="mt">no app/ no pages/<br>zero routes</span><span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">46</span><span class="sym">Au</span>
+      <span class="nm">Authentication</span>
+      <span class="mt">I-01 declared<br>nothing implements it</span><span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">47</span><span class="sym">Ap</span>
+      <span class="nm">Running Application</span>
+      <span class="mt">nothing is served<br>next dev has no pages</span><span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">48</span><span class="sym">Ci</span>
+      <span class="nm">CI Pipeline</span>
+      <span class="mt">gate is pre-commit only<br>local machine only</span><span class="st">Absent</span></div>
+  </div>
+</section>
+
+<!-- ═══ L9 ═══════════════════════════════════════════════════════ -->
+<section class="grp">
+  <div class="grp-h"><span class="n">L9</span><h2>Assurance</h2>
+    <span class="t">7 elements · 2 locked · 1 partial · 4 unverified</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">49</span><span class="sym">Ts</span>
+      <span class="nm">Test Suite</span>
+      <span class="mt">542 tests · 12 files<br>all 17 lib modules</span><span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">50</span><span class="sym">Ln</span>
+      <span class="nm">Linters</span>
+      <span class="mt">11, each parses<br>its own canon</span><span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">51</span><span class="sym">Gt</span>
+      <span class="nm">Gate</span>
+      <span class="mt">17 checks, pre-commit<br>bypassable with --no-verify</span><span class="st">Partial</span></div>
+    <div class="el uv"><span class="z">52</span><span class="sym">Cv</span>
+      <span class="nm">Coverage</span>
+      <span class="mt">never measured<br>no threshold set</span><span class="st">Unverified</span></div>
+    <div class="el uv"><span class="z">53</span><span class="sym">Ax</span>
+      <span class="nm">Accessibility Audit</span>
+      <span class="mt">contrast computed by me<br>no axe · no pa11y · no AT</span><span class="st">Unverified</span></div>
+    <div class="el uv"><span class="z">54</span><span class="sym">Rn</span>
+      <span class="nm">Render Proof</span>
+      <span class="mt">155 KB interface<br>never opened in a browser</span><span class="st">Unverified</span></div>
+    <div class="el uv"><span class="z">55</span><span class="sym">Fz</span>
+      <span class="nm">Property / Fuzz Tests</span>
+      <span class="mt">money is exact by design<br>never fuzzed</span><span class="st">Unverified</span></div>
+  </div>
+</section>
+
+<!-- ═══ CRITICAL FINDINGS ════════════════════════════════════════ -->
+<section class="findings">
+  <div class="eyebrow">The part that matters</div>
+  <h1 style="font-size:clamp(30px,4.5vw,44px);margin-top:12px">Nine criticisms,<br>with evidence.</h1>
+
+  <div class="finding" style="margin-top:40px">
+    <span class="rk">Severity 1 · Structural</span>
+    <h3>Nothing is served. This is a specification, not a product.</h3>
+    <p>There is no <code>app/</code>, no <code>pages/</code>, no route of any kind. The chain runs
+    unbroken from <code>constants/ufr.ts</code> through Zod contracts and the Drizzle schema to 396
+    lines of DDL — and terminates there. <code>next dev</code> would start and serve nothing.</p>
+    <p>The one interface that exists is a single self-contained HTML file. It is not the product; it
+    is a proof that the design system can be built.</p>
+    <div class="ev">app/      does not exist
+pages/    does not exist
+routes    0
+served    nothing</div>
+  </div>
+
+  <div class="finding">
+    <span class="rk">Severity 1 · Unverified</span>
+    <h3>The interface has never been rendered. Not once.</h3>
+    <p>GC-ASSEMBLIES.html is 155 KB across thirteen assemblies. Every claim made about it —
+    that the layouts hold, that the tabs work, that the piston fills, that the ground inversion
+    reads as intended — rests on parsing the file, executing its render functions headlessly, and
+    computing contrast arithmetically.</p>
+    <p>The browser preview tooling timed out on all three attempts this session. <strong>No human
+    and no browser has seen this file.</strong> Arithmetic cannot catch a collapsed grid, an
+    overlapping element, a font that failed to load, or a layout that breaks at 380px.</p>
+    <div class="ev">verification used   parse · headless render · computed WCAG
+never performed     visual inspection · browser render · device test</div>
+  </div>
+
+  <div class="finding">
+    <span class="rk">Severity 2 · Coverage</span>
+    <h3>Fifteen of twenty-eight assemblies exist only as specification.</h3>
+    <p>The registry is the deliverable people read as complete, and it is complete. The build is
+    not. AS-07, AS-08, AS-14 through AS-23, and AS-26 through AS-28 have sections, rules and
+    corrections recorded — and no implementation. That includes all three chrome components, both
+    regions, and the ballot.</p>
+    <div class="ev">registered  28
+built       13   (46%)
+spec only   15   AS-07 AS-08 AS-14…AS-23 AS-26 AS-27 AS-28</div>
+  </div>
+
+  <div class="finding">
+    <span class="rk">Severity 2 · Coverage</span>
+    <h3>The aperture system covers 11% of the objects it governs.</h3>
+    <p>Apertures are the tier that decides what each vantage may see — the mechanism the whole
+    disclosure model rests on. Three objects have one: Property, Distribution, Resolution.
+    Twenty-four do not, including Investor, Commitment, Agreement, OwnershipPosition and
+    CapitalCall — every object carrying personal or financial data.</p>
+    <p>Worse: <strong>the time and admin vantages have no aperture at all</strong>, yet AS-25 sits
+    at time and AS-13 sits at admin. Two built screens operate at vantages the disclosure layer
+    does not describe.</p>
+    <div class="ev">objects with an aperture   3 of 27
+vantages with an aperture  gateway · space · capital · member
+vantages WITHOUT           time · admin   ← both have built screens</div>
+  </div>
+
+  <div class="finding warn">
+    <span class="rk">Severity 2 · Proof</span>
+    <h3>Thirty state transitions, fourteen irreversible, tested by example.</h3>
+    <p>The transition table is declared as data, which is exactly what makes exhaustive testing
+    possible — and the tests never iterate it. They exercise chosen paths. An irreversible
+    transition quietly acquiring a reverse route is the failure mode this layer exists to prevent,
+    and nothing currently walks every edge to check.</p>
+    <p>This is the same class of defect as the Member Law firing on acceptance instead of
+    settlement, which two independently-correct declarations produced and only a cross-check
+    caught.</p>
+    <div class="ev">transitions          30
+marked one-way       14   (reversible: false)
+iterated by a test   no</div>
+  </div>
+
+  <div class="finding warn">
+    <span class="rk">Severity 2 · Proof</span>
+    <h3>Money is exact by construction and unfuzzed by policy.</h3>
+    <p>Every amount is a bigint in minor units scaled 10⁴, and <code>allocate()</code> uses largest
+    remainder so splits sum exactly. That is the right design. But three edge cases have no test:
+    allocation of a zero total, allocation across a single weight, and behaviour at very large
+    values. There is no property-based testing anywhere in the repository.</p>
+    <p>Exactness by construction is a strong claim. It deserves a stronger check than eleven
+    hand-picked examples.</p>
+    <div class="ev">allocate(0n, …)        untested
+allocate(x, [1n])      untested
+very large values      untested
+fast-check / fuzz      absent from package.json</div>
+  </div>
+
+  <div class="finding warn">
+    <span class="rk">Severity 3 · Declared, unbuilt</span>
+    <h3>Five design subsystems exist only as constants.</h3>
+    <p>Charts, density modes, terminal mode, print and PDF, and email templates are all declared
+    with real rules — six named charts, four density modes, a print spec. None has an
+    implementation. The risk is not the absence; it is that a declared subsystem reads as a
+    delivered one when the registry is the thing being reviewed.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Subsystem</th><th>Declared</th><th>Built</th><th class="m">Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>Charts</td><td>6 named</td><td>none</td><td class="m">1 svg in build, a map not a chart</td></tr>
+        <tr><td>Density modes</td><td>4 modes</td><td>none</td><td class="m">no data-density anywhere</td></tr>
+        <tr><td>Terminal mode</td><td>admin-only spec</td><td>none</td><td class="m">no selector exists</td></tr>
+        <tr><td>Print / PDF</td><td>PRINT, PDF_REPORT</td><td>none</td><td class="m">no @media print rule</td></tr>
+        <tr><td>Email</td><td>EMAILS</td><td>none</td><td class="m">no template file</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="finding warn">
+    <span class="rk">Severity 3 · Enforcement</span>
+    <h3>Six invariants are constitutional text and nothing else.</h3>
+    <p>Thirty-five of forty-one reach a field or a capability. These six do not, and two of them —
+    Identity Invariance and Transfer Is Additive — are precisely the guarantees a secondary
+    transfer would violate first.</p>
+    <div class="scroll"><table>
+      <thead><tr><th class="m">ID</th><th>Invariant</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="m">E-06</td><td>No field exists without a Registry ID</td><td>Meta-rule; enforced socially, not mechanically</td></tr>
+        <tr><td class="m">A-01</td><td>Identity Invariance</td><td>Asset identity must survive ownership change</td></tr>
+        <tr><td class="m">A-06</td><td>Preservation Requirement</td><td>Operational assets need active lifecycle management</td></tr>
+        <tr><td class="m">F-08</td><td>Economic Versioning</td><td>Models version forward; they never mutate</td></tr>
+        <tr><td class="m">F-11</td><td>Disclosure Separation</td><td>Execution and disclosure align but stay separate</td></tr>
+        <tr><td class="m">F-12</td><td>Transfer Is Additive</td><td>Historical ownership is immutable</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="finding note">
+    <span class="rk">Severity 3 · Assurance</span>
+    <h3>Every accessibility claim in this system was made by me, checked by me.</h3>
+    <p>The contrast work is real: every shipped pairing was computed against its actual ground,
+    including blended opacity, and four separate failures were caught and fixed this session. But
+    it is arithmetic on hex values. No axe run, no pa11y, no screen reader, no keyboard walkthrough
+    by anyone but the code that wrote it.</p>
+    <p>Contrast is the one part of accessibility that arithmetic <em>can</em> settle. Focus order,
+    announcement quality, whether <code>aria-current</code> lands where a screen reader expects it,
+    whether the piston is operable by switch control — none of that has been tested at all.</p>
+    <div class="ev">computed and verified   contrast ratios · token provenance · markup balance
+never tested            axe · pa11y · NVDA/JAWS/VoiceOver · keyboard walk
+                        visual regression · real device · 380px viewport</div>
+  </div>
+</section>
+
+<footer>
+  Wave 6 exit assessment · generated from measurement, not recollection · 31 Jul 2026<br>
+  Counts verified against constants/, lib/, tests/, migrations/ and GC-ASSEMBLIES.html at commit affd7cd.<br>
+  Two figures in earlier reports were wrong and are corrected here: the test count is 542 (not 605),
+  and there are 27 business objects (not 33 — the earlier count included the Domain enum).
+</footer>
+
+</div>
+</body>
+</html>
