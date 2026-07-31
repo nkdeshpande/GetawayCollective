@@ -38,11 +38,47 @@ export const COLOUR = {
   critical: "#FF3B30",    // System-critical alert ONLY (rarest colour)
   confirm: "#1FAA59",     // Settlement, success
 
+  // ── Ground-specific variants — ADDITIVE, added 31 Jul 2026 ─────────
+  //
+  // NOT a change to any value above. Every original token keeps its exact
+  // hex, so §29 Design Supremacy is intact: nothing was overridden, four
+  // things were added.
+  //
+  // Why: a computed WCAG audit (scripts/token-lint.js) found four semantic
+  // colours falling below AA on ONE of the two grounds, while clearing it
+  // comfortably on the other. The worst was `forest` on `void` at 1.38:1 —
+  // a dark green on near-black, effectively invisible in Obsidian mode.
+  //
+  // Each variant holds the original's HUE and SATURATION and moves only
+  // lightness, to the first value clearing 4.5:1. They are the same colour,
+  // legible on the ground the original could not survive.
+  //
+  // Use the original on its good ground and the variant on the other. The
+  // rule that colour is never the only carrier of meaning still stands —
+  // this widens where a signal can be seen, it does not license relying on
+  // it alone.
+  forestLight: "#228A68",   // forest on void:    1.38:1 -> 4.62:1
+  copperDeep: "#8C6635",    // copper on paper:   2.18:1 -> 4.61:1
+  confirmDeep: "#177F43",   // confirm on paper:  2.70:1 -> 4.52:1
+  hazardDeep: "#BE4915",    // hazard on paper:   2.93:1 -> 4.52:1
+
   // Strokes & hairlines
   hairline: "rgba(10,10,10,0.12)",     // Light mode hairline
   hairlineInv: "rgba(242,242,242,0.14)", // Dark mode hairline
   strokeIdle: "1px",
   strokeActive: "2px",
+} as const;
+
+/**
+ * Which token to use for a semantic colour on a given ground.
+ *
+ * Callers should reach for this rather than picking a hex, so the
+ * ground-specific choice is made once here instead of remembered
+ * everywhere.
+ */
+export const ON_GROUND = {
+  void: { forest: "forestLight", copper: "copper", confirm: "confirm", hazard: "hazard" },
+  paper: { forest: "forest", copper: "copperDeep", confirm: "confirmDeep", hazard: "hazardDeep" },
 } as const;
 
 // ── Typography ──────────────────────────────────────────────────────
@@ -142,6 +178,11 @@ export const CSS_VARS = `
   --gc-critical: ${COLOUR.critical};
   --gc-confirm: ${COLOUR.confirm};
 
+  --gc-forest-light: ${COLOUR.forestLight};
+  --gc-copper-deep: ${COLOUR.copperDeep};
+  --gc-confirm-deep: ${COLOUR.confirmDeep};
+  --gc-hazard-deep: ${COLOUR.hazardDeep};
+
   --gc-hairline: ${COLOUR.hairline};
   --gc-hairline-inv: ${COLOUR.hairlineInv};
 
@@ -179,6 +220,13 @@ export const CSS_VARS = `
     --gc-bg-panel: var(--gc-void-panel);
     --gc-fg: var(--gc-ink-inverse);
     --gc-fg-dim: var(--gc-steel-dim);
+
+    /* Ground-aware semantic aliases. A component uses --gc-currency and is
+       legible on whichever ground it lands on, without choosing a hex. */
+    --gc-heritage: var(--gc-forest-light);
+    --gc-currency: var(--gc-copper);
+    --gc-settled: var(--gc-confirm);
+    --gc-risk: var(--gc-hazard);
   }
 }
 
@@ -188,6 +236,11 @@ export const CSS_VARS = `
     --gc-bg-panel: var(--gc-paper-panel);
     --gc-fg: var(--gc-ink);
     --gc-fg-dim: var(--gc-steel);
+
+    --gc-heritage: var(--gc-forest);
+    --gc-currency: var(--gc-copper-deep);
+    --gc-settled: var(--gc-confirm-deep);
+    --gc-risk: var(--gc-hazard-deep);
   }
 }
 `;

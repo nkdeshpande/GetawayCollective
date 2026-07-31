@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Reference — Getaway Collective</title>
+<style>
+/* ── Token package, inlined from dist/tokens.css (v3.0 LOCKED) ── */
+/* GC Design System — v3.0 LOCKED
+ * GENERATED FILE — do not edit.
+ * Source: constants/tokens.ts · regenerate with `npm run tokens`
+ * Authority: L1-01 §29 Design Supremacy Clause
+ */
+:root {
+  --gc-void: #0A0A0A;
+  --gc-void-panel: #121212;
+  --gc-paper: #F2F2F2;
+  --gc-paper-panel: #FFFFFF;
+  --gc-mist: #E8E8E6;
+
+  --gc-ink: #0A0A0A;
+  --gc-ink-inverse: #F2F2F2;
+  --gc-steel: #6B6B6B;
+  --gc-steel-dim: #9A9A9A;
+
+  --gc-forest: #0C3024;
+  --gc-copper: #C79F6B;
+  --gc-electric: #2061DE;
+  --gc-hazard: #E8672E;
+  --gc-critical: #FF3B30;
+  --gc-confirm: #1FAA59;
+
+  --gc-forest-light: #228A68;
+  --gc-copper-deep: #8C6635;
+  --gc-confirm-deep: #177F43;
+  --gc-hazard-deep: #BE4915;
+
+  --gc-hairline: rgba(10,10,10,0.12);
+  --gc-hairline-inv: rgba(242,242,242,0.14);
+
+  --gc-f-display: 'Outfit', 'Segoe UI Variable Display', -apple-system, sans-serif;
+  --gc-f-body: 'Inter', 'Segoe UI Variable', -apple-system, sans-serif;
+  --gc-f-mono: 'Space Mono', ui-monospace, 'Consolas', 'SFMono-Regular', monospace;
+  --gc-f-editorial: 'Playfair Display', Georgia, serif;
+
+  --gc-sp-3xs: 4px;
+  --gc-sp-2xs: 8px;
+  --gc-sp-xs: 12px;
+  --gc-sp-s: 16px;
+  --gc-sp-m: 24px;
+  --gc-sp-l: 32px;
+  --gc-sp-xl: 48px;
+  --gc-sp-2xl: 64px;
+  --gc-sp-3xl: 96px;
+  --gc-sp-4xl: 128px;
+
+  --gc-stroke-idle: 1px;
+  --gc-stroke-active: 2px;
+  --gc-radius: 0px;
+
+  --gc-ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+  --gc-ease-shutter: cubic-bezier(0.9, 0, 0.2, 1);
+  --gc-dur-instant: 120ms;
+  --gc-dur-fast: 240ms;
+  --gc-dur-cinema: 600ms;
+  --gc-dur-commit: 3000ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gc-bg: var(--gc-void);
+    --gc-bg-panel: var(--gc-void-panel);
+    --gc-fg: var(--gc-ink-inverse);
+    --gc-fg-dim: var(--gc-steel-dim);
+
+    /* Ground-aware semantic aliases. A component uses --gc-currency and is
+       legible on whichever ground it lands on, without choosing a hex. */
+    --gc-heritage: var(--gc-forest-light);
+    --gc-currency: var(--gc-copper);
+    --gc-settled: var(--gc-confirm);
+    --gc-risk: var(--gc-hazard);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --gc-bg: var(--gc-paper);
+    --gc-bg-panel: var(--gc-paper-panel);
+    --gc-fg: var(--gc-ink);
+    --gc-fg-dim: var(--gc-steel);
+
+    --gc-heritage: var(--gc-forest);
+    --gc-currency: var(--gc-copper-deep);
+    --gc-settled: var(--gc-confirm-deep);
+    --gc-risk: var(--gc-hazard-deep);
+  }
+}
+
+/* ── ADDENDUM A · motion · overlays · notifications · brand ── */
+:root {
+  /* A · Motion */
+  --gc-ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --gc-ease-alert: cubic-bezier(0.68, -0.4, 0.32, 1.4);
+  --gc-dur-press: 80ms;
+  --gc-dur-alert: 280ms;
+  --gc-dur-settle: 320ms;
+  --gc-dur-toast: 4200ms;
+
+  /* B · Overlays */
+  --gc-backdrop-dim: rgba(10,10,10,0.55);
+  --gc-backdrop-blur: 10px;
+  --gc-blur-glass: 12px;
+
+  /* Semantic state — notifications use these, never Signal colours */
+  --state-error: #FF3B30;
+  --state-success: #1FAA59;
+  --state-info: #2061DE;
+  --state-warning: #D9A15C;
+  --state-matrix: #39FF6A;
+
+  --surface-quiet: #F2F2F2;
+  --surface-neutral: #E8E8E6;
+  --surface-decision: #FFFFFF;
+  --surface-alert: #FBEAE3;
+
+  /* Provenance */
+  --conf-observed: #1FAA59;
+  --conf-verified: #1FAA59;
+  --conf-modelled: #C79F6B;
+  --conf-estimated: #2061DE;
+  --conf-forecast: #2061DE;
+  --conf-pending: #6B6B6B;
+
+  --health-strong: #1FAA59;
+  --health-adequate: #C79F6B;
+  --health-weak: #E8672E;
+  --health-critical: #FF3B30;
+
+  /* Density */
+  --density-compact-row: 28px;
+  --density-comfortable-row: 40px;
+  --density-presentation-row: 64px;
+  --density-audit-row: 22px;
+  --density-audit-size: 10px;
+
+  /* Stacking */
+  --z-grid: 1;
+  --z-content: 10;
+  --z-hud: 100;
+  --z-overlay: 500;
+  --z-cursor: 999;
+}
+
+/* The Piston keeps its full duration. Capital commitment is never shortened. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --gc-ease-cinema: linear;
+    --gc-ease-shutter: linear;
+    --gc-ease-settle: linear;
+    --gc-ease-alert: linear;
+    --gc-dur-instant: 1ms;
+    --gc-dur-fast: 1ms;
+    --gc-dur-settle: 1ms;
+    --gc-dur-alert: 1ms;
+    --gc-dur-cinema: 1ms;
+    --gc-dur-commit: 3000ms;
+  }
+}
+
+
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:var(--gc-void);color:var(--gc-ink-inverse);
+       font-family:var(--gc-f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:var(--gc-sp-2xl) var(--gc-sp-l) var(--gc-sp-4xl)}
+  h1{font-family:var(--gc-f-display);font-weight:200;font-size:clamp(30px,5vw,52px);
+     text-transform:uppercase;letter-spacing:.03em;margin:0}
+  h2{font-family:var(--gc-f-display);font-weight:400;font-size:12px;text-transform:uppercase;
+     letter-spacing:.2em;color:var(--gc-steel-dim);margin:var(--gc-sp-3xl) 0 var(--gc-sp-m)}
+  .eyebrow{font-family:var(--gc-f-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+           color:var(--gc-copper);margin-bottom:var(--gc-sp-xs)}
+  .lede{color:var(--gc-steel-dim);max-width:64ch;margin-top:var(--gc-sp-s)}
+  hr{height:1px;background:var(--gc-hairline-inv);border:0;margin:var(--gc-sp-xl) 0 0}
+  .mono{font-family:var(--gc-f-mono);font-variant-numeric:tabular-nums;font-size:12px}
+  .note{border-left:2px solid var(--gc-copper);padding:var(--gc-sp-2xs) 0 var(--gc-sp-2xs) var(--gc-sp-s);
+        color:var(--gc-steel-dim);margin:var(--gc-sp-m) 0;max-width:70ch}
+  .note strong{color:var(--gc-ink-inverse);font-weight:500}
+
+  .sws{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;
+       background:var(--gc-hairline-inv);margin-top:var(--gc-sp-m)}
+  .sw{background:var(--gc-void-panel);padding:var(--gc-sp-xs)}
+  .chip{height:56px;border:1px solid var(--gc-hairline-inv)}
+  .meta{display:flex;justify-content:space-between;margin-top:var(--gc-sp-2xs);gap:var(--gc-sp-2xs)}
+  .meta .k{font-size:12px}
+  .meta .mono{color:var(--gc-steel)}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  .scroll{overflow-x:auto}
+  th{text-align:left;font-weight:400;font-size:11px;text-transform:uppercase;letter-spacing:.14em;
+     color:var(--gc-steel-dim);padding:var(--gc-sp-2xs) var(--gc-sp-s);
+     border-bottom:1px solid var(--gc-hairline-inv);white-space:nowrap}
+  td{padding:var(--gc-sp-2xs) var(--gc-sp-s);border-bottom:1px solid var(--gc-hairline-inv);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  td.num{font-family:var(--gc-f-mono);font-variant-numeric:tabular-nums;text-align:right}
+
+  .pill{display:inline-block;font-family:var(--gc-f-mono);font-size:10px;letter-spacing:.09em;
+        text-transform:uppercase;padding:3px 8px;border:1px solid currentColor;white-space:nowrap}
+  .t-steel{color:var(--gc-steel)} .t-electric{color:var(--gc-electric)}
+  .t-confirm{color:var(--gc-confirm)} .t-hazard{color:var(--gc-hazard)}
+  .t-critical{color:var(--gc-critical)} .t-copper{color:var(--gc-copper)}
+  .t-forest{color:var(--gc-forest)}
+
+  .type-row{border-bottom:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-m) 0;
+            display:grid;grid-template-columns:130px 1fr;gap:var(--gc-sp-m);align-items:baseline}
+  .type-row .lbl{font-family:var(--gc-f-mono);font-size:11px;color:var(--gc-steel);text-transform:uppercase;
+                 letter-spacing:.1em}
+  .d-display{font-family:var(--gc-f-display);font-weight:200;font-size:38px;text-transform:uppercase;letter-spacing:.02em}
+  .d-body{font-family:var(--gc-f-body);font-size:16px;max-width:60ch}
+  .d-mono{font-family:var(--gc-f-mono);font-size:16px;font-variant-numeric:tabular-nums;color:var(--gc-copper)}
+  .d-edit{font-family:var(--gc-f-editorial);font-style:italic;font-size:22px;color:var(--gc-steel-dim);max-width:52ch}
+
+  .il-row{display:grid;grid-template-columns:80px 130px 1fr;gap:var(--gc-sp-m);align-items:baseline;
+          padding:var(--gc-sp-xs) 0;border-bottom:1px solid var(--gc-hairline-inv)}
+  .enumgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;
+            background:var(--gc-hairline-inv);margin-top:var(--gc-sp-s)}
+  .enumcell{background:var(--gc-void-panel);padding:var(--gc-sp-s)}
+  .enumcell .desc{font-size:12px;color:var(--gc-steel);margin-top:6px}
+  .enumcell .path{font-family:var(--gc-f-mono);font-size:10px;color:var(--gc-steel);
+                  text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--gc-sp-2xs)}
+  footer{margin-top:var(--gc-sp-3xl);padding-top:var(--gc-sp-m);border-top:1px solid var(--gc-hairline-inv);
+         color:var(--gc-steel);font-family:var(--gc-f-mono);font-size:11px}
+
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]) body{background:var(--gc-paper);color:var(--gc-ink)}
+    :root:not([data-theme="dark"]) .sw,
+    :root:not([data-theme="dark"]) .enumcell{background:var(--gc-paper-panel)}
+    :root:not([data-theme="dark"]) .sws,
+    :root:not([data-theme="dark"]) .enumgrid{background:var(--gc-hairline)}
+    :root:not([data-theme="dark"]) th,:root:not([data-theme="dark"]) td,
+    :root:not([data-theme="dark"]) .type-row,:root:not([data-theme="dark"]) .il-row,
+    :root:not([data-theme="dark"]) .chip,:root:not([data-theme="dark"]) footer{border-color:var(--gc-hairline)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Getaway Collective · GC.SYSTEM v3.0 LOCKED</div>
+  <h1>Design Reference</h1>
+  <p class="lede">Generated from <span class="mono">constants/tokens.ts</span> and
+  <span class="mono">constants/enums.ts</span>. Every swatch, ratio and label is read from source —
+  a reference maintained by hand drifts from the token package, and then people trust the picture
+  over the code.</p>
+  <hr>
+
+  <h2>Palette</h2>
+  <div class="sws">
+  <div class="sw">
+    <div class="chip" style="background:#0A0A0A"></div>
+    <div class="meta"><span class="k">void</span><span class="mono">#0A0A0A</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#121212"></div>
+    <div class="meta"><span class="k">voidPanel</span><span class="mono">#121212</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#F2F2F2"></div>
+    <div class="meta"><span class="k">paper</span><span class="mono">#F2F2F2</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#FFFFFF"></div>
+    <div class="meta"><span class="k">paperPanel</span><span class="mono">#FFFFFF</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#E8E8E6"></div>
+    <div class="meta"><span class="k">mist</span><span class="mono">#E8E8E6</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#0A0A0A"></div>
+    <div class="meta"><span class="k">ink</span><span class="mono">#0A0A0A</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#F2F2F2"></div>
+    <div class="meta"><span class="k">inkInverse</span><span class="mono">#F2F2F2</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#6B6B6B"></div>
+    <div class="meta"><span class="k">steel</span><span class="mono">#6B6B6B</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#9A9A9A"></div>
+    <div class="meta"><span class="k">steelDim</span><span class="mono">#9A9A9A</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#0C3024"></div>
+    <div class="meta"><span class="k">forest</span><span class="mono">#0C3024</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#C79F6B"></div>
+    <div class="meta"><span class="k">copper</span><span class="mono">#C79F6B</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#2061DE"></div>
+    <div class="meta"><span class="k">electric</span><span class="mono">#2061DE</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#E8672E"></div>
+    <div class="meta"><span class="k">hazard</span><span class="mono">#E8672E</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#FF3B30"></div>
+    <div class="meta"><span class="k">critical</span><span class="mono">#FF3B30</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#1FAA59"></div>
+    <div class="meta"><span class="k">confirm</span><span class="mono">#1FAA59</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#228A68"></div>
+    <div class="meta"><span class="k">forestLight</span><span class="mono">#228A68</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#8C6635"></div>
+    <div class="meta"><span class="k">copperDeep</span><span class="mono">#8C6635</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#177F43"></div>
+    <div class="meta"><span class="k">confirmDeep</span><span class="mono">#177F43</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#BE4915"></div>
+    <div class="meta"><span class="k">hazardDeep</span><span class="mono">#BE4915</span></div>
+  </div></div>
+
+  <h2>Contrast audit — computed, not asserted</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Token</th><th>on void</th><th></th><th>on paper</th><th></th></tr></thead>
+    <tbody>
+    <tr><td><span class="pill t-forest">forest</span></td>
+        <td class="num">1.38:1</td><td><span class="pill t-critical">accent only</span></td>
+        <td class="num">12.81:1</td><td><span class="pill t-confirm">AA text</span></td></tr>
+    <tr><td><span class="pill t-copper">copper</span></td>
+        <td class="num">8.11:1</td><td><span class="pill t-confirm">AA text</span></td>
+        <td class="num">2.18:1</td><td><span class="pill t-critical">accent only</span></td></tr>
+    <tr><td><span class="pill t-electric">electric</span></td>
+        <td class="num">3.61:1</td><td><span class="pill t-hazard">AA UI</span></td>
+        <td class="num">4.9:1</td><td><span class="pill t-confirm">AA text</span></td></tr>
+    <tr><td><span class="pill t-hazard">hazard</span></td>
+        <td class="num">6.04:1</td><td><span class="pill t-confirm">AA text</span></td>
+        <td class="num">2.93:1</td><td><span class="pill t-critical">accent only</span></td></tr>
+    <tr><td><span class="pill t-critical">critical</span></td>
+        <td class="num">5.58:1</td><td><span class="pill t-confirm">AA text</span></td>
+        <td class="num">3.17:1</td><td><span class="pill t-hazard">AA UI</span></td></tr>
+    <tr><td><span class="pill t-confirm">confirm</span></td>
+        <td class="num">6.55:1</td><td><span class="pill t-confirm">AA text</span></td>
+        <td class="num">2.7:1</td><td><span class="pill t-critical">accent only</span></td></tr>
+    <tr><td><span class="pill t-steel">steel</span></td>
+        <td class="num">3.72:1</td><td><span class="pill t-hazard">AA UI</span></td>
+        <td class="num">4.76:1</td><td><span class="pill t-confirm">AA text</span></td></tr>
+    <tr><td><span class="pill t-steel">steelDim</span></td>
+        <td class="num">7.04:1</td><td><span class="pill t-confirm">AA text</span></td>
+        <td class="num">2.51:1</td><td><span class="pill t-critical">accent only</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">
+    <strong>Four pairings fall below AA UI on one ground.</strong>
+    <span class="mono">forest</span> on <span class="mono">void</span> is 1.38:1 — effectively invisible.
+    <span class="mono">copper</span>, <span class="mono">confirm</span> and <span class="mono">hazard</span>
+    fall short on <span class="mono">paper</span>. The palette is locked (§29), so these are
+    <strong>usage constraints, not defects</strong>: colour is never the only carrier of meaning.
+    A status carries a label, a metric carries a unit. See <span class="mono">docs/DESIGN-USAGE-RULES.md</span>.
+  </div>
+
+  <h2>Type matrix — four roles</h2>
+  <div class="type-row"><div class="lbl">Display<br>Outfit</div>
+    <div class="d-display">Ownership without operational burden</div></div>
+  <div class="type-row"><div class="lbl">Body<br>Inter</div>
+    <div class="d-body">Capital that compounds through time, architecture and stewardship. Set at a measure
+    near 65 characters, because a line a reader loses their place in is a line they read twice.</div></div>
+  <div class="type-row"><div class="lbl">Data<br>Space Mono</div>
+    <div class="d-mono">₹12,500,000.5000 &nbsp; 14.50% &nbsp; 2.50x &nbsp; UFR-0264</div></div>
+  <div class="type-row"><div class="lbl">Editorial<br>Playfair, italic only</div>
+    <div class="d-edit">Modern luxury is defined not by excess, but by the absence of noise.</div></div>
+  <div class="note">
+    Money is always <span class="mono">Space Mono</span> with <span class="mono">tabular-nums</span>.
+    That is what makes a column of figures comparable at a glance — and on <span class="mono">paper</span>
+    it is the signal doing the work, since <span class="mono">copper</span> is only an accent there.
+  </div>
+
+  <h2>Information hierarchy</h2>
+  
+  <div class="il-row">
+    <div class="mono">IL-1</div>
+    <div class="mono" style="color:var(--gc-steel)">700 · 1.0</div>
+    <div style="font-weight:700;opacity:1.0">Critical Decision — the quick brown fox</div>
+  </div>
+  <div class="il-row">
+    <div class="mono">IL-2</div>
+    <div class="mono" style="color:var(--gc-steel)">500 · 1.0</div>
+    <div style="font-weight:500;opacity:1.0">Primary Metric — the quick brown fox</div>
+  </div>
+  <div class="il-row">
+    <div class="mono">IL-3</div>
+    <div class="mono" style="color:var(--gc-steel)">400 · 0.85</div>
+    <div style="font-weight:400;opacity:0.85">Supporting Metric — the quick brown fox</div>
+  </div>
+  <div class="il-row">
+    <div class="mono">IL-4</div>
+    <div class="mono" style="color:var(--gc-steel)">400 · 0.65</div>
+    <div style="font-weight:400;opacity:0.65">Context — the quick brown fox</div>
+  </div>
+  <div class="il-row">
+    <div class="mono">IL-5</div>
+    <div class="mono" style="color:var(--gc-steel)">400 · 0.45</div>
+    <div style="font-weight:400;opacity:0.45">Metadata — the quick brown fox</div>
+  </div>
+  <div class="il-row">
+    <div class="mono">IL-6</div>
+    <div class="mono" style="color:var(--gc-steel)">400 · 0.3</div>
+    <div style="font-weight:400;opacity:0.3">Audit — the quick brown fox</div>
+  </div>
+
+  <h2>Spacing — 4px base</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Step</th><th>Value</th><th></th></tr></thead>
+    <tbody><tr><td class="mono">3xs</td><td class="num">4px</td>
+      <td><div style="height:8px;width:4px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">2xs</td><td class="num">8px</td>
+      <td><div style="height:8px;width:8px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">xs</td><td class="num">12px</td>
+      <td><div style="height:8px;width:12px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">s</td><td class="num">16px</td>
+      <td><div style="height:8px;width:16px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">m</td><td class="num">24px</td>
+      <td><div style="height:8px;width:24px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">l</td><td class="num">32px</td>
+      <td><div style="height:8px;width:32px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">xl</td><td class="num">48px</td>
+      <td><div style="height:8px;width:48px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">2xl</td><td class="num">64px</td>
+      <td><div style="height:8px;width:64px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">3xl</td><td class="num">96px</td>
+      <td><div style="height:8px;width:96px;background:var(--gc-copper)"></div></td></tr><tr><td class="mono">4xl</td><td class="num">128px</td>
+      <td><div style="height:8px;width:128px;background:var(--gc-copper)"></div></td></tr></tbody>
+  </table></div>
+
+  <h2>Enumerations — 135 values across 26 sets</h2>
+  <div class="note">
+    Tone is semantic, never decorative. <strong><span class="mono">critical</span> is budgeted at 12</strong>
+    and currently spends 10 — spending it on ordinary states would leave nothing
+    that still registers when a real breach happens. Enforced by <span class="mono">enum-lint</span>.
+  </div>
+  
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Organization.entity_type</div>
+      <span class="pill t-forest">LLP</span>
+      <div class="desc">Limited Liability Partnership</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.entity_type</div>
+      <span class="pill t-steel">Private Limited</span>
+      <div class="desc">Private limited company</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.entity_type</div>
+      <span class="pill t-steel">Trust</span>
+      <div class="desc">Trust structure</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.entity_type</div>
+      <span class="pill t-steel">Partnership</span>
+      <div class="desc">General partnership</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.entity_type</div>
+      <span class="pill t-steel">Sole Proprietor</span>
+      <div class="desc">Single-owner entity</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.entity_type</div>
+      <span class="pill t-hazard">Foreign Entity</span>
+      <div class="desc">Incorporated outside the jurisdiction</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Organization.role_in_enterprise</div>
+      <span class="pill t-forest">Asset Platform</span>
+      <div class="desc">Getaway Collective. Owns capital and governance</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.role_in_enterprise</div>
+      <span class="pill t-electric">Operating Partner</span>
+      <div class="desc">Runs the property under a Management Agreement</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.role_in_enterprise</div>
+      <span class="pill t-electric">Brand Partner</span>
+      <div class="desc">Demand generation under a Services Agreement</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.role_in_enterprise</div>
+      <span class="pill t-copper">Investment Vehicle</span>
+      <div class="desc">An LLP holding assets for investors</div>
+    </div><div class="enumcell">
+      <div class="path">Organization.role_in_enterprise</div>
+      <span class="pill t-steel">External Counterparty</span>
+      <div class="desc">Third party outside the enterprise</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">InvestmentVehicle.vehicle_form</div>
+      <span class="pill t-forest">LLP</span>
+      <div class="desc">The constitutional default (§24a)</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.vehicle_form</div>
+      <span class="pill t-hazard">SPV</span>
+      <div class="desc">Special purpose vehicle. Needs Board approval</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.vehicle_form</div>
+      <span class="pill t-hazard">Fund</span>
+      <div class="desc">Pooled fund. Needs Board approval</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.vehicle_form</div>
+      <span class="pill t-hazard">Trust</span>
+      <div class="desc">Trust. Needs Board approval</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.vehicle_form</div>
+      <span class="pill t-hazard">Syndicate</span>
+      <div class="desc">Syndicate. Needs Board approval</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">InvestmentVehicle.lifecycle_state</div>
+      <span class="pill t-steel">Forming</span>
+      <div class="desc">Constituted, not yet raising</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.lifecycle_state</div>
+      <span class="pill t-electric">Raising</span>
+      <div class="desc">Offering open to commitments</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.lifecycle_state</div>
+      <span class="pill t-electric">Deployed</span>
+      <div class="desc">Capital placed into assets</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.lifecycle_state</div>
+      <span class="pill t-confirm">Stabilised</span>
+      <div class="desc">Reserve funding mandatory. Growth calls only</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.lifecycle_state</div>
+      <span class="pill t-hazard">Winding Down</span>
+      <div class="desc">Final assets in disposition</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentVehicle.lifecycle_state</div>
+      <span class="pill t-steel">Dissolved</span>
+      <div class="desc">Wound up. Records survive the entity</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Property.lifecycle_state</div>
+      <span class="pill t-steel">Prospecting</span>
+      <div class="desc">Under consideration. Nothing committed</div>
+    </div><div class="enumcell">
+      <div class="path">Property.lifecycle_state</div>
+      <span class="pill t-electric">Pending</span>
+      <div class="desc">Terms agreed, diligence running</div>
+    </div><div class="enumcell">
+      <div class="path">Property.lifecycle_state</div>
+      <span class="pill t-confirm">Acquired</span>
+      <div class="desc">Title transferred. Terms are now immutable</div>
+    </div><div class="enumcell">
+      <div class="path">Property.lifecycle_state</div>
+      <span class="pill t-electric">In Development</span>
+      <div class="desc">Capital works under an approved budget</div>
+    </div><div class="enumcell">
+      <div class="path">Property.lifecycle_state</div>
+      <span class="pill t-confirm">Stabilised</span>
+      <div class="desc">Operating. Reserve funding mandatory</div>
+    </div><div class="enumcell">
+      <div class="path">Property.lifecycle_state</div>
+      <span class="pill t-hazard">Disposition Pending</span>
+      <div class="desc">Sale approved, title not yet transferred</div>
+    </div><div class="enumcell">
+      <div class="path">Property.lifecycle_state</div>
+      <span class="pill t-steel">Exited</span>
+      <div class="desc">Sold. Record retained permanently</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Valuation.source</div>
+      <span class="pill t-confirm">Independent</span>
+      <div class="desc">Third-party valuer. Fit for filing</div>
+    </div><div class="enumcell">
+      <div class="path">Valuation.source</div>
+      <span class="pill t-hazard">Management</span>
+      <div class="desc">Internal estimate. NOT fit for filing</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">InvestmentOffering.offering_state</div>
+      <span class="pill t-steel">Draft</span>
+      <div class="desc">Terms not yet disclosed</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentOffering.offering_state</div>
+      <span class="pill t-electric">Open</span>
+      <div class="desc">Accepting commitments on disclosed terms</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentOffering.offering_state</div>
+      <span class="pill t-confirm">Closed</span>
+      <div class="desc">Raise complete. Cannot reopen</div>
+    </div><div class="enumcell">
+      <div class="path">InvestmentOffering.offering_state</div>
+      <span class="pill t-steel">Cancelled</span>
+      <div class="desc">Abandoned before opening</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Investor.member_state</div>
+      <span class="pill t-steel">Investor</span>
+      <div class="desc">Pre-commitment. Outside the vehicle</div>
+    </div><div class="enumcell">
+      <div class="path">Investor.member_state</div>
+      <span class="pill t-forest">Member</span>
+      <div class="desc">Capital settled. Inside, with governance rights</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Investor.accreditation_state</div>
+      <span class="pill t-steel">Not Accredited</span>
+      <div class="desc">No accreditation on file</div>
+    </div><div class="enumcell">
+      <div class="path">Investor.accreditation_state</div>
+      <span class="pill t-electric">In Review</span>
+      <div class="desc">Compliance assessment under way</div>
+    </div><div class="enumcell">
+      <div class="path">Investor.accreditation_state</div>
+      <span class="pill t-confirm">Accredited</span>
+      <div class="desc">Valid for fifteen working days</div>
+    </div><div class="enumcell">
+      <div class="path">Investor.accreditation_state</div>
+      <span class="pill t-hazard">Expired</span>
+      <div class="desc">Blocks new commitments only. Voting survives</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Commitment.commitment_state</div>
+      <span class="pill t-steel">Offered</span>
+      <div class="desc">Made, not yet accepted</div>
+    </div><div class="enumcell">
+      <div class="path">Commitment.commitment_state</div>
+      <span class="pill t-electric">Accepted</span>
+      <div class="desc">Binding. Accreditation tested at this moment</div>
+    </div><div class="enumcell">
+      <div class="path">Commitment.commitment_state</div>
+      <span class="pill t-confirm">Settled</span>
+      <div class="desc">Funded. Triggers the Member Law</div>
+    </div><div class="enumcell">
+      <div class="path">Commitment.commitment_state</div>
+      <span class="pill t-hazard">Lapsed</span>
+      <div class="desc">Accreditation expired before acceptance</div>
+    </div><div class="enumcell">
+      <div class="path">Commitment.commitment_state</div>
+      <span class="pill t-steel">Withdrawn</span>
+      <div class="desc">Withdrawn in writing before acceptance</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">CapitalCall.purpose</div>
+      <span class="pill t-copper">Acquisition</span>
+      <div class="desc">New asset. Growth capital</div>
+    </div><div class="enumcell">
+      <div class="path">CapitalCall.purpose</div>
+      <span class="pill t-copper">Expansion</span>
+      <div class="desc">Board-approved expansion</div>
+    </div><div class="enumcell">
+      <div class="path">CapitalCall.purpose</div>
+      <span class="pill t-copper">Redevelopment</span>
+      <div class="desc">Board-approved redevelopment</div>
+    </div><div class="enumcell">
+      <div class="path">CapitalCall.purpose</div>
+      <span class="pill t-hazard">Extraordinary Event</span>
+      <div class="desc">Outside the normal operating framework</div>
+    </div><div class="enumcell">
+      <div class="path">CapitalCall.purpose</div>
+      <span class="pill t-steel">LLP Provision</span>
+      <div class="desc">Required under the LLP Agreement</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Investment.capital_state</div>
+      <span class="pill t-steel">Committed</span>
+      <div class="desc">Promised, not yet drawn</div>
+    </div><div class="enumcell">
+      <div class="path">Investment.capital_state</div>
+      <span class="pill t-electric">Drawn</span>
+      <div class="desc">Called and received</div>
+    </div><div class="enumcell">
+      <div class="path">Investment.capital_state</div>
+      <span class="pill t-copper">Invested</span>
+      <div class="desc">Deployed into an asset</div>
+    </div><div class="enumcell">
+      <div class="path">Investment.capital_state</div>
+      <span class="pill t-confirm">Returned</span>
+      <div class="desc">Capital returned. Terminal</div>
+    </div><div class="enumcell">
+      <div class="path">Investment.capital_state</div>
+      <span class="pill t-confirm">Distributed</span>
+      <div class="desc">Paid out to partners. Terminal</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Distribution.waterfall_stage</div>
+      <span class="pill t-electric">1 · Operating Company</span>
+      <div class="desc">Consideration for services performed</div>
+    </div><div class="enumcell">
+      <div class="path">Distribution.waterfall_stage</div>
+      <span class="pill t-electric">2 · Brand &amp; Digital</span>
+      <div class="desc">Commercial participation. Never equity</div>
+    </div><div class="enumcell">
+      <div class="path">Distribution.waterfall_stage</div>
+      <span class="pill t-forest">3 · Administration Reserve</span>
+      <div class="desc">2.5% of Revenue Base</div>
+    </div><div class="enumcell">
+      <div class="path">Distribution.waterfall_stage</div>
+      <span class="pill t-forest">4 · Property Sinking Fund</span>
+      <div class="desc">2.5% of Revenue Base</div>
+    </div><div class="enumcell">
+      <div class="path">Distribution.waterfall_stage</div>
+      <span class="pill t-hazard">5 · Debt Service</span>
+      <div class="desc">The Vehicle's own borrowing</div>
+    </div><div class="enumcell">
+      <div class="path">Distribution.waterfall_stage</div>
+      <span class="pill t-copper">6 · Partner Distribution</span>
+      <div class="desc">The remainder, pro-rata by units</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-copper">Subscription</span>
+      <div class="desc">Investor subscription into an offering</div>
+    </div><div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-forest">LLP Agreement</span>
+      <div class="desc">Constitutional document of the vehicle</div>
+    </div><div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-hazard">Operating Agreement</span>
+      <div class="desc">ALWAYS material related-party</div>
+    </div><div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-hazard">Commercial Services</span>
+      <div class="desc">ALWAYS material related-party</div>
+    </div><div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-steel">Share Purchase</span>
+      <div class="desc">Share purchase agreement</div>
+    </div><div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-steel">Shareholders</span>
+      <div class="desc">Shareholders agreement</div>
+    </div><div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-hazard">Financing</span>
+      <div class="desc">Debt facility documentation</div>
+    </div><div class="enumcell">
+      <div class="path">Agreement.agreement_type</div>
+      <span class="pill t-steel">Lease</span>
+      <div class="desc">Lease instrument</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Resolution.resolution_type</div>
+      <span class="pill t-steel">Ordinary</span>
+      <div class="desc">Over 50% of equity present</div>
+    </div><div class="enumcell">
+      <div class="path">Resolution.resolution_type</div>
+      <span class="pill t-electric">Special</span>
+      <div class="desc">At least 76% of total equity</div>
+    </div><div class="enumcell">
+      <div class="path">Resolution.resolution_type</div>
+      <span class="pill t-critical">Unanimous</span>
+      <div class="desc">100% of total equity. Entrenched matters only</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Resolution.outcome</div>
+      <span class="pill t-confirm">Approved</span>
+      <div class="desc">Threshold met</div>
+    </div><div class="enumcell">
+      <div class="path">Resolution.outcome</div>
+      <span class="pill t-steel">Rejected</span>
+      <div class="desc">Threshold not met</div>
+    </div><div class="enumcell">
+      <div class="path">Resolution.outcome</div>
+      <span class="pill t-hazard">Tied — Not Approved</span>
+      <div class="desc">A tie fails. The proposer carries the burden</div>
+    </div><div class="enumcell">
+      <div class="path">Resolution.outcome</div>
+      <span class="pill t-hazard">Inquorate</span>
+      <div class="desc">Under 60% of equity present. No outcome</div>
+    </div><div class="enumcell">
+      <div class="path">Resolution.outcome</div>
+      <span class="pill t-critical">Not Unanimous</span>
+      <div class="desc">Entrenched matter without full consent</div>
+    </div><div class="enumcell">
+      <div class="path">Resolution.outcome</div>
+      <span class="pill t-critical">Rights Not Confirmed</span>
+      <div class="desc">Unanimity without the rights confirmation</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Committee.committee_name</div>
+      <span class="pill t-forest">Board</span>
+      <div class="desc">Highest governing authority</div>
+    </div><div class="enumcell">
+      <div class="path">Committee.committee_name</div>
+      <span class="pill t-copper">Investment Committee</span>
+      <div class="desc">Capital deployment</div>
+    </div><div class="enumcell">
+      <div class="path">Committee.committee_name</div>
+      <span class="pill t-hazard">Audit &amp; Risk</span>
+      <div class="desc">Enterprise integrity, reserves, treasury</div>
+    </div><div class="enumcell">
+      <div class="path">Committee.committee_name</div>
+      <span class="pill t-electric">Governance &amp; Ethics</span>
+      <div class="desc">Constitutional interpretation, conflicts</div>
+    </div><div class="enumcell">
+      <div class="path">Committee.committee_name</div>
+      <span class="pill t-steel">Brand &amp; Market</span>
+      <div class="desc">Brand and commercial growth</div>
+    </div><div class="enumcell">
+      <div class="path">Committee.committee_name</div>
+      <span class="pill t-steel">Operations &amp; Asset Performance</span>
+      <div class="desc">Operator performance oversight</div>
+    </div><div class="enumcell">
+      <div class="path">Committee.committee_name</div>
+      <span class="pill t-critical">Constitutional Review Panel</span>
+      <div class="desc">Convened where the declaring authority is implicated</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">ComplianceEvent.event_type</div>
+      <span class="pill t-hazard">Audit Finding</span>
+      <div class="desc">Raised by internal or external audit</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.event_type</div>
+      <span class="pill t-hazard">Regulatory Notice</span>
+      <div class="desc">Received from a regulator</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.event_type</div>
+      <span class="pill t-hazard">Policy Breach</span>
+      <div class="desc">Enterprise policy not followed</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.event_type</div>
+      <span class="pill t-electric">Conflict Disclosure</span>
+      <div class="desc">Declared under I-07</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.event_type</div>
+      <span class="pill t-critical">Constitutional Failure</span>
+      <div class="desc">CF-01 to CF-06. Compels re-ratification</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.event_type</div>
+      <span class="pill t-hazard">Operator SLA Breach</span>
+      <div class="desc">Service level not met</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.event_type</div>
+      <span class="pill t-critical">Reserve Breach</span>
+      <div class="desc">Balance below the Reserve Floor</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">ComplianceEvent.severity</div>
+      <span class="pill t-steel">Advisory</span>
+      <div class="desc">Monitoring only</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.severity</div>
+      <span class="pill t-hazard">Governance Alert</span>
+      <div class="desc">Executive review required</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.severity</div>
+      <span class="pill t-hazard">Material</span>
+      <div class="desc">Affects investor rights or reporting</div>
+    </div><div class="enumcell">
+      <div class="path">ComplianceEvent.severity</div>
+      <span class="pill t-critical">Constitutional Breach</span>
+      <div class="desc">A constitutional obligation was not met</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Forecast.scenario</div>
+      <span class="pill t-steel">Base Case</span>
+      <div class="desc">Expected outcome</div>
+    </div><div class="enumcell">
+      <div class="path">Forecast.scenario</div>
+      <span class="pill t-hazard">Downside</span>
+      <div class="desc">Adverse scenario</div>
+    </div><div class="enumcell">
+      <div class="path">Forecast.scenario</div>
+      <span class="pill t-confirm">Upside</span>
+      <div class="desc">Favourable scenario</div>
+    </div><div class="enumcell">
+      <div class="path">Forecast.scenario</div>
+      <span class="pill t-copper">Exit</span>
+      <div class="desc">Disposition scenario</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Liquidity</span>
+      <div class="desc">Cash availability</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Interest Rate</span>
+      <div class="desc">Cost of debt movement</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Operator</span>
+      <div class="desc">Operating partner performance</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Market</span>
+      <div class="desc">Demand and pricing</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-forest">Climate</span>
+      <div class="desc">Physical and transition risk</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Currency</span>
+      <div class="desc">FX exposure</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Legal</span>
+      <div class="desc">Title, contract, litigation</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Regulatory</span>
+      <div class="desc">Compliance and licensing</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-electric">Technology</span>
+      <div class="desc">Platform and data risk</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.risk_category</div>
+      <span class="pill t-hazard">Counterparty</span>
+      <div class="desc">Third-party failure</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Risk.likelihood</div>
+      <span class="pill t-steel">Rare</span>
+      <div class="desc">Unlikely within the horizon</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.likelihood</div>
+      <span class="pill t-steel">Unlikely</span>
+      <div class="desc">Possible but not expected</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.likelihood</div>
+      <span class="pill t-hazard">Possible</span>
+      <div class="desc">Could occur</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.likelihood</div>
+      <span class="pill t-hazard">Likely</span>
+      <div class="desc">Expected to occur</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.likelihood</div>
+      <span class="pill t-critical">Almost Certain</span>
+      <div class="desc">Expected within the horizon</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Risk.impact</div>
+      <span class="pill t-steel">Negligible</span>
+      <div class="desc">No material effect</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.impact</div>
+      <span class="pill t-steel">Minor</span>
+      <div class="desc">Absorbed within normal operations</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.impact</div>
+      <span class="pill t-hazard">Moderate</span>
+      <div class="desc">Noticeable effect on returns</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.impact</div>
+      <span class="pill t-hazard">Major</span>
+      <div class="desc">Significant effect on returns</div>
+    </div><div class="enumcell">
+      <div class="path">Risk.impact</div>
+      <span class="pill t-critical">Severe</span>
+      <div class="desc">Threatens the vehicle</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">DueDiligence.workstream</div>
+      <span class="pill t-steel">Legal</span>
+      <div class="desc">Contract and corporate review</div>
+    </div><div class="enumcell">
+      <div class="path">DueDiligence.workstream</div>
+      <span class="pill t-steel">Technical</span>
+      <div class="desc">Building and systems condition</div>
+    </div><div class="enumcell">
+      <div class="path">DueDiligence.workstream</div>
+      <span class="pill t-forest">Environmental</span>
+      <div class="desc">Contamination, climate, biodiversity</div>
+    </div><div class="enumcell">
+      <div class="path">DueDiligence.workstream</div>
+      <span class="pill t-copper">Financial</span>
+      <div class="desc">Accounts, projections, tax</div>
+    </div><div class="enumcell">
+      <div class="path">DueDiligence.workstream</div>
+      <span class="pill t-steel">Commercial</span>
+      <div class="desc">Market and demand</div>
+    </div><div class="enumcell">
+      <div class="path">DueDiligence.workstream</div>
+      <span class="pill t-steel">Title</span>
+      <div class="desc">Land title and encumbrances</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">DueDiligence.outcome</div>
+      <span class="pill t-confirm">Clear</span>
+      <div class="desc">No findings</div>
+    </div><div class="enumcell">
+      <div class="path">DueDiligence.outcome</div>
+      <span class="pill t-hazard">Clear with Conditions</span>
+      <div class="desc">Proceed subject to conditions</div>
+    </div><div class="enumcell">
+      <div class="path">DueDiligence.outcome</div>
+      <span class="pill t-critical">Adverse</span>
+      <div class="desc">Blocks approval until resolved</div>
+    </div>
+  </div>
+  <div class="enumgrid">
+    <div class="enumcell">
+      <div class="path">Research.research_topic</div>
+      <span class="pill t-forest">ESG</span>
+      <div class="desc">Environmental, social, governance</div>
+    </div><div class="enumcell">
+      <div class="path">Research.research_topic</div>
+      <span class="pill t-steel">Geographic</span>
+      <div class="desc">Region and location analysis</div>
+    </div><div class="enumcell">
+      <div class="path">Research.research_topic</div>
+      <span class="pill t-steel">Asset Class</span>
+      <div class="desc">Sector and asset type</div>
+    </div><div class="enumcell">
+      <div class="path">Research.research_topic</div>
+      <span class="pill t-steel">Economic</span>
+      <div class="desc">Macro and rates</div>
+    </div><div class="enumcell">
+      <div class="path">Research.research_topic</div>
+      <span class="pill t-steel">Regulatory</span>
+      <div class="desc">Rules and licensing</div>
+    </div>
+  </div>
+
+  <h2>Atom specifications</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Atom</th><th>Rule</th><th>Content</th></tr></thead>
+    <tbody><tr><td>Metric</td><td>IL-2 value, Space Mono, tabular-nums, tone by measure</td><td class="mono">value · unit · delta</td></tr><tr><td>Status Pill</td><td>1px hairline, 0 radius, label always present</td><td class="mono">tone · label</td></tr><tr><td>Ledger Row</td><td>append-only, mono, right-aligned money</td><td class="mono">account · amount · narrative</td></tr><tr><td>Confidence Tag</td><td>provenance class, IL-5</td><td class="mono">observed → pending</td></tr><tr><td>Reserve Gauge</td><td>four bands against the floor</td><td class="mono">≥120 · 110-119 · 100-109 · &lt;100</td></tr><tr><td>Waterfall Bar</td><td>six stages in fixed order, shortfall marked</td><td class="mono">stage · amount · shortfall</td></tr><tr><td>Hold-to-Commit</td><td>3s hold before a capital-moving action</td><td class="mono">idle → engaged → sealed → locked</td></tr></tbody>
+  </table></div>
+  <div class="note">
+    Zero radius everywhere. No drop shadows — depth comes from hairlines. Circles only for status LEDs
+    and the Trinity Lens. Every animation respects <span class="mono">prefers-reduced-motion</span>,
+    including this page.
+  </div>
+
+  <footer>
+    Generated by scripts/gen-design-reference.js · tokens inlined from dist/tokens.css (v3.0 LOCKED, §29)<br>
+    Regenerate: npm run design
+  </footer>
+</div>
+</body>
+</html>

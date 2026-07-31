@@ -109,7 +109,35 @@ function main() {
     '',
   ].join('\n');
 
-  fs.writeFileSync(path.join(OUT_DIR, 'tokens.css'), header + t.CSS_VARS.trimStart(), 'utf8');
+  // ── Addendum A ──────────────────────────────────────────────────────
+  // Appends; never shadows a core token. The core module does not import
+  // the addendum, so precedence cannot be reversed by accident — which is
+  // the structural version of "COMPLEMENTARY, NON-BREAKING".
+  let addendumCss = '';
+  const ADDENDUM = path.join(ROOT, 'constants', 'tokens-addendum.ts');
+  if (fs.existsSync(ADDENDUM)) {
+    const raw = fs.readFileSync(ADDENDUM, 'utf8');
+    const js = raw
+      // Anchored to line start. Unanchored, this matched inside the word
+      // "important" in a doc comment and ate everything to the next
+      // semicolon — which happened to be most of the CSS block.
+      .replace(/^\s*import\s[^;]+;/gm, '')      // COLOUR is injected below
+      .replace(/^\s*export\s+/gm, '')
+      .replace(/\s+as\s+const/g, '')
+      .replace(/:\s*Record<[^>]+>/g, '')
+      .replace(/\(category:\s*string\):\s*string/g, '(category)');
+    // eslint-disable-next-line no-new-func
+    const fn = new Function('COLOUR', `${js}\nreturn ADDENDUM_CSS_VARS;`);
+    addendumCss =
+      '\n/* ── ADDENDUM A · motion · overlays · notifications · brand ── */\n' +
+      fn(t.COLOUR).trimStart();
+  }
+
+  fs.writeFileSync(
+    path.join(OUT_DIR, 'tokens.css'),
+    header + t.CSS_VARS.trimStart() + addendumCss,
+    'utf8',
+  );
 
   const n = expectedCssVars(t).length;
   console.log(`[export-tokens] OK — ${n} tokens verified in both formats`);
