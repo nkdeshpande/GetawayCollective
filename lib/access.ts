@@ -61,9 +61,7 @@ export const ANONYMOUS: Subject = Object.freeze({
  * every guard in the system pass, and nothing would report it.
  */
 export function resolveSubject(): Subject {
-  return { identified: true, accredited: true, member: true,
-           rights: ["vehicle.form", "content.publish", "media.manage",
-                    "organization.register"] as never };
+  return ANONYMOUS;
 }
 
 /** What access class a subject satisfies. */

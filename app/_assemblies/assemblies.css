@@ -264,7 +264,15 @@ section[data-sec]{padding:var(--gc-sp-2xl) 0;border-bottom:1px solid var(--gc-ha
   font:400 10px/1 var(--gc-font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gc-hazard-deep)}
 
 /* ── AS-05 · Member console ──────────────────────────────────────── */
-.panel{background:var(--gc-void-panel);border:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-m)}
+/* `color:inherit` is load-bearing. A .panel sets a background and takes
+   its colour from whichever ground it sits in — which works for a div
+   and fails for a <button>, because the user-agent stylesheet gives a
+   button `color: buttontext` and that does not inherit.
+   The Story grid renders its tiles as buttons styled as panels, and
+   they came out pure black on the void panel at 1.12:1. Fixed here
+   rather than on the button, so any element that carries a UA colour is
+   correct the moment it is given this class. */
+.panel{background:var(--gc-void-panel);border:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-m);color:inherit}
 /* A panel ON PAPER.
    `.panel` and `.on-paper` are both single-class selectors and `.panel`
    is declared later, so `.panel.on-paper` kept the void-panel background
