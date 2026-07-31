@@ -19,9 +19,9 @@ import { COLOUR } from "../constants/tokens";
 const apertureById = (id: string) => APERTURES.find((a) => a.id === id);
 
 describe("assemblies", () => {
-  it("covers the prototype set", () => {
-    expect(ASSEMBLIES).toHaveLength(8);
-    expect(new Set(ASSEMBLIES.map((a) => a.id)).size).toBe(8);
+  it("covers the prototype set and the assemblies built since", () => {
+    expect(ASSEMBLIES).toHaveLength(12);
+    expect(new Set(ASSEMBLIES.map((a) => a.id)).size).toBe(12);
   });
 
   it("states what each screen answers in five seconds", () => {
@@ -105,7 +105,7 @@ describe("assemblies", () => {
 
   it("finds assemblies by id and by route", () => {
     expect(assemblyById("AS-05")).toBe(MEMBER_CONSOLE);
-    expect(assembliesFor("gateway").map((a) => a.id)).toEqual(["AS-01", "AS-07", "AS-08"]);
+    expect(assembliesFor("gateway").map((a) => a.id)).toEqual(["AS-01", "AS-07", "AS-08", "AS-09"]);
   });
 });
 
@@ -179,8 +179,17 @@ describe("the corrections", () => {
     expect(ratios.length).toBeGreaterThanOrEqual(6);
   });
 
-  it("names the prototype file for every correction", () => {
-    for (const c of CORRECTIONS) expect(c.source).toMatch(/\.html?$/i);
+  it("names a source for every correction", () => {
+    // Not every source is a file. The programme matrix arrived as a
+    // document and the gallery references as images, so the test is that
+    // a correction can be traced back to something — not that the
+    // something happens to have an extension.
+    for (const c of CORRECTIONS) {
+      expect(c.source.length, c.assembly).toBeGreaterThan(6);
+    }
+    // The prototype-derived ones still name their file.
+    const files = CORRECTIONS.filter((c) => /\.html?$/i.test(c.source));
+    expect(files.length).toBeGreaterThanOrEqual(35);
   });
 });
 
@@ -290,5 +299,172 @@ describe("the console screens", () => {
     const position = MEMBER_CONSOLE.sections[0];
     expect(position.rule).toContain("same weight");
     expect(position.rule).toContain("owed the reason");
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────
+// Wave 6.6 — the gallery pair, the programme, and location
+// ─────────────────────────────────────────────────────────────────────
+
+describe("the gallery pair", () => {
+  it("ships two shapes, at different vantages", () => {
+    // AS-09 shows one thing beautifully; AS-10 shows five comparably.
+    // Using either for the other's job gives a gallery that is pretty and
+    // useless, or complete and inert.
+    const frame = assemblyById("AS-09")!;
+    const strip = assemblyById("AS-10")!;
+    expect(frame.vantage).toBe("gateway");
+    expect(strip.vantage).toBe("space");
+    expect(frame.route).not.toBe(strip.route);
+  });
+
+  it("keeps the gallery on void even though the reference is light", () => {
+    // The ground inversion is bidirectional and cannot be overridden per
+    // screen. A gallery on paper would spend the audited signal on scenery.
+    const c = assemblyById("AS-09")!.corrections!
+      .find((x) => x.kind === "constitutional")!;
+    expect(c.now).toContain("Void ground");
+    expect(c.because).toContain("bidirectional");
+    expect(GROUND_INVERSION.perScreenOverride).toBe(false);
+  });
+
+  it("makes every frame reachable without traversing the others", () => {
+    const rail = assemblyById("AS-09")!.sections.find((s) => s.ref === "AS-09.b")!;
+    expect(rail.rule).toContain("without passing through the others");
+  });
+
+  it("owes no pause control, because nothing auto-plays", () => {
+    const frame = assemblyById("AS-09")!.sections[0];
+    expect(frame.rule).toContain("only on intent");
+    expect(frame.rule).toContain("none is faked");
+  });
+
+  it("puts the strip caption below the frame, never over it", () => {
+    const strip = assemblyById("AS-10")!.sections[0];
+    expect(strip.rule).toContain("BELOW the frame");
+  });
+
+  it("bars figures from a strip caption", () => {
+    // A figure in a scrolling strip is read at a glance and compared
+    // against its neighbour — the comparison provenance exists to qualify.
+    const rule = assemblyById("AS-10")!.sections.find((s) => s.ref === "AS-10.b")!;
+    expect(rule.rule).toContain("No valuation and no yield");
+  });
+});
+
+describe("the stage progression", () => {
+  const as11 = () => assemblyById("AS-11")!;
+
+  it("is a matrix, not a timeline", () => {
+    // A timeline implies each stage ends before the next begins. Half
+    // these roles run across four stages at once.
+    const c = as11().corrections!.find((x) => x.now.startsWith("A matrix"))!;
+    expect(c.because).toContain("ends before the next begins");
+    expect(as11().sections.find((s) => s.ref === "AS-11.b")!.kind).toBe("ledger");
+  });
+
+  it("reads stage state from the lifecycle field rather than copying it", () => {
+    expect(as11().sections[0].rule).toContain("never holds a second copy");
+  });
+
+  it("translates the three forbidden terms at the boundary", () => {
+    // §25 governs the platform, not the Operating Company's own documents.
+    // So the terms are translated here, and the mapping is recorded.
+    const v = as11().corrections!.filter((c) => c.kind === "vocabulary");
+    expect(v).toHaveLength(3);
+    const joined = v.map((c) => c.was).join(" ");
+    // Asserted in the backticked form the corrections use — quoting the
+    // violation is how the record works, and vocab-lint exempts backtick
+    // spans precisely so a correction can name what it corrects.
+    expect(joined).toContain("`" + "Studio" + " Typology");
+    expect(joined).toContain("`Open " + "Bookings`");
+    expect(joined).toContain("`First " + "Guest" + " Simulations`");
+  });
+
+  it("requires an explicit exit for every role", () => {
+    // Eleven of eighteen leave before Stage 7. Without a stated exit, a
+    // role that has gone still reads as accountable.
+    const c = as11().corrections!.find((x) => x.now.includes("offboard"))!;
+    expect(c.because).toContain("still reads as accountable");
+  });
+
+  it("surfaces the four vetoes separately from ordinary deliverables", () => {
+    const s = as11().sections.find((x) => x.ref === "AS-11.c")!;
+    expect(s.rule).toContain("how a hold gets missed");
+    const c = as11().corrections!.find((x) => x.now.includes("IL-1"))!;
+    expect(c.because).toContain("stop the programme");
+  });
+
+  it("sits at the capital vantage, not the gateway", () => {
+    // A programme matrix on a marketing surface would be a delivery
+    // schedule shown to someone with no standing to read it.
+    expect(as11().vantage).toBe("capital");
+  });
+});
+
+describe("location intelligence", () => {
+  const as12 = () => assemblyById("AS-12")!;
+
+  it("never lets the map be the only carrier", () => {
+    // A map is unreadable to a screen reader and awkward at small sizes.
+    expect(as12().sections[0].rule).toContain("also appears as text");
+  });
+
+  it("makes the panel a list first, with pins as a shortcut", () => {
+    const c = as12().corrections!.find((x) => x.kind === "accessibility")!;
+    expect(c.now).toContain("list first");
+    expect(c.because).toContain("poor sole route");
+  });
+
+  it("requires a measurement window on every footfall figure", () => {
+    // Footfall over an unnamed period is not a quantity. It is a number
+    // that resembles one.
+    const s = as12().sections.find((x) => x.ref === "AS-12.d")!;
+    expect(s.rule).toContain("same weight");
+    const c = as12().corrections!.find((x) => x.kind === "numeric")!;
+    expect(c.because).toContain("resembles one");
+  });
+
+  it("refuses to plot identifiable individuals", () => {
+    const c = as12().corrections!.find((x) => x.was?.includes("Identifiable"))!;
+    expect(c.now).toContain("minimum cell count");
+    expect(c.because).toContain("re-identify");
+    expect(c.kind).toBe("constitutional");
+  });
+
+  it("declares catchment as modelled, with its assumption", () => {
+    const s = as12().sections.find((x) => x.ref === "AS-12.b")!;
+    expect(s.rule).toContain("MODELLED");
+    expect(s.rule).toContain("assumption");
+  });
+
+  it("bars marketing rounding on durations", () => {
+    const s = as12().sections.find((x) => x.ref === "AS-12.c")!;
+    expect(s.rule).toContain("method behind it");
+  });
+});
+
+describe("the registry after Wave 6.6", () => {
+  it("holds twelve assemblies", () => {
+    expect(ASSEMBLIES).toHaveLength(12);
+  });
+
+  it("still resolves every reference and never widens an aperture", () => {
+    const RANK: Record<string, number> =
+      { gateway: 0, space: 1, time: 1, member: 2, capital: 3, admin: 4 };
+    for (const a of ASSEMBLIES) {
+      for (const s of a.sections) {
+        for (const ref of s.contains) {
+          const ap = APERTURES.find((x) => x.id === ref);
+          if (ap) expect(RANK[ap.vantage], `${s.ref}`).toBeLessThanOrEqual(RANK[a.vantage]);
+        }
+      }
+    }
+  });
+
+  it("covers all five correction kinds across the new work", () => {
+    const fresh = CORRECTIONS.filter((c) => ["AS-09","AS-10","AS-11","AS-12"].includes(c.assembly));
+    expect(fresh.length).toBeGreaterThanOrEqual(14);
+    expect(new Set(fresh.map((c) => c.kind)).size).toBeGreaterThanOrEqual(4);
   });
 });

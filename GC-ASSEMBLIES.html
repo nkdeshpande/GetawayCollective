@@ -358,7 +358,13 @@ section[data-sec]{padding:var(--s-2xl) 0;border-bottom:1px solid var(--hair)}
 .piston .ticks{position:absolute;inset:0;pointer-events:none;display:flex}
 .piston .ticks i{flex:1;border-right:1px solid rgba(242,242,242,.22)}
 .piston .ticks i:last-child{border-right:none}
-.piston[disabled]{border-color:var(--steel);opacity:.5}
+.piston[disabled]{border-color:var(--steel);opacity:.45;pointer-events:none}
+/* Settled is NOT disabled. The piston is inert because it fired, and its
+   label is now the record that capital moved — the last thing that should
+   be the dimmest on the screen. */
+.piston.settled{opacity:1;border-color:var(--confirm);pointer-events:none}
+.piston.settled .fill{background:var(--confirm)}
+.piston.settled .cap{mix-blend-mode:normal;color:var(--void)}
 
 /* ── Settled ─────────────────────────────────────────────────────── */
 .settled{border:1px solid var(--confirm);padding:var(--s-m);display:none}
@@ -392,6 +398,129 @@ th.num{text-align:right}
 
 .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ── AS-09 · Gallery Frame ───────────────────────────────────────── */
+/* Cinematic. One frame centred, the neighbours receding. Advances only
+   on intent — nothing auto-plays, so no pause control is owed and none
+   is faked. */
+.gal{position:relative;overflow:hidden;padding:var(--s-l) 0}
+.gal-track{display:flex;align-items:center;gap:2vw;
+  transition:transform 700ms var(--e-cinema);will-change:transform}
+@media (prefers-reduced-motion:reduce){ .gal-track{transition:none} }
+.gal-frame{flex:0 0 min(62vw,760px);aspect-ratio:4/3;position:relative;overflow:hidden;
+  border:1px solid var(--hair);background:var(--void-panel);
+  transition:opacity 700ms var(--e-cinema),filter 700ms var(--e-cinema)}
+.gal-frame:not(.is-on) .plate{opacity:.3;filter:grayscale(1)}
+.gal-frame:not(.is-on) .cap{opacity:0}  /* text at 32% is 2.61:1 — hide it, do not fade it */
+.gal-frame:not(.is-on) .xh{opacity:.3}
+@media (prefers-reduced-motion:reduce){ .gal-frame{transition:none} }
+.gal-frame .plate{position:absolute;inset:0}
+.gal-frame .scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.92) 0%,rgba(10,10,10,.15) 55%,transparent 100%)}
+.gal-frame .cap{position:absolute;inset:auto 0 0 0;padding:var(--s-l)}
+.gal-frame h3{font:600 clamp(28px,3.6vw,44px)/0.9 var(--f-display);
+  letter-spacing:-0.035em;text-transform:uppercase}
+/* Corner crosshairs — the one ornament kept from the source. */
+.xh{position:absolute;width:14px;height:14px;border:1px solid var(--hair)}
+.gal-frame.is-on .xh{border-color:var(--forest-light)}
+.xh.tl{top:14px;left:14px;border-right:none;border-bottom:none}
+.xh.tr{top:14px;right:14px;border-left:none;border-bottom:none}
+.xh.bl{bottom:14px;left:14px;border-right:none;border-top:none}
+.xh.br{bottom:14px;right:14px;border-left:none;border-top:none}
+/* Rail — every frame reachable directly, not only in sequence. */
+.gal-rail{display:flex;gap:var(--s-2xs);align-items:center;
+  margin-top:var(--s-m);flex-wrap:wrap}
+.gal-rail button{background:none;border:1px solid var(--hair);color:var(--steel-dim);
+  font:400 11px/1 var(--f-mono);letter-spacing:.1em;padding:var(--s-2xs) var(--s-xs);
+  transition:color var(--d-instant),border-color var(--d-instant)}
+.gal-rail button:hover{color:var(--ink-inv)}
+.gal-rail button[aria-current="true"]{color:var(--void);background:var(--copper);
+  border-color:var(--copper)}
+.gal-pos{margin-left:auto;color:var(--steel-dim)}
+
+/* ── AS-10 · Gallery Strip ───────────────────────────────────────── */
+/* Catalogue. Several frames comparable at once. The caption sits BELOW
+   the frame — text over an image is legible only against the part of the
+   image it happens to land on. */
+.strip{display:flex;gap:1px;background:var(--hair);border:1px solid var(--hair);
+  overflow-x:auto;scroll-snap-type:x mandatory;padding:1px}
+.strip-item{flex:0 0 min(46vw,300px);scroll-snap-align:start;background:var(--void);
+  display:flex;flex-direction:column}
+.strip-item .plate{aspect-ratio:3/4;position:relative;overflow:hidden}
+.strip-item .plate span{position:absolute;inset:0;
+  transition:transform 600ms var(--e-cinema)}
+.strip-item:hover .plate span{transform:scale(1.04)}
+@media (prefers-reduced-motion:reduce){ .strip-item .plate span{transition:none} }
+.strip-cap{padding:var(--s-s) var(--s-xs) var(--s-m)}
+.strip-cap .nm{display:block;margin-bottom:2px}
+.strip-cap .sub{color:var(--steel-dim)}
+
+/* ── AS-11 · Stage Progression ───────────────────────────────────── */
+.stages{display:flex;gap:1px;background:var(--hair);border:1px solid var(--hair);
+  min-width:900px}
+.stage{flex:1;background:var(--void-panel);padding:var(--s-s);
+  display:flex;flex-direction:column;gap:var(--s-2xs);min-width:0}
+.stage.now{background:var(--void);border-top:2px solid var(--copper);padding-top:14px}
+.stage .n{color:var(--steel)}
+.stage .t{line-height:1.2;word-break:break-word}
+.stage.done .t{color:var(--steel-dim)}
+.stage.now .t{color:var(--copper)}
+.stage .st{margin-top:auto;padding-top:var(--s-2xs)}
+
+.matrix{min-width:1080px;border-collapse:collapse;font-size:12px}
+.matrix th{position:sticky;top:0;background:var(--void);z-index:2;padding:var(--s-2xs);
+  border-bottom:1px solid var(--hair);vertical-align:bottom;font-size:10px;
+  color:var(--steel-dim)}  /* steel is 3.72 — below AA at 10px */
+.matrix th.role{left:0;z-index:3;text-align:left;min-width:150px;max-width:150px}
+.matrix td{padding:var(--s-2xs);border-bottom:1px solid rgba(242,242,242,.06);
+  border-right:1px solid rgba(242,242,242,.06);vertical-align:top;min-width:118px}
+.matrix td.role{position:sticky;left:0;background:var(--void);z-index:1;
+  min-width:150px;max-width:150px;border-right:1px solid var(--hair)}
+.matrix tbody tr:hover td{background:rgba(242,242,242,.03)}
+.matrix tbody tr:hover td.role{background:var(--void-panel)}
+.matrix td.now{background:rgba(199,159,107,.05)}
+/* Onboard and offboard are STATES, not decoration. */
+.mk{display:inline-block;font:400 9px/1.4 var(--f-mono);letter-spacing:.1em;
+  text-transform:uppercase;padding:1px 5px;margin-bottom:3px;white-space:nowrap}
+.mk.on{color:var(--confirm);border:1px solid var(--confirm)}
+.mk.off{color:var(--steel-dim);border:1px solid var(--hair)}
+.mk.veto{color:var(--void);background:var(--critical)}
+.dv{display:block;color:var(--steel-dim);line-height:1.35;margin-bottom:2px}
+.dv::before{content:"";display:inline-block;width:3px;height:3px;background:var(--steel);
+  vertical-align:2px;margin-right:5px}
+.dv.v{color:var(--critical)}
+.dv.v::before{background:var(--critical)}
+/* A role absent from a stage says so. A blank cell reads as an omission. */
+.absent{color:var(--steel-dim)}  /* NOT opacity: .5 on steel renders #3B3B3B at 1.77:1 */
+
+.vetoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:var(--s-s)}
+.veto{border:1px solid var(--critical);padding:var(--s-m);background:var(--void-panel)}
+.veto .who{color:var(--critical);margin-bottom:var(--s-2xs)}
+
+/* ── AS-12 · Location ────────────────────────────────────────────── */
+.loc{display:grid;grid-template-columns:1fr 420px;gap:1px;background:var(--hair);
+  border:1px solid var(--hair)}
+@media (max-width:900px){ .loc{grid-template-columns:1fr} }
+.map{background:var(--void-panel);position:relative;min-height:420px;overflow:hidden}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.ring{fill:none;stroke:var(--forest-light);stroke-dasharray:3 5}  /* full strength: 4.37:1 */
+.ring-fill{fill:var(--forest-light);opacity:.05}
+.site{fill:var(--copper)}
+.poi{fill:var(--steel-dim);cursor:pointer}
+.poi.sel{fill:var(--copper)}
+.map-legend{position:absolute;left:var(--s-s);bottom:var(--s-s);
+  background:rgba(10,10,10,.88);border:1px solid var(--hair);padding:var(--s-2xs) var(--s-xs)}
+.loc-panel{background:var(--void);padding:var(--s-m);max-height:620px;overflow-y:auto}
+/* The panel is a LIST first. Pins select within it; they are not the only
+   way in. A 24px pin is a fine shortcut and a poor sole route. */
+.poi-row{width:100%;text-align:left;background:none;border:none;
+  border-bottom:1px solid var(--hair);padding:var(--s-xs) 0;color:inherit;
+  display:flex;justify-content:space-between;gap:var(--s-s);align-items:baseline}
+.poi-row:hover{background:rgba(242,242,242,.03)}
+.poi-row[aria-current="true"]{border-left:2px solid var(--copper);padding-left:var(--s-2xs)}
+.poi-row .d{color:var(--steel-dim);font-family:var(--f-mono);white-space:nowrap}
+.win{color:var(--steel-dim);white-space:nowrap}
+
 [hidden]{display:none !important}
 </style>
 </head>
@@ -414,6 +543,10 @@ th.num{text-align:right}
       <button data-go="AS-04">AS-04 Capital</button>
       <button data-go="AS-05">AS-05 Member</button>
       <button data-go="AS-06">AS-06 Commit</button>
+      <button data-go="AS-09">AS-09 Frame</button>
+      <button data-go="AS-10">AS-10 Strip</button>
+      <button data-go="AS-11">AS-11 Stages</button>
+      <button data-go="AS-12">AS-12 Location</button>
     </nav>
   </div>
 </header>
@@ -1262,6 +1395,492 @@ A["AS-06"] = { vantage:"capital", render: () => {
   </div>
 </section>` } };
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-09 / AS-10 · THE GALLERY PAIR
+
+   Two shapes, deliberately not interchangeable. AS-09 shows one thing
+   beautifully; AS-10 shows five things comparably. Using either for the
+   other's job gives you a gallery that is pretty and useless, or complete
+   and inert.
+
+   Both read from the same PROPERTIES array as every other screen.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const VIEWS = [
+  { t:"Kyoto House",  s:"Higashiyama · Machiya restoration", h:158 },
+  { t:"Swiss Vault",  s:"Valais · Passive house",            h:198 },
+  { t:"Oslo Base",    s:"Vestland · Mass timber",            h:172 },
+  { t:"Coastal Study",s:"Kerala · Feasibility",              h:142 },
+  { t:"Nagano Ridge", s:"Chubu · Under assessment",          h:186 },
+];
+/* Plates stand in for photography. Derived from the forest token so the
+   placeholder is system-coloured rather than hand-picked. */
+const plate = (h) =>
+  `background:linear-gradient(145deg,hsl(${h} 34% 26%) 0%,hsl(${h} 30% 13%) 55%,var(--void) 100%)`;
+
+A["AS-09"] = { vantage:"gateway", render: () => `
+<section data-sec="AS-09.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-09.a</span>
+      <span class="t-micro label">Gallery Frame · cinematic</span></div>
+    <h1 class="t-display-l">Places</h1>
+    <p class="t-body dim measure" style="margin-top:var(--s-2xs)">
+      A gallery is an aperture set to its narrowest. It shows a place and its name, and nothing
+      that would need its provenance beside it.
+    </p>
+  </div>
+
+  <div class="gal">
+    <div class="gal-track" id="galTrack">
+      ${VIEWS.map((v,i)=>`
+        <figure class="gal-frame${i===0?" is-on":""}" data-gi="${i}"
+                aria-hidden="${i===0?"false":"true"}">
+          <span class="plate" style="${plate(v.h)}" aria-hidden="true"></span>
+          <span class="scrim" aria-hidden="true"></span>
+          <span class="xh tl"></span><span class="xh tr"></span>
+          <span class="xh bl"></span><span class="xh br"></span>
+          <figcaption class="cap">
+            <span class="t-micro label" style="display:block;margin-bottom:var(--s-2xs)">
+              ${String(i+1).padStart(2,"0")} / ${String(VIEWS.length).padStart(2,"0")}</span>
+            <h3>${esc(v.t)}</h3>
+            <p class="t-body-s dim" style="margin-top:var(--s-2xs)">${esc(v.s)}</p>
+          </figcaption>
+        </figure>`).join("")}
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="gal-rail" role="group" aria-label="Gallery frames">
+      ${VIEWS.map((v,i)=>`<button data-gj="${i}" aria-current="${i===0}"
+        aria-label="Frame ${i+1}: ${esc(v.t)}">${String(i+1).padStart(2,"0")}</button>`).join("")}
+      <span class="gal-pos t-mono-s" id="galPos" role="status" aria-live="polite">
+        Frame 1 of ${VIEWS.length} · ${esc(VIEWS[0].t)}</span>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> Arrow keys, Home and End move between frames, and every frame has
+        its own rail button. The source was reachable by drag, wheel and touch only — a keyboard has no
+        drag, so it had no navigation at all.</span>
+      <span class="fix"><b>Fixed</b> A finite set with its position stated. The source ran an infinite
+        triple-buffered track, which gives no way to know whether you have seen everything — the one
+        question a gallery has to answer.</span>
+      <span class="fix"><b>Rule</b> Nothing auto-plays. It advances only on intent, so no pause control
+        is owed and none is faked.</span>
+      <span class="fix"><b>Rule</b> Void ground. The reference sits on light, but the ground inversion
+        is bidirectional: paper marks a financial claim. A gallery on paper would spend that signal on
+        scenery, and the waterfall would stop meaning anything.</span>
+    </div>
+  </div>
+</section>` };
+
+A["AS-10"] = { vantage:"space", render: () => `
+<section data-sec="AS-10.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-10.a</span>
+      <span class="t-micro label">Gallery Strip · catalogue</span></div>
+    <h1 class="t-display-l">The collection</h1>
+    <p class="t-body dim measure" style="margin-top:var(--s-2xs);margin-bottom:var(--s-l)">
+      The same frames, arranged for comparison rather than persuasion. Five visible at once, each
+      captioned with what it is.
+    </p>
+
+    <div class="strip" tabindex="0" role="region" aria-label="Property strip, scrollable">
+      ${VIEWS.concat(VIEWS.slice(0,2)).map((v,i)=>`
+        <article class="strip-item">
+          <div class="plate"><span style="${plate(v.h)}"></span></div>
+          <div class="strip-cap">
+            <span class="nm t-body">${esc(v.t)}</span>
+            <span class="sub t-body-s">${esc(v.s)}</span>
+          </div>
+        </article>`).join("")}
+    </div>
+    <p class="t-mono-s dim" style="margin-top:var(--s-2xs)">
+      7 properties · scroll or use the arrow keys
+    </p>
+
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> The caption sits BELOW the frame, never over it. Text over an image
+        is legible only against the part of the image it happens to land on.</span>
+      <span class="fix"><b>Rule</b> No valuation and no yield in a caption. A figure in a scrolling strip
+        is read at a glance and compared against its neighbour — which is exactly the comparison
+        provenance exists to qualify.</span>
+      <span class="fix"><b>Fixed</b> Captions are body-s at steelDim, not all-caps micro at 3:1. Caps at
+        that size and contrast is decoration that happens to contain words.</span>
+      <span class="fix"><b>Fixed</b> The strip scrolls in its own container with its count stated. The
+        source bled off the right edge and relied on the viewer guessing there was more.</span>
+    </div>
+  </div>
+</section>` };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-11 · THE STAGE PROGRESSION
+
+   Eight stages, eighteen roles. A MATRIX, not a timeline — a timeline
+   implies each stage ends before the next begins, and half these roles
+   run across four stages at once.
+
+   VOCABULARY BOUNDARY: the deliverables come from the delivery side,
+   which is a different entity with its own language. §25 governs the
+   investment platform, not the Operating Company's internal documents.
+   The terms are translated here, at the boundary, and the mapping is
+   recorded rather than applied invisibly.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const STAGES = [
+  { n:"0", t:"Strategic Definition" }, { n:"1", t:"Preparation & Brief" },
+  { n:"2", t:"Concept Design" },       { n:"3", t:"Developed Design" },
+  { n:"4", t:"Technical Design" },     { n:"5", t:"Construction" },
+  { n:"6", t:"Handover & Launch" },    { n:"7", t:"In Use" },
+];
+const NOW = 4;   // from the Property lifecycle field. Never a second copy.
+
+/* "on" onboard · "off" offboard · "-" absent · array = deliverables
+   A leading "!" marks a VETO. */
+const R = (name, cells) => ({ name, cells });
+const ROLES = [
+  R("The Founder", [
+    ["on","Platform Invariants","Vibe Contract Spec","Failure Containment"],
+    ["!Site Go/No-Go Veto"],
+    ["Sensory Threshold Lock","State Architecture Def."],
+    ["Sensory Calibration","Traceability Matrix"],
+    ["Digital Twin Blueprint","Master Exec. Programme"],
+    ["!Site Defect Veto"],
+    ["Continuous Alignment","Digital Twin Asset Reg.","Pre-Arrival Scripts"],
+    ["Sensory Compliance Log","System Drift Oversight","!Ultimate Escalation"]]),
+  R("Marketing Lead", [
+    ["on","Sensory Intent Charter"],
+    ["Narrative Brand Guide","Demographics Mapping"],
+    ["UI/UX Wireframes","Content Strategy Lock"],
+    ["Pre-Launch Teasers","AIDA Funnel Setup"],
+    ["Marketing Positioning","Early Access Promos"],
+    ["-"],
+    ["LAUNCH","Open for occupancy","PR & Partner Rituals","Launch Offers"],
+    ["Narrative Audits","off"]]),
+  R("Statutory Approvals", [
+    ["on","Regulatory Mapping","Invariants List"],
+    ["Feasibility Truth Reg.","Initial Filings"],
+    ["Clearances Follow-up"], ["Final Building Permits"],
+    ["-"], ["Monitoring"], ["Operating Licenses"], ["off"]]),
+  R("Civil Lead", [
+    ["on","Site Red-Flag Thresholds"],
+    ["Site Intelligence Report","Earthwork Balancing"],
+    ["Grading & Topography"], ["Infrastructure Spines"],
+    ["-"], ["off"], ["-"], ["-"]]),
+  R("Lead Architect", [
+    ["-"], ["on","Typology Envelope"],
+    ["Universal Site Blueprint"], ["Site-Adapted BIM · LOD 300"],
+    ["GFC Construction Pack"], ["RFI Support"], ["off"], ["-"]]),
+  R("Automation Principal", [
+    ["-"], ["-"], ["on","Control State Machine"],
+    ["I/O Master Taxonomy","Network Topology"],
+    ["Automation GFC","Off-site Kernel Testing"],
+    ["!Local Node Pull-Plug Cert"], ["off"], ["-"]]),
+  R("MEP Design Manager", [
+    ["-"], ["-"], ["on","Equipment Class Defs"],
+    ["Failure Fallback Logic","Coordinated MEP Dwg"],
+    ["ICD Connection Details"], ["RFI Support"], ["off"], ["-"]]),
+  R("Structural Lead", [
+    ["-"], ["-"], ["on","Chassis Standards"],
+    ["Mivan Tolerance Spec","Foundation Design"],
+    ["Structural GFCs"], ["QA Observation"], ["off"], ["-"]]),
+  R("Acoustics Consultant", [
+    ["-"], ["on","Acoustic Performance Spec"],
+    ["Soundscape Modeling"], ["Material Sound Mapping"],
+    ["Final Mitigation Specs"], ["Monitoring"], ["Acoustic Test Reports","off"], ["-"]]),
+  R("Deployment Commander", [
+    ["-"], ["-"], ["-"], ["-"],
+    ["on","Logistics Blueprint","4-Day Takt Log"],
+    ["Site Execution Plan"], ["off"], ["-"]]),
+  R("PMC", [
+    ["-"], ["on","Cost/Time Baseline"],
+    ["Budget Allocation Matrix"], ["Invariant Compliance Clauses"],
+    ["Site Risk Log"], ["Change Impact Reg."],
+    ["Practical Completion Cert","off"], ["-"]]),
+  R("Landscape Principal", [
+    ["-"], ["-"], ["on","Sensory Buffering Stds"],
+    ["Fragrance Belt Spec"], ["Nursery Procurement"],
+    ["Planting Schedule Exec."], ["Sensory Buffer Verification","off"], ["-"]]),
+  R("EPCC Interface", [
+    ["-"], ["-"], ["-"], ["on","ICD Master Manual"],
+    ["Responsibility Matrix"], ["Interface Verification","IRM Log"], ["off"], ["-"]]),
+  R("Lighting Lead", [
+    ["-"], ["-"], ["on","Dimming Curve Stds"],
+    ["Scene Token Settings","DALI Network Design"],
+    ["Fixture Procurement"], ["Installation Supervision","Kelvin Shift Audit"],
+    ["Lux Audit Lock","off"], ["-"]]),
+  R("Operations Strategist", [
+    ["-"], ["-"], ["-"], ["-"],
+    ["on","Algorithmic Triage Setup"],
+    ["Staff OS Logic Config"], ["Dry-Run Operations"],
+    ["Labor Efficiency Tracking","Triage Response Logs"]]),
+  R("O&M Strategist", [
+    ["-"], ["-"], ["-"], ["-"],
+    ["on","Spares Philosophy"], ["O&M Manuals","CMMS Setup"],
+    ["Asset Health Dashboards"], ["Spares Inventory Log"]]),
+  R("Vibe Guardians", [
+    ["-"], ["-"], ["-"], ["-"], ["-"],
+    ["on","Ritual Script Training"],
+    ["First Occupancy Simulations"],
+    ["Ritual Performance Logs","Reset Score Reports"]]),
+  R("Maintenance Leads", [
+    ["-"], ["-"], ["-"], ["-"], ["-"],
+    ["on","Shadow Fix Training"],
+    ["Predictive Maintenance"], ["MTTR Logs"]]),
+];
+
+/* Every role must carry an explicit onboard AND an explicit exit. Eleven
+   of the eighteen leave before Stage 7; without a stated exit, a role
+   that has gone still reads as accountable. Checked, not assumed. */
+(function boundaries(){
+  const missing = ROLES.filter(r => {
+    const flat = r.cells.flat();
+    const onboards = flat.includes("on");
+    const exits = flat.includes("off") || r.cells[7].some(c => c !== "-");
+    return !onboards || !exits;
+  }).map(r => r.name);
+  if (missing.length) throw new Error("Roles with no onboard or no exit: " + missing.join(", "));
+})();
+
+const VETOES = [
+  { who:"The Founder", w:"Stage 1", t:"Site Go/No-Go",
+    d:"Stops acquisition outright. The last point before capital is committed to a location." },
+  { who:"The Founder", w:"Stage 5", t:"Site Defect",
+    d:"Halts construction on a defect the programme would otherwise absorb." },
+  { who:"Automation Principal", w:"Stage 5", t:"Local Node Pull-Plug",
+    d:"Certifies that every automated system fails safe when its network does. Nothing hands over without it." },
+  { who:"The Founder", w:"Stage 7", t:"Ultimate Escalation",
+    d:"The final hold in operation, after every other route has been used." },
+];
+
+A["AS-11"] = { vantage:"capital", render: () => `
+<section data-sec="AS-11.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-11.a</span>
+      <span class="t-micro label">Stage Rail</span></div>
+    <h1 class="t-display-l">Kyoto House · programme</h1>
+    <p class="t-body dim" style="margin:var(--s-2xs) 0 var(--s-l)">
+      Stage ${STAGES[NOW].n} · ${esc(STAGES[NOW].t)} — from the Property lifecycle field.
+    </p>
+    <div class="scroll-x">
+      <div class="stages">
+        ${STAGES.map((st,i)=>`
+          <div class="stage ${i<NOW?"done":i===NOW?"now":""}">
+            <span class="n t-mono-s">STAGE ${st.n}</span>
+            <span class="t t-body-s">${esc(st.t)}</span>
+            <span class="st t-mono-s ${i<NOW?"dim":""}">
+              ${i<NOW?"Complete":i===NOW?"<span style='color:var(--copper)'>Current</span>":"Ahead"}</span>
+          </div>`).join("")}
+      </div>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> A matrix, not a timeline. A timeline implies each stage ends before
+        the next begins; half these roles run across four stages at once, and the week bars made that
+        unreadable.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-11.b">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-11.b</span>
+      <span class="t-micro label">Role Matrix · 18 roles × 8 stages</span></div>
+    <div class="scroll-x" tabindex="0" role="region" aria-label="Role matrix, scrollable">
+      <table class="matrix">
+        <thead><tr><th class="role">Role</th>
+          ${STAGES.map((s,i)=>`<th${i===NOW?' style="color:var(--copper)"':''}>
+            ${s.n} · ${esc(s.t)}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${ROLES.map(r=>`<tr>
+            <td class="role t-body-s">${esc(r.name)}</td>
+            ${r.cells.map((c,i)=>{
+              if (c[0] === "-") return `<td class="${i===NOW?"now":""}">
+                <span class="absent t-mono-s">not engaged</span></td>`;
+              return `<td class="${i===NOW?"now":""}">${c.map(d=>{
+                if (d === "on")  return `<span class="mk on">Onboard</span>`;
+                if (d === "off") return `<span class="mk off">Offboard</span>`;
+                if (d.startsWith("!")) return `<span class="dv v">${esc(d.slice(1))}</span>`;
+                return `<span class="dv">${esc(d)}</span>`;
+              }).join("")}</td>`;
+            }).join("")}
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> Onboard and offboard are states, and a role not yet engaged says
+        <em>not engaged</em>. A blank cell would read as an omission.</span>
+      <span class="fix"><b>Fixed</b> <code>Studio Typology Env.</code> → Typology Envelope,
+        <code>Open Bookings</code> → Open for occupancy, <code>First Guest Simulations</code> → First
+        Occupancy Simulations, <code>Guest Reset Score</code> → Reset Score. §25 forbids all three terms
+        on the platform. They are not censored at source — they are translated at the boundary, because
+        the delivery side is a different entity with its own language.</span>
+      <span class="fix"><b>Fixed</b> Every role carries an explicit onboard and an explicit exit, checked
+        at load. Eleven of the eighteen leave before Stage 7; without a stated exit, a role that has gone
+        still reads as accountable.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-11.c" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-11.c</span>
+      <span class="t-micro label">Holds and Vetoes</span></div>
+    <p class="t-body dim measure" style="margin-bottom:var(--s-m)">
+      Four points where one person can stop the programme.
+    </p>
+    <div class="vetoes">
+      ${VETOES.map(v=>`<div class="veto">
+        <span class="mk veto">Veto</span>
+        <h3 class="t-subheading" style="margin:var(--s-2xs) 0">${esc(v.t)}</h3>
+        <div class="who t-mono-s">${esc(v.who)} · ${esc(v.w)}</div>
+        <p class="t-body-s dim">${esc(v.d)}</p>
+      </div>`).join("")}
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> Vetoes are surfaced separately at IL-1 with their holder named. The
+        source listed them inline among ordinary deliverables, which is how a hold gets missed.</span>
+    </div>
+  </div>
+</section>` };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-12 · LOCATION INTELLIGENCE
+
+   Every figure here is Market Intelligence — the weakest-sourced object
+   in the registry. Most of it modelled or estimated, almost none of it
+   observed. So this screen carries more confidence tags per square inch
+   than any other, and that is correct rather than noisy.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const RINGS = [
+  { r:30, km:"0–30 km", pop:"412,000", drive:"under 45 min", conf:"modelled",
+    basis:"2021 census tracts, 40 km/h road-network average" },
+  { r:58, km:"30–90 km", pop:"1,860,000", drive:"45–110 min", conf:"modelled",
+    basis:"Same tracts, expressway segments at posted limits" },
+  { r:86, km:"90–180 km", pop:"9,240,000", drive:"110 min – 3 hr", conf:"estimated",
+    basis:"Prefecture totals apportioned by area. Coarse." },
+];
+const ACCESS = [
+  { n:"Kansai Int'l (KIX)", d:"1 hr 42 min", m:"rail + transfer", conf:"observed", x:22, y:74 },
+  { n:"Kyoto Station",      d:"18 min",      m:"road",            conf:"observed", x:44, y:58 },
+  { n:"Osaka (Umeda)",      d:"54 min",      m:"rail",            conf:"observed", x:20, y:66 },
+  { n:"Nagoya",             d:"2 hr 11 min", m:"shinkansen",      conf:"observed", x:78, y:44 },
+  { n:"Higashiyama access", d:"6 min",       m:"walk",            conf:"observed", x:56, y:50 },
+];
+const FOOTFALL = [
+  { m:"Ward visitor count", v:"5.28 M", w:"12 mo to Mar 2026", conf:"verified",
+    src:"Kyoto City tourism board" },
+  { m:"Peak-month share",   v:"14.2%",  w:"Nov 2025",          conf:"observed",
+    src:"Same series" },
+  { m:"Trough-month share", v:"4.1%",   w:"Feb 2026",          conf:"observed",
+    src:"Same series" },
+  { m:"Forward 12-mo",      v:"5.6 M",  w:"to Mar 2027",       conf:"forecast",
+    src:"Trend extension. Not a booking signal." },
+];
+
+A["AS-12"] = { vantage:"space", render: () => `
+<section data-sec="AS-12.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-12.a</span>
+      <span class="t-micro label">Location Intelligence</span></div>
+    <h1 class="t-display-l">Who can reach it</h1>
+    <p class="t-body dim measure" style="margin:var(--s-2xs) 0 var(--s-l)">
+      Every figure on this screen is Market Intelligence, which is the weakest-sourced object in the
+      registry. It carries more confidence tags than any other screen, and that is correct.
+    </p>
+
+    <div class="loc">
+      <div class="map">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img"
+             aria-label="Catchment map. Every point plotted here is also listed as text on the right.">
+          ${RINGS.slice().reverse().map(r=>`
+            <circle class="ring-fill" cx="56" cy="50" r="${r.r}"/>
+            <circle class="ring" cx="56" cy="50" r="${r.r}" stroke-width="0.4"/>`).join("")}
+          ${ACCESS.map((a,i)=>`<circle class="poi" data-poi="${i}" cx="${a.x}" cy="${a.y}" r="1.7"/>`).join("")}
+          <rect class="site" x="54.6" y="48.6" width="2.8" height="2.8"/>
+        </svg>
+        <div class="map-legend t-mono-s dim">
+          Site · ${esc(PROPERTIES[0].ufr0063)} — rings at 30 / 90 / 180 km
+        </div>
+      </div>
+
+      <div class="loc-panel">
+        <span class="t-micro label">Access points</span>
+        <p class="t-body-s dim" style="margin:var(--s-2xs) 0 var(--s-s)">
+          A list first. The pins select within it; they are not the only way in.
+        </p>
+        <div role="group" aria-label="Access points">
+          ${ACCESS.map((a,i)=>`
+            <button class="poi-row" data-poirow="${i}" aria-current="${i===0}">
+              <span>
+                <span class="t-body">${esc(a.n)}</span><br>
+                <span class="t-body-s dim">${esc(a.m)}</span>
+              </span>
+              <span class="d t-mono-s">${esc(a.d)}<br>
+                <span style="font-size:10px">${CONF[a.conf]}</span></span>
+            </button>`).join("")}
+        </div>
+        <div class="fixes">
+          <span class="fix"><b>Fixed</b> The source made detail reachable only by clicking a 24px pin on
+            a pannable map. A fine shortcut, a poor sole route — anyone without a precise pointer had no
+            access to the content at all.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-12.b">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-12.b</span>
+      <span class="t-micro label">Catchment</span></div>
+    <div class="panel on-panel scroll-x">
+      <table>
+        <thead><tr><th>Ring</th><th class="num">Population</th><th>Drive time</th>
+          <th>Confidence</th><th>Basis</th></tr></thead>
+        <tbody>${RINGS.map(r=>`<tr>
+          <td class="t-mono-s">${esc(r.km)}</td>
+          <td class="num">${PROVISIONAL.has(r.conf)?'<span class="prov">~</span>':''}${esc(r.pop)}</td>
+          <td class="t-mono-s dim">${esc(r.drive)}</td>
+          <td>${tag(r.conf)}</td>
+          <td class="t-body-s dim">${esc(r.basis)}</td></tr>`).join("")}</tbody>
+      </table>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> Catchment is modelled. Each ring states the assumption it was drawn
+        from, because a ring on a map is a claim about roads, not about distance.</span>
+      <span class="fix"><b>Rule</b> Every figure plotted on the map also appears here as text. A map is
+        unreadable to a screen reader and awkward at any small size.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-12.d" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-12.d</span>
+      <span class="t-micro label">Demand Evidence</span></div>
+    <div class="panel on-panel scroll-x">
+      <table>
+        <thead><tr><th>Measure</th><th class="num">Value</th><th>Window</th>
+          <th>Confidence</th><th>Source</th></tr></thead>
+        <tbody>${FOOTFALL.map(f=>`<tr>
+          <td class="t-body-s">${esc(f.m)}</td>
+          <td class="num">${PROVISIONAL.has(f.conf)?'<span class="prov">~</span>':''}${esc(f.v)}</td>
+          <td class="win t-mono-s">${esc(f.w)}</td>
+          <td>${tag(f.conf)}</td>
+          <td class="t-body-s dim">${esc(f.src)}</td></tr>`).join("")}</tbody>
+      </table>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> The measurement window renders beside the figure at the same weight.
+        Footfall over an unnamed period is not a quantity — it is a number that resembles one.</span>
+      <span class="fix"><b>Fixed</b> Aggregates only. The reference plotted named individuals at known
+        current locations, which is a privacy exposure regardless of who is looking — and thin cells
+        re-identify people even after the names come off.</span>
+    </div>
+  </div>
+</section>` };
+
 /* ═══════════════════════════════════════════════════════════════════
    NAVIGATION
    ═══════════════════════════════════════════════════════════════════ */
@@ -1420,7 +2039,8 @@ function wire(){
     const fire = () => {
       done = true; timer = null;
       cap.textContent = "Committed";
-      piston.disabled = true;
+      piston.classList.add("settled");
+      piston.setAttribute("aria-disabled", "true");
       document.getElementById("settled").classList.add("on");
       document.getElementById("st4").dataset.state = "done";
       const st = document.getElementById("anchorState");
@@ -1433,6 +2053,50 @@ function wire(){
     piston.addEventListener("keydown", start);
     ["pointerup","pointerleave","pointercancel","keyup","blur"].forEach(ev =>
       piston.addEventListener(ev, stop));
+  }
+
+
+  /* AS-09 — gallery. Arrow keys, Home/End, and a rail button per frame. */
+  const track = document.getElementById("galTrack");
+  if (track){
+    const frames = [...track.querySelectorAll(".gal-frame")];
+    const rail = [...stage.querySelectorAll("[data-gj]")];
+    const pos = document.getElementById("galPos");
+    let gi = 0;
+    const show = (n) => {
+      gi = Math.max(0, Math.min(frames.length - 1, n));
+      const f = frames[gi];
+      const shift = f.offsetLeft - (track.parentElement.clientWidth - f.offsetWidth) / 2;
+      track.style.transform = `translateX(${-shift}px)`;
+      frames.forEach((x,i) => {
+        x.classList.toggle("is-on", i === gi);
+        x.setAttribute("aria-hidden", i !== gi);
+      });
+      rail.forEach((b,i) => b.setAttribute("aria-current", i === gi));
+      pos.textContent = `Frame ${gi+1} of ${frames.length} · ${VIEWS[gi].t}`;
+    };
+    rail.forEach((b,i) => b.addEventListener("click", () => show(i)));
+    stage.addEventListener("keydown", e => {
+      if (!e.target.closest(".gal-rail")) return;
+      const k = { ArrowRight:gi+1, ArrowLeft:gi-1, Home:0, End:frames.length-1 }[e.key];
+      if (k === undefined) return;
+      e.preventDefault(); show(k); rail[gi].focus();
+    });
+    requestAnimationFrame(() => show(0));
+    addEventListener("resize", () => show(gi), { passive:true });
+  }
+
+  /* AS-12 — pins and rows are two routes to the same selection. */
+  const rows = [...stage.querySelectorAll("[data-poirow]")];
+  const pins = [...stage.querySelectorAll("[data-poi]")];
+  if (rows.length){
+    const pick = (i) => {
+      rows.forEach((r,n) => r.setAttribute("aria-current", n === i));
+      pins.forEach((p,n) => p.classList.toggle("sel", n === i));
+      rows[i].scrollIntoView({ block:"nearest" });
+    };
+    rows.forEach((r,i) => r.addEventListener("click", () => pick(i)));
+    pins.forEach((p,i) => p.addEventListener("click", () => { pick(i); rows[i].focus(); }));
   }
 
   /* Aperture ring grows over an aperture. */

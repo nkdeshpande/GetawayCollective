@@ -205,8 +205,17 @@ for (const a of ASSEMBLIES) {
     if (locked.size === 0) {
       fail.push("Parsed zero locked colours from tokens.ts. Refusing to check vacuously.");
     } else {
-      const css = h.slice(h.indexOf("<style>"), h.indexOf("</style>"));
-      const inline = (h.match(/style="[^"]*"/g) || []).join(" ");
+      // Strip CSS and HTML comments first. A hex inside a comment is
+      // DOCUMENTING a defect — "opacity .5 on steel renders #3B3B3B at
+      // 1.77:1" — which is the opposite of committing one. This is the
+      // same distinction the vocabulary linter draws with backtick spans,
+      // and the third place it has been needed, so it is worth naming:
+      // a check that cannot tell a record from a use will always flag the
+      // record, because the record is where the defect is written down.
+      const css = h
+        .slice(h.indexOf("<style>"), h.indexOf("</style>"))
+        .replace(/\/\*[\s\S]*?\*\//g, " ");
+      const inline = (h.replace(/<!--[\s\S]*?-->/g, " ").match(/style="[^"]*"/g) || []).join(" ");
       const used = new Set(
         ((css + inline).match(/#[0-9A-Fa-f]{6}\b/g) || []).map((c) => c.toUpperCase()),
       );

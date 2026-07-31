@@ -785,6 +785,292 @@ export const STORY_PLAYBACK: Assembly = {
 
 // ─────────────────────────────────────────────────────────────────────
 
+
+// -----------------------------------------------------------------
+// THE GALLERY PAIR - two shapes, deliberately not interchangeable
+// -----------------------------------------------------------------
+
+/**
+ * AS-09 - THE GALLERY FRAME
+ *
+ * The cinematic one. One card held at a time, dragged, large. For the
+ * gateway, where the job is to make someone want to look closer.
+ *
+ * A gallery is an aperture set to its narrowest: it shows a place and its
+ * name, and nothing that would need provenance beside it.
+ */
+export const GALLERY_FRAME: Assembly = {
+  id: "AS-09",
+  name: "The Gallery Frame",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Show places at full bleed, one at a time, to someone who has decided nothing yet.",
+  answers: "What do these places look like, and do I want to see more?",
+  sections: [
+    S("AS-09.a", "Frame", "feature",
+      "One card centred at a time. Drag, arrow keys, or the rail.",
+      ["AP-01"],
+      "Advances only on intent. Nothing auto-plays, so no pause control is owed and none is faked."),
+    S("AS-09.b", "Rail", "onward",
+      "Position in the set, and a route to every frame directly.",
+      [],
+      "Every frame is reachable without passing through the others. A gallery that can only be " +
+      "traversed in order is a slideshow."),
+  ],
+  corrections: [
+    {
+      source: "GallerySection+GalleryFrame.html",
+      was: "Cards reachable only by drag, wheel and touch.",
+      now: "Arrow keys, Home and End, plus a focusable rail control per frame.",
+      because: "Drag is a pointer gesture. A keyboard has no drag, so the gallery had no navigation.",
+      kind: "accessibility",
+    },
+    {
+      source: "GallerySection+GalleryFrame.html",
+      was: "An infinite triple-buffered track with no announced position.",
+      now: "A finite set, with position stated as text.",
+      because:
+        "An endless carousel gives no way to know whether you have seen everything, which is the " +
+        "only question a gallery has to answer.",
+      kind: "interaction",
+    },
+    {
+      source: "Fanned-card reference",
+      was: "The fanned gallery sits on a light ground.",
+      now: "Void ground. The gallery persuades; it asserts nothing.",
+      because:
+        "The ground inversion is bidirectional and cannot be overridden per screen. Paper marks a " +
+        "financial claim, so a gallery on paper would spend that signal on scenery and the " +
+        "waterfall would stop meaning anything.",
+      kind: "constitutional",
+    },
+  ],
+};
+
+/**
+ * AS-10 - THE GALLERY STRIP
+ *
+ * The catalogue one. Several frames visible at once, each captioned with
+ * what it is. For the space vantage, where someone is comparing rather
+ * than being persuaded.
+ *
+ * The pair is deliberate. AS-09 shows one thing beautifully; AS-10 shows
+ * five things comparably. Using either for the other's job gives you a
+ * gallery that is pretty and useless, or complete and inert.
+ */
+export const GALLERY_STRIP: Assembly = {
+  id: "AS-10",
+  name: "The Gallery Strip",
+  route: "space",
+  vantage: "space",
+  intent: "Let someone compare several properties, or several views of one, side by side.",
+  answers: "How do these compare, and which one do I want to open?",
+  sections: [
+    S("AS-10.a", "Strip", "grid",
+      "Frames in a horizontal run, each captioned beneath the image.",
+      ["AP-03", "O-01"],
+      "The caption sits BELOW the frame, never over it. Text over an image is legible only against " +
+      "the part of the image it happens to land on."),
+    S("AS-10.b", "Caption Rule", "narrative",
+      "What a caption may carry: name, jurisdiction, lifecycle state.",
+      [],
+      "No valuation and no yield in a caption. A figure in a scrolling strip is read at a glance and " +
+      "compared against its neighbour, which is exactly the comparison provenance exists to qualify."),
+  ],
+  corrections: [
+    {
+      source: "Gallery-strip reference",
+      was: "Captions in all-caps micro type at roughly 3:1, over full-bleed images.",
+      now: "Caption in body-s at steelDim, name in body, below the frame.",
+      because: "Caps at that size and contrast is decoration that happens to contain words.",
+      kind: "accessibility",
+    },
+    {
+      source: "Gallery-strip reference",
+      was: "The strip runs off the right edge with no indication of how much is left.",
+      now: "Overflow scrolls in its own container, with position stated.",
+      because: "A strip bleeding off-screen relies on the viewer guessing there is more. Some do not.",
+      kind: "interaction",
+    },
+  ],
+};
+
+// -----------------------------------------------------------------
+// THE PROGRAMME
+// -----------------------------------------------------------------
+
+/**
+ * AS-11 - THE STAGE PROGRESSION
+ *
+ * Eight stages, eighteen roles, and who holds what at each one.
+ *
+ * This is the densest surface in the product and the one most likely to
+ * be printed. It is a MATRIX, not a timeline: a timeline implies each
+ * stage ends before the next begins, and half these roles run across four
+ * stages at once.
+ *
+ * -- THE VOCABULARY BOUNDARY --------------------------------------
+ * The deliverables come from the delivery side, which is a different
+ * entity with its own language. Section 25 governs the investment
+ * platform, not the Operating Company's internal documents. So the terms
+ * are not censored at source - they are TRANSLATED at the boundary, and
+ * the mapping is recorded rather than applied invisibly.
+ */
+export const STAGE_PROGRESSION: Assembly = {
+  id: "AS-11",
+  name: "The Stage Progression",
+  route: "capital",
+  vantage: "capital",
+  intent: "Show who holds what at each stage of a property, from definition through to operation.",
+  answers: "What stage is this property at, and who is accountable right now?",
+  sections: [
+    S("AS-11.a", "Stage Rail", "figure",
+      "Stages 0 to 7, with the current one marked.",
+      [],
+      "Stage state comes from the Property lifecycle field. The rail renders it; it never holds a " +
+      "second copy of it."),
+    S("AS-11.b", "Role Matrix", "ledger",
+      "Eighteen roles down, eight stages across. Each cell holds its deliverables.",
+      ["O-07"],
+      "Onboard and offboard are STATES, not decoration. A role absent from a stage says so, rather " +
+      "than leaving a gap that reads as an omission."),
+    S("AS-11.c", "Holds and Vetoes", "feature",
+      "The four veto powers, and who holds each.",
+      [],
+      "A veto is the strongest thing on this screen and renders as such. Burying it in a cell " +
+      "beside twelve routine deliverables is how a hold gets missed."),
+  ],
+  corrections: [
+    {
+      source: "Programme matrix (supplied)",
+      was: "`Studio Typology Env.` as a Stage 2 architectural deliverable.",
+      now: "Typology Envelope. The built form, not what the interior gets called.",
+      because:
+        "Section 25 forbids `Studio` on the platform - it is an Operating Company concern. The " +
+        "deliverable is about built form, and loses nothing by saying so.",
+      kind: "vocabulary",
+    },
+    {
+      source: "Programme matrix (supplied)",
+      was: "`Open Bookings` as the Stage 6 launch deliverable.",
+      now: "Open for occupancy. The operating partner opens its own channel on its own terms.",
+      because:
+        "Section 25 forbids `Booking`, and this is more than a word: the platform does not take " +
+        "them, so the deliverable recorded an act by a different entity as if it were the " +
+        "platform's own.",
+      kind: "vocabulary",
+    },
+    {
+      source: "Programme matrix (supplied)",
+      was: "`First Guest Simulations` and `Guest Reset Score Reports` at Stages 6 and 7.",
+      now: "First Occupancy Simulations, and Reset Score Reports.",
+      because:
+        "Section 25 forbids `Guest` - the shareholder register has none. The measurement is of the " +
+        "property's reset between occupancies, which is what the renamed deliverable says.",
+      kind: "vocabulary",
+    },
+    {
+      source: "Programme matrix (supplied)",
+      now: "Every role carries an explicit onboard AND offboard stage.",
+      because:
+        "Eleven of the eighteen roles leave before Stage 7, and four never arrive before Stage 3. " +
+        "Without a stated exit, a role that has gone still reads as accountable.",
+      kind: "constitutional",
+    },
+    {
+      source: "Programme matrix (supplied)",
+      was: "Vetoes listed inline among ordinary deliverables.",
+      now: "Vetoes surfaced separately, at IL-1, naming their holder.",
+      because:
+        "Site Go/No-Go, Site Defect, Ultimate Escalation and the local pull-plug certification are " +
+        "the four points where one person can stop the programme. They are not line items.",
+      kind: "constitutional",
+    },
+    {
+      source: "Programme matrix (supplied)",
+      was: "The stage grid drawn as a timeline with week bars.",
+      now: "A matrix. Stage bars indicate span, not sequence.",
+      because:
+        "A timeline implies each stage ends before the next begins. Half these roles run across " +
+        "four stages simultaneously, and the timeline made that unreadable.",
+      kind: "interaction",
+    },
+  ],
+};
+
+// -----------------------------------------------------------------
+// LOCATION
+// -----------------------------------------------------------------
+
+/**
+ * AS-12 - LOCATION INTELLIGENCE
+ *
+ * Map, catchment, access, and the demand evidence underneath a site.
+ *
+ * Every figure here is Market Intelligence, which is the weakest-sourced
+ * object in the registry - most of it modelled or estimated, almost none
+ * of it observed. So this screen carries more confidence tags per square
+ * inch than any other, and that is correct rather than noisy.
+ */
+export const LOCATION_INTELLIGENCE: Assembly = {
+  id: "AS-12",
+  name: "Location Intelligence",
+  route: "space",
+  vantage: "space",
+  intent: "Show what is around a site, who can reach it, and what that is worth.",
+  answers: "Who can get here, how easily, and how many of them are there?",
+  sections: [
+    S("AS-12.a", "Map", "figure",
+      "The site, its catchment rings, and the access points that define them.",
+      [],
+      "The map is never the only carrier. Every figure plotted on it also appears as text, because " +
+      "a map is unreadable to a screen reader and awkward at any small size."),
+    S("AS-12.b", "Catchment", "ledger",
+      "Population and drive time per ring, each with its source.",
+      [],
+      "Catchment is MODELLED. It carries the class, and each ring states the assumption it was " +
+      "drawn from."),
+    S("AS-12.c", "Access", "ledger",
+      "Airport, rail and road, with real durations.",
+      [],
+      "Durations are observed or modelled, never marketing rounding. `90 minutes from the city` is " +
+      "a claim with a method behind it, or it is not made."),
+    S("AS-12.d", "Demand Evidence", "figure",
+      "Footfall and seasonality, with the window they were measured over.",
+      ["O-10"],
+      "A footfall figure with no measurement window is not evidence. The window renders beside the " +
+      "figure at the same weight."),
+  ],
+  corrections: [
+    {
+      source: "Location-panel reference",
+      was: "Location detail reachable only by clicking a pin on a pannable map.",
+      now: "The panel is a list first. Pins select within it; they are not the only way in.",
+      because:
+        "Clicking a 24px pin is a fine shortcut and a poor sole route. Anyone without a precise " +
+        "pointer had no access to the content at all.",
+      kind: "accessibility",
+    },
+    {
+      source: "Location-panel reference",
+      was: "Aggregate figures shown with no measurement window.",
+      now: "Every figure carries its window and its confidence class.",
+      because: "Footfall over an unnamed period is not a quantity. It is a number that resembles one.",
+      kind: "numeric",
+    },
+    {
+      source: "Insights-panel reference",
+      was: "Identifiable individuals plotted on a map with names and current locations.",
+      now: "Aggregates only, above a minimum cell count.",
+      because:
+        "A map of named people at known places is a privacy exposure regardless of who is looking, " +
+        "and thin cells re-identify individuals even after the names come off.",
+      kind: "constitutional",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -794,6 +1080,10 @@ export const ASSEMBLIES: readonly Assembly[] = [
   COMMITMENT_FLOW,
   PORTFOLIO_NARRATIVE,
   STORY_PLAYBACK,
+  GALLERY_FRAME,
+  GALLERY_STRIP,
+  STAGE_PROGRESSION,
+  LOCATION_INTELLIGENCE,
 ];
 
 /**
