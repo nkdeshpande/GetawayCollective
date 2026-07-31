@@ -127,14 +127,19 @@ describe("waterfall (F-05)", () => {
   });
 
   it("but a large operating share CAN starve the reserve in practice", () => {
-    // Documented consequence of the ratified stage order (L1-16 Part I):
-    // the Operating Company ranks AHEAD of both reserves and debt service.
-    // With a 90% operating share the pool is exhausted at stage 3.
+    // RATIFIED behaviour, not a defect (L1-16 §1.1a, BLANK-28 closed).
     //
-    // The engine is doing what the constitution says. Whether the
-    // constitution should say it is a governance question, logged as
-    // BLANK-28 — there is currently no cap on the stage 1 share, and no
-    // subordination of the Operating Company to reserve funding.
+    // Debt is owned by the Investment Vehicle; the Operating Company has
+    // nothing to do with it. The operator's share is consideration for
+    // services performed, so it ranks ahead of the Vehicle's own
+    // obligations — its borrowing and its reserve provisioning alike.
+    //
+    // The residual risk is real and deliberately uncapped in the
+    // constitution. The control is the Management Agreement, which is an
+    // always-material related-party transaction (EP-01 §4.10a) and cannot
+    // be set or amended without Board approval.
+    //
+    // This test exists so the behaviour cannot change silently.
     const greedy = runWaterfall({ ...base, operatingCompanyShare: money("900000.0000") });
     expect(format(greedy.stages[Stage.AdminReserve - 1].amount)).toBe("20000.0000");
     expect(format(greedy.stages[Stage.SinkingFund - 1].amount)).toBe("0.0000");

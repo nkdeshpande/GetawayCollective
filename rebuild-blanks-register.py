@@ -15,10 +15,6 @@ ws.append(['ID', 'Section', 'What is missing', 'My proposed default',
            'Blocks', 'Owner', 'Priority', 'Approve? (Y / amend)'])
 
 open_rows = [
-    ['BLANK-28', 'L1-16 Part I',
-     'No cap on the Stage 1 Operating Company share, and no subordination of it to reserve funding. The ratified waterfall order is 1 OpCo, 2 Brand, 3 Admin Reserve, 4 Sinking Fund, 5 Debt Service, 6 Partners - so the Operating Company ranks AHEAD of both constitutional reserves AND debt service. Demonstrated in tests: a 90 percent operating share leaves the Admin Reserve short by 5,000, the Sinking Fund at zero and debt service wholly unpaid, on a 1,000,000 Revenue Base.',
-     'CANNOT DEFAULT - this is a commercial and fiduciary judgement. Three options: (a) accept as ratified, relying on the Operating Agreement to cap the share commercially rather than constitutionally; (b) cap the Stage 1 share at a constitutional ceiling expressed in basis points of Revenue Base; (c) subordinate Stage 1 to Stages 3-5, so reserves and debt service fund before the operator is paid. Option (c) is the institutional norm but materially changes the operator economics you have already modelled. The engine currently implements exactly what was ratified.',
-     'F-05, F-06, L1-16 Part I', 'Executive Office + Finance', 'HIGH', ''],
 ]
 for r in open_rows:
     ws.append(r)
@@ -74,6 +70,8 @@ ratified = [
      'RATIFIED - MERGED. L1-01 §23 and L1-14 independently assigned the same F-identifiers to different rules, violating §14 Naming Authority. The two sets are merged into ONE canonical table of 18 in L1-01 §23, which is now the sole FINANCIAL numbering. Every rule from both survived; only numbers changed. L1-14 Part IV retains its prose but its numbers are VOID and carry an explicit old-to-new mapping table. Resolved before Wave 2 began, because Wave 2 bakes invariant ids into field definitions.', '30 Jul 2026'],
     ['BLANK-09a', 'L1-16 §2.6a', 'Reserve breach - does distribution suspension survive?',
      'RATIFIED - TWO DISTINCT TESTS. (1) PROSPECTIVE: a distribution that would ITSELF take the reserve below floor is rejected automatically and is NOT voteable - a floor a single payment may cross at will is not a floor. (2) EXISTING BREACH: where the reserve is already below floor, scheduled distributions CONTINUE unless suspended by Ordinary Resolution (>50% of equity present). Automatic on any breach: broadcast to Board, Executive Office and affected LLP Partners, plus deferral of discretionary expenditure. RECORDED TENSION accepted knowingly: partners voting on whether to pause their own distributions are voting on their own cash, and the incentive runs toward continuing to distribute from a vehicle already below its liquidity floor. Limited by the non-voteable prospective test, by the breach being broadcast so the decision is made in the open, and by expenditure deferral operating regardless. Residual exposure: a prolonged sub-floor period sustained by repeated small distributions each individually lawful. Reserve Coverage Ratio (UFR-0385) makes it visible; nothing else prevents it.', '30 Jul 2026'],
+    ['BLANK-28', 'L1-16 §1.1a', 'Operating Company ranks ahead of reserves and debt service',
+     'RATIFIED - ACCEPT AS ORDERED. Debt is owned by the Investment Vehicle; the Operating Company has nothing to do with it. The operator share is CONSIDERATION FOR SERVICES PERFORMED - the same economic class as the staff and utilities it pays out of that share - not a claim on profit. The Vehicle services its own borrowing, and funds its own reserve provisioning, out of what the property generates AFTER it has paid to be operated. Subordinating the operator to the Vehicle financing would ask a service provider to underwrite a debt it neither incurred nor benefits from. NO constitutional cap on the Stage 1 share: the share is a commercial term that varies by asset, and a fixed ceiling would go stale or force amendments. THE CONTROL ALREADY EXISTS ELSEWHERE - the Management Agreement is an ALWAYS-MATERIAL related-party transaction under EP-01 §4.10a, requiring Board approval to set and Board approval again to amend, regardless of value. The residual starvation risk is real, demonstrated in the test suite, and deliberately governed by the instrument rather than by a constitutional number.', '31 Jul 2026'],
     ['BLANK-25', 'L1-01 §25 Vocabulary', 'Should Consumer join the forbidden list?',
      'RATIFIED - YES. Getaway Collective has Investor and Member, not Consumer. A Member owns; they do not consume. Linter now enforces 16 terms; the codebase was already clean.', '30 Jul 2026'],
     ['BLANK-26', 'WAVE-2-ARCHITECTURE-TARGET', 'Status of GC.SYSTEM v3.0 Sovereign OS scaffold',
@@ -107,13 +105,12 @@ for line in [
     ['GETAWAY COLLECTIVE - L1 BLANKS REGISTER - Rev 3'],
     ['Regenerated 30 Jul 2026'],
     [''],
-    ['OPEN: 1   (BLANK-28 - Operating Company share ranks ahead of reserves and debt service)'],
-    ['RATIFIED: 31'],
+    ['OPEN: 0'],
+    ['RATIFIED: 32'],
     [''],
     ['Column H on Open Blanks: write Y to accept the default, or write the correction.'],
     [''],
-    ['BLANK-23 is a DEFECT, not a decision. Two documents assign the same F-identifiers'],
-    ['to different rules. Must be fixed before any FINANCIAL invariant reaches code.'],
+    ['All L1 blanks are ratified. Wave 2 has no open constitutional questions.'],
     [''],
     ['BLANK-09a is a one-line confirmation, not a design question.'],
     [''],

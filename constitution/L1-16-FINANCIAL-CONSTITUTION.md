@@ -56,6 +56,28 @@ Revenue Base
 
 > **SUPERSESSION NOTICE.** This waterfall replaces the earlier draft sequence *Revenue → Fees → Reserves → Preferred Return → Catch-Up → Profit Share* recorded in L1-01 §23. **There is no preferred return, no catch-up, and no carried interest tier.** Getaway Collective does not participate in LLP economics as an owner (see Part IV) and therefore has no promote to earn. Any document still referencing preferred return or catch-up is superseded.
 
+## 1.1a Why Stage 1 Precedes Debt Service — RATIFIED 31 Jul 2026
+
+*Resolves BLANK-28.*
+
+**Debt is owned by the Investment Vehicle. The Operating Company has nothing to do with it.**
+
+That single fact settles the ordering. The Operating Company is a contracted service provider running the property under a Management Agreement. Its share is **consideration for services performed**, in the same economic class as the staff, utilities and maintenance it pays for out of that share. It is a cost of operating the asset, not a claim on the asset's profits.
+
+Debt service, by contrast, is an obligation the **Vehicle** incurred when it borrowed. The Vehicle services its own borrowing out of what the property generates *after* it has paid to be operated. Subordinating the operator to the Vehicle's financing would ask a service provider to underwrite a debt it neither incurred nor benefits from, and no operator would accept that term.
+
+The same reasoning applies to Stages 3 and 4: the reserves are the **Vehicle's own provisioning**, funded from what remains once operations are paid for.
+
+### The residual risk, and where it is controlled
+
+An operating share set high enough will starve reserves and debt service. This is real and demonstrated in the test suite: at a 90% share on a ₹10,00,000 Revenue Base, the Admin Reserve is short, the Sinking Fund receives nothing, and debt service is wholly unpaid.
+
+**No constitutional cap on the Stage 1 share is imposed**, because the share is a commercial term that varies by asset, and a fixed ceiling would either go stale or force amendments.
+
+**The control is elsewhere and already exists.** The Management Agreement is an **always-material related-party transaction** under EP-01 §4.10a — material regardless of value, requiring Board approval, and requiring it again for any amendment. An operating share that would starve the Vehicle cannot be set, or later raised, without the Board approving it in the open with the Audit & Risk Committee informed.
+
+That is the right location for the control. The constitution governs *who decides and on what evidence*; the number itself belongs in the instrument the Board approves.
+
 ## 1.2 The Revenue Base — RATIFIED
 
 For all constitutional purposes, the **Revenue Base** means:

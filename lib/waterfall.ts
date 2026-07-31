@@ -26,7 +26,22 @@
  *
  * Stages 3 and 4 are percentages of the REVENUE BASE, not of whatever
  * survives stages 1 and 2. A generous operating share therefore cannot
- * quietly shrink the reserve contribution.
+ * quietly shrink the reserve ENTITLEMENT — though it can exhaust the pool
+ * before the entitlement is paid. See below.
+ *
+ * ── WHY STAGE 1 OUTRANKS DEBT SERVICE (L1-16 §1.1a) ──────────────────
+ * Debt is owned by the Investment Vehicle. The Operating Company has
+ * nothing to do with it. The operator's share is consideration for
+ * services performed — the same economic class as the staff and utilities
+ * it pays out of that share — not a claim on profit. The Vehicle services
+ * its own borrowing out of what the property generates after it has paid
+ * to be operated.
+ *
+ * The residual risk is real: a high enough operating share starves
+ * reserves and debt service, and this engine will let it, because the
+ * constitution does. The control is the Management Agreement, which is an
+ * always-material related-party transaction (EP-01 §4.10a) and cannot be
+ * set or amended without Board approval.
  */
 
 import {
