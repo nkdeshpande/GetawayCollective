@@ -428,6 +428,174 @@ export const JOURNAL_ROUTES: readonly Route[] = [
       notes: "One entry. Figures are read from the registries, never typed into the prose." }),
 ];
 
+/**
+ * WHAT A PAGE HOLDS, WHERE NO ASSEMBLY SAYS IT.
+ *
+ * Most routes render a registered assembly, and that assembly's sections
+ * already state what is on the screen. Twenty-nine did not: they declare
+ * `assembly: null`, so the information-architecture map had nothing to
+ * report and listed them as URLs with no contents.
+ *
+ * A URL with no stated contents is a page nobody has described. It builds
+ * anyway, renders a shell, and reads on the map as though the system were
+ * smaller than it is.
+ *
+ * Each entry below is the page's parts, in the order they appear. This is
+ * a DECLARATION, not documentation of something already built: several of
+ * these pages are still shells, and what is written here is what they owe.
+ *
+ * Keyed by route path. gen-ia-map.js reads it, and reports any route that
+ * has neither an assembly nor an entry here.
+ */
+export const PAGE_CONTENTS: Record<string, readonly { part: string; holds: string }[]> = {
+  "/auth/sign-in": [
+    { part: "Request", holds: "Email address only. No password field — the platform does not hold passwords." },
+    { part: "Sent", holds: "Confirmation that a link was sent, worded identically whether or not the address is known. A different message would confirm who holds an account." },
+    { part: "Recovery", holds: "What to do when the link does not arrive, without a control that reveals whether the address exists." },
+  ],
+  "/auth/verify": [
+    { part: "Verifying", holds: "The state while a link is checked. No control, because there is nothing for the viewer to do." },
+    { part: "Expired", holds: "What a stale link means and how to request another. Links are single-use and time-bound." },
+    { part: "Wrong device", holds: "Stated plainly rather than treated as a failure — a link opened elsewhere is ordinary, not suspicious." },
+  ],
+  "/auth/sign-out": [
+    { part: "Confirmation", holds: "That the session ended, and on which device." },
+    { part: "Other sessions", holds: "Whether sessions remain elsewhere, and the control to end them." },
+  ],
+  "/passport": [
+    { part: "Progress", holds: "The sixteen stages with the state of each: complete, in progress, not started." },
+    { part: "Resume", holds: "A link to the furthest incomplete stage. The application is resumable by URL, so this is a shortcut and never the only way back." },
+    { part: "What is held", holds: "Which documents have been received, and which are outstanding." },
+    { part: "Decision", holds: "The standing decision and its date, once one exists." },
+  ],
+  "/member/notifications": [
+    { part: "Unread", holds: "Events since last read, newest first, each naming the vehicle it concerns." },
+    { part: "All", holds: "The full record. A notification is never deleted, only marked read." },
+    { part: "Delivery", holds: "Which channels carried each one, so a missed notice can be traced rather than disputed." },
+  ],
+  "/member/profile": [
+    { part: "Identity", holds: "Name, contact, and tax residency as recorded. Changes are proposed, not applied — an identity on a register is not edited in place." },
+    { part: "Verification", holds: "What has been verified, when, and against which document." },
+    { part: "Positions", holds: "Every vehicle this identity is a partner in, with the date settlement fired." },
+  ],
+  "/member/settings": [
+    { part: "Index", holds: "Notifications, security and tax, each with the one line that says what it governs." },
+  ],
+  "/member/settings/notifications": [
+    { part: "Channels", holds: "Email and in-platform, per event class." },
+    { part: "Cannot be silenced", holds: "Capital calls, resolutions and distributions. Stated as unsilenceable rather than shown as a control that refuses to move." },
+  ],
+  "/member/settings/security": [
+    { part: "Sessions", holds: "Where this identity is signed in, and the control to end each." },
+    { part: "Second factor", holds: "State and enrolment. Required before any office right is granted." },
+    { part: "Recent activity", holds: "Sign-ins with time and network address, retained thirteen months." },
+  ],
+  "/member/settings/tax": [
+    { part: "Residency", holds: "Declared jurisdiction, and the date it was last confirmed." },
+    { part: "Withholding", holds: "The rate applied to distributions and the basis for it." },
+    { part: "Documents", holds: "Certificates held, with expiry. An expired certificate changes the rate, and says so before it does." },
+  ],
+  "/admin": [
+    { part: "Standing", holds: "What is open, what is overdue and what is unassigned, across every vehicle." },
+    { part: "By vehicle", holds: "One row per vehicle with its lifecycle state and open items." },
+    { part: "Rights", holds: "Which rights the viewer holds, since every control here is gated on one." },
+  ],
+  "/admin/governance": [
+    { part: "Committees", holds: "Standing committees, their remit and their membership." },
+    { part: "Resolutions", holds: "Open ballots and their thresholds." },
+    { part: "Policies", holds: "Instruments in force, with version and date." },
+  ],
+  "/admin/governance/committees": [
+    { part: "Register", holds: "Each committee, its remit, its quorum and who sits on it." },
+    { part: "Conflicts", holds: "Declared interests per member, and the matters they may not vote on." },
+    { part: "Terms", holds: "When each appointment ends. A committee whose terms have lapsed is shown as lapsed, not as sitting." },
+  ],
+  "/admin/governance/policies": [
+    { part: "In force", holds: "Every policy with its version, effective date and the resolution that ratified it." },
+    { part: "Superseded", holds: "Prior versions, retained. A policy relied on in the past must remain retrievable." },
+    { part: "Review", holds: "Next review date, and what is overdue." },
+  ],
+  "/admin/compliance": [
+    { part: "Open events", holds: "Findings, notices and breaches, by severity." },
+    { part: "Accreditation", holds: "Applications by state, and what each is waiting on." },
+    { part: "Conflicts", holds: "The register, and matters currently constrained by it." },
+  ],
+  "/admin/compliance/events": [
+    { part: "Register", holds: "Every compliance event with its class, the capability that raised it and the reason recorded." },
+    { part: "Ageing", holds: "How long each has been open, against the period allowed for it." },
+    { part: "Closure", holds: "What closed an event, by whom, and the reason. E-02 — a closure with no reason is not a closure." },
+  ],
+  "/admin/compliance/accreditation": [
+    { part: "Queue", holds: "Applications awaiting a decision, oldest first." },
+    { part: "Held", holds: "Applications waiting on the applicant, and what for." },
+    { part: "Decisions", holds: "Granted and refused, each with its recorded reason and the person who made it." },
+  ],
+  "/admin/compliance/conflicts": [
+    { part: "Declarations", holds: "Every declared interest, who declared it and when." },
+    { part: "Constraints", holds: "The matters each declaration bars its holder from. I-07." },
+    { part: "Unresolved", holds: "Interests declared with no constraint recorded — a declaration nobody acted on." },
+  ],
+  "/admin/ledger": [
+    { part: "Entries", holds: "The append-only record. Nothing here is edited; a correction is a further entry." },
+    { part: "Reconciliation", holds: "Where the ledger and the vehicle records last agreed, and any current difference." },
+    { part: "Seal", holds: "The hash chain and its last verification. A ledger that cannot be verified is a spreadsheet." },
+  ],
+  "/admin/telemetry": [
+    { part: "Health", holds: "What is running, what is degraded, and since when." },
+    { part: "Volumes", holds: "Events by class over time, so an absence of events is visible as an absence." },
+    { part: "Failures", holds: "Errors by surface, with the route that raised them." },
+  ],
+  "/admin/authority": [
+    { part: "Rights", holds: "Every declared right and what it permits." },
+    { part: "Holders", holds: "Who holds each right, and under which grant." },
+    { part: "Unheld", holds: "Rights nobody holds. A right nobody holds is a capability nobody can exercise, and that is worth seeing." },
+  ],
+  "/admin/authority/grants": [
+    { part: "Grants", holds: "Each grant with its right, its holder, its reason and its expiry." },
+    { part: "Expiring", holds: "Grants ending within thirty days." },
+    { part: "Standing", holds: "Grants with no expiry, listed separately because a permanent grant deserves to be looked at." },
+  ],
+  "/admin/authority/revocations": [
+    { part: "Revocations", holds: "What was withdrawn, from whom, when and why." },
+    { part: "Effect", holds: "What each holder could no longer do from the moment it took effect." },
+    { part: "Pending", holds: "Revocations scheduled but not yet in force." },
+  ],
+  "/admin/reports": [
+    { part: "Standing", holds: "Reports produced on a schedule, with the last run and the next." },
+    { part: "Ad hoc", holds: "Reports built on request, with the parameters that produced them." },
+    { part: "Provenance", holds: "For each report, which records it drew on and at what time — a report with no as-at time cannot be reconciled later." },
+  ],
+  "/admin/research": [
+    { part: "Market intelligence", holds: "Records held, with source and confidence class." },
+    { part: "Coverage", holds: "Which regions and asset classes are covered, and which are not." },
+    { part: "Age", holds: "How old each record is. Research is treated as perishable and its age is shown, not buried." },
+  ],
+  "/admin/failure": [
+    { part: "Constitutional failure", holds: "What rule was breached, when, and by which capability." },
+    { part: "Containment", holds: "What was suspended automatically, and what remains running." },
+    { part: "Record", holds: "The full event, unedited. This page exists so a failure cannot be quietly resolved." },
+  ],
+  "/search": [
+    { part: "Query", holds: "One field. Results are scoped to what the viewer may already reach." },
+    { part: "Results", holds: "Grouped by kind — vehicles, properties, documents, resolutions." },
+    { part: "Absence", holds: "A result the viewer may not reach is not shown as withheld. It is not shown, because 'you may not see this' confirms it exists." },
+  ],
+  "/flow": [
+    { part: "Masthead", holds: "The property, its jurisdiction and its coordinates." },
+    { part: "The unit", holds: "Commitment, share, indicative distribution and entitlement, each with its confidence class." },
+    { part: "Capital stack", holds: "Land, formation and facility, on the paper ground because it is an assertion." },
+    { part: "The waterfall", holds: "Six stages in order, closing to 100%, with debt service stated as its own stage." },
+    { part: "Returns", holds: "Cash yield, cover ratio, payback and exit, each classed. The dossier's inconsistency is stated here rather than resolved silently." },
+    { part: "Governance", holds: "Voting basis and thresholds, read from the LLP Agreement." },
+  ],
+  "/flow/commit": [
+    { part: "Review", holds: "Vehicle, property, share, amount, completion window and lock-in — every term that binds, before the control that binds it." },
+    { part: "The piston", holds: "A three-second sustained press. The duration is the deliberation, and no undo follows." },
+    { part: "Derivation", holds: "How the unit falls out of the equity layer, on paper." },
+    { part: "Recorded", holds: "State becomes Committed, never Member. The Member Law fires on settlement." },
+  ],
+};
+
 export const ROUTES: readonly Route[] = [
   ...PUBLIC_ROUTES, ...LEGAL_ROUTES, ...AUTH_ROUTES,
   ...MEMBER_ROUTES, ...CAPITAL_ROUTES, ...ADMIN_ROUTES, ...SYSTEM_ROUTES,

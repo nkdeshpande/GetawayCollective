@@ -19,6 +19,8 @@ const asmSrc = read("constants", "assemblies.ts");
 
 const asmName = new Map();
 const asmVantage = new Map();
+const asmScope = new Map();
+const asmIntent = new Map();
 for (const m of asmSrc.matchAll(/export const \w+: Assembly = \{([\s\S]*?)\n\};/g)) {
   const id = (m[1].match(/\bid:\s*"([^"]+)"/) || [])[1];
   if (!id) continue;
@@ -34,7 +36,21 @@ const GROUP_VANTAGE = {
   gateway: "gateway", space: "space", capital: "capital",
   time: "time", member: "member", admin: "admin",
 };
-const join = (c) => [...c.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]).join("");
+/**
+ * Decode the escapes a TypeScript string literal may carry.
+ *
+ * The parser lifts source text, so "\u2014" arrived as six characters and
+ * rendered as `\u2014` in the middle of a sentence. Anything written as
+ * an escape in the canon has to be decoded before it is displayed, or the
+ * map shows the source rather than the string.
+ */
+const unescapeTs = (s) =>
+  s.replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
+   .replace(/\\n/g, " ")
+   .replace(/\\(["'\\])/g, "$1");
+
+const join = (c) =>
+  unescapeTs([...c.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]).join(""));
 const resolveConst = (n) => {
   const m = src.match(new RegExp(`export const ${n}\\s*=\\s*((?:"(?:[^"\\\\]|\\\\.)*"\\s*\\+?\\s*\\n?\\s*)+);`));
   return m ? join(m[1]) : "";
@@ -48,6 +64,8 @@ const SECTIONS = [
   ["CAPITAL_ROUTES", "Capital Workspace", "Operational. Carries data about people other than the viewer."],
   ["ADMIN_ROUTES", "Administration", "Every route names the RIGHT it requires, never the role that holds it."],
   ["SYSTEM_ROUTES", "System States", "Places that are really states."],
+  ["FLOW_ROUTES", "The Worked Flow", "One offering walked end to end on illustrative data. Public throughout, declaring no assembly: these are demonstration components, not the registered assemblies rendering real records, and that distinction is what makes them public."],
+  ["JOURNAL_ROUTES", "The Journal", "What the platform says about itself, one binding decision at a time. Separate from Voices because a partner talking about returns is regulated speech and an explanation of a mechanism is not."],
 ];
 
 function parseSection(name) {
@@ -119,8 +137,194 @@ const accessOf = (r) => {
   const v = r.assembly && asmVantage.has(r.assembly) ? asmVantage.get(r.assembly) : GROUP_VANTAGE[r.group];
   return ACCESS_FOR_VANTAGE[v];
 };
+
+/* ═══════════════════════════════════════════════════════════════════
+   WHAT IS ON EACH PAGE
+
+   A map of URLs is a table of contents with the contents left out. Each
+   of these is parsed from the registry that owns it, so a page's entry
+   here cannot describe something the application does not render.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/** Assembly → its sections. What the screen is made of. */
+const asmSections = new Map();
+for (const m of asmSrc.matchAll(/export const \w+: Assembly = \{([\s\S]*?)\n\};/g)) {
+  const id = (m[1].match(/\bid:\s*"([^"]+)"/) || [])[1];
+  if (!id) continue;
+  const secs = [...m[1].matchAll(
+    /S\(\s*"([^"]+)",\s*"([^"]+)",\s*"(\w+)",\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+),\s*\[([^\]]*)\]/g,
+  )].map((x) => ({
+    ref: x[1], name: x[2], kind: x[3],
+    purpose: join(x[4]),
+    contains: [...x[5].matchAll(/"([^"]+)"/g)].map((y) => y[1]),
+  }));
+  asmSections.set(id, secs);
+  asmScope.set(id, (m[1].match(/\bscope:\s*"([^"]+)"/) || [])[1] || "screen");
+  asmIntent.set(id, (m[1].match(/\bintent:\s*\n?\s*"((?:[^"\\]|\\.)*)"/) || [])[1] || "");
+}
+
+/** Declared contents for routes that render no assembly. */
+const pageContents = new Map();
+{
+  const block = src.match(/export const PAGE_CONTENTS[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!block) {
+    console.error("[ia-map] Could not parse PAGE_CONTENTS. Refusing to write a partial architecture.");
+    process.exit(2);
+  }
+  for (const m of block[1].matchAll(/"([^"]+)":\s*\[([\s\S]*?)\n  \],/g)) {
+    const items = [...m[2].matchAll(
+      /\{\s*part:\s*"((?:[^"\\]|\\.)*)",\s*holds:\s*"((?:[^"\\]|\\.)*)"\s*\}/g,
+    )].map((x) => ({ part: unescapeTs(x[1]), holds: unescapeTs(x[2]) }));
+    if (items.length) pageContents.set(m[1], items);
+  }
+  if (pageContents.size === 0) {
+    console.error("[ia-map] PAGE_CONTENTS parsed as empty. Refusing to write.");
+    process.exit(2);
+  }
+}
+
+/** The legal corpus: path → document, its parts and its clause headings. */
+const legalSrc = read("content", "legal.ts");
+const documents = new Map();
+for (const m of legalSrc.matchAll(/const (\w+): StandingDocument = \{([\s\S]*?)\n\};/g)) {
+  const b = m[2];
+  const dpath = (b.match(/\bpath:\s*"([^"]+)"/) || [])[1];
+  if (!dpath) continue;
+  const parts = [];
+  for (const pm of b.matchAll(/\{\s*\n\s*ref:\s*"(\w+)",\s*\n\s*title:\s*"([^"]*)",([\s\S]*?)\n    \},/g)) {
+    const clauses = [...pm[3].matchAll(/\{\s*n:\s*"([^"]+)"(?:,\s*h:\s*"((?:[^"\\]|\\.)*)")?/g)]
+      .map((c) => ({ n: c[1], h: c[2] || "" }));
+    parts.push({ ref: pm[1], title: pm[2], clauses });
+  }
+  documents.set(dpath, {
+    id: (b.match(/\bid:\s*"([^"]+)"/) || [])[1],
+    title: (b.match(/\btitle:\s*"([^"]*)"/) || [])[1],
+    version: (b.match(/\bversion:\s*"([^"]*)"/) || [])[1],
+    effective: (b.match(/\beffective:\s*"([^"]*)"/) || [])[1],
+    purpose: join((b.match(/\bpurpose:\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+)/) || [, ""])[1]),
+    parts,
+  });
+}
+
+/** The Journal. */
+const journalSrc = read("content", "journal.ts");
+const entries = [...journalSrc.matchAll(
+  /const J\d+: Entry = \{\s*\n\s*id:\s*"([^"]+)",\s*\n\s*slug:\s*"([^"]+)",\s*\n\s*title:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g,
+)].map((m) => ({ id: m[1], slug: m[2], title: m[3] }));
+
+/** The vehicle console's panels (AS-31). */
+const consoleSrc = read("app", "_assemblies", "console.tsx");
+const panels = [...consoleSrc.matchAll(/\{ id: "(\w+)", label: "([^"]+)", note: "([^"]*)" \}/g)]
+  .map((m) => ({ id: m[1], label: m[2], note: m[3] }));
+
+/** The accreditation steps inside the worked flow. */
+const flowSrc = read("app", "_assemblies", "flow.tsx");
+const flowSteps = [...flowSrc.matchAll(/\{ id: "(\w+)", t: "([^"]+)", d: "([^"]*)" \}/g)]
+  .map((m) => ({ id: m[1], t: m[2], d: m[3] }));
+
+/** The property Asset Disclosure sections. */
+const ssSrc = read("app", "_assemblies", "slowspace.ts");
+const disclosureItems = [...ssSrc.matchAll(/\n    n: "(\d\d)",\s*\n\s*t: "([^"]+)",/g)]
+  .map((m) => ({ n: m[1], t: m[2] }));
+
+if (documents.size === 0 || entries.length === 0 || panels.length === 0 ||
+    flowSteps.length === 0 || disclosureItems.length === 0) {
+  console.error(
+    "[ia-map] A contents registry parsed as empty " +
+      `(documents ${documents.size}, journal ${entries.length}, panels ${panels.length}, ` +
+      `flow steps ${flowSteps.length}, disclosure ${disclosureItems.length}). ` +
+      "Refusing to write an architecture with the contents missing.",
+  );
+  process.exit(2);
+}
+
+/**
+ * What a page contains, as a list of lines.
+ *
+ * Order matters: the most specific source wins. A legal route describes
+ * its own parts rather than AS-29's generic five sections, because the
+ * question "what is on /legal/terms" is answered by the document, not by
+ * the renderer.
+ */
+function contentsOf(r) {
+  const out = [];
+
+  const doc = documents.get(r.path);
+  if (doc) {
+    out.push({ h: `${doc.id} · v${doc.version} · in force ${doc.effective}`, t: doc.purpose });
+    for (const part of doc.parts) {
+      out.push({
+        h: `Part ${part.ref} — ${part.title}`,
+        t: part.clauses.map((c) => (c.h ? `${c.n} ${c.h}` : c.n)).join(" · "),
+      });
+    }
+    return out;
+  }
+
+  if (r.path === "/journal") {
+    out.push({ h: `${entries.length} entries, newest first`,
+               t: entries.map((e) => `${e.id} ${e.title}`).join(" · ") });
+    return out;
+  }
+  if (r.path === "/journal/[slug]") {
+    for (const e of entries) out.push({ h: `/journal/${e.slug}`, t: `${e.id} — ${e.title}` });
+    return out;
+  }
+
+  if (r.path === "/flow/accreditation") {
+    for (const st of flowSteps) out.push({ h: st.t, t: st.d });
+    out.push({ h: "Terms dialog", t: "The Terms and Conditions rendered over the form. The agree control is disabled until the document has been opened." });
+    return out;
+  }
+  if (r.path === "/flow/risk") {
+    for (const it of disclosureItems) out.push({ h: it.n, t: it.t });
+    out.push({ h: "Important Investment Risk", t: "Stated outside the numbered sequence. Reduced, delayed, lower value, partial loss, total loss." });
+    out.push({ h: "Acknowledgement", t: "Recorded against a version, enabled on reaching the end by any route." });
+    return out;
+  }
+  if (r.path === "/flow/settled") {
+    out.push({ h: "AS-31 The Vehicle Console",
+               t: panels.map((x) => x.label).join(" · ") });
+    for (const x of panels) out.push({ h: `— ${x.label}`, t: x.note });
+    return out;
+  }
+
+  const declared = pageContents.get(r.path);
+  if (declared) {
+    for (const d of declared) out.push({ h: d.part, t: d.holds });
+    return out;
+  }
+
+  const secs = r.assembly ? asmSections.get(r.assembly) : null;
+  if (secs && secs.length) {
+    for (const sec of secs) {
+      out.push({
+        h: `${sec.ref} ${sec.name}`,
+        t: sec.purpose + (sec.contains.length ? `  ⟨renders ${sec.contains.join(", ")}⟩` : ""),
+      });
+    }
+    return out;
+  }
+
+  return out;
+}
+
 const TONE = { public: "#1FAA59", identified: "#7FA4EE", accredited: "#C79F6B",
                member: "#E8672E", office: "#FF3B30" };
+/**
+ * The page ending: the last segment of the URL.
+ *
+ * It is what people type, quote and mistype, so it is shown on its own
+ * rather than left to be read off the end of the full path. The root is
+ * "/" and has no ending; a dynamic segment keeps its brackets, because
+ * the ending of that page is a shape rather than a word.
+ */
+const ending = (p) => {
+  if (p === "/") return "/";
+  const seg = p.split("/").filter(Boolean);
+  return "/" + seg[seg.length - 1];
+};
+
 const esc = (s) => String(s ?? "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 const code = (s) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
 
@@ -131,6 +335,12 @@ const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GC.SYSTEM · Information Architecture</title><style>
 :root{--void:#0A0A0A;--panel:#121212;--paper:#F2F2F2;--inv:#F2F2F2;--dim:#9A9A9A;
+/* --steel is 3.72:1 on void and 3.52:1 on the panel. It is a NON-TEXT
+   colour here exactly as it is in the application, and it is kept only
+   for rules and borders. Two labels used it as text — the route count
+   and the passport stage index — which is the same defect the palette
+   fixed in the app, reappearing in a standalone document that carries
+   its own copy of the palette and that no checker reads. */
 --steel:#6B6B6B;--copper:#C79F6B;--confirm:#1FAA59;--hazard:#E8672E;--critical:#FF3B30;
 --blue:#7FA4EE;--hair:rgba(242,242,242,.10);
 --fd:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
@@ -154,7 +364,7 @@ text-transform:uppercase;color:var(--dim);margin-top:6px}
 .grp-h{padding-bottom:14px;border-bottom:1px solid var(--hair);margin-bottom:4px}
 .grp-h h2{font:600 21px/1.2 var(--fd);letter-spacing:-.02em}
 .grp-h p{font-size:13.5px;color:var(--dim);margin-top:6px;max-width:82ch}
-.grp-h .n{float:right;font:400 11px/1 var(--fm);color:var(--steel)}
+.grp-h .n{float:right;font:400 11px/1 var(--fm);color:var(--dim)}
 .rt{display:grid;grid-template-columns:minmax(240px,1.3fr) 1fr 96px 190px;gap:16px;
 padding:13px 0;border-bottom:1px solid rgba(242,242,242,.055);align-items:baseline}
 @media(max-width:900px){.rt{grid-template-columns:1fr;gap:5px;padding:16px 0}}
@@ -175,8 +385,19 @@ display:block;margin-bottom:3px}
 .stages{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:1px;
 background:var(--hair);border:1px solid var(--hair);margin-top:14px}
 .stages div{background:var(--panel);padding:12px 14px}
-.stages .i{font:400 10px/1 var(--fm);color:var(--steel)}
+.stages .i{font:400 10px/1 var(--fm);color:var(--dim)}
 .stages .t{display:block;font-size:13px;margin-top:5px;text-transform:capitalize}
+.cts{grid-column:1/-1;margin-top:10px;padding:12px 14px;background:rgba(242,242,242,.035);
+border-left:2px solid var(--copper)}
+.cts>b{display:block;font:400 9.5px/1.6 var(--fm);letter-spacing:.14em;text-transform:uppercase;
+color:var(--copper);margin-bottom:8px}
+.cts>b code{font-family:var(--fm);color:var(--inv);letter-spacing:0;text-transform:none;font-size:11px}
+.ct{display:grid;grid-template-columns:minmax(150px,270px) 1fr;gap:14px;padding:4px 0;
+border-top:1px solid rgba(242,242,242,.05)}
+.ct:first-of-type{border-top:0}
+@media(max-width:900px){.ct{grid-template-columns:1fr;gap:2px;padding:7px 0}}
+.ch{font:400 11.5px/1.5 var(--fm);color:#D8D8D8}
+.cp{font-size:12.5px;color:var(--dim);max-width:86ch}
 .laws{margin-top:64px;padding-top:36px;border-top:1px solid var(--hair)}
 .law{border-left:2px solid var(--copper);padding-left:18px;margin-bottom:22px;max-width:84ch}
 .law b{display:block;font:400 10px/1 var(--fm);letter-spacing:.16em;text-transform:uppercase;
@@ -216,6 +437,10 @@ ${g.routes.map((r) => { const a = accessOf(r); return `<div class="rt">
 <span class="rg">${r.rights.map(esc).join("<br>") || ""}</span>
 ${r.override ? `<span class="ov"><b>Override → ${esc(r.override.access)}</b>${esc(r.override.because)}</span>` : ""}
 ${r.notes ? `<span class="nt">${code(r.notes)}</span>` : ""}
+${(() => { const c = contentsOf(r); if (!c.length) return ""; return `<div class="cts">
+<b>Ending <code>${esc(ending(r.path))}</code> &middot; contents</b>
+${c.map((x) => `<div class="ct"><span class="ch">${esc(x.h)}</span><span class="cp">${esc(x.t)}</span></div>`).join("")}
+</div>`; })()}
 </div>`; }).join("")}
 ${g.k === "AUTH_ROUTES" ? `<div class="stages">
 ${STAGES.map((s, i) => `<div><span class="i">${String(i + 1).padStart(2, "0")}</span>
@@ -239,6 +464,32 @@ There is no super-admin. The eight roles are offices and committees; a role hold
 the condition separationViolations() exists to detect.
 </footer>
 </div></body></html>`;
+
+/*
+ * Coverage, reported rather than assumed.
+ *
+ * A route with no contents is a page whose registry says nothing about
+ * what is on it. That is sometimes correct — a system state is a state —
+ * but it should be VISIBLE, because a map that silently omits half its
+ * pages reads as a map of a smaller system.
+ */
+{
+  const withContents = all.filter((r) => contentsOf(r).length);
+  const without = all.filter((r) => !contentsOf(r).length);
+  console.log(
+    `[ia-map] contents: ${withContents.length}/${all.length} routes describe what they hold`,
+  );
+  if (without.length) {
+    console.error(
+      `[ia-map] ${without.length} route(s) describe no contents: ` +
+        `${without.map((r) => r.path).join(", ")}.\n` +
+        `  Give each an assembly, or an entry in PAGE_CONTENTS in constants/routes.ts.\n` +
+        `  A URL with no stated contents is a page nobody has described, and a map that ` +
+        `lists it silently reads as a map of a smaller system.`,
+    );
+    process.exit(2);
+  }
+}
 
 fs.writeFileSync(path.join(ROOT, "INFORMATION-ARCHITECTURE.html"), html);
 console.log("[ia-map] wrote INFORMATION-ARCHITECTURE.html");

@@ -2,6 +2,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GC.SYSTEM · Information Architecture</title><style>
 :root{--void:#0A0A0A;--panel:#121212;--paper:#F2F2F2;--inv:#F2F2F2;--dim:#9A9A9A;
+/* --steel is 3.72:1 on void and 3.52:1 on the panel. It is a NON-TEXT
+   colour here exactly as it is in the application, and it is kept only
+   for rules and borders. Two labels used it as text — the route count
+   and the passport stage index — which is the same defect the palette
+   fixed in the app, reappearing in a standalone document that carries
+   its own copy of the palette and that no checker reads. */
 --steel:#6B6B6B;--copper:#C79F6B;--confirm:#1FAA59;--hazard:#E8672E;--critical:#FF3B30;
 --blue:#7FA4EE;--hair:rgba(242,242,242,.10);
 --fd:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
@@ -25,7 +31,7 @@ text-transform:uppercase;color:var(--dim);margin-top:6px}
 .grp-h{padding-bottom:14px;border-bottom:1px solid var(--hair);margin-bottom:4px}
 .grp-h h2{font:600 21px/1.2 var(--fd);letter-spacing:-.02em}
 .grp-h p{font-size:13.5px;color:var(--dim);margin-top:6px;max-width:82ch}
-.grp-h .n{float:right;font:400 11px/1 var(--fm);color:var(--steel)}
+.grp-h .n{float:right;font:400 11px/1 var(--fm);color:var(--dim)}
 .rt{display:grid;grid-template-columns:minmax(240px,1.3fr) 1fr 96px 190px;gap:16px;
 padding:13px 0;border-bottom:1px solid rgba(242,242,242,.055);align-items:baseline}
 @media(max-width:900px){.rt{grid-template-columns:1fr;gap:5px;padding:16px 0}}
@@ -46,8 +52,19 @@ display:block;margin-bottom:3px}
 .stages{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:1px;
 background:var(--hair);border:1px solid var(--hair);margin-top:14px}
 .stages div{background:var(--panel);padding:12px 14px}
-.stages .i{font:400 10px/1 var(--fm);color:var(--steel)}
+.stages .i{font:400 10px/1 var(--fm);color:var(--dim)}
 .stages .t{display:block;font-size:13px;margin-top:5px;text-transform:capitalize}
+.cts{grid-column:1/-1;margin-top:10px;padding:12px 14px;background:rgba(242,242,242,.035);
+border-left:2px solid var(--copper)}
+.cts>b{display:block;font:400 9.5px/1.6 var(--fm);letter-spacing:.14em;text-transform:uppercase;
+color:var(--copper);margin-bottom:8px}
+.cts>b code{font-family:var(--fm);color:var(--inv);letter-spacing:0;text-transform:none;font-size:11px}
+.ct{display:grid;grid-template-columns:minmax(150px,270px) 1fr;gap:14px;padding:4px 0;
+border-top:1px solid rgba(242,242,242,.05)}
+.ct:first-of-type{border-top:0}
+@media(max-width:900px){.ct{grid-template-columns:1fr;gap:2px;padding:7px 0}}
+.ch{font:400 11.5px/1.5 var(--fm);color:#D8D8D8}
+.cp{font-size:12.5px;color:var(--dim);max-width:86ch}
 .laws{margin-top:64px;padding-top:36px;border-top:1px solid var(--hair)}
 .law{border-left:2px solid var(--copper);padding-left:18px;margin-bottom:22px;max-width:84ch}
 .law b{display:block;font:400 10px/1 var(--fm);letter-spacing:.16em;text-transform:uppercase;
@@ -62,15 +79,15 @@ code{font-family:var(--fm);font-size:.88em;background:rgba(242,242,242,.07);padd
 <div class="eb">GC.SYSTEM · Wave 7 · Information Architecture</div>
 <h1>Every URL<br>in the system.</h1>
 <p class="lede">
-<strong>96 routes</strong> across seven sections, plus 16 generated passport
+<strong>103 routes</strong> across seven sections, plus 16 generated passport
 stages. Access is <strong>derived from the assembly's vantage</strong> rather than declared — the
 aperture tier already decided what each vantage may see, and a route restating it would be a second
-source of truth. 8 routes override that derivation, and every
+source of truth. 12 routes override that derivation, and every
 one states why.
 </p>
 <div class="tally">
-<div><b style="color:#1FAA59">34</b><span>public</span></div><div><b style="color:#7FA4EE">3</b><span>identified</span></div><div><b style="color:#C79F6B">3</b><span>accredited</span></div><div><b style="color:#E8672E">22</b><span>member</span></div><div><b style="color:#FF3B30">34</b><span>office</span></div>
-<div><b>8</b><span>Overrides</span></div>
+<div><b style="color:#1FAA59">41</b><span>public</span></div><div><b style="color:#7FA4EE">3</b><span>identified</span></div><div><b style="color:#C79F6B">3</b><span>accredited</span></div><div><b style="color:#E8672E">22</b><span>member</span></div><div><b style="color:#FF3B30">34</b><span>office</span></div>
+<div><b>12</b><span>Overrides</span></div>
 <div><b>21</b><span>Rights used</span></div>
 </div>
 </header>
@@ -85,6 +102,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">Hero region, then routes into the collection. No figure above the fold.</span>
+<div class="cts">
+<b>Ending <code>/</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-23.a Ground</span><span class="cp">Image or moving image, with the scrim that makes type survivable over it.</span></div><div class="ct"><span class="ch">AS-23.b Claim</span><span class="cp">One line, display-xl. Optionally one supporting line.</span></div><div class="ct"><span class="ch">AS-23.c Entry</span><span class="cp">At most two routes onward, one of them primary.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/collection</span>
 <span><span class="nm">The Collection</span><br><span class="asm">AS-01 · The Gateway Grid</span></span>
@@ -92,6 +113,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/collection</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-01.a Signal Line</span><span class="cp">System identity and nothing else. One mono line.  ⟨renders A-01⟩</span></div><div class="ct"><span class="ch">AS-01.b Property Grid</span><span class="cp">One narrow aperture per property, in a 4:5 frame.  ⟨renders AP-01, O-01⟩</span></div><div class="ct"><span class="ch">AS-01.c Into the Console</span><span class="cp">One route out, to the wide aperture on the same object.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/collection/<em>[property]</em></span>
 <span><span class="nm">Property</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
@@ -99,6 +124,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/[property]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-03.a Masthead</span><span class="cp">Full-bleed image, property name in display-xl, jurisdiction.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.b Trinity Lens</span><span class="cp">Space · Capital · Time as three lenses onto the same property.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.c Thesis</span><span class="cp">Why this asset should outperform. Prose, measure-capped.</span></div><div class="ct"><span class="ch">AS-03.d Into Commitment</span><span class="cp">Route to AS-06 if the offering is open; to the register if not.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/collection/<em>[property]</em>/space</span>
 <span><span class="nm">Space</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
@@ -106,6 +135,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/space</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-03.a Masthead</span><span class="cp">Full-bleed image, property name in display-xl, jurisdiction.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.b Trinity Lens</span><span class="cp">Space · Capital · Time as three lenses onto the same property.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.c Thesis</span><span class="cp">Why this asset should outperform. Prose, measure-capped.</span></div><div class="ct"><span class="ch">AS-03.d Into Commitment</span><span class="cp">Route to AS-06 if the offering is open; to the register if not.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/collection/<em>[property]</em>/capital</span>
 <span><span class="nm">Capital</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
@@ -113,6 +146,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">The Capital LENS at the space vantage. Renders AP-03 and routes to the console; it does not render console disclosure because a tab is labelled Capital.</span>
+<div class="cts">
+<b>Ending <code>/capital</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-03.a Masthead</span><span class="cp">Full-bleed image, property name in display-xl, jurisdiction.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.b Trinity Lens</span><span class="cp">Space · Capital · Time as three lenses onto the same property.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.c Thesis</span><span class="cp">Why this asset should outperform. Prose, measure-capped.</span></div><div class="ct"><span class="ch">AS-03.d Into Commitment</span><span class="cp">Route to AS-06 if the offering is open; to the register if not.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/collection/<em>[property]</em>/time</span>
 <span><span class="nm">Time</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
@@ -120,6 +157,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/time</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-03.a Masthead</span><span class="cp">Full-bleed image, property name in display-xl, jurisdiction.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.b Trinity Lens</span><span class="cp">Space · Capital · Time as three lenses onto the same property.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.c Thesis</span><span class="cp">Why this asset should outperform. Prose, measure-capped.</span></div><div class="ct"><span class="ch">AS-03.d Into Commitment</span><span class="cp">Route to AS-06 if the offering is open; to the register if not.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/collection/<em>[property]</em>/location</span>
 <span><span class="nm">Location</span><br><span class="asm">AS-12 · Location Intelligence</span></span>
@@ -127,6 +168,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/location</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-12.a Map</span><span class="cp">The site, its catchment rings, and the access points that define them.</span></div><div class="ct"><span class="ch">AS-12.b Catchment</span><span class="cp">Population and drive time per ring, each with its source.</span></div><div class="ct"><span class="ch">AS-12.c Access</span><span class="cp">Airport, rail and road, with real durations.</span></div><div class="ct"><span class="ch">AS-12.d Demand Evidence</span><span class="cp">Footfall and seasonality, with the window they were measured over.  ⟨renders O-10⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/collection/<em>[property]</em>/gallery</span>
 <span><span class="nm">Gallery</span><br><span class="asm">AS-10 · The Gallery Strip</span></span>
@@ -134,6 +179,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/gallery</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-10.a Strip</span><span class="cp">Frames in a horizontal run, each captioned beneath the image.  ⟨renders AP-03, O-01⟩</span></div><div class="ct"><span class="ch">AS-10.b Caption Rule</span><span class="cp">What a caption may carry: name, jurisdiction, lifecycle state.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/gallery</span>
 <span><span class="nm">Gallery</span><br><span class="asm">AS-09 · The Gallery Frame</span></span>
@@ -141,6 +190,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/gallery</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-09.a Frame</span><span class="cp">One card centred at a time. Drag, arrow keys, or the rail.  ⟨renders AP-01⟩</span></div><div class="ct"><span class="ch">AS-09.b Rail</span><span class="cp">Position in the set, and a route to every frame directly.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/story</span>
 <span><span class="nm">Story</span><br><span class="asm">AS-08 · The Story Playback</span></span>
@@ -148,6 +201,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/story</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-08.a Grid</span><span class="cp">Tiles in a 4:5 frame. Each opens the player at its own index.</span></div><div class="ct"><span class="ch">AS-08.b Player</span><span class="cp">Full-screen sequence with progress, manual advance, and pause.</span></div><div class="ct"><span class="ch">AS-08.c Exit</span><span class="cp">Always visible, always reachable by Escape.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/portfolio</span>
 <span><span class="nm">The Portfolio</span><br><span class="asm">AS-07 · The Portfolio Narrative</span></span>
@@ -155,6 +212,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/portfolio</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-07.a Premise</span><span class="cp">One claim over ambient media.</span></div><div class="ct"><span class="ch">AS-07.b The Three</span><span class="cp">One section per brand: name, position, media, two paragraphs.</span></div><div class="ct"><span class="ch">AS-07.c Attributes</span><span class="cp">Three attributes per brand, in a hairline terminal grid.</span></div><div class="ct"><span class="ch">AS-07.d Onward</span><span class="cp">Into the gateway grid.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/how-capital-works</span>
 <span><span class="nm">How Capital Works</span><br><span class="asm">AS-04 · The Capital Explainer</span></span>
@@ -162,6 +223,10 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → public</b>The waterfall explainer is the single most important thing a prospective investor can read before committing, and putting it behind a sign-in would mean the disclosure only reaches people who have already decided.</span>
 
+<div class="cts">
+<b>Ending <code>/how-capital-works</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-04.a Premise</span><span class="cp">One claim, in display-xl. Dark ground.</span></div><div class="ct"><span class="ch">AS-04.b The Structure</span><span class="cp">The three-entity model as a diagram: platform, vehicle, operating partner.</span></div><div class="ct"><span class="ch">AS-04.c The Waterfall</span><span class="cp">Six stages, in order, on paper ground.  ⟨renders O-03⟩</span></div><div class="ct"><span class="ch">AS-04.d The Floor</span><span class="cp">Reserve floor and what happens when distribution would breach it.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-04.e Return Drivers</span><span class="cp">Yield and appreciation, stated as drivers not promises.</span></div><div class="ct"><span class="ch">AS-04.f Onward</span><span class="cp">Space · Time · Commitment.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/voices</span>
 <span><span class="nm">Voices</span><br><span class="asm">AS-24 · Testimonials</span></span>
@@ -169,6 +234,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">Testimonials. No figure, no return, no performance reference — regulated speech.</span>
+<div class="cts">
+<b>Ending <code>/voices</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-24.a Statements</span><span class="cp">Attributed quotes about the property, and about occupying it.</span></div><div class="ct"><span class="ch">AS-24.b Attribution</span><span class="cp">Name or initials, role, date, and the consent basis.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/answers</span>
 <span><span class="nm">Answers</span><br><span class="asm">AS-17 · The Knowledge Base</span></span>
@@ -176,6 +245,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/answers</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-17.a Search</span><span class="cp">Filter across questions and answers.</span></div><div class="ct"><span class="ch">AS-17.b Answers</span><span class="cp">Grouped questions, each with the governing clause cited.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/status</span>
 <span><span class="nm">System Status</span><br><span class="asm">AS-15 · System Status</span></span>
@@ -183,6 +256,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/status</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-15.a Current State</span><span class="cp">One line: operational, degraded, or down. Then the components.</span></div><div class="ct"><span class="ch">AS-15.b Components</span><span class="cp">Each component with its state, and when that state was last confirmed.</span></div><div class="ct"><span class="ch">AS-15.c Incidents</span><span class="cp">Open and recent incidents, with what is being done.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/roles</span>
 <span><span class="nm">Open Roles</span><br><span class="asm">AS-18 · Recruitment</span></span>
@@ -190,6 +267,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/roles</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-18.a How We Work</span><span class="cp">What the work is actually like. Two or three claims, all falsifiable.</span></div><div class="ct"><span class="ch">AS-18.b Open Roles</span><span class="cp">Role, what it owns, and whether it is open.</span></div><div class="ct"><span class="ch">AS-18.c Applying</span><span class="cp">One route, with what to send and what happens next.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/roles/<em>[code]</em></span>
 <span><span class="nm">Role</span><br><span class="asm">AS-18 · Recruitment</span></span>
@@ -197,6 +278,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/[code]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-18.a How We Work</span><span class="cp">What the work is actually like. Two or three claims, all falsifiable.</span></div><div class="ct"><span class="ch">AS-18.b Open Roles</span><span class="cp">Role, what it owns, and whether it is open.</span></div><div class="ct"><span class="ch">AS-18.c Applying</span><span class="cp">One route, with what to send and what happens next.</span></div>
+</div>
 </div>
 
 </section><section class="grp">
@@ -204,32 +289,48 @@ one states why.
 <h2>Legal</h2><p>Standing statements. All public — a document behind a sign-in is one nobody can rely on before they sign in.</p></div>
 <div class="rt">
 <span class="pth">/legal</span>
-<span><span class="nm">Legal</span></span>
+<span><span class="nm">Legal</span><br><span class="asm">AS-29 · The Standing Document</span></span>
 <span class="ac" style="color:#1FAA59">public</span>
 <span class="rg"></span>
 
 <span class="nt">Index of the standing documents.</span>
+<div class="cts">
+<b>Ending <code>/legal</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-29.a Masthead</span><span class="cp">Title, what the document is for in one sentence, version, effective date and reading time.</span></div><div class="ct"><span class="ch">AS-29.b Contents</span><span class="cp">Every part, linked, with its clause range. Sticky on wide screens.</span></div><div class="ct"><span class="ch">AS-29.c Body</span><span class="cp">Numbered parts and clauses, in order, each clause addressable by its own anchor.</span></div><div class="ct"><span class="ch">AS-29.d Assertions</span><span class="cp">Clauses marked as assertions of fact, set on the paper ground.</span></div><div class="ct"><span class="ch">AS-29.e Alongside</span><span class="cp">The documents that must be read with this one, and why each.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/legal/terms</span>
-<span><span class="nm">Terms of Use</span></span>
+<span><span class="nm">Terms and Conditions</span><br><span class="asm">AS-29 · The Standing Document</span></span>
 <span class="ac" style="color:#1FAA59">public</span>
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/terms</code> &middot; contents</b>
+<div class="ct"><span class="ch">DOC-01 · v2.0 · in force 2026-07-31</span><span class="cp">What you are agreeing to when you commit capital through this platform, and what each of the three entities involved is and is not responsible for.</span></div><div class="ct"><span class="ch">Part A — Who you are contracting with</span><span class="cp">A.1 Getaway Collective · A.2 The vehicle · A.3 The operating partner · A.4 Governance without ownership</span></div><div class="ct"><span class="ch">Part B — Eligibility</span><span class="cp">B.1 Who may commit · B.2 Accreditation · B.3 Jurisdiction and residence · B.4 Refusal</span></div><div class="ct"><span class="ch">Part C — Your account and the passport</span><span class="cp">C.1 One identity · C.2 Security · C.3 Accuracy</span></div><div class="ct"><span class="ch">Part D — Commitment and settlement</span><span class="cp">D.1 A commitment is an offer · D.2 Settlement is the event that matters · D.3 Settlement is irreversible · D.4 The completion window · D.5 Nothing new appears after commitment</span></div><div class="ct"><span class="ch">Part E — Money</span><span class="cp">E.1 The waterfall · E.2 Debt service is its own stage · E.3 Distribution can be blocked · E.4 No preferred return · E.5 Fees · E.6 Rounding · E.7 Taxes</span></div><div class="ct"><span class="ch">Part F — Entitlement</span><span class="cp">F.1 What entitlement is · F.2 When it begins · F.3 Unused nights · F.4 Precedence</span></div><div class="ct"><span class="ch">Part G — Lock-in and transfer</span><span class="cp">G.1 Lock-in · G.2 There is no market · G.3 Transfer requires consent · G.4 Death and succession</span></div><div class="ct"><span class="ch">Part H — Governance</span><span class="cp">H.1 Voting is contribution-weighted · H.2 Thresholds · H.3 What you can call · H.4 A minority position is a minority position</span></div><div class="ct"><span class="ch">Part I — The platform itself</span><span class="cp">I.1 Availability · I.2 Figures shown · I.3 What we publish is what we hold · I.4 Acceptable use · I.5 Intellectual property</span></div><div class="ct"><span class="ch">Part J — Liability</span><span class="cp">J.1 What is never excluded · J.2 What is excluded · J.3 Cap · J.4 Your own diligence</span></div><div class="ct"><span class="ch">Part K — Changes, complaints and law</span><span class="cp">K.1 Changes to these terms · K.2 Complaints · K.3 Governing law · K.4 If a clause fails</span></div><div class="ct"><span class="ch">Part L — Standing disclosure</span><span class="cp">L.1 Capital at risk, past performance, and advice · L.2 This is a summary</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/legal/privacy</span>
-<span><span class="nm">Privacy Notice</span></span>
+<span><span class="nm">Privacy Notice</span><br><span class="asm">AS-29 · The Standing Document</span></span>
 <span class="ac" style="color:#1FAA59">public</span>
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/privacy</code> &middot; contents</b>
+<div class="ct"><span class="ch">DOC-03 · v2.0 · in force 2026-07-31</span><span class="cp">What is collected about you, why it is collected, who sees it, and how long it is kept.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/legal/cookies</span>
-<span><span class="nm">Cookie Notice</span></span>
+<span><span class="nm">Cookie Notice</span><br><span class="asm">AS-29 · The Standing Document</span></span>
 <span class="ac" style="color:#1FAA59">public</span>
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/cookies</code> &middot; contents</b>
+<div class="ct"><span class="ch">DOC-04 · v2.0 · in force 2026-07-31</span><span class="cp">What is stored on your device, and why there is no consent banner.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/legal/risk-disclosure</span>
 <span><span class="nm">Risk Disclosure</span><br><span class="asm">AS-14 · The Risk Disclosure</span></span>
@@ -237,27 +338,43 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → public</b>It gates commitment, and it is also the document a prospective investor most needs to read before deciding whether to start. Public to read; the ACKNOWLEDGEMENT still requires identity and is recorded against a version.</span>
 
+<div class="cts">
+<b>Ending <code>/risk-disclosure</code> &middot; contents</b>
+<div class="ct"><span class="ch">DOC-02 · v3.0 · in force 2026-07-31</span><span class="cp">Understanding ownership, operations, returns and risks — how ownership in a Getaway Collective hospitality asset works, what rights accompany it, how the property is operated, how returns are generated, and the principal risks that may affect your investment.</span></div><div class="ct"><span class="ch">Part A — Before You Commit</span><span class="cp">A.1 · A.2</span></div><div class="ct"><span class="ch">Part B — Understanding the Asset</span><span class="cp">B.1 · B.2 · B.3</span></div><div class="ct"><span class="ch">Part C — Ownership Structure</span><span class="cp">C.1 · C.2 · C.3</span></div><div class="ct"><span class="ch">Part D — Development &amp; Construction</span><span class="cp">D.1 · D.2 · D.3</span></div><div class="ct"><span class="ch">Part E — Hospitality Operations</span><span class="cp">E.1 · E.2 · E.3</span></div><div class="ct"><span class="ch">Part F — Revenue &amp; Distributions</span><span class="cp">F.1 · F.2 · F.3</span></div><div class="ct"><span class="ch">Part G — Ownership Duration &amp; Liquidity</span><span class="cp">G.1 · G.2</span></div><div class="ct"><span class="ch">Part H — Financing</span><span class="cp">H.1 · H.2 · H.3</span></div><div class="ct"><span class="ch">Part I — Governance</span><span class="cp">I.1 · I.2</span></div><div class="ct"><span class="ch">Part J — Regulation &amp; Compliance</span><span class="cp">J.1 · J.2 · J.3</span></div><div class="ct"><span class="ch">Part K — The Platform</span><span class="cp">K.1 · K.2</span></div><div class="ct"><span class="ch">Part L — Principal Investment Risks</span><span class="cp">L.1 · L.2 · L.3</span></div><div class="ct"><span class="ch">Part M — Important Reminder</span><span class="cp">M.1 · M.2</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/legal/disclosures</span>
-<span><span class="nm">Standing Disclosures</span></span>
+<span><span class="nm">Standing Disclosures</span><br><span class="asm">AS-29 · The Standing Document</span></span>
 <span class="ac" style="color:#1FAA59">public</span>
 <span class="rg"></span>
 
 <span class="nt">Capital at risk, past performance, no guarantee. Body size, reading tone.</span>
+<div class="cts">
+<b>Ending <code>/disclosures</code> &middot; contents</b>
+<div class="ct"><span class="ch">DOC-05 · v2.0 · in force 2026-07-31</span><span class="cp">The disclosures that apply to everything on this platform, and where each one lives.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/legal/complaints</span>
-<span><span class="nm">Complaints Procedure</span></span>
+<span><span class="nm">Complaints Procedure</span><br><span class="asm">AS-29 · The Standing Document</span></span>
 <span class="ac" style="color:#1FAA59">public</span>
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/complaints</code> &middot; contents</b>
+<div class="ct"><span class="ch">DOC-06 · v2.0 · in force 2026-07-31</span><span class="cp">Who reads a complaint, how long each stage takes, and what to do if the answer is wrong.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/legal/accessibility</span>
-<span><span class="nm">Accessibility Statement</span></span>
+<span><span class="nm">Accessibility Statement</span><br><span class="asm">AS-29 · The Standing Document</span></span>
 <span class="ac" style="color:#1FAA59">public</span>
 <span class="rg"></span>
 
 <span class="nt">States what has been tested and what has not. Currently: contrast computed, no assistive-technology testing performed.</span>
+<div class="cts">
+<b>Ending <code>/accessibility</code> &middot; contents</b>
+<div class="ct"><span class="ch">DOC-07 · v2.0 · in force 2026-07-31</span><span class="cp">What has been tested, what has been found, and what has not been tested at all.</span></div>
+</div>
 </div>
 
 </section><section class="grp">
@@ -270,6 +387,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">No password is ever handled by the design system. Delegated.</span>
+<div class="cts">
+<b>Ending <code>/sign-in</code> &middot; contents</b>
+<div class="ct"><span class="ch">Request</span><span class="cp">Email address only. No password field — the platform does not hold passwords.</span></div><div class="ct"><span class="ch">Sent</span><span class="cp">Confirmation that a link was sent, worded identically whether or not the address is known. A different message would confirm who holds an account.</span></div><div class="ct"><span class="ch">Recovery</span><span class="cp">What to do when the link does not arrive, without a control that reveals whether the address exists.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/auth/verify</span>
 <span><span class="nm">Verify</span></span>
@@ -277,6 +398,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">The token arrives as a QUERY parameter, not a path segment, and it is not declared as a param for that reason. It is in the URL at all only because an email link has no other carrier — so it is single-use, short-lived, and stripped from the address bar on arrival. A URL is written to server logs, browser history and referrer headers.</span>
+<div class="cts">
+<b>Ending <code>/verify</code> &middot; contents</b>
+<div class="ct"><span class="ch">Verifying</span><span class="cp">The state while a link is checked. No control, because there is nothing for the viewer to do.</span></div><div class="ct"><span class="ch">Expired</span><span class="cp">What a stale link means and how to request another. Links are single-use and time-bound.</span></div><div class="ct"><span class="ch">Wrong device</span><span class="cp">Stated plainly rather than treated as a failure — a link opened elsewhere is ordinary, not suspicious.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/auth/sign-out</span>
 <span><span class="nm">Sign Out</span></span>
@@ -284,6 +409,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/sign-out</code> &middot; contents</b>
+<div class="ct"><span class="ch">Confirmation</span><span class="cp">That the session ended, and on which device.</span></div><div class="ct"><span class="ch">Other sessions</span><span class="cp">Whether sessions remain elsewhere, and the control to end them.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/passport</span>
 <span><span class="nm">Your Passport</span></span>
@@ -291,6 +420,10 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → identified</b>The passport is how someone BECOMES a member. Requiring membership to reach it would close the only door into the system.</span>
 
+<div class="cts">
+<b>Ending <code>/passport</code> &middot; contents</b>
+<div class="ct"><span class="ch">Progress</span><span class="cp">The sixteen stages with the state of each: complete, in progress, not started.</span></div><div class="ct"><span class="ch">Resume</span><span class="cp">A link to the furthest incomplete stage. The application is resumable by URL, so this is a shortcut and never the only way back.</span></div><div class="ct"><span class="ch">What is held</span><span class="cp">Which documents have been received, and which are outstanding.</span></div><div class="ct"><span class="ch">Decision</span><span class="cp">The standing decision and its date, once one exists.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/passport/${st}</span>
 <span><span class="nm">Passport · ${st.replace(/-/g, " ")}</span><br><span class="asm">AS-06 · The Commitment Flow</span></span>
@@ -298,6 +431,10 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → identified</b>Accreditation is reached before membership exists, by definition — the Member Law fires on settlement, and settlement cannot happen until accreditation has. Requiring member access here would close the only door into the system.</span>
 
+<div class="cts">
+<b>Ending <code>/${st}</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-06.a Asset Anchor</span><span class="cp">The property, the amount, and the terms. Sticky through every step.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-06.b Identity</span><span class="cp">Legal name, contact. Autosaved per field on blur.</span></div><div class="ct"><span class="ch">AS-06.c Accreditation</span><span class="cp">PR-01. Resumable; a partial application survives the session.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-06.d Review</span><span class="cp">The full commitment, restated, with everything that binds.</span></div><div class="ct"><span class="ch">AS-06.e The Piston</span><span class="cp">The commitment control. Linear, 3000ms, never eased.  ⟨renders M-04⟩</span></div><div class="ct"><span class="ch">AS-06.f Settled</span><span class="cp">What was committed, and that membership begins at settlement, not here.</span></div>
+</div>
 </div>
 <div class="stages">
 <div><span class="i">01</span>
@@ -328,6 +465,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/member</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-05.a Position</span><span class="cp">Total position, change since entry, next distribution and its date.  ⟨renders O-02, O-05⟩</span></div><div class="ct"><span class="ch">AS-05.b Assets</span><span class="cp">One member-vantage aperture per held property.  ⟨renders AP-04, O-01⟩</span></div><div class="ct"><span class="ch">AS-05.c Entitlement</span><span class="cp">Nights held, nights used, what is scheduled.</span></div><div class="ct"><span class="ch">AS-05.d Documents</span><span class="cp">Agreements, certificates, filings. What is signed and what is not.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/position</span>
 <span><span class="nm">Position</span><br><span class="asm">AS-05 · The Member Console</span></span>
@@ -335,6 +476,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/position</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-05.a Position</span><span class="cp">Total position, change since entry, next distribution and its date.  ⟨renders O-02, O-05⟩</span></div><div class="ct"><span class="ch">AS-05.b Assets</span><span class="cp">One member-vantage aperture per held property.  ⟨renders AP-04, O-01⟩</span></div><div class="ct"><span class="ch">AS-05.c Entitlement</span><span class="cp">Nights held, nights used, what is scheduled.</span></div><div class="ct"><span class="ch">AS-05.d Documents</span><span class="cp">Agreements, certificates, filings. What is signed and what is not.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/holdings</span>
 <span><span class="nm">Holdings</span><br><span class="asm">AS-10 · The Gallery Strip</span></span>
@@ -342,6 +487,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/holdings</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-10.a Strip</span><span class="cp">Frames in a horizontal run, each captioned beneath the image.  ⟨renders AP-03, O-01⟩</span></div><div class="ct"><span class="ch">AS-10.b Caption Rule</span><span class="cp">What a caption may carry: name, jurisdiction, lifecycle state.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/holdings/<em>[property]</em></span>
 <span><span class="nm">Holding</span><br><span class="asm">AS-03 · The Property Masthead</span></span>
@@ -349,6 +498,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/[property]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-03.a Masthead</span><span class="cp">Full-bleed image, property name in display-xl, jurisdiction.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.b Trinity Lens</span><span class="cp">Space · Capital · Time as three lenses onto the same property.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-03.c Thesis</span><span class="cp">Why this asset should outperform. Prose, measure-capped.</span></div><div class="ct"><span class="ch">AS-03.d Into Commitment</span><span class="cp">Route to AS-06 if the offering is open; to the register if not.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/distributions</span>
 <span><span class="nm">Distributions</span><br><span class="asm">AS-05 · The Member Console</span></span>
@@ -356,6 +509,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/distributions</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-05.a Position</span><span class="cp">Total position, change since entry, next distribution and its date.  ⟨renders O-02, O-05⟩</span></div><div class="ct"><span class="ch">AS-05.b Assets</span><span class="cp">One member-vantage aperture per held property.  ⟨renders AP-04, O-01⟩</span></div><div class="ct"><span class="ch">AS-05.c Entitlement</span><span class="cp">Nights held, nights used, what is scheduled.</span></div><div class="ct"><span class="ch">AS-05.d Documents</span><span class="cp">Agreements, certificates, filings. What is signed and what is not.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/distributions/<em>[ref]</em></span>
 <span><span class="nm">Distribution</span><br><span class="asm">AS-05 · The Member Console</span></span>
@@ -363,6 +520,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/[ref]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-05.a Position</span><span class="cp">Total position, change since entry, next distribution and its date.  ⟨renders O-02, O-05⟩</span></div><div class="ct"><span class="ch">AS-05.b Assets</span><span class="cp">One member-vantage aperture per held property.  ⟨renders AP-04, O-01⟩</span></div><div class="ct"><span class="ch">AS-05.c Entitlement</span><span class="cp">Nights held, nights used, what is scheduled.</span></div><div class="ct"><span class="ch">AS-05.d Documents</span><span class="cp">Agreements, certificates, filings. What is signed and what is not.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/calls</span>
 <span><span class="nm">Capital Calls</span><br><span class="asm">AS-26 · The Capital Call</span></span>
@@ -370,6 +531,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/calls</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-26.a The Call</span><span class="cp">Amount, due date, and the commitment it draws against.</span></div><div class="ct"><span class="ch">AS-26.b Basis</span><span class="cp">How the amount was computed from the commitment and the drawn-to-date.</span></div><div class="ct"><span class="ch">AS-26.c Default</span><span class="cp">What happens if the call is not met, stated plainly.</span></div><div class="ct"><span class="ch">AS-26.d Settlement</span><span class="cp">Payment, and the record of it.  ⟨renders M-04⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/calls/<em>[ref]</em></span>
 <span><span class="nm">Capital Call</span><br><span class="asm">AS-26 · The Capital Call</span></span>
@@ -377,6 +542,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">Default consequences render in full above the payment control.</span>
+<div class="cts">
+<b>Ending <code>/[ref]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-26.a The Call</span><span class="cp">Amount, due date, and the commitment it draws against.</span></div><div class="ct"><span class="ch">AS-26.b Basis</span><span class="cp">How the amount was computed from the commitment and the drawn-to-date.</span></div><div class="ct"><span class="ch">AS-26.c Default</span><span class="cp">What happens if the call is not met, stated plainly.</span></div><div class="ct"><span class="ch">AS-26.d Settlement</span><span class="cp">Payment, and the record of it.  ⟨renders M-04⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/entitlement</span>
 <span><span class="nm">Entitlement</span><br><span class="asm">AS-25 · The Time Ledger</span></span>
@@ -384,6 +553,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/entitlement</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-25.a Balance</span><span class="cp">Nights held, used, scheduled and remaining, for the current entitlement year.</span></div><div class="ct"><span class="ch">AS-25.b Calendar</span><span class="cp">The entitlement year, with what is held and what is available.</span></div><div class="ct"><span class="ch">AS-25.c Ledger</span><span class="cp">Every draw and return against the entitlement, append-only.  ⟨renders O-08⟩</span></div><div class="ct"><span class="ch">AS-25.d Expiry</span><span class="cp">What lapses, and when.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/entitlement/<em>[year]</em></span>
 <span><span class="nm">Entitlement Year</span><br><span class="asm">AS-25 · The Time Ledger</span></span>
@@ -391,6 +564,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/[year]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-25.a Balance</span><span class="cp">Nights held, used, scheduled and remaining, for the current entitlement year.</span></div><div class="ct"><span class="ch">AS-25.b Calendar</span><span class="cp">The entitlement year, with what is held and what is available.</span></div><div class="ct"><span class="ch">AS-25.c Ledger</span><span class="cp">Every draw and return against the entitlement, append-only.  ⟨renders O-08⟩</span></div><div class="ct"><span class="ch">AS-25.d Expiry</span><span class="cp">What lapses, and when.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/resolutions</span>
 <span><span class="nm">Resolutions</span><br><span class="asm">AS-27 · The Ballot</span></span>
@@ -398,6 +575,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/resolutions</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-27.a Resolution</span><span class="cp">The text as it will be minuted, its threshold, and the closing time.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-27.b Weight</span><span class="cp">The viewer's own voting weight, and how it was derived.</span></div><div class="ct"><span class="ch">AS-27.c Cast</span><span class="cp">For, against, abstain. Irreversible once the window closes.</span></div><div class="ct"><span class="ch">AS-27.d Outcome</span><span class="cp">The aggregate, once the window closes.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/resolutions/<em>[ref]</em></span>
 <span><span class="nm">Ballot</span><br><span class="asm">AS-27 · The Ballot</span></span>
@@ -405,6 +586,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">Sealed at every vantage. The confirmation never echoes the choice.</span>
+<div class="cts">
+<b>Ending <code>/[ref]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-27.a Resolution</span><span class="cp">The text as it will be minuted, its threshold, and the closing time.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-27.b Weight</span><span class="cp">The viewer's own voting weight, and how it was derived.</span></div><div class="ct"><span class="ch">AS-27.c Cast</span><span class="cp">For, against, abstain. Irreversible once the window closes.</span></div><div class="ct"><span class="ch">AS-27.d Outcome</span><span class="cp">The aggregate, once the window closes.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/documents</span>
 <span><span class="nm">Documents</span><br><span class="asm">AS-05 · The Member Console</span></span>
@@ -412,6 +597,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/documents</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-05.a Position</span><span class="cp">Total position, change since entry, next distribution and its date.  ⟨renders O-02, O-05⟩</span></div><div class="ct"><span class="ch">AS-05.b Assets</span><span class="cp">One member-vantage aperture per held property.  ⟨renders AP-04, O-01⟩</span></div><div class="ct"><span class="ch">AS-05.c Entitlement</span><span class="cp">Nights held, nights used, what is scheduled.</span></div><div class="ct"><span class="ch">AS-05.d Documents</span><span class="cp">Agreements, certificates, filings. What is signed and what is not.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/documents/<em>[id]</em></span>
 <span><span class="nm">Document</span><br><span class="asm">AS-05 · The Member Console</span></span>
@@ -419,6 +608,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/[id]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-05.a Position</span><span class="cp">Total position, change since entry, next distribution and its date.  ⟨renders O-02, O-05⟩</span></div><div class="ct"><span class="ch">AS-05.b Assets</span><span class="cp">One member-vantage aperture per held property.  ⟨renders AP-04, O-01⟩</span></div><div class="ct"><span class="ch">AS-05.c Entitlement</span><span class="cp">Nights held, nights used, what is scheduled.</span></div><div class="ct"><span class="ch">AS-05.d Documents</span><span class="cp">Agreements, certificates, filings. What is signed and what is not.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/reports</span>
 <span><span class="nm">Reports</span><br><span class="asm">AS-05 · The Member Console</span></span>
@@ -426,6 +619,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/reports</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-05.a Position</span><span class="cp">Total position, change since entry, next distribution and its date.  ⟨renders O-02, O-05⟩</span></div><div class="ct"><span class="ch">AS-05.b Assets</span><span class="cp">One member-vantage aperture per held property.  ⟨renders AP-04, O-01⟩</span></div><div class="ct"><span class="ch">AS-05.c Entitlement</span><span class="cp">Nights held, nights used, what is scheduled.</span></div><div class="ct"><span class="ch">AS-05.d Documents</span><span class="cp">Agreements, certificates, filings. What is signed and what is not.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/notifications</span>
 <span><span class="nm">Notifications</span></span>
@@ -433,6 +630,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">The alert centre. A system ticker (SIGNAL_APERTURE) never lands here; only things asked of the member do.</span>
+<div class="cts">
+<b>Ending <code>/notifications</code> &middot; contents</b>
+<div class="ct"><span class="ch">Unread</span><span class="cp">Events since last read, newest first, each naming the vehicle it concerns.</span></div><div class="ct"><span class="ch">All</span><span class="cp">The full record. A notification is never deleted, only marked read.</span></div><div class="ct"><span class="ch">Delivery</span><span class="cp">Which channels carried each one, so a missed notice can be traced rather than disputed.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/profile</span>
 <span><span class="nm">Profile</span></span>
@@ -440,6 +641,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/profile</code> &middot; contents</b>
+<div class="ct"><span class="ch">Identity</span><span class="cp">Name, contact, and tax residency as recorded. Changes are proposed, not applied — an identity on a register is not edited in place.</span></div><div class="ct"><span class="ch">Verification</span><span class="cp">What has been verified, when, and against which document.</span></div><div class="ct"><span class="ch">Positions</span><span class="cp">Every vehicle this identity is a partner in, with the date settlement fired.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/settings</span>
 <span><span class="nm">Settings</span></span>
@@ -447,6 +652,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/settings</code> &middot; contents</b>
+<div class="ct"><span class="ch">Index</span><span class="cp">Notifications, security and tax, each with the one line that says what it governs.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/settings/notifications</span>
 <span><span class="nm">Notification Settings</span></span>
@@ -454,6 +663,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/notifications</code> &middot; contents</b>
+<div class="ct"><span class="ch">Channels</span><span class="cp">Email and in-platform, per event class.</span></div><div class="ct"><span class="ch">Cannot be silenced</span><span class="cp">Capital calls, resolutions and distributions. Stated as unsilenceable rather than shown as a control that refuses to move.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/settings/security</span>
 <span><span class="nm">Security</span></span>
@@ -461,6 +674,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/security</code> &middot; contents</b>
+<div class="ct"><span class="ch">Sessions</span><span class="cp">Where this identity is signed in, and the control to end each.</span></div><div class="ct"><span class="ch">Second factor</span><span class="cp">State and enrolment. Required before any office right is granted.</span></div><div class="ct"><span class="ch">Recent activity</span><span class="cp">Sign-ins with time and network address, retained thirteen months.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/member/settings/tax</span>
 <span><span class="nm">Tax Details</span></span>
@@ -468,6 +685,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/tax</code> &middot; contents</b>
+<div class="ct"><span class="ch">Residency</span><span class="cp">Declared jurisdiction, and the date it was last confirmed.</span></div><div class="ct"><span class="ch">Withholding</span><span class="cp">The rate applied to distributions and the basis for it.</span></div><div class="ct"><span class="ch">Documents</span><span class="cp">Certificates held, with expiry. An expired certificate changes the rate, and says so before it does.</span></div>
+</div>
 </div>
 
 </section><section class="grp">
@@ -480,6 +701,10 @@ one states why.
 <span class="rg">portfolio.manage</span>
 
 
+<div class="cts">
+<b>Ending <code>/capital</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-02.a Console Header</span><span class="cp">Vehicle, as-at date, and the reserve band. Three facts.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-02.b Asset Grid</span><span class="cp">One wide aperture per property.  ⟨renders AP-02, O-01⟩</span></div><div class="ct"><span class="ch">AS-02.c Telemetry Strip</span><span class="cp">Live operational status per asset, and when it last spoke.  ⟨renders A-11⟩</span></div><div class="ct"><span class="ch">AS-02.d Console Actions</span><span class="cp">Sync, record valuation, open ledger.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/properties</span>
 <span><span class="nm">Properties</span><br><span class="asm">AS-02 · The Property Console</span></span>
@@ -487,6 +712,10 @@ one states why.
 <span class="rg">portfolio.manage</span>
 
 
+<div class="cts">
+<b>Ending <code>/properties</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-02.a Console Header</span><span class="cp">Vehicle, as-at date, and the reserve band. Three facts.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-02.b Asset Grid</span><span class="cp">One wide aperture per property.  ⟨renders AP-02, O-01⟩</span></div><div class="ct"><span class="ch">AS-02.c Telemetry Strip</span><span class="cp">Live operational status per asset, and when it last spoke.  ⟨renders A-11⟩</span></div><div class="ct"><span class="ch">AS-02.d Console Actions</span><span class="cp">Sync, record valuation, open ledger.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/properties/<em>[id]</em></span>
 <span><span class="nm">Property Console</span><br><span class="asm">AS-02 · The Property Console</span></span>
@@ -494,6 +723,10 @@ one states why.
 <span class="rg">portfolio.manage</span>
 
 
+<div class="cts">
+<b>Ending <code>/[id]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-02.a Console Header</span><span class="cp">Vehicle, as-at date, and the reserve band. Three facts.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-02.b Asset Grid</span><span class="cp">One wide aperture per property.  ⟨renders AP-02, O-01⟩</span></div><div class="ct"><span class="ch">AS-02.c Telemetry Strip</span><span class="cp">Live operational status per asset, and when it last spoke.  ⟨renders A-11⟩</span></div><div class="ct"><span class="ch">AS-02.d Console Actions</span><span class="cp">Sync, record valuation, open ledger.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/properties/<em>[id]</em>/programme</span>
 <span><span class="nm">Programme</span><br><span class="asm">AS-11 · The Stage Progression</span></span>
@@ -501,6 +734,10 @@ one states why.
 <span class="rg">property.advance_lifecycle</span>
 
 
+<div class="cts">
+<b>Ending <code>/programme</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-11.a Stage Rail</span><span class="cp">Stages 0 to 7, with the current one marked.</span></div><div class="ct"><span class="ch">AS-11.b Role Matrix</span><span class="cp">Eighteen roles down, eight stages across. Each cell holds its deliverables.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-11.c Holds and Vetoes</span><span class="cp">The four veto powers, and who holds each.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/properties/<em>[id]</em>/valuations</span>
 <span><span class="nm">Valuations</span><br><span class="asm">AS-02 · The Property Console</span></span>
@@ -508,6 +745,10 @@ one states why.
 <span class="rg">valuation.record</span>
 
 
+<div class="cts">
+<b>Ending <code>/valuations</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-02.a Console Header</span><span class="cp">Vehicle, as-at date, and the reserve band. Three facts.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-02.b Asset Grid</span><span class="cp">One wide aperture per property.  ⟨renders AP-02, O-01⟩</span></div><div class="ct"><span class="ch">AS-02.c Telemetry Strip</span><span class="cp">Live operational status per asset, and when it last spoke.  ⟨renders A-11⟩</span></div><div class="ct"><span class="ch">AS-02.d Console Actions</span><span class="cp">Sync, record valuation, open ledger.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/waterfall</span>
 <span><span class="nm">Waterfall</span><br><span class="asm">AS-04 · The Capital Explainer</span></span>
@@ -515,6 +756,10 @@ one states why.
 <span class="rg">distribution.execute</span>
 
 
+<div class="cts">
+<b>Ending <code>/waterfall</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-04.a Premise</span><span class="cp">One claim, in display-xl. Dark ground.</span></div><div class="ct"><span class="ch">AS-04.b The Structure</span><span class="cp">The three-entity model as a diagram: platform, vehicle, operating partner.</span></div><div class="ct"><span class="ch">AS-04.c The Waterfall</span><span class="cp">Six stages, in order, on paper ground.  ⟨renders O-03⟩</span></div><div class="ct"><span class="ch">AS-04.d The Floor</span><span class="cp">Reserve floor and what happens when distribution would breach it.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-04.e Return Drivers</span><span class="cp">Yield and appreciation, stated as drivers not promises.</span></div><div class="ct"><span class="ch">AS-04.f Onward</span><span class="cp">Space · Time · Commitment.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/distributions</span>
 <span><span class="nm">Distributions</span><br><span class="asm">AS-02 · The Property Console</span></span>
@@ -522,6 +767,10 @@ one states why.
 <span class="rg">distribution.execute</span>
 
 
+<div class="cts">
+<b>Ending <code>/distributions</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-02.a Console Header</span><span class="cp">Vehicle, as-at date, and the reserve band. Three facts.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-02.b Asset Grid</span><span class="cp">One wide aperture per property.  ⟨renders AP-02, O-01⟩</span></div><div class="ct"><span class="ch">AS-02.c Telemetry Strip</span><span class="cp">Live operational status per asset, and when it last spoke.  ⟨renders A-11⟩</span></div><div class="ct"><span class="ch">AS-02.d Console Actions</span><span class="cp">Sync, record valuation, open ledger.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/distributions/<em>[ref]</em></span>
 <span><span class="nm">Distribution</span><br><span class="asm">AS-02 · The Property Console</span></span>
@@ -529,6 +778,10 @@ one states why.
 <span class="rg">distribution.execute</span>
 
 
+<div class="cts">
+<b>Ending <code>/[ref]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-02.a Console Header</span><span class="cp">Vehicle, as-at date, and the reserve band. Three facts.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-02.b Asset Grid</span><span class="cp">One wide aperture per property.  ⟨renders AP-02, O-01⟩</span></div><div class="ct"><span class="ch">AS-02.c Telemetry Strip</span><span class="cp">Live operational status per asset, and when it last spoke.  ⟨renders A-11⟩</span></div><div class="ct"><span class="ch">AS-02.d Console Actions</span><span class="cp">Sync, record valuation, open ledger.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/calls</span>
 <span><span class="nm">Capital Calls</span><br><span class="asm">AS-26 · The Capital Call</span></span>
@@ -536,6 +789,10 @@ one states why.
 <span class="rg">capital.call</span>
 
 
+<div class="cts">
+<b>Ending <code>/calls</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-26.a The Call</span><span class="cp">Amount, due date, and the commitment it draws against.</span></div><div class="ct"><span class="ch">AS-26.b Basis</span><span class="cp">How the amount was computed from the commitment and the drawn-to-date.</span></div><div class="ct"><span class="ch">AS-26.c Default</span><span class="cp">What happens if the call is not met, stated plainly.</span></div><div class="ct"><span class="ch">AS-26.d Settlement</span><span class="cp">Payment, and the record of it.  ⟨renders M-04⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/risk</span>
 <span><span class="nm">Risk Register</span><br><span class="asm">AS-28 · The Risk Register</span></span>
@@ -543,6 +800,10 @@ one states why.
 <span class="rg">compliance.record</span>
 
 
+<div class="cts">
+<b>Ending <code>/risk</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-28.a Register</span><span class="cp">Every risk with category, likelihood, impact, owner and mitigation.  ⟨renders O-09⟩</span></div><div class="ct"><span class="ch">AS-28.b Movement</span><span class="cp">What has changed since the last review, and when the next one falls.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/capital/offerings</span>
 <span><span class="nm">Offerings</span><br><span class="asm">AS-02 · The Property Console</span></span>
@@ -550,6 +811,10 @@ one states why.
 <span class="rg">offering.open</span>
 
 
+<div class="cts">
+<b>Ending <code>/offerings</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-02.a Console Header</span><span class="cp">Vehicle, as-at date, and the reserve band. Three facts.  ⟨renders O-04⟩</span></div><div class="ct"><span class="ch">AS-02.b Asset Grid</span><span class="cp">One wide aperture per property.  ⟨renders AP-02, O-01⟩</span></div><div class="ct"><span class="ch">AS-02.c Telemetry Strip</span><span class="cp">Live operational status per asset, and when it last spoke.  ⟨renders A-11⟩</span></div><div class="ct"><span class="ch">AS-02.d Console Actions</span><span class="cp">Sync, record valuation, open ledger.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/commit/<em>[offering]</em></span>
 <span><span class="nm">Commit</span><br><span class="asm">AS-06 · The Commitment Flow</span></span>
@@ -557,6 +822,10 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → accredited</b>An Investor commits BEFORE membership exists — the Member Law fires on settlement, not here. Requiring member access would make it unreachable by anyone who could use it.</span>
 
+<div class="cts">
+<b>Ending <code>/[offering]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-06.a Asset Anchor</span><span class="cp">The property, the amount, and the terms. Sticky through every step.  ⟨renders AP-03⟩</span></div><div class="ct"><span class="ch">AS-06.b Identity</span><span class="cp">Legal name, contact. Autosaved per field on blur.</span></div><div class="ct"><span class="ch">AS-06.c Accreditation</span><span class="cp">PR-01. Resumable; a partial application survives the session.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-06.d Review</span><span class="cp">The full commitment, restated, with everything that binds.</span></div><div class="ct"><span class="ch">AS-06.e The Piston</span><span class="cp">The commitment control. Linear, 3000ms, never eased.  ⟨renders M-04⟩</span></div><div class="ct"><span class="ch">AS-06.f Settled</span><span class="cp">What was committed, and that membership begins at settlement, not here.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/commit/<em>[offering]</em>/risk</span>
 <span><span class="nm">Risk Disclosure</span><br><span class="asm">AS-14 · The Risk Disclosure</span></span>
@@ -564,6 +833,10 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → accredited</b>The gate immediately before commitment, on the same path and for the same reason.</span>
 
+<div class="cts">
+<b>Ending <code>/risk</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-14.a Statement</span><span class="cp">The risks, in order of severity, on paper ground.</span></div><div class="ct"><span class="ch">AS-14.b Acknowledgement</span><span class="cp">An explicit acknowledgement, recorded with the version acknowledged.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/commit/<em>[offering]</em>/execute</span>
 <span><span class="nm">Execute</span><br><span class="asm">AS-19 · The Ledger Lock</span></span>
@@ -571,6 +844,10 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → accredited</b>The execution sequence for a commitment made before membership exists.</span>
 
+<div class="cts">
+<b>Ending <code>/execute</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-19.a Ledger</span><span class="cp">What is being committed, restated.  ⟨renders O-08⟩</span></div><div class="ct"><span class="ch">AS-19.b Invariants</span><span class="cp">The acknowledgements that bind, as real checkboxes.</span></div><div class="ct"><span class="ch">AS-19.c Execution</span><span class="cp">The piston. Linear, 3000ms.  ⟨renders M-04⟩</span></div><div class="ct"><span class="ch">AS-19.d Recorded</span><span class="cp">The reference, the state, and what is still outstanding.</span></div>
+</div>
 </div>
 
 </section><section class="grp">
@@ -583,6 +860,10 @@ one states why.
 <span class="rg">organization.register</span>
 
 
+<div class="cts">
+<b>Ending <code>/admin</code> &middot; contents</b>
+<div class="ct"><span class="ch">Standing</span><span class="cp">What is open, what is overdue and what is unassigned, across every vehicle.</span></div><div class="ct"><span class="ch">By vehicle</span><span class="cp">One row per vehicle with its lifecycle state and open items.</span></div><div class="ct"><span class="ch">Rights</span><span class="cp">Which rights the viewer holds, since every control here is gated on one.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles</span>
 <span><span class="nm">Vehicles</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -590,6 +871,10 @@ one states why.
 <span class="rg">vehicle.form</span>
 
 
+<div class="cts">
+<b>Ending <code>/vehicles</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles/<em>[llpin]</em></span>
 <span><span class="nm">Docket</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -597,6 +882,10 @@ one states why.
 <span class="rg">vehicle.form</span>
 
 
+<div class="cts">
+<b>Ending <code>/[llpin]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles/<em>[llpin]</em>/formation</span>
 <span><span class="nm">Formation</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -604,6 +893,10 @@ one states why.
 <span class="rg">vehicle.form</span>
 
 
+<div class="cts">
+<b>Ending <code>/formation</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles/<em>[llpin]</em>/partners</span>
 <span><span class="nm">Register of Partners</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -611,6 +904,10 @@ one states why.
 <span class="rg">vehicle.form</span>
 
 
+<div class="cts">
+<b>Ending <code>/partners</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles/<em>[llpin]</em>/filings</span>
 <span><span class="nm">Statutory Calendar</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -618,6 +915,10 @@ one states why.
 <span class="rg">compliance.record</span>
 
 
+<div class="cts">
+<b>Ending <code>/filings</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles/<em>[llpin]</em>/charges</span>
 <span><span class="nm">Charges</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -625,6 +926,10 @@ one states why.
 <span class="rg">vehicle.form</span>
 
 
+<div class="cts">
+<b>Ending <code>/charges</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles/<em>[llpin]</em>/resolutions</span>
 <span><span class="nm">Resolutions</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -632,6 +937,10 @@ one states why.
 <span class="rg">resolution.table</span>
 
 
+<div class="cts">
+<b>Ending <code>/resolutions</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/vehicles/<em>[llpin]</em>/audit</span>
 <span><span class="nm">Docket Audit</span><br><span class="asm">AS-13 · The LLP Docket</span></span>
@@ -639,6 +948,10 @@ one states why.
 <span class="rg">compliance.record</span>
 
 
+<div class="cts">
+<b>Ending <code>/audit</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-13.a Docket Header</span><span class="cp">Entity name, LLPIN, status, registered office, and the date the file was last complete.</span></div><div class="ct"><span class="ch">AS-13.b Formation</span><span class="cp">The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.</span></div><div class="ct"><span class="ch">AS-13.c Register of Partners</span><span class="cp">Designated partners with DPIN, partners with contribution and profit share.  ⟨renders O-02⟩</span></div><div class="ct"><span class="ch">AS-13.d Statutory Calendar</span><span class="cp">Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.  ⟨renders O-07⟩</span></div><div class="ct"><span class="ch">AS-13.e Charges and Encumbrances</span><span class="cp">Registered charges over the entity's assets, with holder, amount and satisfaction state.</span></div><div class="ct"><span class="ch">AS-13.f Resolutions</span><span class="cp">Partner resolutions with threshold, result and the register extract they bind.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-13.g Property Nexus</span><span class="cp">Which properties this entity holds, and on what instrument.  ⟨renders O-01⟩</span></div><div class="ct"><span class="ch">AS-13.h Docket Audit</span><span class="cp">Every version of every document, who filed it and when.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/governance</span>
 <span><span class="nm">Governance</span></span>
@@ -646,6 +959,10 @@ one states why.
 <span class="rg">resolution.table</span>
 
 
+<div class="cts">
+<b>Ending <code>/governance</code> &middot; contents</b>
+<div class="ct"><span class="ch">Committees</span><span class="cp">Standing committees, their remit and their membership.</span></div><div class="ct"><span class="ch">Resolutions</span><span class="cp">Open ballots and their thresholds.</span></div><div class="ct"><span class="ch">Policies</span><span class="cp">Instruments in force, with version and date.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/governance/committees</span>
 <span><span class="nm">Committees</span></span>
@@ -653,6 +970,10 @@ one states why.
 <span class="rg">committee.constitute</span>
 
 
+<div class="cts">
+<b>Ending <code>/committees</code> &middot; contents</b>
+<div class="ct"><span class="ch">Register</span><span class="cp">Each committee, its remit, its quorum and who sits on it.</span></div><div class="ct"><span class="ch">Conflicts</span><span class="cp">Declared interests per member, and the matters they may not vote on.</span></div><div class="ct"><span class="ch">Terms</span><span class="cp">When each appointment ends. A committee whose terms have lapsed is shown as lapsed, not as sitting.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/governance/resolutions</span>
 <span><span class="nm">Resolutions</span><br><span class="asm">AS-27 · The Ballot</span></span>
@@ -660,6 +981,10 @@ one states why.
 <span class="rg">resolution.table</span>
 
 
+<div class="cts">
+<b>Ending <code>/resolutions</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-27.a Resolution</span><span class="cp">The text as it will be minuted, its threshold, and the closing time.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-27.b Weight</span><span class="cp">The viewer's own voting weight, and how it was derived.</span></div><div class="ct"><span class="ch">AS-27.c Cast</span><span class="cp">For, against, abstain. Irreversible once the window closes.</span></div><div class="ct"><span class="ch">AS-27.d Outcome</span><span class="cp">The aggregate, once the window closes.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/governance/resolutions/<em>[ref]</em></span>
 <span><span class="nm">Resolution</span><br><span class="asm">AS-27 · The Ballot</span></span>
@@ -667,6 +992,10 @@ one states why.
 <span class="rg">resolution.resolve</span>
 
 <span class="nt">Results only. Admin is NOT an exception to I-05 — it is the vantage most likely to assume it is.</span>
+<div class="cts">
+<b>Ending <code>/[ref]</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-27.a Resolution</span><span class="cp">The text as it will be minuted, its threshold, and the closing time.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-27.b Weight</span><span class="cp">The viewer's own voting weight, and how it was derived.</span></div><div class="ct"><span class="ch">AS-27.c Cast</span><span class="cp">For, against, abstain. Irreversible once the window closes.</span></div><div class="ct"><span class="ch">AS-27.d Outcome</span><span class="cp">The aggregate, once the window closes.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/governance/policies</span>
 <span><span class="nm">Policies</span></span>
@@ -674,6 +1003,10 @@ one states why.
 <span class="rg">policy.approve</span>
 
 
+<div class="cts">
+<b>Ending <code>/policies</code> &middot; contents</b>
+<div class="ct"><span class="ch">In force</span><span class="cp">Every policy with its version, effective date and the resolution that ratified it.</span></div><div class="ct"><span class="ch">Superseded</span><span class="cp">Prior versions, retained. A policy relied on in the past must remain retrievable.</span></div><div class="ct"><span class="ch">Review</span><span class="cp">Next review date, and what is overdue.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/compliance</span>
 <span><span class="nm">Compliance</span></span>
@@ -681,6 +1014,10 @@ one states why.
 <span class="rg">compliance.record</span>
 
 
+<div class="cts">
+<b>Ending <code>/compliance</code> &middot; contents</b>
+<div class="ct"><span class="ch">Open events</span><span class="cp">Findings, notices and breaches, by severity.</span></div><div class="ct"><span class="ch">Accreditation</span><span class="cp">Applications by state, and what each is waiting on.</span></div><div class="ct"><span class="ch">Conflicts</span><span class="cp">The register, and matters currently constrained by it.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/compliance/events</span>
 <span><span class="nm">Compliance Events</span></span>
@@ -688,6 +1025,10 @@ one states why.
 <span class="rg">compliance.record</span>
 
 
+<div class="cts">
+<b>Ending <code>/events</code> &middot; contents</b>
+<div class="ct"><span class="ch">Register</span><span class="cp">Every compliance event with its class, the capability that raised it and the reason recorded.</span></div><div class="ct"><span class="ch">Ageing</span><span class="cp">How long each has been open, against the period allowed for it.</span></div><div class="ct"><span class="ch">Closure</span><span class="cp">What closed an event, by whom, and the reason. E-02 — a closure with no reason is not a closure.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/compliance/accreditation</span>
 <span><span class="nm">Accreditation Queue</span></span>
@@ -695,6 +1036,10 @@ one states why.
 <span class="rg">accreditation.grant</span>
 
 
+<div class="cts">
+<b>Ending <code>/accreditation</code> &middot; contents</b>
+<div class="ct"><span class="ch">Queue</span><span class="cp">Applications awaiting a decision, oldest first.</span></div><div class="ct"><span class="ch">Held</span><span class="cp">Applications waiting on the applicant, and what for.</span></div><div class="ct"><span class="ch">Decisions</span><span class="cp">Granted and refused, each with its recorded reason and the person who made it.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/compliance/conflicts</span>
 <span><span class="nm">Conflict Register</span></span>
@@ -702,6 +1047,10 @@ one states why.
 <span class="rg">conflict.disclose</span>
 
 
+<div class="cts">
+<b>Ending <code>/conflicts</code> &middot; contents</b>
+<div class="ct"><span class="ch">Declarations</span><span class="cp">Every declared interest, who declared it and when.</span></div><div class="ct"><span class="ch">Constraints</span><span class="cp">The matters each declaration bars its holder from. I-07.</span></div><div class="ct"><span class="ch">Unresolved</span><span class="cp">Interests declared with no constraint recorded — a declaration nobody acted on.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/ledger</span>
 <span><span class="nm">Ledger</span></span>
@@ -709,6 +1058,10 @@ one states why.
 <span class="rg">capital.deploy</span>
 
 
+<div class="cts">
+<b>Ending <code>/ledger</code> &middot; contents</b>
+<div class="ct"><span class="ch">Entries</span><span class="cp">The append-only record. Nothing here is edited; a correction is a further entry.</span></div><div class="ct"><span class="ch">Reconciliation</span><span class="cp">Where the ledger and the vehicle records last agreed, and any current difference.</span></div><div class="ct"><span class="ch">Seal</span><span class="cp">The hash chain and its last verification. A ledger that cannot be verified is a spreadsheet.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/telemetry</span>
 <span><span class="nm">Telemetry</span></span>
@@ -716,6 +1069,10 @@ one states why.
 <span class="rg">portfolio.manage</span>
 
 
+<div class="cts">
+<b>Ending <code>/telemetry</code> &middot; contents</b>
+<div class="ct"><span class="ch">Health</span><span class="cp">What is running, what is degraded, and since when.</span></div><div class="ct"><span class="ch">Volumes</span><span class="cp">Events by class over time, so an absence of events is visible as an absence.</span></div><div class="ct"><span class="ch">Failures</span><span class="cp">Errors by surface, with the route that raised them.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/authority</span>
 <span><span class="nm">Authority</span></span>
@@ -723,6 +1080,10 @@ one states why.
 <span class="rg">authority.grant</span>
 
 
+<div class="cts">
+<b>Ending <code>/authority</code> &middot; contents</b>
+<div class="ct"><span class="ch">Rights</span><span class="cp">Every declared right and what it permits.</span></div><div class="ct"><span class="ch">Holders</span><span class="cp">Who holds each right, and under which grant.</span></div><div class="ct"><span class="ch">Unheld</span><span class="cp">Rights nobody holds. A right nobody holds is a capability nobody can exercise, and that is worth seeing.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/authority/grants</span>
 <span><span class="nm">Grants</span></span>
@@ -730,6 +1091,10 @@ one states why.
 <span class="rg">authority.grant</span>
 
 
+<div class="cts">
+<b>Ending <code>/grants</code> &middot; contents</b>
+<div class="ct"><span class="ch">Grants</span><span class="cp">Each grant with its right, its holder, its reason and its expiry.</span></div><div class="ct"><span class="ch">Expiring</span><span class="cp">Grants ending within thirty days.</span></div><div class="ct"><span class="ch">Standing</span><span class="cp">Grants with no expiry, listed separately because a permanent grant deserves to be looked at.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/authority/revocations</span>
 <span><span class="nm">Revocations</span></span>
@@ -737,6 +1102,10 @@ one states why.
 <span class="rg">authority.revoke</span>
 
 
+<div class="cts">
+<b>Ending <code>/revocations</code> &middot; contents</b>
+<div class="ct"><span class="ch">Revocations</span><span class="cp">What was withdrawn, from whom, when and why.</span></div><div class="ct"><span class="ch">Effect</span><span class="cp">What each holder could no longer do from the moment it took effect.</span></div><div class="ct"><span class="ch">Pending</span><span class="cp">Revocations scheduled but not yet in force.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/reports</span>
 <span><span class="nm">Reports</span></span>
@@ -744,6 +1113,10 @@ one states why.
 <span class="rg">report.publish</span>
 
 
+<div class="cts">
+<b>Ending <code>/reports</code> &middot; contents</b>
+<div class="ct"><span class="ch">Standing</span><span class="cp">Reports produced on a schedule, with the last run and the next.</span></div><div class="ct"><span class="ch">Ad hoc</span><span class="cp">Reports built on request, with the parameters that produced them.</span></div><div class="ct"><span class="ch">Provenance</span><span class="cp">For each report, which records it drew on and at what time — a report with no as-at time cannot be reconciled later.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/research</span>
 <span><span class="nm">Research</span></span>
@@ -751,6 +1124,10 @@ one states why.
 <span class="rg">diligence.complete</span>
 
 
+<div class="cts">
+<b>Ending <code>/research</code> &middot; contents</b>
+<div class="ct"><span class="ch">Market intelligence</span><span class="cp">Records held, with source and confidence class.</span></div><div class="ct"><span class="ch">Coverage</span><span class="cp">Which regions and asset classes are covered, and which are not.</span></div><div class="ct"><span class="ch">Age</span><span class="cp">How old each record is. Research is treated as perishable and its age is shown, not buried.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/admin/failure</span>
 <span><span class="nm">Constitutional Failure</span></span>
@@ -758,6 +1135,10 @@ one states why.
 <span class="rg">constitutional_failure.declare</span>
 
 <span class="nt">CF-01..CF-06. The gravest surface in the system and the least used. Declaring a failure requires a resolution reference, not a role — there is no login that can do this alone.</span>
+<div class="cts">
+<b>Ending <code>/failure</code> &middot; contents</b>
+<div class="ct"><span class="ch">Constitutional failure</span><span class="cp">What rule was breached, when, and by which capability.</span></div><div class="ct"><span class="ch">Containment</span><span class="cp">What was suspended automatically, and what remains running.</span></div><div class="ct"><span class="ch">Record</span><span class="cp">The full event, unedited. This page exists so a failure cannot be quietly resolved.</span></div>
+</div>
 </div>
 
 </section><section class="grp">
@@ -770,6 +1151,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">No stack trace, no exception name, no auto-redirect.</span>
+<div class="cts">
+<b>Ending <code>/404</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-16.a The Miss</span><span class="cp">What was asked for, that it is not here, and three routes out.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/403</span>
 <span><span class="nm">Not Permitted</span><br><span class="asm">AS-16 · Signal Lost</span></span>
@@ -777,6 +1162,10 @@ one states why.
 <span class="rg"></span>
 
 <span class="nt">Says the viewer may not see it. Never says whether it EXISTS — that distinction leaks the shape of the system to anyone probing it.</span>
+<div class="cts">
+<b>Ending <code>/403</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-16.a The Miss</span><span class="cp">What was asked for, that it is not here, and three routes out.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/500</span>
 <span><span class="nm">System Error</span><br><span class="asm">AS-16 · Signal Lost</span></span>
@@ -784,6 +1173,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/500</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-16.a The Miss</span><span class="cp">What was asked for, that it is not here, and three routes out.</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/maintenance</span>
 <span><span class="nm">Maintenance</span><br><span class="asm">AS-15 · System Status</span></span>
@@ -791,6 +1184,10 @@ one states why.
 <span class="rg"></span>
 
 
+<div class="cts">
+<b>Ending <code>/maintenance</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-15.a Current State</span><span class="cp">One line: operational, degraded, or down. Then the components.</span></div><div class="ct"><span class="ch">AS-15.b Components</span><span class="cp">Each component with its state, and when that state was last confirmed.</span></div><div class="ct"><span class="ch">AS-15.c Incidents</span><span class="cp">Open and recent incidents, with what is being done.  ⟨renders O-08⟩</span></div>
+</div>
 </div><div class="rt">
 <span class="pth">/search</span>
 <span><span class="nm">Search</span></span>
@@ -798,6 +1195,97 @@ one states why.
 <span class="rg"></span>
 <span class="ov"><b>Override → identified</b>Results are scoped to what the viewer may see, which requires knowing who they are. An anonymous search would either return nothing or leak the index.</span>
 
+<div class="cts">
+<b>Ending <code>/search</code> &middot; contents</b>
+<div class="ct"><span class="ch">Query</span><span class="cp">One field. Results are scoped to what the viewer may already reach.</span></div><div class="ct"><span class="ch">Results</span><span class="cp">Grouped by kind — vehicles, properties, documents, resolutions.</span></div><div class="ct"><span class="ch">Absence</span><span class="cp">A result the viewer may not reach is not shown as withheld. It is not shown, because 'you may not see this' confirms it exists.</span></div>
+</div>
+</div>
+
+</section><section class="grp">
+<div class="grp-h"><span class="n">5 routes</span>
+<h2>The Worked Flow</h2><p>One offering walked end to end on illustrative data. Public throughout, declaring no assembly: these are demonstration components, not the registered assemblies rendering real records, and that distinction is what makes them public.</p></div>
+<div class="rt">
+<span class="pth">/flow</span>
+<span><span class="nm">SlowSpace Coastal</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Step 1 of 5. The offering at the space vantage: capital stack, six-stage waterfall, governance and programme, each carrying its confidence class.</span>
+<div class="cts">
+<b>Ending <code>/flow</code> &middot; contents</b>
+<div class="ct"><span class="ch">Masthead</span><span class="cp">The property, its jurisdiction and its coordinates.</span></div><div class="ct"><span class="ch">The unit</span><span class="cp">Commitment, share, indicative distribution and entitlement, each with its confidence class.</span></div><div class="ct"><span class="ch">Capital stack</span><span class="cp">Land, formation and facility, on the paper ground because it is an assertion.</span></div><div class="ct"><span class="ch">The waterfall</span><span class="cp">Six stages in order, closing to 100%, with debt service stated as its own stage.</span></div><div class="ct"><span class="ch">Returns</span><span class="cp">Cash yield, cover ratio, payback and exit, each classed. The dossier's inconsistency is stated here rather than resolved silently.</span></div><div class="ct"><span class="ch">Governance</span><span class="cp">Voting basis and thresholds, read from the LLP Agreement.</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/flow/accreditation</span>
+<span><span class="nm">Accreditation</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → public</b>A worked demonstration of the whole arc, on illustrative data for a fictional partner rather than a real position. Public because the point is that a prospective investor can see every step - including the accreditation and disclosure they would meet later - before committing to any of it.</span>
+<span class="nt">Step 2. PR-01, resumable - each field saves on blur to a draft record.</span>
+<div class="cts">
+<b>Ending <code>/accreditation</code> &middot; contents</b>
+<div class="ct"><span class="ch">Identity</span><span class="cp">Legal name and contact, for the register.</span></div><div class="ct"><span class="ch">Verification</span><span class="cp">PAN and address, for regulatory compliance.</span></div><div class="ct"><span class="ch">Terms and deposit</span><span class="cp">The agreement you are entering, and the ₹50,000 that reserves a unit.</span></div><div class="ct"><span class="ch">Terms dialog</span><span class="cp">The Terms and Conditions rendered over the form. The agree control is disabled until the document has been opened.</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/flow/risk</span>
+<span><span class="nm">Risk Disclosure</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → public</b>A worked demonstration of the whole arc, on illustrative data for a fictional partner rather than a real position. Public because the point is that a prospective investor can see every step - including the accreditation and disclosure they would meet later - before committing to any of it.</span>
+<span class="nt">Step 3. Seven clauses in severity order, on paper. The gate opens on reaching the end by any route.</span>
+<div class="cts">
+<b>Ending <code>/risk</code> &middot; contents</b>
+<div class="ct"><span class="ch">01</span><span class="cp">Long-Term Hospitality Ownership</span></div><div class="ct"><span class="ch">02</span><span class="cp">Development &amp; Construction</span></div><div class="ct"><span class="ch">03</span><span class="cp">Hospitality Performance</span></div><div class="ct"><span class="ch">04</span><span class="cp">Cash Distribution</span></div><div class="ct"><span class="ch">05</span><span class="cp">Financing</span></div><div class="ct"><span class="ch">06</span><span class="cp">Planning &amp; Regulation</span></div><div class="ct"><span class="ch">07</span><span class="cp">Financial Information</span></div><div class="ct"><span class="ch">Important Investment Risk</span><span class="cp">Stated outside the numbered sequence. Reduced, delayed, lower value, partial loss, total loss.</span></div><div class="ct"><span class="ch">Acknowledgement</span><span class="cp">Recorded against a version, enabled on reaching the end by any route.</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/flow/commit</span>
+<span><span class="nm">Commit</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → public</b>A worked demonstration of the whole arc, on illustrative data for a fictional partner rather than a real position. Public because the point is that a prospective investor can see every step - including the accreditation and disclosure they would meet later - before committing to any of it.</span>
+<span class="nt">Step 4. The piston, 3000ms linear. States Committed, never Member.</span>
+<div class="cts">
+<b>Ending <code>/commit</code> &middot; contents</b>
+<div class="ct"><span class="ch">Review</span><span class="cp">Vehicle, property, share, amount, completion window and lock-in — every term that binds, before the control that binds it.</span></div><div class="ct"><span class="ch">The piston</span><span class="cp">A three-second sustained press. The duration is the deliberation, and no undo follows.</span></div><div class="ct"><span class="ch">Derivation</span><span class="cp">How the unit falls out of the equity layer, on paper.</span></div><div class="ct"><span class="ch">Recorded</span><span class="cp">State becomes Committed, never Member. The Member Law fires on settlement.</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/flow/settled</span>
+<span><span class="nm">Settled</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+<span class="ov"><b>Override → public</b>A worked demonstration of the whole arc, on illustrative data for a fictional partner rather than a real position. Public because the point is that a prospective investor can see every step - including the accreditation and disclosure they would meet later - before committing to any of it.</span>
+<span class="nt">Step 5. The first screen where the Member Law has fired.</span>
+<div class="cts">
+<b>Ending <code>/settled</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-31 The Vehicle Console</span><span class="cp">Position · Entitlement · Documents · Resolutions · Distributions · Disclosure</span></div><div class="ct"><span class="ch">— Position</span><span class="cp">What you hold, and what it is worth.</span></div><div class="ct"><span class="ch">— Entitlement</span><span class="cp">Nights, and when they begin.</span></div><div class="ct"><span class="ch">— Documents</span><span class="cp">The instruments that bind.</span></div><div class="ct"><span class="ch">— Resolutions</span><span class="cp">What has been put to partners.</span></div><div class="ct"><span class="ch">— Distributions</span><span class="cp">What has been paid, and what has not.</span></div><div class="ct"><span class="ch">— Disclosure</span><span class="cp">The version you acknowledged.</span></div>
+</div>
+</div>
+
+</section><section class="grp">
+<div class="grp-h"><span class="n">2 routes</span>
+<h2>The Journal</h2><p>What the platform says about itself, one binding decision at a time. Separate from Voices because a partner talking about returns is regulated speech and an explanation of a mechanism is not.</p></div>
+<div class="rt">
+<span class="pth">/journal</span>
+<span><span class="nm">The Journal</span><br><span class="asm">AS-30 · The Journal</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Index. Entries newest first; the order is checked at load.</span>
+<div class="cts">
+<b>Ending <code>/journal</code> &middot; contents</b>
+<div class="ct"><span class="ch">8 entries, newest first</span><span class="cp">J-01 Why a body corporate, and not a share of a building · J-02 The waterfall, read from the bottom · J-03 What settlement changes · J-04 Governance without ownership · J-05 Reading a modelled number · J-06 Two waters · J-07 The night is not the product · J-08 What this platform does not do</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/journal/<em>[slug]</em></span>
+<span><span class="nm">Journal Entry</span><br><span class="asm">AS-30 · The Journal</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">One entry. Figures are read from the registries, never typed into the prose.</span>
+<div class="cts">
+<b>Ending <code>/[slug]</code> &middot; contents</b>
+<div class="ct"><span class="ch">/journal/why-a-body-corporate</span><span class="cp">J-01 — Why a body corporate, and not a share of a building</span></div><div class="ct"><span class="ch">/journal/the-waterfall-read-from-the-bottom</span><span class="cp">J-02 — The waterfall, read from the bottom</span></div><div class="ct"><span class="ch">/journal/what-settlement-changes</span><span class="cp">J-03 — What settlement changes</span></div><div class="ct"><span class="ch">/journal/governance-without-ownership</span><span class="cp">J-04 — Governance without ownership</span></div><div class="ct"><span class="ch">/journal/reading-a-modelled-number</span><span class="cp">J-05 — Reading a modelled number</span></div><div class="ct"><span class="ch">/journal/two-waters</span><span class="cp">J-06 — Two waters</span></div><div class="ct"><span class="ch">/journal/the-night-is-not-the-product</span><span class="cp">J-07 — The night is not the product</span></div><div class="ct"><span class="ch">/journal/what-this-platform-does-not-do</span><span class="cp">J-08 — What this platform does not do</span></div>
+</div>
 </div>
 
 </section>
