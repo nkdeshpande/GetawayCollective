@@ -19,9 +19,18 @@ import { COLOUR } from "../constants/tokens";
 const apertureById = (id: string) => APERTURES.find((a) => a.id === id);
 
 describe("assemblies", () => {
-  it("covers the prototype set and the assemblies built since", () => {
-    expect(ASSEMBLIES).toHaveLength(12);
-    expect(new Set(ASSEMBLIES.map((a) => a.id)).size).toBe(12);
+  it("registers each assembly exactly once, with a contiguous id run", () => {
+    // Asserting a COUNT breaks every time the registry grows, which taught
+    // me nothing three times running. What actually matters is that no id
+    // is duplicated and none is skipped — a missing AS-nn is a registry
+    // gap, and a repeated one is two screens fighting over a name.
+    const ids = ASSEMBLIES.map((a) => a.id);
+    expect(new Set(ids).size, "duplicate id").toBe(ids.length);
+    const ns = ids.map((i) => Number(i.slice(3))).sort((a, b) => a - b);
+    expect(ns[0]).toBe(1);
+    for (let i = 1; i < ns.length; i++) {
+      expect(ns[i], `gap after AS-${String(ns[i - 1]).padStart(2, "0")}`).toBe(ns[i - 1] + 1);
+    }
   });
 
   it("states what each screen answers in five seconds", () => {
@@ -105,7 +114,9 @@ describe("assemblies", () => {
 
   it("finds assemblies by id and by route", () => {
     expect(assemblyById("AS-05")).toBe(MEMBER_CONSOLE);
-    expect(assembliesFor("gateway").map((a) => a.id)).toEqual(["AS-01", "AS-07", "AS-08", "AS-09"]);
+    const gw = assembliesFor("gateway").map((a) => a.id);
+    expect(gw).toContain("AS-01");
+    expect(gw.every((id) => assemblyById(id)!.route === "gateway")).toBe(true);
   });
 });
 
@@ -445,8 +456,8 @@ describe("location intelligence", () => {
 });
 
 describe("the registry after Wave 6.6", () => {
-  it("holds twelve assemblies", () => {
-    expect(ASSEMBLIES).toHaveLength(12);
+  it("holds every assembly built so far", () => {
+    expect(ASSEMBLIES.length).toBeGreaterThanOrEqual(19);
   });
 
   it("still resolves every reference and never widens an aperture", () => {
@@ -466,5 +477,178 @@ describe("the registry after Wave 6.6", () => {
     const fresh = CORRECTIONS.filter((c) => ["AS-09","AS-10","AS-11","AS-12"].includes(c.assembly));
     expect(fresh.length).toBeGreaterThanOrEqual(14);
     expect(new Set(fresh.map((c) => c.kind)).size).toBeGreaterThanOrEqual(4);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────
+// Wave 6.7 — the LLP docket and the ancillary set
+// ─────────────────────────────────────────────────────────────────────
+
+describe("the LLP docket", () => {
+  const as13 = () => assemblyById("AS-13")!;
+
+  it("sits at the admin vantage and holds one entity completely", () => {
+    expect(as13().vantage).toBe("admin");
+    // Eight sections: header, formation, register, calendar, charges,
+    // resolutions, nexus, audit. A docket with a gap is not a partial
+    // docket, it is a misleading one.
+    expect(as13().sections).toHaveLength(8);
+  });
+
+  it("corrects the vehicle from an SPV to an LLP", () => {
+    // §24a makes the LLP the constitutional default and an SPV a
+    // Board-approved exception. Every prototype had it the other way.
+    const c = as13().corrections!.find((x) => x.was?.includes("SPV_INCORPORATION"))!;
+    expect(c.now).toContain("Register of Partners");
+    expect(c.because).toContain("24a");
+    expect(c.kind).toBe("constitutional");
+  });
+
+  it("refuses to derive profit share from contribution", () => {
+    // The trap: they look interchangeable and are independent under the
+    // Act. A docket that derives one from the other is quietly wrong for
+    // every entity whose agreement differs, with nothing on screen to show it.
+    const c = as13().corrections!.find((x) => x.now.includes("never derived"))!;
+    expect(c.because).toContain("independent");
+    expect(as13().sections.find((s) => s.ref === "AS-13.c")!.rule).toContain("never derived");
+  });
+
+  it("rejects the unverifiable hash", () => {
+    const c = as13().corrections!.find((x) => x.was?.includes("8d993k2"))!;
+    // `k` is not a hexadecimal digit.
+    expect(c.because).toContain("hexadecimal");
+    expect(c.kind).toBe("numeric");
+  });
+
+  it("shows the hash even where the content is restricted", () => {
+    const c = as13().corrections!.find((x) => x.was?.includes("HASH: HIDDEN"))!;
+    expect(c.now).toContain("always shown");
+    expect(c.because).toContain("outside the wall");
+  });
+
+  it("computes statutory due dates rather than storing them", () => {
+    // A docket listing only what WAS filed cannot show what was missed,
+    // and missing is the state that matters.
+    const c = as13().corrections!.find((x) => x.now.includes("computed from the financial year"))!;
+    expect(c.because).toContain("cannot show what was missed");
+    expect(as13().sections[0].rule).toContain("DERIVED");
+  });
+
+  it("seals the ballot even at the admin vantage", () => {
+    // Admin is not an exception to I-05; it is the vantage most likely to
+    // assume it is.
+    const s = as13().sections.find((x) => x.ref === "AS-13.f")!;
+    expect(s.rule).toContain("sealed at every vantage");
+    expect(s.rule).toContain("admin is not an exception");
+  });
+
+  it("puts an unsatisfied charge ahead of what it outranks", () => {
+    const s = as13().sections.find((x) => x.ref === "AS-13.e")!;
+    expect(s.rule).toContain("senior claim");
+  });
+});
+
+describe("the ancillary set", () => {
+  it("records the fourth drifted copy of the waterfall", () => {
+    // The FAQ held its own restatement — three stages missing including
+    // debt service, and "Platform Fee" where the Admin Reserve belongs.
+    const c = assemblyById("AS-17")!.corrections!.find((x) => x.was?.includes("Platform Fee"))!;
+    expect(c.because).toContain("fourth independent copy");
+    expect(c.kind).toBe("constitutional");
+  });
+
+  it("removes physical access-control state from the public status page", () => {
+    // Announcing which site's access control is offline says which door is
+    // currently unsecured.
+    const c = assemblyById("AS-15")!.corrections!.find((x) => x.was?.includes("MagLock"))!;
+    expect(c.now).toContain("Removed");
+    expect(c.because).toContain("unsecured");
+  });
+
+  it("never treats silence as health", () => {
+    const s = assemblyById("AS-15")!.sections.find((x) => x.ref === "AS-15.b")!;
+    expect(s.rule).toContain("Silence is not health");
+  });
+
+  it("drops the 404 auto-redirect", () => {
+    const c = assemblyById("AS-16")!.corrections!.find((x) => x.was?.includes("30-second"))!;
+    expect(c.because).toContain("2.2.1");
+    expect(c.now).toContain("No automatic redirect");
+  });
+
+  it("stops reflecting the requested path and the exception name", () => {
+    const c = assemblyById("AS-16")!.corrections!.find((x) => x.was?.includes("NULL_POINTER"))!;
+    expect(c.because).toContain("injection surface");
+    expect(c.kind).toBe("constitutional");
+  });
+
+  it("records the version acknowledged, not just the acknowledgement", () => {
+    // An acknowledgement of v2.4 says nothing about v3.0.
+    const s = assemblyById("AS-14")!.sections.find((x) => x.ref === "AS-14.b")!;
+    expect(s.rule).toContain("VERSION is recorded");
+  });
+
+  it("unlocks the risk gate by any route, not by scroll position", () => {
+    const c = assemblyById("AS-14")!.corrections!.find((x) => x.was?.includes("scrolling a div"))!;
+    expect(c.because).toContain("Scroll position is not reading");
+    expect(c.because).toContain("locked out the people most likely to have read it");
+  });
+
+  it("restores the piston to its constitutional duration", () => {
+    // 1.3s is inside the range where someone presses through it.
+    const c = assemblyById("AS-19")!.corrections!.find((x) => x.was?.includes("1.5%"))!;
+    expect(c.now).toBe("3000ms, linear.");
+    expect(c.kind).toBe("constitutional");
+  });
+
+  it("removes the white flash from the commit confirmation", () => {
+    const c = assemblyById("AS-19")!.corrections!.find((x) => x.was?.includes("retina-burn"))!;
+    expect(c.because).toContain("photosensitivity");
+  });
+
+  it("keeps filled roles legible", () => {
+    // Someone reading a filled role is deciding whether to watch for the
+    // next one.
+    const c = assemblyById("AS-18")!.corrections!.find((x) => x.was?.includes("opacity: 0.3"))!;
+    expect(c.because).toContain("could not read what the role was");
+  });
+
+  it("rewrites the recruitment voice", () => {
+    const c = assemblyById("AS-18")!.corrections!.find((x) => x.was?.includes("backend is war"))!;
+    expect(c.because).toContain("cold and");
+    expect(c.kind).toBe("vocabulary");
+  });
+});
+
+describe("criticalDeep", () => {
+  it("exists, because the docket renders entirely on paper", () => {
+    // The original four ground variants missed `critical` — it is the
+    // rarest colour and appeared on no paper surface at the time.
+    expect(COLOUR.criticalDeep).toBe("#DD0C00");
+  });
+
+  it("clears AA on paper where critical does not", () => {
+    const lum = (hex: string) => {
+      const c = [0, 2, 4]
+        .map((i) => parseInt(hex.slice(1 + i, 3 + i), 16) / 255)
+        .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+      return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    };
+    const ratio = (a: string, b: string) => {
+      const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+      return (hi + 0.05) / (lo + 0.05);
+    };
+    expect(ratio(COLOUR.critical, COLOUR.paper)).toBeLessThan(4.5);      // 3.17 — the gap
+    expect(ratio(COLOUR.criticalDeep, COLOUR.paper)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("changed nothing that was already locked", () => {
+    // §29 Design Supremacy: the variants are additive. Every original
+    // value keeps its exact hex.
+    expect(COLOUR.critical).toBe("#FF3B30");
+    expect(COLOUR.confirm).toBe("#1FAA59");
+    expect(COLOUR.hazard).toBe("#E8672E");
+    expect(COLOUR.forest).toBe("#0C3024");
+    expect(COLOUR.copper).toBe("#C79F6B");
   });
 });

@@ -1071,6 +1071,563 @@ export const LOCATION_INTELLIGENCE: Assembly = {
 };
 
 
+
+// -----------------------------------------------------------------
+// THE DOCKET
+// -----------------------------------------------------------------
+
+/**
+ * AS-13 - THE LLP DOCKET
+ *
+ * One legal entity, one complete file.
+ *
+ * -- WHY THIS IS THE HARDEST SCREEN IN THE SYSTEM ------------------
+ * Everything else in the product renders a slice of an object. A docket
+ * renders EVERYTHING about one, and it has to remain complete: a docket
+ * with a gap is not a partial docket, it is a misleading one. Someone
+ * reading it concludes the filing does not exist rather than that the
+ * screen did not fetch it.
+ *
+ * So absence is rendered explicitly at every level, and the statutory
+ * calendar is computed from the financial year rather than stored, which
+ * means a missing filing shows as overdue instead of showing as nothing.
+ *
+ * -- THE STRUCTURAL CORRECTION -------------------------------------
+ * Every prototype in the set describes the vehicle as an SPV holding
+ * Class-A equity shares with a shareholder registry. Section 24a makes
+ * the LLP the constitutional default and an SPV a Board-approved
+ * exception. An LLP has none of those things: partners rather than
+ * shareholders, capital contribution rather than shares, an LLP
+ * Agreement rather than a memorandum, and a profit share that is set BY
+ * that agreement rather than computed from the contribution ratio.
+ *
+ * That last one is the trap. Contribution and profit share look
+ * interchangeable and are not, and a docket that derives one from the
+ * other will be quietly wrong for every entity whose agreement says
+ * otherwise.
+ */
+export const LLP_DOCKET: Assembly = {
+  id: "AS-13",
+  name: "The LLP Docket",
+  route: "admin",
+  vantage: "admin",
+  intent: "Hold every legal fact about one investment vehicle in one place, completely.",
+  answers: "Is this entity in good standing, and what is outstanding?",
+  sections: [
+    S("AS-13.a", "Docket Header", "masthead",
+      "Entity name, LLPIN, status, registered office, and the date the file was last complete.",
+      [],
+      "Standing is DERIVED from the filing calendar, never stored. A stored status is a claim about " +
+      "the past that keeps asserting itself into the present."),
+    S("AS-13.b", "Formation", "ledger",
+      "The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.",
+      [],
+      "Each document carries a real content hash. A hash that is not verifiable is worse than no " +
+      "hash, because it implies a verification nobody performed."),
+    S("AS-13.c", "Register of Partners", "ledger",
+      "Designated partners with DPIN, partners with contribution and profit share.",
+      ["O-02"],
+      "Profit share is read FROM the LLP Agreement, never derived from contribution. The two are " +
+      "independent and only look interchangeable."),
+    S("AS-13.d", "Statutory Calendar", "ledger",
+      "Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.",
+      ["O-07"],
+      "Due dates are COMPUTED from the financial year, so a filing that was never made renders as " +
+      "overdue rather than as an empty row."),
+    S("AS-13.e", "Charges and Encumbrances", "ledger",
+      "Registered charges over the entity's assets, with holder, amount and satisfaction state.",
+      [],
+      "An unsatisfied charge is the senior claim on everything below it. It renders before any " +
+      "figure that it outranks."),
+    S("AS-13.f", "Resolutions", "ledger",
+      "Partner resolutions with threshold, result and the register extract they bind.",
+      ["O-06"],
+      "The result is public. The ballot is sealed at every vantage including this one - admin is " +
+      "not an exception to I-05, it is the vantage most likely to assume it is."),
+    S("AS-13.g", "Property Nexus", "grid",
+      "Which properties this entity holds, and on what instrument.",
+      ["O-01"],
+      "The nexus is the join between the legal file and the asset file. A property whose title " +
+      "sits in a different entity from the one distributing on it is a defect, not a nuance."),
+    S("AS-13.h", "Docket Audit", "ledger",
+      "Every version of every document, who filed it and when.",
+      ["O-08"],
+      "Append-only. A superseded version stays visible with its successor linked, because the " +
+      "question a docket answers is usually about what was true at a past date."),
+  ],
+  corrections: [
+    {
+      source: "G6_46_Good_LegalHub.HTML",
+      was: "`SPV_INCORPORATION.CERT` and a shareholder registry as the entity's core records.",
+      now: "Certificate of Incorporation and a Register of Partners, for an LLP.",
+      because:
+        "Section 24a makes the LLP the constitutional default and an SPV a Board-approved " +
+        "exception. An LLP has partners and capital contribution; it has no shareholders and no " +
+        "shares to register.",
+      kind: "constitutional",
+    },
+    {
+      source: "ANC.08_FAQ.HTML",
+      was: "`You hold Class-A Equity Shares in this SPV, granting you fractional ownership`.",
+      now: "Capital contribution to an LLP, with the profit share set by the LLP Agreement.",
+      because:
+        "There is no share class in an LLP, so there is no Class-A. The answer described a " +
+        "different legal instrument from the one the platform actually issues.",
+      kind: "constitutional",
+    },
+    {
+      source: "AS-13 design",
+      now: "Profit share is read from the LLP Agreement and never derived from contribution.",
+      because:
+        "The two are independent under the Act and only look interchangeable. A docket that " +
+        "derives one from the other is quietly wrong for every entity whose agreement differs, " +
+        "and nothing on the screen would reveal it.",
+      kind: "numeric",
+    },
+    {
+      source: "G6_46_Good_LegalHub.HTML",
+      was: "`SHA-256: 8d993k2...12x`.",
+      now: "A real hash, or the field is absent and says why.",
+      because:
+        "That string contains `k`, which is not a hexadecimal digit, so it is not a SHA-256 of " +
+        "anything. A hash nobody can verify implies a verification nobody performed.",
+      kind: "numeric",
+    },
+    {
+      source: "G6_46_Good_LegalHub.HTML",
+      was: "Restricted documents rendered with `HASH: HIDDEN`.",
+      now: "The hash is always shown. Access controls the CONTENT, not the fingerprint.",
+      because:
+        "The hash is precisely what lets someone confirm a document is the one they were told " +
+        "about, without being able to read it. Hiding it removes the only check available to " +
+        "somebody outside the wall.",
+      kind: "constitutional",
+    },
+    {
+      source: "G6_46_Good_LegalHub.HTML",
+      was: "`MASTER SERVICE AGREEMENT` as the governing document.",
+      now: "The LLP Agreement.",
+      because:
+        "Section 25 forbids the term, and the substance is wrong too: the LLP Agreement is the " +
+        "constitutional document of the entity, not a commercial contract alongside it.",
+      kind: "vocabulary",
+    },
+    {
+      source: "AS-13 design",
+      now: "Statutory due dates are computed from the financial year, not stored.",
+      because:
+        "Form 11 falls 60 days after the year end and Form 8 falls 30 days after six months. A " +
+        "docket listing only what WAS filed cannot show what was missed, and missing is the " +
+        "state that matters.",
+      kind: "constitutional",
+    },
+    {
+      source: "G6_46_Good_LegalHub.HTML",
+      was: "Locked rows dimmed and marked `[ LOGIN REQ ]` with no statement of what is behind them.",
+      now: "Restricted rows keep full contrast, name the document, and state the basis for access.",
+      because:
+        "Dimming a row someone cannot open makes it hard to read AND hard to ask about. What is " +
+        "restricted is the content; the existence of the document is a fact about the entity.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+// -----------------------------------------------------------------
+// THE ANCILLARY SET
+// -----------------------------------------------------------------
+
+/**
+ * AS-14 - THE RISK DISCLOSURE
+ *
+ * The gate before AS-06. Mandatory, high-friction, and on paper ground
+ * throughout, because the entire screen is assertion.
+ */
+export const RISK_DISCLOSURE: Assembly = {
+  id: "AS-14",
+  name: "The Risk Disclosure",
+  route: "capital",
+  vantage: "capital",
+  intent: "Put the ways this can lose money in front of someone before they can commit.",
+  answers: "What can go wrong, and how badly?",
+  sections: [
+    S("AS-14.a", "Statement", "narrative",
+      "The risks, in order of severity, on paper ground.",
+      [],
+      "Paper throughout. Every sentence here is an assertion, so the ground never leaves it."),
+    S("AS-14.b", "Acknowledgement", "action",
+      "An explicit acknowledgement, recorded with the version acknowledged.",
+      [],
+      "The VERSION is recorded, not just the act. An acknowledgement of v2.4 says nothing about " +
+      "v3.0, and a disclosure that changed after acceptance has not been accepted."),
+  ],
+  corrections: [
+    {
+      source: "ANC.02_RISK DISCLOSURE.HTML",
+      was: "Acknowledgement unlocked by scrolling a div to 99%.",
+      now: "Unlocked by reaching the end by any means: scroll, keyboard, or the skip-to-end control.",
+      because:
+        "Scroll position is not reading, and someone navigating by keyboard who tabbed to the end " +
+        "never triggered the scroll handler at all. The gate locked out the people most likely " +
+        "to have read it.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.02_RISK DISCLOSURE.HTML",
+      was: "The toggle row held at `opacity: 0.5; pointer-events: none` until unlocked.",
+      now: "Visible at full contrast throughout, with `disabled` and a stated reason.",
+      because:
+        "A control at half opacity with pointer events off is invisible to the eye and absent from " +
+        "the keyboard, so nothing tells you what you have to do to proceed.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.02_RISK DISCLOSURE.HTML",
+      was: "`3-year hard lock-in` and `Platform Fee 15%` stated as terms.",
+      now: "Terms read from the vehicle's own record, never typed into the disclosure.",
+      because:
+        "A disclosure that restates commercial terms in prose will drift from the instrument it " +
+        "describes, and the prose is what people rely on.",
+      kind: "constitutional",
+    },
+    {
+      source: "ANC.02_RISK DISCLOSURE.HTML",
+      was: "`--highlight: #FFFF00` behind the most severe clauses.",
+      now: "A left rule in hazard, at full text contrast.",
+      because:
+        "Yellow highlighter is not in the palette, and marking the worst clause by background " +
+        "colour alone leaves it unmarked for anyone who cannot see the difference.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/**
+ * AS-15 - SYSTEM STATUS
+ *
+ * What is up, what is down, and what is being done about it.
+ */
+export const SYSTEM_STATUS: Assembly = {
+  id: "AS-15",
+  name: "System Status",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Say what is working and what is not, before anyone has to ask.",
+  answers: "Is it me, or is it them?",
+  sections: [
+    S("AS-15.a", "Current State", "figure",
+      "One line: operational, degraded, or down. Then the components.",
+      [],
+      "The headline is a word, not a dashboard. Someone arriving here has a yes/no question."),
+    S("AS-15.b", "Components", "ledger",
+      "Each component with its state, and when that state was last confirmed.",
+      [],
+      "A component nobody has heard from renders as UNKNOWN, never as healthy. Silence is not health."),
+    S("AS-15.c", "Incidents", "ledger",
+      "Open and recent incidents, with what is being done.",
+      ["O-08"]),
+  ],
+  corrections: [
+    {
+      source: "ANC.05_Status_Asset.HTML",
+      was: "Physical access control listed publicly: `MagLock (Main Gate)`, `Goa Access Control - OFFLINE`.",
+      now: "Removed from the public status page entirely.",
+      because:
+        "Announcing which site's access control is offline, and where, tells anyone reading which " +
+        "door is currently unsecured. That belongs at the admin vantage or nowhere.",
+      kind: "constitutional",
+    },
+    {
+      source: "ANC.05_Status_Asset.HTML",
+      was: "The OFFLINE state carried an infinite `glitch` animation.",
+      now: "Static, in critical, with a text label.",
+      because:
+        "Animating a failure makes the one word on the page that has to be read the hardest to " +
+        "read, and it runs forever with no reduced-motion path.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.05_Status_Asset.HTML",
+      was: "`--terminal: #00FF41` as the operational tone.",
+      now: "confirm, at 6.55:1.",
+      because:
+        "Terminal mode is admin-only and read-only by §29. A public status page is neither.",
+      kind: "constitutional",
+    },
+    {
+      source: "ANC.05_Status_Asset.HTML",
+      was: "`body { overflow: hidden }` with a fixed 90vh chassis.",
+      now: "The page scrolls.",
+      because:
+        "On a short viewport the incident list was unreachable, which is the content a status page " +
+        "exists to deliver.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/**
+ * AS-16 - SIGNAL LOST
+ *
+ * The 404. The one screen whose whole job is to be brief.
+ */
+export const SIGNAL_LOST: Assembly = {
+  id: "AS-16",
+  name: "Signal Lost",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Say that the thing is not here, and offer the nearest thing that is.",
+  answers: "Where do I go now?",
+  sections: [
+    S("AS-16.a", "The Miss", "masthead",
+      "What was asked for, that it is not here, and three routes out.",
+      [],
+      "No stack trace, no exception name. A visitor is not debugging and an attacker should not be " +
+      "handed a map."),
+  ],
+  corrections: [
+    {
+      source: "ANC.07_SignalLost_glitch-404.HTML",
+      was: "A 30-second timer that faded the page, raised `alert()`, then redirected.",
+      now: "No automatic redirect.",
+      because:
+        "WCAG 2.2.1: a time limit needs to be turnable off. Worse, someone reading the routes out " +
+        "gets the page pulled away mid-sentence by a modal they did not open.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.07_SignalLost_glitch-404.HTML",
+      was: "The whole content block parallaxed with the pointer, over infinite glitch animations.",
+      now: "Static. The type is the treatment.",
+      because:
+        "Content that moves with the cursor is a vestibular trigger, and none of it was behind a " +
+        "reduced-motion query.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.07_SignalLost_glitch-404.HTML",
+      was: "A trace log showing `GET /investors/secret-page` and `NULL_POINTER_EXCEPTION`.",
+      now: "The path, plainly, and nothing about internals.",
+      because:
+        "Reflecting the requested path into the page is an injection surface, and naming the " +
+        "exception tells someone probing the site what the stack is.",
+      kind: "constitutional",
+    },
+    {
+      source: "ANC.07_SignalLost_glitch-404.HTML",
+      was: "A noise overlay at 0.4 opacity across the viewport.",
+      now: "Removed.",
+      because: "It lowered the contrast of everything beneath it, including the routes out.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/**
+ * AS-17 - THE KNOWLEDGE BASE
+ *
+ * Questions, answered, each pointing at the document that governs it.
+ */
+export const KNOWLEDGE_BASE: Assembly = {
+  id: "AS-17",
+  name: "The Knowledge Base",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Answer the questions people actually ask, and cite what governs each answer.",
+  answers: "Where is the answer, and what is it based on?",
+  sections: [
+    S("AS-17.a", "Search", "action",
+      "Filter across questions and answers.",
+      [],
+      "A real label, and results announced. Filtering that silently empties a list reads as a " +
+      "broken page."),
+    S("AS-17.b", "Answers", "ledger",
+      "Grouped questions, each with the governing clause cited.",
+      [],
+      "Every answer cites a document. An uncited answer on a regulated platform is a claim with " +
+      "nothing behind it."),
+  ],
+  corrections: [
+    {
+      source: "ANC.08_FAQ.HTML",
+      was: "`Gross Revenue - (Operating Costs + Platform Fee 15% + Sinking Fund 2.5%)`.",
+      now: "The six-stage waterfall, cited to it rather than restated.",
+      because:
+        "Three stages missing including debt service, and `Platform Fee` is not the Admin Reserve. " +
+        "The FAQ was a fourth independent copy of the waterfall, and it had drifted.",
+      kind: "constitutional",
+    },
+    {
+      source: "ANC.08_FAQ.HTML",
+      was: "`ASK CONCIERGE`, `TRANSMIT TO CONCIERGE`, and `the Steward Console`.",
+      now: "Contact the investor relations desk. The member console.",
+      because: "Section 25 forbids all three terms.",
+      kind: "vocabulary",
+    },
+    {
+      source: "ANC.08_FAQ.HTML",
+      was: "Accordions built from divs with `onclick`, and `max-height: 600px` on the panel.",
+      now: "Real buttons with `aria-expanded`, and no height cap.",
+      because:
+        "No state was exposed to assistive technology, and any answer over 600px was silently " +
+        "clipped - including the exit-mechanism answer, which was the longest.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.08_FAQ.HTML",
+      was: "The search field labelled only by its placeholder, and uppercasing what was typed.",
+      now: "A real label, and no transform on the input.",
+      because:
+        "A placeholder disappears on the first keystroke, and uppercasing renders what someone " +
+        "typed as something they did not type.",
+      kind: "accessibility",
+    },
+  ],
+};
+
+/**
+ * AS-18 - RECRUITMENT
+ *
+ * Open roles. The screen where the brand voice is most easily lost.
+ */
+export const RECRUITMENT: Assembly = {
+  id: "AS-18",
+  name: "Recruitment",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Describe the open roles honestly enough that the right people recognise themselves.",
+  answers: "What is the work, and would I want it?",
+  sections: [
+    S("AS-18.a", "How We Work", "narrative",
+      "What the work is actually like. Two or three claims, all falsifiable.",
+      [],
+      "Warm, confident, assertive, with pleasantness. A recruitment page is where the voice slips " +
+      "into swagger fastest, because swagger reads as confidence until you are the reader."),
+    S("AS-18.b", "Open Roles", "ledger",
+      "Role, what it owns, and whether it is open.",
+      [],
+      "A filled role stays fully legible. Someone reading it is deciding whether to watch for the " +
+      "next one."),
+    S("AS-18.c", "Applying", "action",
+      "One route, with what to send and what happens next.",
+      [],
+      "A real file input. A drop zone alone cannot be reached from a keyboard."),
+  ],
+  corrections: [
+    {
+      source: "ANC.09_Recruitment.HTML",
+      was: "`We sell peace, but our backend is war.` and `We are a crew, not a family. " +
+           "Performance is the only currency.`",
+      now: "Rewritten. The work is demanding; the copy says so without the threat.",
+      because:
+        "The voice is warm, confident, assertive, with pleasantness. That copy is cold and " +
+        "faintly hostile, and it filters for people who enjoy being told they might not make it.",
+      kind: "vocabulary",
+    },
+    {
+      source: "ANC.09_Recruitment.HTML",
+      was: "`Design the guest loop for Coorg_04`.",
+      now: "Design the occupancy sequence.",
+      because: "Section 25 forbids the term.",
+      kind: "vocabulary",
+    },
+    {
+      source: "ANC.09_Recruitment.HTML",
+      was: "Filled roles at `opacity: 0.3; pointer-events: none`.",
+      now: "Full contrast, marked Filled, still readable.",
+      because:
+        "0.3 opacity on that ground is near 2:1. Someone deciding whether to watch for the next " +
+        "opening could not read what the role was.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.09_Recruitment.HTML",
+      was: "`Do not send a CV. Send a Dossier.` over a div-based upload zone.",
+      now: "A real file input, and a CV is accepted.",
+      because:
+        "The div could not be reached or operated from a keyboard, and refusing the standard " +
+        "artefact filters hardest against people without time to make a bespoke one.",
+      kind: "accessibility",
+    },
+    {
+      source: "ANC.09_Recruitment.HTML",
+      was: "`L1 / L2 / L3 CLEARANCE` badges against each role.",
+      now: "Seniority stated plainly.",
+      because:
+        "Clearance levels imply a classification scheme the organisation does not operate. " +
+        "Invented security theatre on a hiring page reads as either confusing or untrue.",
+      kind: "vocabulary",
+    },
+  ],
+};
+
+/**
+ * AS-19 - THE LEDGER LOCK
+ *
+ * The commitment execution sequence, from AS-06's piston onward.
+ */
+export const LEDGER_LOCK: Assembly = {
+  id: "AS-19",
+  name: "The Ledger Lock",
+  route: "capital",
+  vantage: "capital",
+  intent: "Execute a commitment and show exactly what was recorded.",
+  answers: "Did it go through, and what happens next?",
+  sections: [
+    S("AS-19.a", "Ledger", "feature", "What is being committed, restated.", ["O-08"]),
+    S("AS-19.b", "Invariants", "action",
+      "The acknowledgements that bind, as real checkboxes.",
+      [],
+      "Each one is a separate acknowledgement of a separate fact. Bundling them into one control " +
+      "makes the bundle the thing acknowledged."),
+    S("AS-19.c", "Execution", "action",
+      "The piston. Linear, 3000ms.",
+      ["M-04"],
+      "3000ms exactly. The duration is the deliberation."),
+    S("AS-19.d", "Recorded", "feature",
+      "The reference, the state, and what is still outstanding.",
+      [],
+      "States Committed, never Member. The Member Law fires on settlement."),
+  ],
+  corrections: [
+    {
+      source: "LedgerLock.html",
+      was: "The piston filled at 1.5% every 20ms - complete in about 1.3 seconds.",
+      now: "3000ms, linear.",
+      because:
+        "The commit duration is not styling. Three seconds is the deliberation the control exists " +
+        "to impose, and 1.3 seconds is inside the range where someone presses through it.",
+      kind: "constitutional",
+    },
+    {
+      source: "LedgerLock.html",
+      was: "`retina-burn`: a full-white flash with a 40px white glow.",
+      now: "The 120ms data flash.",
+      because:
+        "A large sudden white flash is a photosensitivity trigger, and there was no reduced-motion " +
+        "path around it.",
+      kind: "accessibility",
+    },
+    {
+      source: "LedgerLock.html",
+      was: "Acknowledgements as divs with `onclick` and a styled inner div.",
+      now: "Real checkboxes with real labels.",
+      because:
+        "They could not be reached, operated or announced from a keyboard - on the screen that " +
+        "records what someone agreed to.",
+      kind: "accessibility",
+    },
+    {
+      source: "LedgerLock.html",
+      was: "`* { cursor: default }`.",
+      now: "Pointer on interactive elements.",
+      because: "It removed the cursor change from every button on a capital-moving flow.",
+      kind: "interaction",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -1084,6 +1641,13 @@ export const ASSEMBLIES: readonly Assembly[] = [
   GALLERY_STRIP,
   STAGE_PROGRESSION,
   LOCATION_INTELLIGENCE,
+  LLP_DOCKET,
+  RISK_DISCLOSURE,
+  SYSTEM_STATUS,
+  SIGNAL_LOST,
+  KNOWLEDGE_BASE,
+  RECRUITMENT,
+  LEDGER_LOCK,
 ];
 
 /**

@@ -63,11 +63,11 @@ text-transform:uppercase;margin-bottom:11px;opacity:.55}
 in order, what each one is for, and every place the source prototype and the canon disagreed &mdash;
 recorded rather than silently resolved, because a silent resolution is a decision nobody can review.</p>
 <div class="stats">
-<div class="stat"><b>12</b><span>Assemblies</span></div>
-<div class="stat"><b>45</b><span>Sections</span></div>
-<div class="stat"><b>55</b><span>Corrections</span></div>
-<div class="stat"><b>19</b><span>Accessibility</span></div>
-<div class="stat"><b>11</b><span>Constitutional</span></div>
+<div class="stat"><b>19</b><span>Assemblies</span></div>
+<div class="stat"><b>68</b><span>Sections</span></div>
+<div class="stat"><b>88</b><span>Corrections</span></div>
+<div class="stat"><b>34</b><span>Accessibility</span></div>
+<div class="stat"><b>21</b><span>Constitutional</span></div>
 </div>
 </header>
 
@@ -382,11 +382,173 @@ screen nobody can miss, which is what makes it a rule rather than a treatment.</
 </td></tr>
 </tbody></table>
 
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-13</span><h3>The LLP Docket</h3>
+<span class="tag">admin</span><span class="tag">admin vantage</span></div>
+<div class="as-b">
+<p class="q">Is this entity in good standing, and what is outstanding?</p>
+<p class="i">Hold every legal fact about one investment vehicle in one place, completely.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-13.a</td>
+<td><strong>Docket Header</strong> <span class="k">masthead</span><br>Entity name, LLPIN, status, registered office, and the date the file was last complete.
+<span class="rule">Standing is DERIVED from the filing calendar, never stored. A stored status is a claim about the past that keeps asserting itself into the present.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-13.b</td>
+<td><strong>Formation</strong> <span class="k">ledger</span><br>The incorporation chain: FiLLiP, Certificate of Incorporation, LLP Agreement, PAN, TAN, GSTIN.
+<span class="rule">Each document carries a real content hash. A hash that is not verifiable is worse than no hash, because it implies a verification nobody performed.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-13.c</td>
+<td><strong>Register of Partners</strong> <span class="k">ledger</span><br>Designated partners with DPIN, partners with contribution and profit share.
+<span class="rule">Profit share is read FROM the LLP Agreement, never derived from contribution. The two are independent and only look interchangeable.</span></td>
+<td class="refs">O-02
+</td></tr><tr><td class="r">AS-13.d</td>
+<td><strong>Statutory Calendar</strong> <span class="k">ledger</span><br>Form 3, Form 8, Form 11, income tax and GST, each against its statutory due date.
+<span class="rule">Due dates are COMPUTED from the financial year, so a filing that was never made renders as overdue rather than as an empty row.</span></td>
+<td class="refs">O-07
+</td></tr><tr><td class="r">AS-13.e</td>
+<td><strong>Charges and Encumbrances</strong> <span class="k">ledger</span><br>Registered charges over the entity's assets, with holder, amount and satisfaction state.
+<span class="rule">An unsatisfied charge is the senior claim on everything below it. It renders before any figure that it outranks.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-13.f</td>
+<td><strong>Resolutions</strong> <span class="k">ledger</span><br>Partner resolutions with threshold, result and the register extract they bind.
+<span class="rule">The result is public. The ballot is sealed at every vantage including this one - admin is not an exception to I-05, it is the vantage most likely to assume it is.</span></td>
+<td class="refs">O-06
+</td></tr><tr><td class="r">AS-13.g</td>
+<td><strong>Property Nexus</strong> <span class="k">grid</span><br>Which properties this entity holds, and on what instrument.
+<span class="rule">The nexus is the join between the legal file and the asset file. A property whose title sits in a different entity from the one distributing on it is a defect, not a nuance.</span></td>
+<td class="refs">O-01
+</td></tr><tr><td class="r">AS-13.h</td>
+<td><strong>Docket Audit</strong> <span class="k">ledger</span><br>Every version of every document, who filed it and when.
+<span class="rule">Append-only. A superseded version stays visible with its successor linked, because the question a docket answers is usually about what was true at a past date.</span></td>
+<td class="refs">O-08
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-14</span><h3>The Risk Disclosure</h3>
+<span class="tag">capital</span><span class="tag">capital vantage</span></div>
+<div class="as-b">
+<p class="q">What can go wrong, and how badly?</p>
+<p class="i">Put the ways this can lose money in front of someone before they can commit.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-14.a</td>
+<td><strong>Statement</strong> <span class="k">narrative</span><br>The risks, in order of severity, on paper ground.
+<span class="rule">Paper throughout. Every sentence here is an assertion, so the ground never leaves it.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-14.b</td>
+<td><strong>Acknowledgement</strong> <span class="k">action</span><br>An explicit acknowledgement, recorded with the version acknowledged.
+<span class="rule">The VERSION is recorded, not just the act. An acknowledgement of v2.4 says nothing about v3.0, and a disclosure that changed after acceptance has not been accepted.</span></td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-15</span><h3>System Status</h3>
+<span class="tag">gateway</span><span class="tag">gateway vantage</span></div>
+<div class="as-b">
+<p class="q">Is it me, or is it them?</p>
+<p class="i">Say what is working and what is not, before anyone has to ask.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-15.a</td>
+<td><strong>Current State</strong> <span class="k">figure</span><br>One line: operational, degraded, or down. Then the components.
+<span class="rule">The headline is a word, not a dashboard. Someone arriving here has a yes/no question.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-15.b</td>
+<td><strong>Components</strong> <span class="k">ledger</span><br>Each component with its state, and when that state was last confirmed.
+<span class="rule">A component nobody has heard from renders as UNKNOWN, never as healthy. Silence is not health.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-15.c</td>
+<td><strong>Incidents</strong> <span class="k">ledger</span><br>Open and recent incidents, with what is being done.
+</td>
+<td class="refs">O-08
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-16</span><h3>Signal Lost</h3>
+<span class="tag">gateway</span><span class="tag">gateway vantage</span></div>
+<div class="as-b">
+<p class="q">Where do I go now?</p>
+<p class="i">Say that the thing is not here, and offer the nearest thing that is.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-16.a</td>
+<td><strong>The Miss</strong> <span class="k">masthead</span><br>What was asked for, that it is not here, and three routes out.
+<span class="rule">No stack trace, no exception name. A visitor is not debugging and an attacker should not be handed a map.</span></td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-17</span><h3>The Knowledge Base</h3>
+<span class="tag">gateway</span><span class="tag">gateway vantage</span></div>
+<div class="as-b">
+<p class="q">Where is the answer, and what is it based on?</p>
+<p class="i">Answer the questions people actually ask, and cite what governs each answer.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-17.a</td>
+<td><strong>Search</strong> <span class="k">action</span><br>Filter across questions and answers.
+<span class="rule">A real label, and results announced. Filtering that silently empties a list reads as a broken page.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-17.b</td>
+<td><strong>Answers</strong> <span class="k">ledger</span><br>Grouped questions, each with the governing clause cited.
+<span class="rule">Every answer cites a document. An uncited answer on a regulated platform is a claim with nothing behind it.</span></td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-18</span><h3>Recruitment</h3>
+<span class="tag">gateway</span><span class="tag">gateway vantage</span></div>
+<div class="as-b">
+<p class="q">What is the work, and would I want it?</p>
+<p class="i">Describe the open roles honestly enough that the right people recognise themselves.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-18.a</td>
+<td><strong>How We Work</strong> <span class="k">narrative</span><br>What the work is actually like. Two or three claims, all falsifiable.
+<span class="rule">Warm, confident, assertive, with pleasantness. A recruitment page is where the voice slips into swagger fastest, because swagger reads as confidence until you are the reader.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-18.b</td>
+<td><strong>Open Roles</strong> <span class="k">ledger</span><br>Role, what it owns, and whether it is open.
+<span class="rule">A filled role stays fully legible. Someone reading it is deciding whether to watch for the next one.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-18.c</td>
+<td><strong>Applying</strong> <span class="k">action</span><br>One route, with what to send and what happens next.
+<span class="rule">A real file input. A drop zone alone cannot be reached from a keyboard.</span></td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
+</div></article><article class="as">
+<div class="as-h"><span class="id">AS-19</span><h3>The Ledger Lock</h3>
+<span class="tag">capital</span><span class="tag">capital vantage</span></div>
+<div class="as-b">
+<p class="q">Did it go through, and what happens next?</p>
+<p class="i">Execute a commitment and show exactly what was recorded.</p>
+<table><thead><tr><th style="width:80px">Ref</th><th>Section</th><th style="width:140px">Renders</th></tr></thead>
+<tbody><tr><td class="r">AS-19.a</td>
+<td><strong>Ledger</strong> <span class="k">feature</span><br>What is being committed, restated.
+</td>
+<td class="refs">O-08
+</td></tr><tr><td class="r">AS-19.b</td>
+<td><strong>Invariants</strong> <span class="k">action</span><br>The acknowledgements that bind, as real checkboxes.
+<span class="rule">Each one is a separate acknowledgement of a separate fact. Bundling them into one control makes the bundle the thing acknowledged.</span></td>
+<td class="refs">&mdash;
+</td></tr><tr><td class="r">AS-19.c</td>
+<td><strong>Execution</strong> <span class="k">action</span><br>The piston. Linear, 3000ms.
+<span class="rule">3000ms exactly. The duration is the deliberation.</span></td>
+<td class="refs">M-04
+</td></tr><tr><td class="r">AS-19.d</td>
+<td><strong>Recorded</strong> <span class="k">feature</span><br>The reference, the state, and what is still outstanding.
+<span class="rule">States Committed, never Member. The Member Law fires on settlement.</span></td>
+<td class="refs">&mdash;
+</td></tr>
+</tbody></table>
+
 </div></article>
 
-<h2>Corrections &mdash; 55 across 12 screens</h2>
+<h2>Corrections &mdash; 88 across 19 screens</h2>
 
-<h2 style="color:#E8672E">constitutional &mdash; 11</h2>
+<h2 style="color:#E8672E">constitutional &mdash; 21</h2>
 <div class="c" style="--t:#E8672E">
 <div class="c-h"><span class="c-k">AS-01</span><span class="c-s">GC_onboardDoc.html</span></div>
 <div class="wn"><div><b>Was</b>Yield shown as a bare figure — <code>YIELD: 8.4%</code>.</div>
@@ -431,8 +593,48 @@ screen nobody can miss, which is what makes it a rule rather than a treatment.</
 <div class="c-h"><span class="c-k">AS-12</span><span class="c-s">Insights-panel reference</span></div>
 <div class="wn"><div><b>Was</b>Identifiable individuals plotted on a map with names and current locations.</div>
 <div><b>Now</b>Aggregates only, above a minimum cell count.</div></div>
-<p class="bc">A map of named people at known places is a privacy exposure regardless of who is looking, and thin cells re-identify individuals even after the names come off.</p></div>
-<h2 style="color:#C9A227">accessibility &mdash; 19</h2>
+<p class="bc">A map of named people at known places is a privacy exposure regardless of who is looking, and thin cells re-identify individuals even after the names come off.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">G6_46_Good_LegalHub.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>SPV_INCORPORATION.CERT</code> and a shareholder registry as the entity's core records.</div>
+<div><b>Now</b>Certificate of Incorporation and a Register of Partners, for an LLP.</div></div>
+<p class="bc">Section 24a makes the LLP the constitutional default and an SPV a Board-approved exception. An LLP has partners and capital contribution; it has no shareholders and no shares to register.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">ANC.08_FAQ.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>You hold Class-A Equity Shares in this SPV, granting you fractional ownership</code>.</div>
+<div><b>Now</b>Capital contribution to an LLP, with the profit share set by the LLP Agreement.</div></div>
+<p class="bc">There is no share class in an LLP, so there is no Class-A. The answer described a different legal instrument from the one the platform actually issues.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">G6_46_Good_LegalHub.HTML</span></div>
+<div class="wn"><div><b>Was</b>Restricted documents rendered with <code>HASH: HIDDEN</code>.</div>
+<div><b>Now</b>The hash is always shown. Access controls the CONTENT, not the fingerprint.</div></div>
+<p class="bc">The hash is precisely what lets someone confirm a document is the one they were told about, without being able to read it. Hiding it removes the only check available to somebody outside the wall.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">AS-13 design</span></div>
+<div class="wn"><div><b>Was</b>&mdash; not stated</div>
+<div><b>Now</b>Statutory due dates are computed from the financial year, not stored.</div></div>
+<p class="bc">Form 11 falls 60 days after the year end and Form 8 falls 30 days after six months. A docket listing only what WAS filed cannot show what was missed, and missing is the state that matters.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-14</span><span class="c-s">ANC.02_RISK DISCLOSURE.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>3-year hard lock-in</code> and <code>Platform Fee 15%</code> stated as terms.</div>
+<div><b>Now</b>Terms read from the vehicle's own record, never typed into the disclosure.</div></div>
+<p class="bc">A disclosure that restates commercial terms in prose will drift from the instrument it describes, and the prose is what people rely on.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-15</span><span class="c-s">ANC.05_Status_Asset.HTML</span></div>
+<div class="wn"><div><b>Was</b>Physical access control listed publicly: <code>MagLock (Main Gate)</code>, <code>Goa Access Control - OFFLINE</code>.</div>
+<div><b>Now</b>Removed from the public status page entirely.</div></div>
+<p class="bc">Announcing which site's access control is offline, and where, tells anyone reading which door is currently unsecured. That belongs at the admin vantage or nowhere.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-15</span><span class="c-s">ANC.05_Status_Asset.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>--terminal: #00FF41</code> as the operational tone.</div>
+<div><b>Now</b>confirm, at 6.55:1.</div></div>
+<p class="bc">Terminal mode is admin-only and read-only by §29. A public status page is neither.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-16</span><span class="c-s">ANC.07_SignalLost_glitch-404.HTML</span></div>
+<div class="wn"><div><b>Was</b>A trace log showing <code>GET /investors/secret-page</code> and <code>NULL_POINTER_EXCEPTION</code>.</div>
+<div><b>Now</b>The path, plainly, and nothing about internals.</div></div>
+<p class="bc">Reflecting the requested path into the page is an injection surface, and naming the exception tells someone probing the site what the stack is.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-17</span><span class="c-s">ANC.08_FAQ.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>Gross Revenue - (Operating Costs + Platform Fee 15% + Sinking Fund 2.5%)</code>.</div>
+<div><b>Now</b>The six-stage waterfall, cited to it rather than restated.</div></div>
+<p class="bc">Three stages missing including debt service, and <code>Platform Fee</code> is not the Admin Reserve. The FAQ was a fourth independent copy of the waterfall, and it had drifted.</p></div><div class="c" style="--t:#E8672E">
+<div class="c-h"><span class="c-k">AS-19</span><span class="c-s">LedgerLock.html</span></div>
+<div class="wn"><div><b>Was</b>The piston filled at 1.5% every 20ms - complete in about 1.3 seconds.</div>
+<div><b>Now</b>3000ms, linear.</div></div>
+<p class="bc">The commit duration is not styling. Three seconds is the deliberation the control exists to impose, and 1.3 seconds is inside the range where someone presses through it.</p></div>
+<h2 style="color:#C9A227">accessibility &mdash; 34</h2>
 <div class="c" style="--t:#C9A227">
 <div class="c-h"><span class="c-k">AS-01</span><span class="c-s">GC_onboardDoc.html</span></div>
 <div class="wn"><div><b>Was</b>Yield and availability revealed by <code>group-hover:opacity-100</code> only.</div>
@@ -509,8 +711,68 @@ screen nobody can miss, which is what makes it a rule rather than a treatment.</
 <div class="c-h"><span class="c-k">AS-12</span><span class="c-s">Location-panel reference</span></div>
 <div class="wn"><div><b>Was</b>Location detail reachable only by clicking a pin on a pannable map.</div>
 <div><b>Now</b>The panel is a list first. Pins select within it; they are not the only way in.</div></div>
-<p class="bc">Clicking a 24px pin is a fine shortcut and a poor sole route. Anyone without a precise pointer had no access to the content at all.</p></div>
-<h2 style="color:#4F8A6B">numeric &mdash; 7</h2>
+<p class="bc">Clicking a 24px pin is a fine shortcut and a poor sole route. Anyone without a precise pointer had no access to the content at all.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">G6_46_Good_LegalHub.HTML</span></div>
+<div class="wn"><div><b>Was</b>Locked rows dimmed and marked <code>[ LOGIN REQ ]</code> with no statement of what is behind them.</div>
+<div><b>Now</b>Restricted rows keep full contrast, name the document, and state the basis for access.</div></div>
+<p class="bc">Dimming a row someone cannot open makes it hard to read AND hard to ask about. What is restricted is the content; the existence of the document is a fact about the entity.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-14</span><span class="c-s">ANC.02_RISK DISCLOSURE.HTML</span></div>
+<div class="wn"><div><b>Was</b>Acknowledgement unlocked by scrolling a div to 99%.</div>
+<div><b>Now</b>Unlocked by reaching the end by any means: scroll, keyboard, or the skip-to-end control.</div></div>
+<p class="bc">Scroll position is not reading, and someone navigating by keyboard who tabbed to the end never triggered the scroll handler at all. The gate locked out the people most likely to have read it.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-14</span><span class="c-s">ANC.02_RISK DISCLOSURE.HTML</span></div>
+<div class="wn"><div><b>Was</b>The toggle row held at <code>opacity: 0.5; pointer-events: none</code> until unlocked.</div>
+<div><b>Now</b>Visible at full contrast throughout, with <code>disabled</code> and a stated reason.</div></div>
+<p class="bc">A control at half opacity with pointer events off is invisible to the eye and absent from the keyboard, so nothing tells you what you have to do to proceed.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-14</span><span class="c-s">ANC.02_RISK DISCLOSURE.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>--highlight: #FFFF00</code> behind the most severe clauses.</div>
+<div><b>Now</b>A left rule in hazard, at full text contrast.</div></div>
+<p class="bc">Yellow highlighter is not in the palette, and marking the worst clause by background colour alone leaves it unmarked for anyone who cannot see the difference.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-15</span><span class="c-s">ANC.05_Status_Asset.HTML</span></div>
+<div class="wn"><div><b>Was</b>The OFFLINE state carried an infinite <code>glitch</code> animation.</div>
+<div><b>Now</b>Static, in critical, with a text label.</div></div>
+<p class="bc">Animating a failure makes the one word on the page that has to be read the hardest to read, and it runs forever with no reduced-motion path.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-15</span><span class="c-s">ANC.05_Status_Asset.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>body { overflow: hidden }</code> with a fixed 90vh chassis.</div>
+<div><b>Now</b>The page scrolls.</div></div>
+<p class="bc">On a short viewport the incident list was unreachable, which is the content a status page exists to deliver.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-16</span><span class="c-s">ANC.07_SignalLost_glitch-404.HTML</span></div>
+<div class="wn"><div><b>Was</b>A 30-second timer that faded the page, raised <code>alert()</code>, then redirected.</div>
+<div><b>Now</b>No automatic redirect.</div></div>
+<p class="bc">WCAG 2.2.1: a time limit needs to be turnable off. Worse, someone reading the routes out gets the page pulled away mid-sentence by a modal they did not open.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-16</span><span class="c-s">ANC.07_SignalLost_glitch-404.HTML</span></div>
+<div class="wn"><div><b>Was</b>The whole content block parallaxed with the pointer, over infinite glitch animations.</div>
+<div><b>Now</b>Static. The type is the treatment.</div></div>
+<p class="bc">Content that moves with the cursor is a vestibular trigger, and none of it was behind a reduced-motion query.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-16</span><span class="c-s">ANC.07_SignalLost_glitch-404.HTML</span></div>
+<div class="wn"><div><b>Was</b>A noise overlay at 0.4 opacity across the viewport.</div>
+<div><b>Now</b>Removed.</div></div>
+<p class="bc">It lowered the contrast of everything beneath it, including the routes out.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-17</span><span class="c-s">ANC.08_FAQ.HTML</span></div>
+<div class="wn"><div><b>Was</b>Accordions built from divs with <code>onclick</code>, and <code>max-height: 600px</code> on the panel.</div>
+<div><b>Now</b>Real buttons with <code>aria-expanded</code>, and no height cap.</div></div>
+<p class="bc">No state was exposed to assistive technology, and any answer over 600px was silently clipped - including the exit-mechanism answer, which was the longest.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-17</span><span class="c-s">ANC.08_FAQ.HTML</span></div>
+<div class="wn"><div><b>Was</b>The search field labelled only by its placeholder, and uppercasing what was typed.</div>
+<div><b>Now</b>A real label, and no transform on the input.</div></div>
+<p class="bc">A placeholder disappears on the first keystroke, and uppercasing renders what someone typed as something they did not type.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-18</span><span class="c-s">ANC.09_Recruitment.HTML</span></div>
+<div class="wn"><div><b>Was</b>Filled roles at <code>opacity: 0.3; pointer-events: none</code>.</div>
+<div><b>Now</b>Full contrast, marked Filled, still readable.</div></div>
+<p class="bc">0.3 opacity on that ground is near 2:1. Someone deciding whether to watch for the next opening could not read what the role was.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-18</span><span class="c-s">ANC.09_Recruitment.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>Do not send a CV. Send a Dossier.</code> over a div-based upload zone.</div>
+<div><b>Now</b>A real file input, and a CV is accepted.</div></div>
+<p class="bc">The div could not be reached or operated from a keyboard, and refusing the standard artefact filters hardest against people without time to make a bespoke one.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-19</span><span class="c-s">LedgerLock.html</span></div>
+<div class="wn"><div><b>Was</b><code>retina-burn</code>: a full-white flash with a 40px white glow.</div>
+<div><b>Now</b>The 120ms data flash.</div></div>
+<p class="bc">A large sudden white flash is a photosensitivity trigger, and there was no reduced-motion path around it.</p></div><div class="c" style="--t:#C9A227">
+<div class="c-h"><span class="c-k">AS-19</span><span class="c-s">LedgerLock.html</span></div>
+<div class="wn"><div><b>Was</b>Acknowledgements as divs with <code>onclick</code> and a styled inner div.</div>
+<div><b>Now</b>Real checkboxes with real labels.</div></div>
+<p class="bc">They could not be reached, operated or announced from a keyboard - on the screen that records what someone agreed to.</p></div>
+<h2 style="color:#4F8A6B">numeric &mdash; 9</h2>
 <div class="c" style="--t:#4F8A6B">
 <div class="c-h"><span class="c-k">AS-02</span><span class="c-s">GC_onboardDoc.html</span></div>
 <div class="wn"><div><b>Was</b>Placeholder cards generated with <code>Math.random()</code> and labelled <code>VOID</code> / <code>PENDING_KYC</code>.</div>
@@ -539,8 +801,16 @@ screen nobody can miss, which is what makes it a rule rather than a treatment.</
 <div class="c-h"><span class="c-k">AS-12</span><span class="c-s">Location-panel reference</span></div>
 <div class="wn"><div><b>Was</b>Aggregate figures shown with no measurement window.</div>
 <div><b>Now</b>Every figure carries its window and its confidence class.</div></div>
-<p class="bc">Footfall over an unnamed period is not a quantity. It is a number that resembles one.</p></div>
-<h2 style="color:#8E8E8E">vocabulary &mdash; 8</h2>
+<p class="bc">Footfall over an unnamed period is not a quantity. It is a number that resembles one.</p></div><div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">AS-13 design</span></div>
+<div class="wn"><div><b>Was</b>&mdash; not stated</div>
+<div><b>Now</b>Profit share is read from the LLP Agreement and never derived from contribution.</div></div>
+<p class="bc">The two are independent under the Act and only look interchangeable. A docket that derives one from the other is quietly wrong for every entity whose agreement differs, and nothing on the screen would reveal it.</p></div><div class="c" style="--t:#4F8A6B">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">G6_46_Good_LegalHub.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>SHA-256: 8d993k2...12x</code>.</div>
+<div><b>Now</b>A real hash, or the field is absent and says why.</div></div>
+<p class="bc">That string contains <code>k</code>, which is not a hexadecimal digit, so it is not a SHA-256 of anything. A hash nobody can verify implies a verification nobody performed.</p></div>
+<h2 style="color:#8E8E8E">vocabulary &mdash; 13</h2>
 <div class="c" style="--t:#8E8E8E">
 <div class="c-h"><span class="c-k">AS-03</span><span class="c-s">Hero+tabs.html</span></div>
 <div class="wn"><div><b>Was</b>Time tab: <code>Awaiting Console Synchronisation. Calendar availability pending Digital Custody lock.</code></div>
@@ -573,8 +843,28 @@ screen nobody can miss, which is what makes it a rule rather than a treatment.</
 <div class="c-h"><span class="c-k">AS-11</span><span class="c-s">Programme matrix (supplied)</span></div>
 <div class="wn"><div><b>Was</b><code>First Guest Simulations</code> and <code>Guest Reset Score Reports</code> at Stages 6 and 7.</div>
 <div><b>Now</b>First Occupancy Simulations, and Reset Score Reports.</div></div>
-<p class="bc">Section 25 forbids <code>Guest</code> - the shareholder register has none. The measurement is of the property's reset between occupancies, which is what the renamed deliverable says.</p></div>
-<h2 style="color:#6B6B6B">interaction &mdash; 10</h2>
+<p class="bc">Section 25 forbids <code>Guest</code> - the shareholder register has none. The measurement is of the property's reset between occupancies, which is what the renamed deliverable says.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-13</span><span class="c-s">G6_46_Good_LegalHub.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>MASTER SERVICE AGREEMENT</code> as the governing document.</div>
+<div><b>Now</b>The LLP Agreement.</div></div>
+<p class="bc">Section 25 forbids the term, and the substance is wrong too: the LLP Agreement is the constitutional document of the entity, not a commercial contract alongside it.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-17</span><span class="c-s">ANC.08_FAQ.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>ASK CONCIERGE</code>, <code>TRANSMIT TO CONCIERGE</code>, and <code>the Steward Console</code>.</div>
+<div><b>Now</b>Contact the investor relations desk. The member console.</div></div>
+<p class="bc">Section 25 forbids all three terms.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-18</span><span class="c-s">ANC.09_Recruitment.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>We sell peace, but our backend is war.</code> and <code>We are a crew, not a family. Performance is the only currency.</code></div>
+<div><b>Now</b>Rewritten. The work is demanding; the copy says so without the threat.</div></div>
+<p class="bc">The voice is warm, confident, assertive, with pleasantness. That copy is cold and faintly hostile, and it filters for people who enjoy being told they might not make it.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-18</span><span class="c-s">ANC.09_Recruitment.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>Design the guest loop for Coorg_04</code>.</div>
+<div><b>Now</b>Design the occupancy sequence.</div></div>
+<p class="bc">Section 25 forbids the term.</p></div><div class="c" style="--t:#8E8E8E">
+<div class="c-h"><span class="c-k">AS-18</span><span class="c-s">ANC.09_Recruitment.HTML</span></div>
+<div class="wn"><div><b>Was</b><code>L1 / L2 / L3 CLEARANCE</code> badges against each role.</div>
+<div><b>Now</b>Seniority stated plainly.</div></div>
+<p class="bc">Clearance levels imply a classification scheme the organisation does not operate. Invented security theatre on a hiring page reads as either confusing or untrue.</p></div>
+<h2 style="color:#6B6B6B">interaction &mdash; 11</h2>
 <div class="c" style="--t:#6B6B6B">
 <div class="c-h"><span class="c-k">AS-01</span><span class="c-s">GC_onboardDoc.html</span></div>
 <div class="wn"><div><b>Was</b><code>cursor: none</code> on body, with a custom ring div following the pointer.</div>
@@ -615,6 +905,10 @@ screen nobody can miss, which is what makes it a rule rather than a treatment.</
 <div class="c-h"><span class="c-k">AS-11</span><span class="c-s">Programme matrix (supplied)</span></div>
 <div class="wn"><div><b>Was</b>The stage grid drawn as a timeline with week bars.</div>
 <div><b>Now</b>A matrix. Stage bars indicate span, not sequence.</div></div>
-<p class="bc">A timeline implies each stage ends before the next begins. Half these roles run across four stages simultaneously, and the timeline made that unreadable.</p></div>
+<p class="bc">A timeline implies each stage ends before the next begins. Half these roles run across four stages simultaneously, and the timeline made that unreadable.</p></div><div class="c" style="--t:#6B6B6B">
+<div class="c-h"><span class="c-k">AS-19</span><span class="c-s">LedgerLock.html</span></div>
+<div class="wn"><div><b>Was</b><code>* { cursor: default }</code>.</div>
+<div><b>Now</b>Pointer on interactive elements.</div></div>
+<p class="bc">It removed the cursor change from every button on a capital-moving flow.</p></div>
 
 </div></body></html>

@@ -62,6 +62,21 @@ export const COLOUR = {
   confirmDeep: "#177F43",   // confirm on paper:  2.70:1 -> 4.52:1
   hazardDeep: "#BE4915",    // hazard on paper:   2.93:1 -> 4.52:1
 
+  // ── FIFTH VARIANT — added 31 Jul 2026 ─────────────────────────────
+  //
+  // Same construction, same reason, same guarantee: nothing above changed.
+  //
+  // The original four came from an audit of the semantic bands on both
+  // grounds. `critical` was missed because it is the rarest colour in the
+  // system and, at the time, appeared on no paper surface at all. The LLP
+  // docket (AS-13) renders entirely on paper, and "Overdue" is the single
+  // word on that screen most likely to be the reason someone opened it.
+  //
+  // 3.17:1 is below AA at any size. Hue (3.2°) and saturation (100%) held;
+  // lightness moved 59% → 43.4%, the first value clearing 4.5 — exactly how
+  // the other four were derived.
+  criticalDeep: "#DD0C00",  // critical on paper: 3.17:1 -> 4.55:1
+
   // Strokes & hairlines
   hairline: "rgba(10,10,10,0.12)",     // Light mode hairline
   hairlineInv: "rgba(242,242,242,0.14)", // Dark mode hairline
@@ -78,7 +93,8 @@ export const COLOUR = {
  */
 export const ON_GROUND = {
   void: { forest: "forestLight", copper: "copper", confirm: "confirm", hazard: "hazard" },
-  paper: { forest: "forest", copper: "copperDeep", confirm: "confirmDeep", hazard: "hazardDeep" },
+  paper: { forest: "forest", copper: "copperDeep", confirm: "confirmDeep", hazard: "hazardDeep",
+           critical: "criticalDeep" },
 } as const;
 
 // ── Typography ──────────────────────────────────────────────────────
@@ -182,6 +198,7 @@ export const CSS_VARS = `
   --gc-copper-deep: ${COLOUR.copperDeep};
   --gc-confirm-deep: ${COLOUR.confirmDeep};
   --gc-hazard-deep: ${COLOUR.hazardDeep};
+  --gc-critical-deep: ${COLOUR.criticalDeep};
 
   --gc-hairline: ${COLOUR.hairline};
   --gc-hairline-inv: ${COLOUR.hairlineInv};

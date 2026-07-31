@@ -25,7 +25,7 @@
   --forest:#0C3024; --forest-light:#228A68;   /* forest is 1.38 on void; the variant is 4.62 */
   --copper:#C79F6B; --copper-deep:#8C6635;    /* copper is 2.18 on paper; the variant is 4.61 */
   --electric:#2061DE; --hazard:#E8672E; --hazard-deep:#BE4915;
-  --critical:#FF3B30; --confirm:#1FAA59; --confirm-deep:#177F43;
+  --critical:#FF3B30; --critical-deep:#DD0C00; --confirm:#1FAA59; --confirm-deep:#177F43;
   /* Strokes */
   --hair:rgba(242,242,242,0.14); --hair-lt:rgba(10,10,10,0.12);
   /* Type */
@@ -521,6 +521,91 @@ th.num{text-align:right}
 .poi-row .d{color:var(--steel-dim);font-family:var(--f-mono);white-space:nowrap}
 .win{color:var(--steel-dim);white-space:nowrap}
 
+
+/* ── AS-13 · The LLP Docket ──────────────────────────────────────── */
+/* The filing-cabinet metaphor from the signed-off LegalHub: tabs that
+   look like they are cut into a folder, and a paper document beneath.
+   Kept, because a docket IS a physical object in every user's head and
+   the metaphor does real navigational work. */
+.docket{display:flex;flex-direction:column}
+.docket-head{display:flex;justify-content:space-between;align-items:flex-start;
+  gap:var(--s-m);flex-wrap:wrap;padding-bottom:var(--s-m);border-bottom:1px solid var(--hair)}
+.standing{display:inline-flex;align-items:center;gap:var(--s-2xs);
+  border:1px solid var(--confirm);color:var(--confirm);padding:var(--s-2xs) var(--s-xs)}
+.standing.late{border-color:var(--hazard);color:var(--hazard)}
+.standing.bad{border-color:var(--critical);color:var(--critical)}
+.standing i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+
+.folder{display:flex;gap:0;margin-top:var(--s-l);overflow-x:auto;padding-left:2px}
+.folder button{flex:none;background:var(--void-panel);border:1px solid var(--hair);
+  border-bottom:none;color:var(--steel-dim);font:400 11px/1 var(--f-mono);
+  letter-spacing:.1em;text-transform:uppercase;padding:var(--s-xs) var(--s-m);
+  margin-right:-1px;position:relative;top:1px;white-space:nowrap;
+  transition:color var(--d-instant),background var(--d-instant)}
+.folder button:hover{color:var(--ink-inv)}
+/* The active tab is PAPER — it is the sheet you have pulled forward, and
+   the ground inversion holds: a docket page is assertion throughout. */
+.folder button[aria-selected="true"]{background:var(--paper);color:var(--ink);
+  border-color:var(--paper);z-index:2;font-weight:700}
+.sheet{background:var(--paper);color:var(--ink);padding:var(--s-xl);position:relative;
+  border:1px solid var(--paper)}
+.sheet h2{font:600 clamp(28px,4vw,40px)/1 var(--f-display);letter-spacing:-.03em;
+  text-transform:uppercase;margin-bottom:var(--s-2xs)}
+.sheet .lead{font:400 11px/1.4 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--steel);border-top:1px solid var(--ink);padding-top:var(--s-s);
+  margin-bottom:var(--s-xl);display:block}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet th{text-align:left;font:400 10px/1.3 var(--f-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--steel);padding:0 var(--s-s) var(--s-2xs) 0;
+  border-bottom:2px solid var(--ink)}
+.sheet th.num{text-align:right}
+.sheet td{padding:var(--s-s) var(--s-s) var(--s-s) 0;border-bottom:1px solid rgba(10,10,10,.14);
+  vertical-align:top}
+.sheet td.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.sheet tr:hover td{background:rgba(10,10,10,.03)}
+.doc-nm{font:500 15px/1.3 var(--f-body);display:block}
+/* A hash is shown ALWAYS, including on restricted rows. Access controls
+   the content; the fingerprint is what lets anyone verify from outside. */
+.hash{font:400 10px/1.4 var(--f-mono);color:var(--steel);word-break:break-all;display:block;
+  margin-top:3px}
+.ver{display:inline-block;border:1px solid var(--ink);padding:1px 7px;
+  font:400 10px/1.5 var(--f-mono);white-space:nowrap}
+.ver.sup{border-color:var(--steel);color:var(--steel)}
+/* Restricted rows keep FULL contrast. What is restricted is the content;
+   the existence of the document is a fact about the entity. */
+.restricted td{box-shadow:inset 2px 0 0 var(--hazard-deep)}  /* not a tint: 4% cost steel 0.37 */
+.lockmark{display:inline-flex;align-items:center;gap:5px;color:var(--hazard-deep);
+  font:400 10px/1.5 var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.lockmark::before{content:"";width:8px;height:8px;border:1.5px solid currentColor;
+  border-bottom:none;border-radius:4px 4px 0 0;margin-bottom:-2px}
+.act{border:1px solid var(--ink);background:transparent;color:var(--ink);
+  padding:var(--s-2xs) var(--s-xs);font:400 10px/1.4 var(--f-mono);letter-spacing:.1em;
+  text-transform:uppercase;white-space:nowrap;transition:background var(--d-instant),color var(--d-instant)}
+.act:hover{background:var(--ink);color:var(--paper)}
+.act[aria-disabled="true"]{border-color:var(--steel);color:var(--steel)}
+.act[aria-disabled="true"]:hover{background:transparent;color:var(--steel)}
+
+/* Statutory calendar — due dates COMPUTED, so a filing never made shows
+   as overdue rather than as an absent row. */
+.due{font-family:var(--f-mono);white-space:nowrap}
+.due.ok{color:var(--confirm-deep)}
+.due.soon{color:var(--hazard-deep)}
+.due.late{color:var(--critical-deep)}
+.state{font:400 10px/1.5 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid currentColor;padding:1px 7px;white-space:nowrap}
+.state.filed{color:var(--confirm-deep)}
+.state.open{color:var(--hazard-deep)}
+.state.overdue{color:var(--critical-deep)}
+
+.nexus{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--s-s)}
+.nexus article{border:1px solid rgba(10,10,10,.2);padding:var(--s-m)}
+.charge{border-left:3px solid var(--critical);padding-left:var(--s-s)}
+.charge.satisfied{border-left-color:var(--confirm-deep)}
+.gap{border:1px dashed var(--critical);color:var(--critical);padding:var(--s-s);
+  font:400 12px/1.5 var(--f-body)}
+.totrow td{border-top:2px solid var(--ink);border-bottom:none;font-weight:700;
+  padding-top:var(--s-s)}
+
 [hidden]{display:none !important}
 </style>
 </head>
@@ -547,6 +632,7 @@ th.num{text-align:right}
       <button data-go="AS-10">AS-10 Strip</button>
       <button data-go="AS-11">AS-11 Stages</button>
       <button data-go="AS-12">AS-12 Location</button>
+      <button data-go="AS-13">AS-13 Docket</button>
     </nav>
   </div>
 </header>
@@ -1881,6 +1967,402 @@ A["AS-12"] = { vantage:"space", render: () => `
   </div>
 </section>` };
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-13 · THE LLP DOCKET — one entity, one complete file
+
+   The hardest screen in the system. Everything else renders a slice of
+   an object; a docket renders EVERYTHING about one, and it has to stay
+   whole. A docket with a gap is not a partial docket, it is a misleading
+   one: the reader concludes the filing does not exist rather than that
+   the screen failed to fetch it.
+
+   So absence is explicit at every level, and the statutory calendar is
+   COMPUTED from the financial year rather than stored — which is what
+   makes a filing that was never made render as overdue instead of as
+   nothing at all.
+
+   ── THE STRUCTURAL CORRECTION ────────────────────────────────────
+   Every prototype describes an SPV holding Class-A equity shares with a
+   shareholder registry. §24a makes the LLP the constitutional default
+   and an SPV a Board-approved exception. An LLP has none of that:
+   partners, capital contribution, an LLP Agreement, and a profit share
+   set BY that agreement rather than derived from the contribution ratio.
+
+   That last one is the trap. The two look interchangeable and are not.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const LLP = {
+  name: "Coastal Collection I LLP",
+  llpin: "AAB-8842",
+  pan: "AAFCC1234K", tan: "BLRC09912F", gstin: "29AAFCC1234K1ZQ",
+  cin: null,                       // an LLP has no CIN. Stated, not blank.
+  incorporated: "2024-03-18",
+  fyEnd: "03-31",
+  office: "No. 14, Residency Road, Bengaluru 560025, Karnataka",
+  agreementDated: "2024-03-22",
+  agreementAmended: "2025-07-09",
+};
+
+/* Capital contribution and profit share are INDEPENDENT.
+   Under the LLP Act the agreement sets the profit share; it does not
+   have to follow the money. Note partner 3 below: 12% of the capital,
+   10% of the profit, by agreement. Deriving one from the other would
+   have rendered that silently wrong, and nothing on screen would show
+   it. So both are stored and the screen checks they each total 100%. */
+const PARTNERS = [
+  { n:"Getaway Collective Holdings", dp:true,  dpin:"09884412", contrib: 40000000_0000n, share: 3800 },
+  { n:"A. Raghunathan",              dp:true,  dpin:"07721189", contrib: 20000000_0000n, share: 2000 },
+  { n:"Meridian Family Office LLP",  dp:false, dpin:null,       contrib: 12000000_0000n, share: 1000 },
+  { n:"S. Kulkarni",                 dp:false, dpin:null,       contrib: 10000000_0000n, share: 1100 },
+  { n:"N. Fernandes",                dp:false, dpin:null,       contrib:  9000000_0000n, share:  950 },
+  { n:"D. Iyer",                     dp:false, dpin:null,       contrib:  9000000_0000n, share: 1150 },
+];
+
+/* Both columns must total exactly. Contribution in rupees, profit share
+   in basis points. Checked at load — a register that does not close is
+   not a register. */
+const CONTRIB_TOTAL = PARTNERS.reduce((a,p)=> a + p.contrib, 0n);
+(function registerCloses(){
+  const bps = PARTNERS.reduce((a,p)=> a + p.share, 0);
+  if (bps !== 10000) throw new Error(`Profit share totals ${bps/100}%, not 100%`);
+  if (PARTNERS.filter(p => p.dp).length < 2) {
+    throw new Error("An LLP requires at least two designated partners (s.7, LLP Act 2008)");
+  }
+  for (const p of PARTNERS) {
+    if (p.dp && !p.dpin) throw new Error(`Designated partner ${p.n} has no DPIN`);
+  }
+})();
+
+const FORMATION = [
+  { d:"FiLLiP — incorporation application", v:"1.0", on:"2024-02-27",
+    h:"9f2c41a7d8e0b3556c1ad94f7e2b08c6a5d3f1029e8b7c46d5a2f30918e7bc44", open:true },
+  { d:"Certificate of Incorporation (RoC Bangalore)", v:"1.0", on:"2024-03-18",
+    h:"1a77b0c9e4d25f8836ba0147c9e5d2f6083b1a9c7e4d0526fb83a19d0c4e7f21", open:true },
+  { d:"LLP Agreement", v:"1.0", on:"2024-03-22",
+    h:"4c19e8a05b7d3f2618ca94d07e5b1f83629d0a4c7b1e85f30d26a9c418b0e7f5", open:true, superseded:true },
+  { d:"LLP Agreement — Supplementary Deed 1", v:"1.1", on:"2025-07-09",
+    h:"7e30b1d94a6c25f8037bd1e04a9c65f27d8b03e1a5c74f960b2d81a37e5c0946", open:true },
+  { d:"Form 3 — Agreement filing", v:"1.1", on:"2025-07-24",
+    h:"b204f9e7a1c68d350f2b87d4e91a0c6537f8b25d0a91c473e6f2b08d5a1c9e73", open:true },
+  { d:"PAN allotment", v:"1.0", on:"2024-04-02",
+    h:"3d81c07f5a2e94b6018d3f7c25a90e14b7d6f03c81a45e29d70b6c1f8a3e5029", open:false,
+    why:"Contains a tax identifier. Restricted to designated partners and the auditor." },
+  { d:"GST registration certificate", v:"1.0", on:"2024-05-11",
+    h:"c5f290a71d3e846b02c7f915a8d43e60b19c7f2a05d83e46b1c9a072f5d38e14", open:false,
+    why:"Restricted to designated partners and the auditor." },
+];
+
+/* ── The statutory calendar ────────────────────────────────────────
+   Due dates are COMPUTED from the financial year, never stored. A
+   docket that lists only what WAS filed cannot show what was missed,
+   and missed is the state that matters. */
+const TODAY = "2026-07-31";
+const days = (a,b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+const addDays = (iso,n) => new Date(Date.parse(iso) + n*86400000).toISOString().slice(0,10);
+
+function calendar(fyEndISO){
+  return [
+    { f:"Form 11", w:"Annual Return",
+      due: addDays(fyEndISO, 60),   basis:"Within 60 days of financial year end" },
+    { f:"Form 8",  w:"Statement of Account & Solvency",
+      due: addDays(fyEndISO, 213),  basis:"Within 30 days of six months from year end" },
+    { f:"ITR-5",   w:"Income tax return",
+      due: addDays(fyEndISO, 214),  basis:"31 October where audit applies" },
+    { f:"Form 3",  w:"Change in LLP Agreement",
+      due: null, basis:"Within 30 days of any change. Event-driven, not annual." },
+  ];
+}
+const FILED = {                       // what the registry actually holds
+  "FY2025-26|Form 11": "2026-05-22",
+  "FY2025-26|Form 8":  null,          // NOT YET FILED — renders as its real state
+  "FY2025-26|ITR-5":   null,
+  "FY2024-25|Form 11": "2025-05-14",
+  "FY2024-25|Form 8":  "2025-10-27",
+  "FY2024-25|ITR-5":   "2025-10-30",
+};
+
+function calendarRows(){
+  const out = [];
+  for (const fy of ["FY2025-26", "FY2024-25"]) {
+    const end = fy === "FY2025-26" ? "2026-03-31" : "2025-03-31";
+    for (const c of calendar(end)) {
+      if (!c.due) continue;
+      const filedOn = FILED[`${fy}|${c.f}`] ?? null;
+      const late = filedOn ? days(c.due, filedOn) > 0 : days(c.due, TODAY) > 0;
+      const state = filedOn ? (late ? "filed-late" : "filed") : (late ? "overdue" : "open");
+      out.push({ fy, ...c, filedOn, state, daysOut: days(TODAY, c.due) });
+    }
+  }
+  return out;
+}
+const CALENDAR = calendarRows();
+
+/* Standing is DERIVED from the calendar, never stored. A stored status
+   is a claim about the past that keeps asserting itself into the
+   present. */
+function standing(){
+  if (CALENDAR.some(r => r.state === "overdue")) return { k:"bad", t:"Not in good standing" };
+  if (CALENDAR.some(r => r.state === "open" && r.daysOut <= 45)) return { k:"late", t:"Filing due" };
+  return { k:"ok", t:"In good standing" };
+}
+
+const CHARGES = [
+  { holder:"HDFC Bank Ltd", amt: 32000000_0000n, created:"2024-11-08",
+    on:"Immovable property — Survey 118/2, Coorg", satisfied:false, form:"Form 8 (charge)" },
+  { holder:"Bridge facility — Avendus", amt: 8000000_0000n, created:"2024-06-14",
+    on:"Receivables", satisfied:true, satisfiedOn:"2025-02-28", form:"Form 8 (charge)" },
+];
+
+const RESOLUTIONS = [
+  { r:"PR-2026-04", t:"Adopt FY2025-26 accounts", on:"2026-06-18",
+    threshold:"Ordinary · >50% of contribution present", result:"Approved", forPct:"86.0%" },
+  { r:"PR-2026-02", t:"Admit N. Fernandes as partner", on:"2026-02-11",
+    threshold:"Special · ≥76% of total contribution", result:"Approved", forPct:"88.0%" },
+  { r:"PR-2025-07", t:"Amend LLP Agreement — profit share schedule", on:"2025-07-02",
+    threshold:"Unanimous", result:"Approved", forPct:"100.0%" },
+  { r:"PR-2025-03", t:"Additional borrowing beyond ₹20 Cr", on:"2025-04-19",
+    threshold:"Special · ≥76% of total contribution", result:"Not approved", forPct:"71.5%" },
+];
+
+const NEXUS = [
+  { p:"Kyoto House", inst:"Registered sale deed", on:"2024-09-30", enc:"HDFC charge (unsatisfied)" },
+  { p:"Coorg Ridge", inst:"Registered sale deed", on:"2025-01-22", enc:"None" },
+];
+
+const AUDIT = [
+  { on:"2026-07-24", who:"A. Raghunathan (DP)", what:"Form 11 FY2025-26 acknowledgement filed" },
+  { on:"2026-06-18", who:"Company secretary",   what:"PR-2026-04 minuted and attached" },
+  { on:"2025-07-24", who:"A. Raghunathan (DP)", what:"Form 3 filed for Supplementary Deed 1" },
+  { on:"2025-07-09", who:"All partners",        what:"LLP Agreement v1.0 superseded by v1.1" },
+  { on:"2024-03-18", who:"RoC Bangalore",       what:"Certificate of Incorporation issued" },
+];
+
+const bps = (n) => (n/100).toFixed(2) + "%";
+const shortHash = (h) => h.slice(0,10) + "…" + h.slice(-6);
+
+A["AS-13"] = { vantage:"admin", render: () => {
+  const st = standing();
+  const overdue = CALENDAR.filter(r => r.state === "overdue");
+  return `
+<section data-sec="AS-13.a" style="border-bottom:none">
+  <div class="wrap docket">
+    <div class="docket-head">
+      <div>
+        <span class="t-micro label">Docket · Investment Vehicle</span>
+        <h1 class="t-display-l" style="margin:var(--s-2xs) 0">${esc(LLP.name)}</h1>
+        <p class="t-mono-s dim">LLPIN ${esc(LLP.llpin)} · incorporated ${esc(LLP.incorporated)}
+          · ${esc(LLP.office)}</p>
+      </div>
+      <div style="text-align:right">
+        <span class="standing ${st.k} t-mono-s"><i aria-hidden="true"></i>${esc(st.t)}</span>
+        <p class="t-mono-s dim" style="margin-top:var(--s-2xs)">
+          Derived from the filing calendar<br>as at ${TODAY}</p>
+      </div>
+    </div>
+
+    ${overdue.length ? `<div class="panel on-panel" style="margin-top:var(--s-m);
+      border-left:2px solid var(--critical)">
+      <span class="t-micro" style="color:var(--critical)">Outstanding</span>
+      <p class="t-body" style="margin-top:var(--s-2xs)">
+        ${overdue.map(o => `${esc(o.f)} for ${esc(o.fy)}, due ${esc(o.due)}
+          (${Math.abs(o.daysOut)} days ago)`).join("; ")}.
+      </p>
+    </div>` : ""}
+
+    <div class="folder" role="tablist" aria-label="Docket sections">
+      ${[["form","Formation"],["reg","Register of Partners"],["cal","Statutory Calendar"],
+         ["chg","Charges"],["res","Resolutions"],["nex","Property Nexus"],["aud","Audit"]]
+        .map(([k,t],i)=>`<button role="tab" id="dt-${k}" aria-controls="dp-${k}"
+          aria-selected="${i===0}" ${i===0?"":'tabindex="-1"'}>${String(i+1).padStart(2,"0")} · ${t}</button>`).join("")}
+    </div>
+
+    <!-- ═══ Every sheet below is PAPER. A docket is assertion throughout,
+         and the ground inversion says so without a word. ═══ -->
+
+    <div class="sheet on-paper" role="tabpanel" id="dp-form" aria-labelledby="dt-form" tabindex="0">
+      <h2>Formation</h2>
+      <span class="lead">The incorporation chain · ${FORMATION.length} documents</span>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Document</th><th>Ver</th><th>Dated</th><th>Access</th><th></th></tr></thead>
+        <tbody>${FORMATION.map(f=>`
+          <tr class="${f.open?"":"restricted"}">
+            <td><span class="doc-nm">${esc(f.d)}</span>
+              <!-- The hash is shown even where the content is not. Access
+                   controls the document; the fingerprint is the only check
+                   available to somebody outside the wall. -->
+              <span class="hash">SHA-256 ${esc(shortHash(f.h))}</span>
+              ${f.why?`<span class="hash" style="color:var(--hazard-deep)">${esc(f.why)}</span>`:""}</td>
+            <td><span class="ver ${f.superseded?"sup":""}">v${esc(f.v)}</span>
+              ${f.superseded?'<br><span class="hash">superseded</span>':""}</td>
+            <td class="t-mono-s">${esc(f.on)}</td>
+            <td>${f.open
+              ? '<span class="t-mono-s" style="color:var(--confirm-deep)">Open</span>'
+              : '<span class="lockmark">Restricted</span>'}</td>
+            <td><button class="act" ${f.open?"":'aria-disabled="true"'}>
+              ${f.open?"Read":"Request"}</button></td>
+          </tr>`).join("")}</tbody>
+      </table></div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-m)">
+        An LLP has no CIN, no memorandum and no articles. The LLP Agreement is the constitutional
+        document of the entity, and Form 3 is how any change to it reaches the registrar.
+      </p>
+    </div>
+
+    <div class="sheet on-paper" role="tabpanel" id="dp-reg" aria-labelledby="dt-reg" tabindex="0" hidden>
+      <h2>Register of Partners</h2>
+      <span class="lead">${PARTNERS.length} partners · ${PARTNERS.filter(p=>p.dp).length} designated</span>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Partner</th><th>DPIN</th><th class="num">Contribution</th>
+          <th class="num">Of capital</th><th class="num">Profit share</th></tr></thead>
+        <tbody>${PARTNERS.map(p=>{
+          const ofCap = Number(p.contrib * 10000n / CONTRIB_TOTAL);
+          const differs = Math.abs(ofCap - p.share) > 1;
+          return `<tr>
+            <td><span class="doc-nm">${esc(p.n)}</span>
+              ${p.dp?'<span class="hash" style="color:var(--confirm-deep)">Designated partner</span>':""}</td>
+            <td class="t-mono-s">${p.dpin?esc(p.dpin):'<span style="color:var(--steel)">—</span>'}</td>
+            <td class="num money">${inr(p.contrib)}</td>
+            <td class="num">${bps(ofCap)}</td>
+            <td class="num">${bps(p.share)}
+              ${differs?'<br><span class="hash" style="color:var(--hazard-deep)">set by agreement</span>':""}</td>
+          </tr>`;}).join("")}
+          <tr class="totrow"><td>Total</td><td></td>
+            <td class="num money">${inr(CONTRIB_TOTAL)}</td>
+            <td class="num">100.00%</td><td class="num">100.00%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-m)">
+        Profit share is read from the LLP Agreement. It is <strong>not</strong> derived from
+        contribution — the two are independent under the Act, and three partners here differ.
+        Voting remains contribution-weighted per §24a, which is a third and separate ratio.
+      </p>
+    </div>
+
+    <div class="sheet on-paper" role="tabpanel" id="dp-cal" aria-labelledby="dt-cal" tabindex="0" hidden>
+      <h2>Statutory Calendar</h2>
+      <span class="lead">Due dates computed from the financial year</span>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Year</th><th>Filing</th><th>Due</th><th>Filed</th><th>State</th>
+          <th>Basis</th></tr></thead>
+        <tbody>${CALENDAR.map(r=>`<tr>
+          <td class="t-mono-s">${esc(r.fy)}</td>
+          <td><span class="doc-nm">${esc(r.f)}</span><span class="hash">${esc(r.w)}</span></td>
+          <td class="due ${r.state==="overdue"?"late":r.state==="open"?"soon":"ok"}">${esc(r.due)}</td>
+          <td class="t-mono-s">${r.filedOn?esc(r.filedOn):'<span style="color:var(--critical-deep)">not filed</span>'}</td>
+          <td><span class="state ${r.state.startsWith("filed")?"filed":r.state}">
+            ${r.state==="filed-late"?"Filed late":r.state==="filed"?"Filed":
+              r.state==="overdue"?"Overdue":"Open"}</span></td>
+          <td class="t-body-s" style="color:var(--steel)">${esc(r.basis)}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-m)">
+        Nothing here is stored as a status. Each due date is computed from the year end, so a filing
+        that was never made renders as <strong>overdue</strong> rather than as an absent row — which
+        is the whole reason this table exists.
+      </p>
+    </div>
+
+    <div class="sheet on-paper" role="tabpanel" id="dp-chg" aria-labelledby="dt-chg" tabindex="0" hidden>
+      <h2>Charges</h2>
+      <span class="lead">Registered encumbrances over entity assets</span>
+      ${CHARGES.map(c=>`<div class="charge ${c.satisfied?"satisfied":""}" style="margin-bottom:var(--s-m)">
+        <div class="row" style="justify-content:space-between;gap:var(--s-s);align-items:baseline">
+          <span class="doc-nm">${esc(c.holder)}</span>
+          <span class="money" style="font-family:var(--f-mono);font-size:18px">${inr(c.amt)}</span>
+        </div>
+        <p class="t-body-s" style="color:var(--steel);margin-top:4px">
+          ${esc(c.on)} · created ${esc(c.created)} · ${esc(c.form)}</p>
+        <p class="t-body-s" style="margin-top:4px;color:${c.satisfied?"var(--confirm-deep)":"var(--critical-deep)"}">
+          ${c.satisfied?`Satisfied ${esc(c.satisfiedOn)}`:"UNSATISFIED — senior to every claim below it"}</p>
+      </div>`).join("")}
+      <p class="t-body-s" style="color:var(--steel)">
+        An unsatisfied charge outranks the distribution waterfall entirely. It renders before any
+        figure it is senior to, on every screen that shows one.
+      </p>
+    </div>
+
+    <div class="sheet on-paper" role="tabpanel" id="dp-res" aria-labelledby="dt-res" tabindex="0" hidden>
+      <h2>Resolutions</h2>
+      <span class="lead">Partner resolutions · results public, ballots sealed</span>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Ref</th><th>Resolution</th><th>Threshold</th><th class="num">For</th>
+          <th>Result</th></tr></thead>
+        <tbody>${RESOLUTIONS.map(r=>`<tr>
+          <td class="t-mono-s">${esc(r.r)}<br><span class="hash">${esc(r.on)}</span></td>
+          <td><span class="doc-nm">${esc(r.t)}</span></td>
+          <td class="t-body-s" style="color:var(--steel)">${esc(r.threshold)}</td>
+          <td class="num">${esc(r.forPct)}</td>
+          <td><span class="state ${r.result==="Approved"?"filed":"overdue"}">${esc(r.result)}</span></td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-m)">
+        The aggregate is public; who voted which way is not, at any vantage. Admin is not an
+        exception to I-05 — it is the vantage most likely to assume it is. PR-2025-03 failed at
+        71.5% against a 76% special threshold; a tie or a shortfall is NOT APPROVED, never deferred.
+      </p>
+    </div>
+
+    <div class="sheet on-paper" role="tabpanel" id="dp-nex" aria-labelledby="dt-nex" tabindex="0" hidden>
+      <h2>Property Nexus</h2>
+      <span class="lead">What this entity holds, and on what instrument</span>
+      <div class="nexus">
+        ${NEXUS.map(n=>`<article>
+          <span class="doc-nm">${esc(n.p)}</span>
+          <p class="t-body-s" style="color:var(--steel);margin-top:6px">${esc(n.inst)} · ${esc(n.on)}</p>
+          <p class="t-body-s" style="margin-top:6px;color:${n.enc==="None"?"var(--steel)":"var(--critical-deep)"}">
+            Encumbrance: ${esc(n.enc)}</p>
+        </article>`).join("")}
+      </div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-m)">
+        The nexus is the join between the legal file and the asset file. A property whose title sits
+        in one entity while another distributes on it is a defect, not a nuance, and this is the
+        only screen where it would be visible.
+      </p>
+    </div>
+
+    <div class="sheet on-paper" role="tabpanel" id="dp-aud" aria-labelledby="dt-aud" tabindex="0" hidden>
+      <h2>Docket Audit</h2>
+      <span class="lead">Append-only · ${AUDIT.length} entries</span>
+      <div class="scroll-x"><table>
+        <thead><tr><th>Date</th><th>Who</th><th>What</th></tr></thead>
+        <tbody>${AUDIT.map(a=>`<tr>
+          <td class="t-mono-s">${esc(a.on)}</td>
+          <td class="t-body-s">${esc(a.who)}</td>
+          <td class="t-body-s">${esc(a.what)}</td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-m)">
+        A superseded document stays visible with its successor linked. The question a docket is
+        usually asked is not what is true now, but what was true on a particular date.
+      </p>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The vehicle is an <strong>LLP</strong>, not an SPV. §24a makes
+        the LLP the constitutional default and an SPV a Board-approved exception. Every prototype in
+        the set described Class-A equity shares and a shareholder registry — an LLP has partners and
+        capital contribution, and no shares to register.</span>
+      <span class="fix"><b>Fixed</b> Profit share is read from the LLP Agreement, never derived from
+        contribution. Three partners here differ, and voting weight is a third ratio again. A docket
+        that derived one from the other would be quietly wrong with nothing on screen to show
+        it.</span>
+      <span class="fix"><b>Fixed</b> Real 64-character hashes. The source printed
+        <code>SHA-256: 8d993k2...12x</code> — <code>k</code> is not a hex digit, so it was not a
+        hash of anything. A hash nobody can verify implies a verification nobody performed.</span>
+      <span class="fix"><b>Fixed</b> Restricted rows show their hash and keep full contrast. The
+        source dimmed them and printed <code>HASH: HIDDEN</code>, which removes the only check
+        available to somebody outside the wall.</span>
+      <span class="fix"><b>Fixed</b> Due dates are computed from the financial year, not stored. Form 8
+        for FY2025-26 has not been filed and renders as <strong>Open</strong> against its computed
+        due date of 30 Oct 2026 — and would flip to <strong>Overdue</strong> on its own the day
+        after. A stored-status design shows an empty row and never flips at all.</span>
+      <span class="fix"><b>Fixed</b> <code>MASTER SERVICE AGREEMENT</code> → the LLP Agreement. §25
+        forbids the term, and the substance was wrong too.</span>
+    </div>
+  </div>
+</section>` } };
+
 /* ═══════════════════════════════════════════════════════════════════
    NAVIGATION
    ═══════════════════════════════════════════════════════════════════ */
@@ -2097,6 +2579,28 @@ function wire(){
     };
     rows.forEach((r,i) => r.addEventListener("click", () => pick(i)));
     pins.forEach((p,i) => p.addEventListener("click", () => { pick(i); rows[i].focus(); }));
+  }
+
+
+  /* AS-13 — docket folder tabs, with arrow-key navigation. */
+  const dtabs = [...stage.querySelectorAll('.folder [role="tab"]')];
+  if (dtabs.length){
+    const pick = (t) => dtabs.forEach(x => {
+      const on = x === t;
+      x.setAttribute("aria-selected", on);
+      x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute("aria-controls")).hidden = !on;
+    });
+    dtabs.forEach((t,i) => {
+      t.addEventListener("click", () => pick(t));
+      t.addEventListener("keydown", e => {
+        const d = { ArrowRight:1, ArrowLeft:-1 }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        const n = dtabs[(i + d + dtabs.length) % dtabs.length];
+        pick(n); n.focus();
+      });
+    });
   }
 
   /* Aperture ring grows over an aperture. */
