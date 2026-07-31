@@ -466,33 +466,79 @@ Getaway Collective does **not** disrupt:
 
 ---
 
-# PART VII — BRAND VOICE & TONE
+# PART VII — BRAND VOICE & TONE — RATIFIED 31 Jul 2026
 
-### How We Sound
+> **THE VOICE: Warm · Confident · Assertive, with Pleasantness.**
+>
+> *Ratified 31 Jul 2026, resolving the conflict between this Part and
+> Addendum A's Voice Principles. Addendum A said the voice "never persuades
+> or hedges with marketing softeners"; this Part said "Warm". Both stand —
+> reconciled below rather than one overruling the other.*
 
-Our voice is:
+### The four attributes
 
-| Attribute | Meaning | Example |
-|-----------|---------|---------|
-| **Intelligent** | We assume our members are educated, experienced, thoughtful | No jargon-as-mystery; no marketing fluff |
-| **Warm** | We're not corporate; we're peers with shared values | "We steward these properties as we'd steward our own" |
-| **Unvarnished** | We say hard truths; we don't soften reality | "This market is expensive. We're not trying to undercut; we're curating." |
-| **Collaborative** | We're building this together, not selling to you | "What do you think we should prioritize?" |
-| **Patient** | We're thinking generationally; no rush | "We're building institutions. Some things take time." |
+| Attribute | Meaning | Sounds like |
+|-----------|---------|-------------|
+| **Warm** | We speak to a person, not to a form. Peers with shared values, not a counterparty. | *"We steward these properties as we'd steward our own."* |
+| **Confident** | We state what is true without hedging. No "may", no "might", no "we believe". | *"This market is expensive. We're not undercutting; we're curating."* |
+| **Assertive** | Every sentence says what happens next. We direct, we don't suggest. | *"Raise the amount to the minimum and we'll take it from there."* |
+| **Pleasant** | Courtesy without softeners. We're never curt, and never apologetic. | *"That's fixed. Here's what changed."* |
+
+### How the four resolve the old tension
+
+Addendum A was right that the voice **never persuades**. This Part was right
+that it is **Warm**. They were only in conflict because *warm* was being read
+as *soft*.
+
+Warmth is about **who we are speaking to** — a person, deserving of a plain
+answer. Persuasion is about **what we want from them**. A message can be warm
+and want nothing.
+
+> **Warm is not soft. Assertive is not cold. Confident is not loud.**
+
+### The three that survive from the earlier voice
+
+**Intelligent**, **Unvarnished** and **Patient** are not dropped — they are
+absorbed. *Intelligent* and *Unvarnished* are what **Confident** means in
+practice. *Patient* is what **Warm** means over a twenty-year horizon.
+*Collaborative* is retired: it made copy ask questions it did not intend to
+act on.
+
+### Rules that follow
+
+1. **Say what is wrong AND what to do.** "Invalid" tells a reader what they already knew.
+2. **Name the constraint, not the person.** "This commitment is below the minimum" — never "you entered too little".
+3. **No apology.** "Sorry" fixes nothing and delays the sentence that does.
+4. **No hedging.** "Cannot", not "may not be able to".
+5. **No softeners.** No "just", "simply", "unfortunately", "please note".
+6. **Second person is welcome.** "You own. We steward. You decide." Warmth lives in the pronoun.
+7. **One idea per sentence.** Editorial italic is reserved for narrative moments; everywhere else, plain declarative sentences.
 
 ### How We Sound
 
 **Not:**
-- "Leverage your lifestyle portfolio" (corporate nonsense)
-- "Unlock exclusive access" (manipulative)
-- "Join our luxury community" (status signaling)
-- "Limited availability—book today!" (artificial scarcity)
+- "Leverage your lifestyle portfolio" — corporate nonsense
+- "Unlock exclusive access" — manipulative
+- "Join our luxury community" — status signalling
+- "Limited availability—book today!" — artificial scarcity
+- "Sorry, something went wrong" — apologetic and uninformative
+- "You may wish to consider raising your commitment" — hedged into meaninglessness
 
 **Yes:**
 - "You own. We steward. You decide."
 - "These properties improve with time."
 - "We're not for everyone; we're for stewards."
 - "Your investment is inseparable from your life."
+- "This commitment is below the minimum for this offering. Raise it to ₹25,00,000 and we'll take it from there."
+- "Distributions are paused while the reserve is below its floor. They resume when it's restored."
+
+### Scope
+
+This voice governs **every string the enterprise emits** — interface copy,
+validation messages, notifications, reports, and member-facing narrative.
+
+There is no second voice for error states. A rejection is a moment when a
+person most needs to be spoken to well, not least.
 
 ---
 

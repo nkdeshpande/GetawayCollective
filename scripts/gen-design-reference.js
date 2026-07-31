@@ -91,6 +91,13 @@ const ENUMS = enumDisplay();
 const toneCount = {};
 for (const g of ENUMS) for (const v of g.values) toneCount[v.tone] = (toneCount[v.tone] ?? 0) + 1;
 
+// ── Risk categories ───────────────────────────────────────────────────
+const RISKS = (() => {
+  const src = read("constants/tokens-addendum.ts");
+  const m = src.match(/RISK_COLOUR[^=]*=\s*\{([\s\S]*?)\n\};/);
+  return m ? [...m[1].matchAll(/(\w+):\s*"(#[0-9a-fA-F]{6})"/g)].map((x) => [x[1], x[2]]) : [];
+})();
+
 // ── Atoms ─────────────────────────────────────────────────────────────
 const ATOMS = [
   ["Metric", "IL-2 value, Space Mono, tabular-nums, tone by measure", "value · unit · delta"],
@@ -273,6 +280,16 @@ ${tokenCss}
       <div class="desc">${esc(v.description)}</div>
     </div>`).join("")}
   </div>`).join("")}
+
+  <h2>Risk categories &mdash; all ten, reconciled</h2>
+  <div class="note">
+    Six of the ten registry categories rendered grey until 31 Jul 2026, which makes a risk
+    register unscannable &mdash; the one thing a register exists to be. Four design-only names
+    were mapped onto their registry synonyms, two categories were given new colours, and
+    <span class="mono">construction</span> and <span class="mono">reputation</span> were dropped
+    because the registry does not track them.
+  </div>
+  <div class="sws">${RISKS.map(([k,v]) => swatch(k, v)).join("")}</div>
 
   <h2>Atom specifications</h2>
   <div class="scroll"><table>

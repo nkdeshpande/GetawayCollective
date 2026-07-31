@@ -156,9 +156,9 @@ export const ENUM_DISPLAY: Record<string, EnumDisplay> = {
   "Agreement.agreement_type": {
     subscription: D("Subscription", "Investor subscription into an offering", "copper"),
     llp_agreement: D("LLP Agreement", "Constitutional document of the vehicle", "forest"),
-    operating_agreement: D("Operating Agreement", "ALWAYS material related-party", "hazard",
+    operating_agreement: D("Operating Agreement", "Material related-party in every case", "hazard",
       "Operating Agreement. Always a material related-party transaction regardless of value."),
-    commercial_services: D("Commercial Services", "ALWAYS material related-party", "hazard",
+    commercial_services: D("Commercial Services", "Material related-party in every case", "hazard",
       "Commercial Services Agreement. Always a material related-party transaction regardless of value."),
     share_purchase: D("Share Purchase", "Share purchase agreement", "steel"),
     shareholders: D("Shareholders", "Shareholders agreement", "steel"),

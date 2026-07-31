@@ -232,31 +232,65 @@ export const HEALTH_COLOUR = {
 } as const;
 
 /**
- * Risk category colours from the canonical document.
+ * Risk category colours — RECONCILED 31 Jul 2026 (resolves question A2).
  *
- * ⚠️ These EIGHT do not match the TEN in `Risk.risk_category` (UFR-0440).
- * Overlapping: liquidity, legal, market, climate. Design-only: construction,
- * operational, reputation, compliance. Registry-only: interest_rate,
- * operator, currency, regulatory, technology, counterparty.
+ * The canonical document coloured EIGHT categories; the registry
+ * (`UFR-0440 Risk.risk_category`) declares TEN, and only four appeared in
+ * both. Six of ten rendered grey, which makes a risk register unscannable —
+ * the one thing a register exists to be.
  *
- * Not reconciled here — the registry is ratified and the design document is
- * locked, so aligning them is a decision, not a refactor. Logged as an open
- * question. `RISK_COLOUR_FALLBACK` keeps the unmapped six rendering rather
- * than crashing.
+ * Resolution: four design-only names were mapped onto their registry
+ * synonyms, and two categories with no equivalent were given new colours.
+ * `construction` and `reputation` were dropped: the registry does not track
+ * them, and adding them would be a §32a amendment rather than a mapping.
+ *
+ * Every one of the ten now has a distinct colour. Nothing renders grey.
  */
 export const RISK_COLOUR: Record<string, string> = {
-  liquidity: "#2061DE",
-  construction: "#C79F6B",
-  legal: "#6B6B6B",
-  operational: "#E8672E",
-  market: "#0C3024",
-  reputation: "#8B5FBF",
-  compliance: "#1FAA59",
-  climate: "#2E8B7A",
+  // Unchanged from the canonical document
+  liquidity: "#2061DE",   // blue
+  market: "#0C3024",      // forest
+  legal: "#6B6B6B",       // steel
+  climate: "#2E8B7A",     // teal
+
+  // Mapped from a design-only name onto its registry synonym
+  operator: "#E8672E",    // <- operational. An operator failing IS operational risk
+  regulatory: "#1FAA59",  // <- compliance. Compliance risk IS regulatory risk
+
+  // ⚠️ Reuse rather than mapping. Both work; neither is a synonym.
+  // Logged for revisiting if either colour is later needed for its
+  // original meaning.
+  counterparty: "#8B5FBF",   // <- reputation. Purple was unspent; counterparty needed a colour
+  interest_rate: "#C79F6B",  // <- construction. Copper is the CURRENCY token under the
+                             //    Metric Grammar; interest rate is a cost-of-money risk, so
+                             //    the association holds, but it stretches a reserved colour
+
+  // New
+  currency: "#B8873F",    // amber-gold. Adjacent to copper because FX is also money,
+                          // distinct enough to read apart at a glance
+  technology: "#5A7D9A",  // slate blue. Cool and unalarming — technology risk is
+                          // usually latent rather than acute
 };
-export const RISK_COLOUR_FALLBACK = COLOUR.steel;
+
+/**
+ * Retained even though every registry value is now mapped. An unmapped
+ * category should render, not crash — the next category added to the
+ * registry will arrive before its colour does.
+ *
+ * `steelDim`, not `steel`: the canonical document assigns `steel` to LEGAL
+ * risk, so a fallback of `steel` would make an unmapped category
+ * indistinguishable from a legal one. A test caught that. The fallback has
+ * to be a colour no category owns, or it silently impersonates one.
+ */
+export const RISK_COLOUR_FALLBACK = COLOUR.steelDim;
 
 export const riskColour = (category: string): string => RISK_COLOUR[category] ?? RISK_COLOUR_FALLBACK;
+
+/** Reuse mappings worth revisiting. Surfaced by the design reference. */
+export const RISK_COLOUR_CAVEATS = {
+  counterparty: "Reuses the reputation purple. Not a synonym — reuse of an unspent colour.",
+  interest_rate: "Reuses copper, which the Metric Grammar reserves for currency.",
+} as const;
 
 /** Row heights per density mode. */
 export const DENSITY_ROW = {
@@ -311,26 +345,49 @@ export const BRAND = {
 } as const;
 
 /**
- * ⚠️ VOICE CONFLICT — see the open questions list.
+ * VOICE — RECONCILED 31 Jul 2026 (resolves question A1).
  *
- * Addendum A states: Sovereign ("never persuades"), Deterministic,
- * Unadorned.
+ * Addendum A originally said the voice is Sovereign ("never persuades"),
+ * Deterministic and Unadorned. L1-02 said Intelligent, Warm, Unvarnished,
+ * Collaborative and Patient. The two read as a contradiction.
  *
- * L1-02 Brand Constitution states: Intelligent, **Warm**, Unvarnished,
- * Collaborative, Patient.
+ * They were only in conflict because *warm* was being taken to mean *soft*.
+ * Warmth is about WHO we are speaking to — a person, owed a plain answer.
+ * Persuasion is about WHAT WE WANT from them. A message can be warm and
+ * want nothing.
  *
- * "Never persuades or hedges with marketing softeners" and "Warm" are not
- * obviously the same instruction. Both are ratified documents. Recorded
- * rather than silently reconciled — picking one would quietly overrule a
- * constitutional document.
+ * The ratified voice is **Warm · Confident · Assertive, with Pleasantness**
+ * (L1-02 Part VII). Addendum A's three principles survive inside it:
+ * Sovereign and Unadorned are what CONFIDENT means in practice;
+ * Deterministic is what ASSERTIVE means.
+ *
+ * This constant now mirrors L1-02 rather than competing with it. L1-02 is
+ * the authority; if the two ever differ again, L1-02 wins.
  */
-export const VOICE_ADDENDUM = {
-  sovereign: "Copy states facts and terms. It never persuades or hedges with marketing softeners.",
-  deterministic: "Every label describes exactly what happens next. No 'magic', no 'smart', no vague verbs.",
-  unadorned:
-    "One idea per sentence. Editorial italic is reserved for the rare moment of narrative warmth; " +
-    "everywhere else, plain declarative sentences.",
+export const VOICE = {
+  warm: "We speak to a person, not to a form. Peers with shared values, not a counterparty.",
+  confident: "We state what is true without hedging. No 'may', no 'might', no 'we believe'.",
+  assertive: "Every sentence says what happens next. We direct, we do not suggest.",
+  pleasant: "Courtesy without softeners. Never curt, never apologetic.",
 } as const;
+
+/** The line that resolved it. Worth keeping where engineers will read it. */
+export const VOICE_PRINCIPLE = "Warm is not soft. Assertive is not cold. Confident is not loud.";
+
+/** Banned constructions, checked by `voice-lint`. */
+export const VOICE_PROHIBITIONS = [
+  "sorry", "unfortunately", "please note", "we apologize", "we apologise",
+  "oops", "whoops", "uh oh", "something went wrong",
+  "you entered", "your mistake", "you failed", "invalid input",
+  "may not be able", "might not be able", "we believe", "we think",
+] as const;
+
+/**
+ * Softeners. Permitted in narrative copy, barred from interface strings —
+ * "just" and "simply" tell a reader their difficulty was trivial, which is
+ * the opposite of warm.
+ */
+export const VOICE_SOFTENERS = ["just ", "simply ", "merely ", "only takes"] as const;
 
 // ─────────────────────────────────────────────────────────────────────
 // E · FULL-BLEED
@@ -404,6 +461,18 @@ export const ADDENDUM_CSS_VARS = `
   --health-adequate: ${HEALTH_COLOUR.adequate};
   --health-weak: ${HEALTH_COLOUR.weak};
   --health-critical: ${HEALTH_COLOUR.critical};
+
+  /* Risk categories — all ten registry values, reconciled 31 Jul 2026 */
+  --risk-liquidity: ${RISK_COLOUR.liquidity};
+  --risk-market: ${RISK_COLOUR.market};
+  --risk-legal: ${RISK_COLOUR.legal};
+  --risk-climate: ${RISK_COLOUR.climate};
+  --risk-operator: ${RISK_COLOUR.operator};
+  --risk-regulatory: ${RISK_COLOUR.regulatory};
+  --risk-counterparty: ${RISK_COLOUR.counterparty};
+  --risk-interest-rate: ${RISK_COLOUR.interest_rate};
+  --risk-currency: ${RISK_COLOUR.currency};
+  --risk-technology: ${RISK_COLOUR.technology};
 
   /* Density */
   --density-compact-row: ${DENSITY_ROW.compact};

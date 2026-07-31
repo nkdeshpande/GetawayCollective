@@ -910,16 +910,49 @@ Functional machines, not navigation tabs.
 
 # PART IX — DESIGN AUTHORITY
 
-## 29. The Design Supremacy Clause — RATIFIED 30 Jul 2026
+## 29. The Design Supremacy Clause — RATIFIED 30 Jul 2026 · AMENDED 31 Jul 2026
 
-> **`GC-DesignSystem.html` — GC.SYSTEM Canonical Design System v3.0 LOCKED — is the sole and total source of visual truth.**
+> **GC.SYSTEM is the sole and total source of visual truth.**
 > **It overrides every design decision in every other document, without exception.**
 
-Where any source, brief, prior draft or future input conflicts with this file, **this file wins and the other source is void** on that point. This clause is self-executing: no adjudication is required.
+Where any source, brief, prior draft or future input conflicts with GC.SYSTEM, **GC.SYSTEM wins and the other source is void** on that point. This clause is self-executing: no adjudication is required.
 
-**Locked values:** radius `0px` · spacing base `4px` · stroke idle `1px` / active `2px` · commit duration `3000ms` · information hierarchy `IL-1…IL-6` · metric grammar (currency / percentage / ratio / forecast / risk / loss) · density modes (compact / comfortable / audit / presentation) · visual modes (concrete / obsidian / immersive).
+### 29-0. What GC.SYSTEM consists of — AMENDED 31 Jul 2026
 
-**Colour is semantic, never decorative.** Copper carries currency and yield and nothing else. Critical is the rarest colour in the system.
+*The original clause named a single file at `v3.0 LOCKED`. The system has since arrived in three parts, and naming only one of them left the other two with no stated authority. This amendment names all three and fixes their precedence.*
+
+| Part | Source | Governs | Status |
+|---|---|---|---|
+| **Core** | `GC-DesignSystem-Canonical.html` | Palette · typography · spacing · radius · stroke · IL · metric grammar · density · visual modes | **LOCKED** |
+| **Addendum A** | `GC-DesignSystem-Addendum-Motion-Brand.html` | Motion · overlays · notifications · brand · full-bleed | **LOCKED, complementary** |
+| **Accessibility extension** | `constants/tokens.ts` §ground variants · `docs/DESIGN-USAGE-RULES.md` | Ground-specific contrast variants | **LOCKED, additive** |
+
+**Precedence: Core → Addendum A → Accessibility extension.** Each later part may only *add*. None may alter a value declared by an earlier one.
+
+**On version numbers.** The original clause said `v3.0 LOCKED`; the canonical file in hand is designated v4.0. The two were verified **value by value** — all 17 core colours, 4 typefaces, 10 spacing steps, 2 curves and 4 durations matched exactly, with **zero drift**. v4.0 is therefore ratified as the successor to v3.0, and this clause is version-agnostic from here: it binds to **GC.SYSTEM as constituted above**, not to a number. A version bump that changes no value is not a constitutional event; one that changes a value is an amendment under §32a.
+
+**Machine-readable form.** `constants/tokens.ts` (core) and `constants/tokens-addendum.ts` (Addendum A). The core module does not import the addendum, so precedence cannot be reversed by accident. Both are exported to `dist/tokens.json` and `dist/tokens.css` by `npm run tokens`, and `scripts/token-lint.js` fails the build on any literal colour, radius, spacing or duration declared outside them.
+
+**Locked values:** radius `0px` · spacing base `4px` · stroke idle `1px` / active `2px` · commit duration `3000ms` · information hierarchy `IL-1…IL-6` · metric grammar (currency / percentage / ratio / forecast / risk / loss) · density modes (compact / comfortable / audit / presentation) · visual modes (concrete / obsidian / immersive / terminal) · four motion curves (cinema / shutter / settle / alert) · stacking scale (grid / content / hud / overlay / cursor).
+
+**Colour is semantic, never decorative.** Copper carries currency and yield and nothing else. Critical is the rarest colour in the system, budgeted at twelve enumeration values and enforced by `scripts/enum-lint.js`.
+
+### 29-0a. Accessibility is part of the system, not a review of it
+
+**Colour is never the only carrier of meaning.** A status carries a label, a metric carries a unit, a risk band carries a word. This is WCAG 1.4.1 and it is also what makes the palette safe on both grounds.
+
+A computed WCAG audit (`scripts/token-lint.js`) found four semantic colours falling below AA on one ground while clearing it on the other — `forest` on `void` at 1.38:1 being effectively invisible, and `copper`, the **currency** token, at 2.18:1 on `paper`. Because the palette is locked, four **additive** ground-specific variants were introduced rather than any value being changed:
+
+| Variant | Value | Replaces on | Ratio |
+|---|---|---|---|
+| `forestLight` | `#228A68` | `void` | 4.62:1 |
+| `copperDeep` | `#8C6635` | `paper` | 4.61:1 |
+| `confirmDeep` | `#177F43` | `paper` | 4.52:1 |
+| `hazardDeep` | `#BE4915` | `paper` | 4.52:1 |
+
+Each holds its original's hue and saturation and moves only lightness. **Every original token keeps its exact value.** Use the original on its good ground and the variant on the other; `ON_GROUND` in `constants/tokens.ts` makes that choice once so it is not remembered everywhere.
+
+**The Piston is never shortened.** Under `prefers-reduced-motion` every curve collapses to a one-frame cross-fade, except the 3000ms capital-commitment hold, which keeps its full duration and becomes a static countdown numeral. Deliberation is the point; the animation is not.
 
 ### 29a. Palette — RESOLVED
 

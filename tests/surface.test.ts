@@ -14,7 +14,7 @@ import {
   EASE, DURATION, REDUCED_MOTION, DISMISSAL, ESCALATION, CONFIDENCE_COLOUR,
   riskColour, RISK_COLOUR_FALLBACK, Z, FULL_BLEED_RULES, TRANSITION_PATTERNS,
 } from "../constants/tokens-addendum";
-import { COLOUR } from "../constants/tokens";
+
 import {
   PROCESSES, ACCREDITATION_PROCESS, COMMITMENT_PROCESS, DISTRIBUTION_PROCESS,
   resumeFrom, expiringSteps, pointOfNoReturn, processById,
@@ -92,9 +92,41 @@ describe("validation messages", () => {
   });
 
   it("explains what to do, not only what went wrong", () => {
-    expect(messageFor("capitalCall.purposeNotPermitted")).toContain("only for");
-    expect(messageFor("immutable.field")).toBeTruthy();
-    expect(VALIDATION["immutable.field"].help).toContain("post an amendment");
+    expect(messageFor("capitalCall.purposeNotPermitted")).toContain("growth only");
+    expect(messageFor("immutable.field")).toContain("post an amendment");
+  });
+
+  // Voice ratified 31 Jul 2026: Warm, Confident, Assertive, with Pleasantness.
+  it("never apologises or hedges", () => {
+    for (const [code, r] of Object.entries(VALIDATION)) {
+      expect(r.message, code).not.toMatch(/sorry|unfortunately|please note/i);
+      expect(r.message, code).not.toMatch(/may not be able|might not be able|we believe/i);
+    }
+  });
+
+  it("never uses a softener that trivialises the difficulty", () => {
+    for (const [code, r] of Object.entries(VALIDATION)) {
+      expect(r.message, code).not.toMatch(/just |simply |merely /i);
+    }
+  });
+
+  it("is confident, not loud — no exclamation marks", () => {
+    for (const [code, r] of Object.entries(VALIDATION)) {
+      expect(r.message, code).not.toContain("!");
+    }
+  });
+
+  it("is warm — speaks to a person where the message concerns them", () => {
+    // Warmth lives in the pronoun.
+    expect(messageFor("commitment.accreditationExpired")).toContain("Your");
+    expect(messageFor("authority.notGranted")).toContain("You");
+    expect(messageFor("vote.recused")).toContain("You");
+  });
+
+  it("is assertive — says what happens next, not only what stopped", () => {
+    expect(messageFor("distribution.debtServiceUnpaid")).toContain("run as soon as it settles");
+    expect(messageFor("distribution.reserveBelowFloor")).toContain("Restore the reserve and it will run");
+    expect(messageFor("commitment.belowMinimum")).toContain("we'll take it from there");
   });
 
   it("returns a code AND a message from the API shape", () => {
@@ -107,7 +139,7 @@ describe("validation messages", () => {
   });
 
   it("degrades to a usable message for an unknown code", () => {
-    expect(messageFor("no.such.rule")).toBe("That value could not be accepted.");
+    expect(messageFor("no.such.rule")).toContain("could not be accepted");
   });
 
   it("states its own copy rules", () => {
@@ -158,11 +190,27 @@ describe("Addendum A", () => {
     expect(CONFIDENCE_COLOUR.observed).toBe(CONFIDENCE_COLOUR.verified);
   });
 
-  it("renders an unmapped risk category rather than crashing", () => {
-    // The design document names 8 categories; the registry has 10.
-    expect(riskColour("liquidity")).toBe("#2061DE");
-    expect(riskColour("counterparty")).toBe(RISK_COLOUR_FALLBACK);
-    expect(riskColour("technology")).toBe(COLOUR.steel);
+  it("gives every one of the ten registry risk categories a distinct colour", () => {
+    // Reconciled 31 Jul 2026. Six of ten used to render grey, which makes a
+    // risk register unscannable - the one thing a register exists to be.
+    const cats = ["liquidity", "interest_rate", "operator", "market", "climate",
+                  "currency", "legal", "regulatory", "technology", "counterparty"];
+    const colours = cats.map(riskColour);
+    expect(colours.every((c) => c !== RISK_COLOUR_FALLBACK)).toBe(true);
+    expect(new Set(colours).size).toBe(10);
+  });
+
+  it("still falls back rather than crashing on an unknown category", () => {
+    // The next category added to the registry arrives before its colour does.
+    expect(riskColour("not_a_category")).toBe(RISK_COLOUR_FALLBACK);
+  });
+
+  it("the fallback impersonates no real category", () => {
+    // It was steel, which the canonical document assigns to LEGAL risk - so
+    // an unmapped category rendered identically to a legal one.
+    const cats = ["liquidity", "interest_rate", "operator", "market", "climate",
+                  "currency", "legal", "regulatory", "technology", "counterparty"];
+    expect(cats.map(riskColour)).not.toContain(RISK_COLOUR_FALLBACK);
   });
 
   it("orders the stacking scale strictly", () => {

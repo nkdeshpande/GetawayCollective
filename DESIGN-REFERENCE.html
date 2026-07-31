@@ -136,6 +136,18 @@
   --health-weak: #E8672E;
   --health-critical: #FF3B30;
 
+  /* Risk categories — all ten registry values, reconciled 31 Jul 2026 */
+  --risk-liquidity: #2061DE;
+  --risk-market: #0C3024;
+  --risk-legal: #6B6B6B;
+  --risk-climate: #2E8B7A;
+  --risk-operator: #E8672E;
+  --risk-regulatory: #1FAA59;
+  --risk-counterparty: #8B5FBF;
+  --risk-interest-rate: #C79F6B;
+  --risk-currency: #B8873F;
+  --risk-technology: #5A7D9A;
+
   /* Density */
   --density-compact-row: 28px;
   --density-comfortable-row: 40px;
@@ -741,11 +753,11 @@
     </div><div class="enumcell">
       <div class="path">Agreement.agreement_type</div>
       <span class="pill t-hazard">Operating Agreement</span>
-      <div class="desc">ALWAYS material related-party</div>
+      <div class="desc">Material related-party in every case</div>
     </div><div class="enumcell">
       <div class="path">Agreement.agreement_type</div>
       <span class="pill t-hazard">Commercial Services</span>
-      <div class="desc">ALWAYS material related-party</div>
+      <div class="desc">Material related-party in every case</div>
     </div><div class="enumcell">
       <div class="path">Agreement.agreement_type</div>
       <span class="pill t-steel">Share Purchase</span>
@@ -1060,6 +1072,56 @@
       <div class="desc">Rules and licensing</div>
     </div>
   </div>
+
+  <h2>Risk categories &mdash; all ten, reconciled</h2>
+  <div class="note">
+    Six of the ten registry categories rendered grey until 31 Jul 2026, which makes a risk
+    register unscannable &mdash; the one thing a register exists to be. Four design-only names
+    were mapped onto their registry synonyms, two categories were given new colours, and
+    <span class="mono">construction</span> and <span class="mono">reputation</span> were dropped
+    because the registry does not track them.
+  </div>
+  <div class="sws">
+  <div class="sw">
+    <div class="chip" style="background:#2061DE"></div>
+    <div class="meta"><span class="k">liquidity</span><span class="mono">#2061DE</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#0C3024"></div>
+    <div class="meta"><span class="k">market</span><span class="mono">#0C3024</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#6B6B6B"></div>
+    <div class="meta"><span class="k">legal</span><span class="mono">#6B6B6B</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#2E8B7A"></div>
+    <div class="meta"><span class="k">climate</span><span class="mono">#2E8B7A</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#E8672E"></div>
+    <div class="meta"><span class="k">operator</span><span class="mono">#E8672E</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#1FAA59"></div>
+    <div class="meta"><span class="k">regulatory</span><span class="mono">#1FAA59</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#8B5FBF"></div>
+    <div class="meta"><span class="k">counterparty</span><span class="mono">#8B5FBF</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#C79F6B"></div>
+    <div class="meta"><span class="k">interest_rate</span><span class="mono">#C79F6B</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#B8873F"></div>
+    <div class="meta"><span class="k">currency</span><span class="mono">#B8873F</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#5A7D9A"></div>
+    <div class="meta"><span class="k">technology</span><span class="mono">#5A7D9A</span></div>
+  </div></div>
 
   <h2>Atom specifications</h2>
   <div class="scroll"><table>
