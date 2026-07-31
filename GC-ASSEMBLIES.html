@@ -4016,6 +4016,71 @@ A["AS-31"] = { vantage:"member", render: () => {
 </div>` } };
 
 
+/* AS-32 - THE PUBLIC SURFACE
+   ---------------------------------------------------------------
+   One renderer for PUB.01 through PUB.11 of the wireframes. The copy
+   lives in content/public.ts; this holds only how a pane sits and which
+   ground it sits on.
+
+   The wireframes call the same move a hard cut to paper mode, meant to
+   wake the reader up, and use it for the sections carrying arithmetic.
+   That is the ground inversion this system already has, so each pane
+   declares its own ground: the cut is a property of what is being said
+   rather than a rhythm applied down the page.
+   --------------------------------------------------------------- */
+A["AS-32"] = { vantage:"gateway", render: () => {
+  const PANES = [
+    { n:"01", e:"The Gateway", g:"void", t:"We do not sell holidays." },
+    { n:"02", e:"The Manifesto", g:"void", t:"Silence and time are the scarce resources." },
+    { n:"03", e:"The Triad", g:"paper", t:"Space &middot; Capital &middot; Time" },
+    { n:"04", e:"The Assets", g:"void", t:"Three properties, at three stages." },
+    { n:"05", e:"The Signal", g:"void", t:"We appear when summoned." },
+    { n:"06", e:"The Proof", g:"void", t:"What partners say." },
+    { n:"07", e:"The Authority", g:"void", t:"Builders, not brokers." },
+    { n:"08", e:"The Blueprint", g:"paper", t:"The physics of restoration." },
+    { n:"09", e:"The Signal", g:"paper", t:"Weekly intelligence on solitude and assets." },
+  ];
+  return `
+<div class="wrap">
+  <span class="t-micro" style="color:var(--steel)">AS-32 &middot; PUB.01 &middot; The Gateway</span>
+  <h1 class="t-display-l" style="margin:var(--s-2xs) 0 var(--s-s)">The Public Surface</h1>
+  <p class="t-body-l" style="color:var(--steel);max-width:65ch">
+    Nine panes on the root, and six further pages: the manifesto, the foundation, the operators,
+    the wire, the dossier and the signal.
+  </p>
+
+  <div class="stack" style="margin-top:var(--s-xl)">
+    ${PANES.map(p => `<div class="${p.g === "paper" ? "panel on-paper" : "panel"}">
+      <div style="display:flex;justify-content:space-between;gap:var(--s-s);flex-wrap:wrap">
+        <span class="t-mono-s" style="color:var(--steel)">${p.n} &middot; ${esc(p.e)}</span>
+        <span class="t-mono-s" style="color:var(--steel)">${p.g === "paper" ? "paper &middot; assertion" : "void &middot; narrative"}</span>
+      </div>
+      <h2 class="t-display-s" style="margin-top:var(--s-2xs)">${p.t}</h2>
+    </div>`).join("")}
+  </div>
+
+  <div class="fixes">
+    <span class="fix"><b>Fixed</b> PUB.01 wrote a valuation, a yield and an entry price into the
+      wireframe for three named properties. None was in a registry. The property records are read
+      instead, each with the basis that produced its valuation and the class of its forward
+      figure.</span>
+    <span class="fix"><b>Fixed</b> PUB.05 named six firms and PUB.10 carried six quotes under real
+      mastheads. Each was a claim about somebody else, evidenced nowhere. Both ship with the
+      structure present, the names withheld, and a statement on the page that they are not yet
+      populated.</span>
+    <span class="fix"><b>Fixed</b> PUB.09 gated the subscription form behind a knob that had to be
+      dragged to centre. That made the only action on the page unreachable by keyboard and
+      invisible to a screen reader, in exchange for atmosphere.</span>
+    <span class="fix"><b>Fixed</b> PUB.07 disclosed the candidate record UNDER the form and called
+      it a trojan horse. A consequence disclosed after the act was not disclosed; it is stated
+      above the fields.</span>
+    <span class="fix"><b>Rule</b> Ground is declared per pane in the content, not applied as a
+      rhythm. A pane carrying arithmetic sits on paper; a pane carrying argument sits on
+      void.</span>
+  </div>
+</div>` } };
+
+
 /* ═══════════════════════════════════════════════════════════════════
    AS-16 · SIGNAL LOST
 

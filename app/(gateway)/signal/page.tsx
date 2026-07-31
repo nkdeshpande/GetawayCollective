@@ -4,20 +4,20 @@
  * Written by scripts/gen-app.js from constants/routes.ts.
  * Run `npm run app` to regenerate, `npm run app:check` to verify.
  *
- * Route     /
+ * Route     /signal
  * Access    public   (derived from vantage)
  * Assembly  AS-32 · The Public Surface
  * 
  */
 
 import type { Metadata } from "next";
-import { Root } from "@/app/_assemblies/publicpages";
+import { Signal } from "@/app/_assemblies/publicpages";
 
 export const metadata: Metadata = {
-  title: "Home · Getaway Collective",
+  title: "The Signal · Getaway Collective",
   robots: { index: true, follow: true },
 };
 
-export default async function P() {
-  return <Root />;
+export default async function Psignal() {
+  return <Signal />;
 }

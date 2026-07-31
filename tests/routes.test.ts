@@ -7,7 +7,8 @@
 import { describe, it, expect } from "vitest";
 import {
   ROUTES, PUBLIC_ROUTES, LEGAL_ROUTES, AUTH_ROUTES, MEMBER_ROUTES,
-  CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, FLOW_ROUTES, JOURNAL_ROUTES, PASSPORT_STAGES,
+  CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, FLOW_ROUTES, JOURNAL_ROUTES,
+  COLLECTIVE_ROUTES, PASSPORT_STAGES,
   ACCESS_RANK, ACCESS_FOR_VANTAGE, GROUP_VANTAGE, IA_LAWS,
   accessOf, isIndexable, routeByPath, routesFor, allParams,
 } from "../constants/routes";
@@ -217,6 +218,7 @@ describe("IA laws", () => {
     const SECTIONS = [
       PUBLIC_ROUTES, LEGAL_ROUTES, AUTH_ROUTES, MEMBER_ROUTES,
       CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, FLOW_ROUTES, JOURNAL_ROUTES,
+      COLLECTIVE_ROUTES,
     ];
     const total = SECTIONS.reduce((n, s) => n + s.length, 0);
     expect(ROUTES).toHaveLength(total);

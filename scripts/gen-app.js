@@ -170,6 +170,15 @@ const PORTED = {
 /* Routes whose component is chosen by PATH, not by assembly. The worked
    flow declares assembly: null on purpose — see constants/routes.ts. */
 const BY_PATH = {
+  /* The public surface: PUB.01-PUB.11, one renderer, chosen by path. */
+  "/": { component: "Root", from: "@/app/_assemblies/publicpages" },
+  "/how-it-works": { component: "HowItWorks", from: "@/app/_assemblies/publicpages" },
+  "/collective/partners": { component: "Partners", from: "@/app/_assemblies/publicpages" },
+  "/collective/operators": { component: "Operators", from: "@/app/_assemblies/publicpages" },
+  "/collective/press": { component: "Wire", from: "@/app/_assemblies/publicpages" },
+  "/communique/request": { component: "Dossier", from: "@/app/_assemblies/publicpages" },
+  "/signal": { component: "Signal", from: "@/app/_assemblies/publicpages" },
+
   /* The legal corpus: one renderer, seven documents, chosen by path.
      AS-29 takes the path as a prop rather than being seven components. */
   "/legal": { component: "DocumentIndex", from: "@/app/_assemblies/documents" },

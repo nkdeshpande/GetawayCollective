@@ -2365,6 +2365,100 @@ export const VEHICLE_CONSOLE: Assembly = {
 };
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   AS-32 · THE PUBLIC SURFACE
+
+   One renderer for PUB.01 through PUB.11. The copy lives in
+   content/public.ts; this holds only how a pane sits and which ground
+   it sits on.
+   ═══════════════════════════════════════════════════════════════════ */
+export const PUBLIC_SURFACE: Assembly = {
+  id: "AS-32",
+  name: "The Public Surface",
+  scope: "screen",
+  route: "gateway",
+  vantage: "gateway",
+  intent: "Say what this is to someone who has not identified themselves, without overstating it.",
+  answers: "What is this, who runs it, and what would I be buying?",
+  sections: [
+    S("AS-32.a", "Masthead", "masthead",
+      "Page id, alias, title and standfirst.",
+      [],
+      "The alias is shown because these pages are referred to by it internally, and a reader who " +
+      "hears one should be able to find the page it names."),
+    S("AS-32.b", "Panes", "narrative",
+      "Numbered panes, each declaring its own ground.",
+      [],
+      "Ground is a property of what is being said, not a rhythm applied down the page. A pane " +
+      "carrying arithmetic sits on paper; a pane carrying argument sits on void."),
+    S("AS-32.c", "Assets", "grid",
+      "The property records, on the root only.",
+      ["O-01"],
+      "PUB.01 wrote a valuation, a yield and an entry price directly into the wireframe. None " +
+      "was in a registry. The records are read instead, with the basis that produced each " +
+      "valuation and the confidence class of each forward figure."),
+    S("AS-32.d", "Absence", "figure",
+      "Stated where a page's roster is not yet real.",
+      [],
+      "The partner grid named six firms and the press page carried six quotes under real " +
+      "mastheads. Naming a professional adviser is a claim about them; an invented quotation " +
+      "under a real masthead is a fabrication. Both ship empty and say so."),
+    S("AS-32.e", "Capture", "action",
+      "The subscription form and the dossier request.",
+      [],
+      "The wireframe gated the subscription behind a draggable tuner, which made it unreachable " +
+      "by keyboard and invisible to a screen reader in exchange for atmosphere. The form is " +
+      "simply present, and the dossier states what requesting it creates ABOVE the fields."),
+  ],
+  corrections: [
+    {
+      source: "GC Collective Wireframes 2.0 · PUB.01",
+      was: "Named properties with a valuation, a yield and an entry price written into the page.",
+      now: "The property records, with the basis of each valuation and the class of each forward figure.",
+      because:
+        "None of the wireframe figures existed in a registry. A headline number with no source " +
+        "is the first thing quoted back to us and the last thing we could defend.",
+      kind: "numeric",
+    },
+    {
+      source: "GC Collective Wireframes 2.0 · PUB.05, PUB.10",
+      was: "Six named firms in a partner grid; six quotes attributed to named publications.",
+      now: "Functions stated without holders, and an empty press page that says it is empty.",
+      because:
+        "Each was a claim about somebody else, evidenced nowhere. An unverified endorsement " +
+        "rendered as a real one is a legal problem before it is a design problem.",
+      kind: "constitutional",
+    },
+    {
+      source: "GC Collective Wireframes 2.0 · PUB.09",
+      was: "A radio tuner gating the form until a knob was dragged to centre.",
+      now: "The form, present.",
+      because:
+        "The gate made the only action on the page unreachable by keyboard and invisible to a " +
+        "screen reader, in exchange for atmosphere.",
+      kind: "accessibility",
+    },
+    {
+      source: "GC Collective Wireframes 2.0 · PUB.07",
+      was: "'THE TROJAN HORSE' — the record described as covert, disclosed under the form.",
+      now: "What requesting the pack creates, stated above the form.",
+      because:
+        "A consequence disclosed after the act was not disclosed. The page also says the record " +
+        "is interest and not an application, because the wireframe called it a candidate node.",
+      kind: "constitutional",
+    },
+    {
+      source: "L1-01 §25",
+      now: "Six forbidden terms translated at the boundary.",
+      because:
+        "The source uses them freely and may continue to. They do not cross into the platform, " +
+        "and the page that addressed a reader by one of them would be the document people quote.",
+      kind: "vocabulary",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -2397,6 +2491,7 @@ export const ASSEMBLIES: readonly Assembly[] = [
   STANDING_DOCUMENT,
   JOURNAL_ASSEMBLY,
   VEHICLE_CONSOLE,
+  PUBLIC_SURFACE,
 ];
 
 /**

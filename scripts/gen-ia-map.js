@@ -65,6 +65,7 @@ const SECTIONS = [
   ["ADMIN_ROUTES", "Administration", "Every route names the RIGHT it requires, never the role that holds it."],
   ["SYSTEM_ROUTES", "System States", "Places that are really states."],
   ["FLOW_ROUTES", "The Worked Flow", "One offering walked end to end on illustrative data. Public throughout, declaring no assembly: these are demonstration components, not the registered assemblies rendering real records, and that distinction is what makes them public."],
+  ["COLLECTIVE_ROUTES", "The Public Surface", "PUB.01 through PUB.11 from the wireframes. Every one public and indexable — these are the pages that exist to be found. /gallery, /portfolio, /story, /voices and /journal already serve PUB.03, PUB.04 and PUB.08 and are retained above."],
   ["JOURNAL_ROUTES", "The Journal", "What the platform says about itself, one binding decision at a time. Separate from Voices because a partner talking about returns is regulated speech and an explanation of a mechanism is not."],
 ];
 

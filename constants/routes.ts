@@ -119,7 +119,7 @@ const R = (
 // ─────────────────────────────────────────────────────────────────────
 
 export const PUBLIC_ROUTES: readonly Route[] = [
-  R("/", "Home", "gateway", "AS-23",
+  R("/", "Home", "gateway", "AS-32",
     { notes: "Hero region, then routes into the collection. No figure above the fold." }),
   R("/collection", "The Collection", "gateway", "AS-01"),
   R("/collection/[property]", "Property", "space", "AS-03", { params: ["property"] }),
@@ -596,11 +596,41 @@ export const PAGE_CONTENTS: Record<string, readonly { part: string; holds: strin
   ],
 };
 
+// -----------------------------------------------------------------
+// THE PUBLIC SURFACE — PUB.01 through PUB.11
+//
+// From GC Collective Wireframes 2.0. Every one is public and
+// indexable: these are the pages that exist to be found.
+//
+// /gallery, /portfolio, /story, /voices, /answers and /journal already
+// serve PUB.03, PUB.04 and PUB.08, and are retained as they stand. The
+// endpoints below are the ones the wireframes add.
+// -----------------------------------------------------------------
+
+export const COLLECTIVE_ROUTES: readonly Route[] = [
+  R("/how-it-works", "How It Works", "gateway", "AS-32",
+    { notes: "PUB.02 / PUB.11 — the doctrine, then a hard cut to the arithmetic. Distinct from " +
+             "/how-capital-works, which is the waterfall itself rather than the argument for it." }),
+  R("/collective/partners", "The Foundation", "gateway", "AS-32",
+    { notes: "PUB.05 — the independent firms. Ships with functions stated and holders withheld " +
+             "until each engagement is recorded against the vehicle it serves." }),
+  R("/collective/operators", "The Operators", "gateway", "AS-32",
+    { notes: "PUB.06 — what runs a property, and who is accountable when it does not." }),
+  R("/collective/press", "The Wire", "gateway", "AS-32",
+    { notes: "PUB.10 — external coverage. Ships empty and says so; the wireframe's six clippings " +
+             "were quotes attributed to real publications that have not published them." }),
+  R("/communique/request", "Request the Dossier", "gateway", "AS-32",
+    { notes: "PUB.07 — the intelligence pack. What requesting it creates is stated above the form." }),
+  R("/signal", "The Signal", "gateway", "AS-32",
+    { notes: "PUB.09 — the weekly transmission. No tuner gate; the form is simply present." }),
+];
+
 export const ROUTES: readonly Route[] = [
   ...PUBLIC_ROUTES, ...LEGAL_ROUTES, ...AUTH_ROUTES,
   ...MEMBER_ROUTES, ...CAPITAL_ROUTES, ...ADMIN_ROUTES, ...SYSTEM_ROUTES,
   ...FLOW_ROUTES,
   ...JOURNAL_ROUTES,
+  ...COLLECTIVE_ROUTES,
 ];
 
 /**
