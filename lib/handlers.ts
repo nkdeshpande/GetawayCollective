@@ -188,21 +188,33 @@ export interface CommitmentInput {
   amount: Money;
   minimumSubscription: Money;
   accreditationValid: boolean;
-  currentMemberState: MemberState;
-  isFirstCommitment: boolean;
 }
 
+/**
+ * Accept a commitment. Does NOT promote the identity.
+ *
+ * The Member Law fires on the first commitment SETTLING, not on it being
+ * accepted (L1-01 §25a, I-08). An accepted commitment can still fail to
+ * fund; promoting here would make a Member of someone who never paid, and
+ * because the promotion is irreversible there would be no way back.
+ *
+ * Promotion lives in `settleCommitment` below.
+ */
 export function acceptCommitment(
   ctx: CommandContext,
   input: CommitmentInput,
   log: EventLog,
   audit: SessionAudit,
-): CommandResult<{ memberState: MemberState }> {
+): CommandResult<{ accepted: true }> {
   return execute("AcceptCommitment", ctx, log, audit, (emit) => {
     // THIS is the accreditation test point. Valid here means the commitment
     // completes even if accreditation later expires — expiry after lawful
     // acceptance does not invalidate an otherwise valid commitment.
     if (!input.accreditationValid) {
+      emit("CommitmentLapsed", input.commitmentId, {
+        investorId: input.investorId,
+        reason: "accreditation not valid at acceptance",
+      });
       throw new Error(
         `accreditation is not valid at acceptance; the commitment lapses (L1-01 §24b, F-10)`,
       );
@@ -218,11 +230,62 @@ export function acceptCommitment(
       offeringId: input.offeringId,
       amount: format(input.amount),
     });
+    return { accepted: true as const };
+  });
+}
 
-    // I-08 — the Member Law. A state change on the existing identity, never
-    // a second record. Irreversible.
+export interface SettlementInput {
+  commitmentId: string;
+  investorId: string;
+  vehicleId: string;
+  amount: Money;
+  entryId: string;
+  currentMemberState: MemberState;
+  isFirstCommitment: boolean;
+}
+
+/**
+ * Settle a commitment — funds received.
+ *
+ * This is where I-08 fires: a state change on the existing identity, never
+ * a second record, irreversible. It runs under DeployCapital because
+ * settlement and deployment are the same movement of money viewed from two
+ * sides, and splitting them would let one happen without the other.
+ */
+export function settleCommitment(
+  ctx: CommandContext,
+  input: SettlementInput,
+  log: EventLog,
+  audit: SessionAudit,
+  ledger: Ledger,
+): CommandResult<{ memberState: MemberState; promoted: boolean }> {
+  return execute("DeployCapital", ctx, log, audit, (emit) => {
+    const entry: LedgerEntry = {
+      entryId: input.entryId,
+      vehicleId: input.vehicleId,
+      account: "capital_drawn",
+      amount: input.amount,
+      postedAt: ctx.now,
+      postedBy: ctx.identityId!,
+      narrative: `Settlement of commitment ${input.commitmentId}`,
+    };
+    ledger.post(entry);
+    emit("LedgerEntryPosted", entry.entryId, { account: entry.account, amount: format(entry.amount) });
+    emit("CommitmentSettled", input.commitmentId, {
+      investorId: input.investorId,
+      amount: format(input.amount),
+    });
+
     const next = nextMemberState(input.currentMemberState, input.isFirstCommitment);
-    return { memberState: next };
+    const promoted = next !== input.currentMemberState;
+    if (promoted) {
+      emit("MemberStatePromoted", input.investorId, {
+        from: input.currentMemberState,
+        to: next,
+        onCommitment: input.commitmentId,
+      });
+    }
+    return { memberState: next, promoted };
   });
 }
 

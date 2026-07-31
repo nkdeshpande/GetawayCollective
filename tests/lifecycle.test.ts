@@ -23,7 +23,7 @@ import { Ledger } from "../lib/ledger";
 import { __resetEventSeq } from "../lib/commands";
 import {
   executeDistribution, callCapital, acceptCommitment, deployCapital,
-  declareReserveBreach, reconcileDistribution,
+  declareReserveBreach, reconcileDistribution, settleCommitment,
 } from "../lib/handlers";
 
 const NOW = "2026-07-31T10:00:00.000Z";
@@ -81,31 +81,57 @@ describe("full lifecycle", () => {
     __resetEventSeq();
   });
 
-  it("accepts a commitment and promotes the identity (I-08)", () => {
+  it("accepts a commitment WITHOUT promoting the identity", () => {
+    // The Member Law fires on SETTLEMENT, not acceptance. An accepted
+    // commitment can still fail to fund, and promoting here would make a
+    // Member of someone who never paid — irreversibly.
     const r = acceptCommitment(ctx("coo", { reason: "Coastal Fund I, first close" }), {
       commitmentId: "c-1", investorId: "inv-a", offeringId: "off-1",
       amount: money("5000000.0000"), minimumSubscription: money("2500000.0000"),
-      accreditationValid: true, currentMemberState: MemberState.Investor,
-      isFirstCommitment: true,
+      accreditationValid: true,
     }, log, audit);
 
     expect(r.ok).toBe(true);
-    expect(r.value!.memberState).toBe(MemberState.Member);
     expect(log.ofType("CommitmentAccepted")).toHaveLength(1);
+    expect(log.ofType("MemberStatePromoted")).toHaveLength(0);
     // Decision event: the reason must have travelled with it (E-02).
     expect(log.ofType("CommitmentAccepted")[0].reason).toContain("first close");
+  });
+
+  it("promotes the identity on SETTLEMENT (I-08)", () => {
+    const r = settleCommitment(ctx("ic-chair", { reason: "funds received" }), {
+      commitmentId: "c-1", investorId: "inv-a", vehicleId: V1,
+      amount: money("5000000.0000"), entryId: "le-settle-1",
+      currentMemberState: MemberState.Investor, isFirstCommitment: true,
+    }, log, audit, ledger);
+
+    expect(r.ok).toBe(true);
+    expect(r.value!.memberState).toBe(MemberState.Member);
+    expect(r.value!.promoted).toBe(true);
+    expect(log.ofType("MemberStatePromoted")).toHaveLength(1);
+  });
+
+  it("does not re-promote an existing Member on a follow-on settlement", () => {
+    const r = settleCommitment(ctx("ic-chair", { reason: "follow-on" }), {
+      commitmentId: "c-2", investorId: "inv-a", vehicleId: V1,
+      amount: money("1000000.0000"), entryId: "le-settle-2",
+      currentMemberState: MemberState.Member, isFirstCommitment: false,
+    }, log, audit, ledger);
+
+    expect(r.value!.promoted).toBe(false);
+    expect(log.ofType("MemberStatePromoted")).toHaveLength(0);
   });
 
   it("lapses a commitment when accreditation was invalid at acceptance", () => {
     const r = acceptCommitment(ctx("coo", { reason: "attempt" }), {
       commitmentId: "c-2", investorId: "inv-b", offeringId: "off-1",
       amount: money("5000000.0000"), minimumSubscription: money("2500000.0000"),
-      accreditationValid: false, currentMemberState: MemberState.Investor,
-      isFirstCommitment: true,
+      accreditationValid: false,
     }, log, audit);
 
     expect(r.ok).toBe(false);
     expect(r.error).toContain("§24b");
+    // Nothing is logged: the command threw, so no events were committed.
     expect(log.size).toBe(0);
   });
 

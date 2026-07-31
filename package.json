@@ -14,7 +14,7 @@
     "tokens": "node scripts/export-tokens.js",
     "schemas": "node scripts/gen-schemas.js",
     "schemas:check": "node scripts/gen-schemas.js --check",
-    "verify": "npm run lint:vocab && npm run lint:ufr && npm run lint:rel && npm run lint:cap && npm run schemas:check && npm run db:check && npm run fixtures:check && npm run tokens && npm run type-check && npm run test:run",
+    "verify": "npm run lint:vocab && npm run lint:ufr && npm run lint:rel && npm run lint:cap && npm run lint:sm && npm run schemas:check && npm run db:check && npm run fixtures:check && npm run tokens && npm run type-check && npm run test:run",
     "type-check": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -26,7 +26,8 @@
     "lint:cap": "node scripts/cap-lint.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "gate": "node scripts/gen-gate-report.js"
+    "gate": "node scripts/gen-gate-report.js",
+    "lint:sm": "node scripts/sm-lint.js"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",

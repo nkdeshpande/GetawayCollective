@@ -56,6 +56,7 @@ export type CommandName =
   | "DiscloseConflict"
   | "CastVote"
   | "GrantAccreditation"
+  | "ExpireAccreditation"
   | "TableResolution"
   | "ResolveResolution"
   | "ApprovePolicyVersion"
@@ -152,7 +153,11 @@ export const CAPABILITIES: readonly CapabilityDefinition[] = [
       conflictSensitive: false,
       description: "Close a raise. Irreversible." }),
   C({ name: "AcceptCommitment", object: BO.Commitment, requiredRight: "commitment.accept",
-      scopeKind: "vehicle", emits: ["CommitmentAccepted"], requiresReason: true,
+      scopeKind: "vehicle",
+      // Three outcomes of one command. Lapse and withdrawal are not failures
+      // of the command; they are results of it, and both change state.
+      emits: ["CommitmentAccepted", "CommitmentLapsed", "CommitmentWithdrawn"],
+      requiresReason: true,
       conflictSensitive: false,
       description: "Accept a binding commitment. THIS is the accreditation test point: valid here means the commitment completes even if accreditation later expires (L1-01 §24b, F-10)." }),
   C({ name: "CallCapital", object: BO.CapitalCall, requiredRight: "capital.call",
@@ -160,7 +165,13 @@ export const CAPABILITIES: readonly CapabilityDefinition[] = [
       conflictSensitive: false,
       description: "Call committed capital. Post-stabilisation the purpose must be a growth purpose (F-16)." }),
   C({ name: "DeployCapital", object: BO.Investment, requiredRight: "capital.deploy",
-      scopeKind: "vehicle", emits: ["CapitalDeployed", "LedgerEntryPosted"], requiresReason: true,
+      scopeKind: "vehicle",
+      // MemberStatePromoted fires HERE, not at acceptance. The Member Law is
+      // triggered by the first commitment SETTLING - a commitment can be
+      // accepted and then never funded, and promoting at acceptance would
+      // make a Member of someone who never paid.
+      emits: ["CapitalDeployed", "LedgerEntryPosted", "CommitmentSettled", "MemberStatePromoted"],
+      requiresReason: true,
       conflictSensitive: true,
       description: "Deploy drawn capital. Moves it between accounted states (F-03)." }),
   C({ name: "ExecuteDistribution", object: BO.Distribution, requiredRight: "distribution.execute",
@@ -181,6 +192,13 @@ export const CAPABILITIES: readonly CapabilityDefinition[] = [
       scopeKind: "enterprise", emits: ["AccreditationGranted"], requiresReason: false,
       conflictSensitive: false,
       description: "Grant accreditation valid for fifteen working days. Transaction-specific, not standing eligibility (L1-01 §24b)." }),
+  C({ name: "ExpireAccreditation", object: BO.Investor, requiredRight: "accreditation.grant",
+      scopeKind: "enterprise", emits: ["AccreditationExpired"], requiresReason: false,
+      conflictSensitive: false,
+      // Separate from GrantAccreditation because it is a different act with a
+      // different consequence. Expiry blocks NEW commitments and nothing else -
+      // voting, distribution and information rights survive it (§24b).
+      description: "Record accreditation expiry after fifteen working days, or closure of a review without grant." }),
   C({ name: "RecordComplianceEvent", object: BO.ComplianceEvent, requiredRight: "compliance.record",
       scopeKind: "enterprise", emits: ["ComplianceEventRecorded"], requiresReason: true,
       conflictSensitive: false,

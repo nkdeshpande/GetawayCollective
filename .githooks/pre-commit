@@ -5,6 +5,7 @@ node scripts/vocab-lint.js          || { echo "BLOCKED: vocabulary (L1-01 §25)"
 node scripts/ufr-lint.js            || { echo "BLOCKED: field registry (E-06)"; exit 1; }
 node scripts/rel-lint.js            || { echo "BLOCKED: relationship graph (E-05)"; exit 1; }
 node scripts/cap-lint.js            || { echo "BLOCKED: capability registry (E-01)"; exit 1; }
+node scripts/sm-lint.js             || { echo "BLOCKED: state machines (A-05)"; exit 1; }
 node scripts/gen-schemas.js --check || { echo "BLOCKED: contracts diverged (E-06)"; exit 1; }
 node scripts/gen-db.js --check      || { echo "BLOCKED: db schema diverged (E-06)"; exit 1; }
 node scripts/gen-fixtures.js --check|| { echo "BLOCKED: fixtures stale"; exit 1; }
