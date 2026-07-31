@@ -7,7 +7,7 @@
 import { describe, it, expect } from "vitest";
 import {
   ROUTES, PUBLIC_ROUTES, LEGAL_ROUTES, AUTH_ROUTES, MEMBER_ROUTES,
-  CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, PASSPORT_STAGES,
+  CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, FLOW_ROUTES, PASSPORT_STAGES,
   ACCESS_RANK, ACCESS_FOR_VANTAGE, GROUP_VANTAGE, IA_LAWS,
   accessOf, isIndexable, routeByPath, routesFor, allParams,
 } from "../constants/routes";
@@ -212,8 +212,22 @@ describe("IA laws", () => {
   });
 
   it("splits into the declared sections without overlap", () => {
-    const total = PUBLIC_ROUTES.length + LEGAL_ROUTES.length + AUTH_ROUTES.length +
-      MEMBER_ROUTES.length + CAPITAL_ROUTES.length + ADMIN_ROUTES.length + SYSTEM_ROUTES.length;
+    const SECTIONS = [
+      PUBLIC_ROUTES, LEGAL_ROUTES, AUTH_ROUTES, MEMBER_ROUTES,
+      CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, FLOW_ROUTES,
+    ];
+    const total = SECTIONS.reduce((n, s) => n + s.length, 0);
     expect(ROUTES).toHaveLength(total);
+
+    /*
+     * A count alone says the arithmetic works, not that the same routes
+     * are on both sides. Adding FLOW_ROUTES to ROUTES while forgetting
+     * this list is what the count caught; forgetting to SPREAD a section
+     * into ROUTES while adding it here would balance just as neatly and
+     * hide a whole section from the guard. Compare the paths.
+     */
+    const declared = SECTIONS.flatMap((s) => s.map((r) => r.path)).sort();
+    const actual = ROUTES.map((r) => r.path).sort();
+    expect(actual).toEqual(declared);
   });
 });

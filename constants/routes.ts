@@ -365,9 +365,56 @@ export const SYSTEM_ROUTES: readonly Route[] = [
 
 // ─────────────────────────────────────────────────────────────────────
 
+// -----------------------------------------------------------------
+// THE WORKED FLOW - SlowSpace Coastal LLP, Padubidri
+//
+// One offering walked end to end, so the arc from gateway to settled
+// position can be seen rather than described. Public throughout: every
+// step is what a prospective investor is shown BEFORE they have an
+// identity, and the guard on the real member routes is unaffected.
+// -----------------------------------------------------------------
+
+/*
+ * These render DEMONSTRATION components against illustrative data for a
+ * fictional partner - not the registered assemblies against real records.
+ * That distinction is what makes public acceptable, and it is why every
+ * one declares `assembly: null`.
+ *
+ * route-lint caught the alternative. Claiming `assembly: "AS-05"` on the
+ * settled step failed immediately: AS-05 renders AP-04 at the member
+ * vantage, and an override may relax the route without relaxing the
+ * disclosure model underneath it. The check was right and the first
+ * version of this table was wrong.
+ */
+export const FLOW_REASON =
+  "A worked demonstration of the whole arc, on illustrative data for a fictional partner rather " +
+  "than a real position. Public because the point is that a prospective investor can see every " +
+  "step - including the accreditation and disclosure they would meet later - before committing " +
+  "to any of it.";
+
+export const FLOW_ROUTES: readonly Route[] = [
+  R("/flow", "SlowSpace Coastal", "space", null,
+    { notes: "Step 1 of 5. The offering at the space vantage: capital stack, six-stage waterfall, " +
+             "governance and programme, each carrying its confidence class." }),
+  R("/flow/accreditation", "Accreditation", "member", null,
+    { accessOverride: { access: "public", because: FLOW_REASON },
+      notes: "Step 2. PR-01, resumable - each field saves on blur to a draft record." }),
+  R("/flow/risk", "Risk Disclosure", "capital", null,
+    { accessOverride: { access: "public", because: FLOW_REASON },
+      notes: "Step 3. Seven clauses in severity order, on paper. The gate opens on reaching the " +
+             "end by any route." }),
+  R("/flow/commit", "Commit", "capital", null,
+    { accessOverride: { access: "public", because: FLOW_REASON },
+      notes: "Step 4. The piston, 3000ms linear. States Committed, never Member." }),
+  R("/flow/settled", "Settled", "member", null,
+    { accessOverride: { access: "public", because: FLOW_REASON },
+      notes: "Step 5. The first screen where the Member Law has fired." }),
+];
+
 export const ROUTES: readonly Route[] = [
   ...PUBLIC_ROUTES, ...LEGAL_ROUTES, ...AUTH_ROUTES,
   ...MEMBER_ROUTES, ...CAPITAL_ROUTES, ...ADMIN_ROUTES, ...SYSTEM_ROUTES,
+  ...FLOW_ROUTES,
 ];
 
 /**

@@ -167,6 +167,16 @@ const PORTED = {
   "AS-24": { component: "Testimonials", from: "@/app/_assemblies/gateway" },
 };
 
+/* Routes whose component is chosen by PATH, not by assembly. The worked
+   flow declares assembly: null on purpose — see constants/routes.ts. */
+const BY_PATH = {
+  "/flow": { component: "Offering", from: "@/app/_assemblies/flow" },
+  "/flow/accreditation": { component: "Accreditation", from: "@/app/_assemblies/flow" },
+  "/flow/risk": { component: "RiskDisclosure", from: "@/app/_assemblies/flow" },
+  "/flow/commit": { component: "Commit", from: "@/app/_assemblies/flow" },
+  "/flow/settled": { component: "Settled", from: "@/app/_assemblies/flow" },
+};
+
 function conventionSource(r, conv) {
   const banner = BANNER(
     `Route      ${r.path}\n` +
@@ -207,7 +217,7 @@ function conventionSource(r, conv) {
 
 function pageSource(r) {
   const access = accessOf(r);
-  const port = r.assembly ? PORTED[r.assembly] : null;
+  const port = BY_PATH[r.path] || (r.assembly ? PORTED[r.assembly] : null);
   const indexable = access === "public";
   const hasParams = r.params.length > 0;
   const title = `${r.name} · Getaway Collective`;

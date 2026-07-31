@@ -127,7 +127,59 @@ function contrast(a, b) {
   return (l1 + 0.05) / (l2 + 0.05);
 }
 
+/**
+ * ON_GROUND, parsed from the same file rather than restated here.
+ *
+ * The previous version of this linter kept its own VARIANTS table, which
+ * meant the canon could gain a remap that the checker never learned about
+ * — and that is precisely what happened with the neutrals.
+ *
+ * Returns { void: {semantic: hex}, paper: {semantic: hex} }.
+ */
+function onGround() {
+  const src = fs.readFileSync(TOKENS, "utf8").replace(/\r\n/g, "\n");
+  const block = src.match(/export const ON_GROUND = \{([\s\S]*?)\n\} as const;/);
+  if (!block) {
+    console.error("[token-lint] Could not parse ON_GROUND. Refusing to run.");
+    process.exit(2);
+  }
+  const out = {};
+  for (const g of block[1].matchAll(/(\w+):\s*\{([\s\S]*?)\}/g)) {
+    const entries = {};
+    for (const m of g[2].matchAll(/(\w+):\s*COLOUR\.(\w+)/g)) entries[m[1]] = m[2];
+    if (Object.keys(entries).length) out[g[1]] = entries;
+  }
+  if (!out.void || !out.paper) {
+    console.error("[token-lint] ON_GROUND parsed to fewer than two grounds. Refusing to run.");
+    process.exit(2);
+  }
+  return out;
+}
+
+/** NEUTRAL_ROLE, parsed from the canon — see the note beside it there. */
+function neutralRole() {
+  const src = fs.readFileSync(TOKENS, "utf8").replace(/\r\n/g, "\n");
+  const block = src.match(/export const NEUTRAL_ROLE = \{([\s\S]*?)\n\} as const;/);
+  if (!block) {
+    console.error("[token-lint] Could not parse NEUTRAL_ROLE. Refusing to run.");
+    process.exit(2);
+  }
+  const out = {};
+  for (const g of block[1].matchAll(/(\w+):\s*\{([^}]*)\}/g)) {
+    const entries = {};
+    for (const m of g[2].matchAll(/(\w+):\s*"(text|non-text)"/g)) entries[m[1]] = m[2];
+    if (Object.keys(entries).length) out[g[1]] = entries;
+  }
+  if (!out.void || !out.paper) {
+    console.error("[token-lint] NEUTRAL_ROLE parsed to fewer than two grounds. Refusing to run.");
+    process.exit(2);
+  }
+  return out;
+}
+
 const P = palette();
+const G = onGround();
+const ROLE = neutralRole();
 const AA_TEXT = 4.5;
 const AA_UI = 3.0;
 
@@ -151,8 +203,8 @@ for (const [gName, ground] of GROUNDS) {
   }
 }
 
-// Text-critical pairings: the primary text tokens must clear AA on their ground.
-const TEXT_PAIRS = [["ink", "paper"], ["inkInverse", "void"], ["steel", "paper"], ["steelDim", "void"]];
+// The two primary text tokens, each on the ground it belongs to.
+const TEXT_PAIRS = [["ink", "paper"], ["inkInverse", "void"]];
 for (const [fg, bg] of TEXT_PAIRS) {
   if (!P[fg] || !P[bg]) continue;
   const r = contrast(P[fg], P[bg]);
@@ -160,6 +212,84 @@ for (const [fg, bg] of TEXT_PAIRS) {
     fail.push(
       `contrast: ${fg} on ${bg} is ${r.toFixed(2)}:1, under the AA text minimum of ${AA_TEXT}:1. ` +
         `This is body text; failing here means the interface is unreadable for part of the audience.`,
+    );
+  }
+}
+
+/**
+ * THE NEUTRALS, ON BOTH GROUNDS.
+ *
+ * This is the check that did not exist. The audit loop below skipped
+ * steel and steelDim outright, and the list above hand-picked "steel on
+ * paper" and "steelDim on void" — the two combinations that happen to
+ * pass. The other two were never computed. steelDim on paper is 2.51:1,
+ * and every section reference and table header on a paper section was
+ * rendering at it, in the shipped application, for as long as the paper
+ * ground has existed.
+ *
+ * Both are tested here through ON_GROUND, so a neutral is measured
+ * against the value it ACTUALLY resolves to on each ground rather than
+ * against its declared default. Testing the default was the whole
+ * mistake: `--gc-steel-dim` means two different colours depending on
+ * where it lands, and a checker that knows only one of them is checking
+ * a colour that is not on the screen.
+ *
+ * They are held to AA_TEXT, not AA_UI. These carry section references,
+ * table headers and captions at 10-13px — that is body text at a small
+ * size, which is the case AA_TEXT exists for.
+ */
+for (const neutral of ["steel", "steelDim"]) {
+  for (const [gName, groundHex] of GROUNDS) {
+    const resolved = G[gName]?.[neutral];
+    if (!resolved) {
+      fail.push(
+        `contrast: ON_GROUND.${gName} declares no mapping for "${neutral}". Every neutral needs one ` +
+          `on every ground, or it silently keeps its default on a ground that default cannot survive.`,
+      );
+      continue;
+    }
+    if (!P[resolved]) {
+      fail.push(`contrast: ON_GROUND.${gName}.${neutral} names "${resolved}", which is not in COLOUR`);
+      continue;
+    }
+    const role = ROLE[gName]?.[neutral];
+    if (!role) {
+      fail.push(
+        `contrast: NEUTRAL_ROLE.${gName} does not say whether "${neutral}" may set type. ` +
+          `Declare it "text" or "non-text" — an undeclared neutral is one nobody has checked.`,
+      );
+      continue;
+    }
+    const floor = role === "text" ? AA_TEXT : AA_UI;
+    const r = contrast(P[resolved], groundHex);
+    if (r < floor) {
+      fail.push(
+        `contrast: ${neutral} on ${gName} resolves to ${resolved} (${P[resolved]}) at ${r.toFixed(2)}:1, ` +
+          `under the ${floor}:1 floor for a "${role}" neutral. ` +
+          (role === "text"
+            ? `This token carries small text — section refs, table headers, captions. Give ${gName} a ` +
+              `darker variant in ON_GROUND rather than moving the default.`
+            : `Even a border or rule has to be visible. Adjust the variant, not the floor.`),
+      );
+    }
+  }
+}
+
+/**
+ * The two neutrals must stay visibly apart on each ground.
+ *
+ * Pulling steelDim up to the AA threshold alone would have collapsed it
+ * onto steel — passing every check above while destroying the hierarchy
+ * the second token exists for. A contrast floor cannot see that; this can.
+ */
+for (const [gName] of GROUNDS) {
+  const a = P[G[gName]?.steel], b = P[G[gName]?.steelDim];
+  if (!a || !b) continue;
+  const sep = contrast(a, b);
+  if (sep < 1.2) {
+    fail.push(
+      `contrast: on ${gName}, steel (${a}) and steelDim (${b}) are only ${sep.toFixed(2)}:1 apart. ` +
+        `Two dim levels that read as one level are one level. Separate them or drop one.`,
     );
   }
 }
@@ -176,12 +306,14 @@ for (const [fg, bg] of TEXT_PAIRS) {
  * ignore the linter. A warning that names the fix, and proves the fix
  * works, is worth reading.
  */
-const VARIANTS = {
-  void: { forest: "forestLight" },
-  paper: { copper: "copperDeep", confirm: "confirmDeep", hazard: "hazardDeep" },
-};
+/* Read from ON_GROUND, not restated. A remap added to the canon is a
+   remap this linter tests, without anyone remembering to tell it. */
+const VARIANTS = { void: G.void, paper: G.paper };
 
 for (const r of results) {
+  /* The neutrals are handled above, against AA_TEXT rather than AA_UI —
+     they carry text, not decoration. They used to be skipped entirely,
+     which is how steelDim shipped at 2.51:1 on paper. */
   if (["steel", "steelDim"].includes(r.fg)) continue;
   if (r.ratio >= AA_UI) continue;
 

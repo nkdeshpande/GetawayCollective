@@ -30,6 +30,32 @@ export const COLOUR = {
   steel: "#6B6B6B",       // Dimmed text
   steelDim: "#9A9A9A",    // Further dimmed
 
+  /*
+   * THE NEUTRALS ALSO NEED A GROUND.
+   *
+   * ON_GROUND below remaps the ACCENTS for paper and always has. The
+   * neutrals were left alone, on the assumption that a mid-grey is
+   * safe against anything. It is not: steelDim is 7.04:1 on void and
+   * 2.51:1 on paper, and every `.sec-ref` and table header on a paper
+   * section was rendering at that second number.
+   *
+   * It was found by measuring a rendered page, not by reading the CSS.
+   * The CSS looked right — .on-paper remapped .dim, .label, .il-5,
+   * .il-6 and .conf one class at a time, and .sec-ref simply was not
+   * on the list. An enumerated list is the wrong mechanism: it fails
+   * silently every time a new class reaches for a neutral, and it will
+   * keep doing so. These are redefined at the VARIABLE inside the
+   * paper scope instead, so the ground fixes the value once and no
+   * caller has to know which ground it is standing on.
+   *
+   * steel darkens further than it strictly needs to (it already passes
+   * at 4.76:1) so that two distinct levels survive. Pulling steelDim
+   * up to the threshold alone would have collapsed both to the same
+   * grey — passing the check and losing the hierarchy it exists for.
+   */
+  steelOnPaper: "#565656",     // steel on paper:    4.76:1 -> 6.55:1
+  steelDimOnPaper: "#6C6C6C",  // steelDim on paper: 2.51:1 -> 4.69:1
+
   // Semantic bands (tied to business meaning, not UX preference)
   forest: "#0C3024",      // Heritage asset class, long-term holdings
   copper: "#C79F6B",      // Currency, capital, revenue, yield (NEVER elsewhere)
@@ -91,10 +117,45 @@ export const COLOUR = {
  * ground-specific choice is made once here instead of remembered
  * everywhere.
  */
+/*
+ * These hold the COLOUR members themselves rather than their names as
+ * strings. A mistyped name used to be `undefined` at runtime; now it
+ * does not compile.
+ */
 export const ON_GROUND = {
-  void: { forest: "forestLight", copper: "copper", confirm: "confirm", hazard: "hazard" },
-  paper: { forest: "forest", copper: "copperDeep", confirm: "confirmDeep", hazard: "hazardDeep",
-           critical: "criticalDeep" },
+  void: {
+    forest: COLOUR.forestLight, copper: COLOUR.copper, confirm: COLOUR.confirm,
+    hazard: COLOUR.hazard, critical: COLOUR.critical,
+    steel: COLOUR.steel, steelDim: COLOUR.steelDim,
+  },
+  paper: {
+    forest: COLOUR.forest, copper: COLOUR.copperDeep, confirm: COLOUR.confirmDeep,
+    hazard: COLOUR.hazardDeep, critical: COLOUR.criticalDeep,
+    steel: COLOUR.steelOnPaper, steelDim: COLOUR.steelDimOnPaper,
+  },
+} as const;
+
+/**
+ * WHICH NEUTRALS MAY SET TYPE, ON WHICH GROUND.
+ *
+ * steel is 3.72:1 on void — above the 3:1 a border or a rule needs, and
+ * below the 4.5:1 type needs. That single fact was already governing the
+ * stylesheet: on void, steel draws hairlines, waterfall bars, dividers
+ * and disabled outlines, and never sets text. It was a convention held
+ * in someone's head. A sweep of all 88 rendered routes confirms it is
+ * kept everywhere, which is exactly why it was worth writing down before
+ * it stopped being kept.
+ *
+ * On paper the same token resolves to steelOnPaper (#565656, 6.55:1) via
+ * ON_GROUND, so there it may set type freely.
+ *
+ * token-lint reads this: "text" is held to 4.5:1, "non-text" to 3:1.
+ * Promoting a pairing to "text" without giving it a variant that earns
+ * the ratio is a build failure, not a judgement call.
+ */
+export const NEUTRAL_ROLE = {
+  void: { steel: "non-text", steelDim: "text" },
+  paper: { steel: "text", steelDim: "text" },
 } as const;
 
 // ── Typography ──────────────────────────────────────────────────────
@@ -173,6 +234,18 @@ export const MODE = {
   immersive: "Full-bleed mode (if used)",
 } as const;
 
+/**
+ * The paper neutrals and accents, as CSS declarations.
+ *
+ * Emitted in TWO places below — the `.on-paper` scope, and the light
+ * colour-scheme root — because a ground arrives by both routes and each
+ * one needs the same remap. Built once here so they cannot drift.
+ */
+const PAPER_SCOPE_VARS = Object.entries(ON_GROUND.paper)
+  .map(([semantic, hex]) =>
+    `  --gc-${semantic.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase())}: ${hex};`)
+  .join("\n");
+
 // ── Export as CSS custom properties (for runtime use) ──────────────────
 export const CSS_VARS = `
 :root {
@@ -186,6 +259,10 @@ export const CSS_VARS = `
   --gc-ink-inverse: ${COLOUR.inkInverse};
   --gc-steel: ${COLOUR.steel};
   --gc-steel-dim: ${COLOUR.steelDim};
+
+  /* The paper scope re-points these; see steelOnPaper. It is emitted
+     from ON_GROUND.paper at the end of this template, so the table
+     stays the single place the mapping is stated. */
 
   --gc-forest: ${COLOUR.forest};
   --gc-copper: ${COLOUR.copper};
@@ -269,6 +346,34 @@ export const CSS_VARS = `
     --gc-currency: var(--gc-copper-deep);
     --gc-settled: var(--gc-confirm-deep);
     --gc-risk: var(--gc-hazard-deep);
+
+    /*
+     * THE PAPER NEUTRALS DELIBERATELY DO NOT APPEAR HERE.
+     *
+     * They were added, and it broke 254 elements across 12 routes.
+     * This block does not make the document paper — body stays void
+     * under every colour scheme, because ground is decided per SECTION
+     * by .on-paper, not per viewer by a media query. Re-pointing the
+     * neutrals at root therefore painted the paper greys onto the void
+     * ground everywhere the page was still dark: #6C6C6C on #0A0A0A is
+     * 2.14:1.
+     *
+     * The aliases above are safe because each is already ground-aware
+     * by construction. A raw neutral is not, and only the .on-paper
+     * scope knows enough to re-point it.
+     */
   }
+}
+
+/* ── The paper scope ───────────────────────────────────────────────
+   Ground inversion is not a media query. A single screen carries both
+   grounds at once — void for narrative, paper for financial assertion
+   — so the paper neutrals have to travel with the SECTION, not with
+   the viewer's colour-scheme preference.
+
+   Generated from ON_GROUND.paper. Adding a token to that table is the
+   whole of adding it here. */
+.on-paper {
+${PAPER_SCOPE_VARS}
 }
 `;
