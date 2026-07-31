@@ -1,0 +1,1460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- user-scalable is NOT disabled. AS-06 collects a PAN number. WCAG 1.4.4. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GC.SYSTEM · Assemblies</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   GC.SYSTEM · ASSEMBLIES — working implementation
+   Tier 05/06 · Wave 6.5 · all 41 corrections applied
+
+   Every colour below is a LOCKED token from constants/tokens.ts.
+   No prototype hex survives. Contrast is stated where it matters.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* Surfaces */
+  --void:#0A0A0A; --void-panel:#121212; --paper:#F2F2F2; --paper-panel:#FFFFFF; --mist:#E8E8E6;
+  /* Text */
+  --ink:#0A0A0A; --ink-inv:#F2F2F2;
+  --steel:#6B6B6B;      /* 3.72 on void — UI/large only, NEVER body */
+  --steel-dim:#9A9A9A;  /* 7.04 on void — the body-size secondary tone */
+  /* Semantic */
+  --forest:#0C3024; --forest-light:#228A68;   /* forest is 1.38 on void; the variant is 4.62 */
+  --copper:#C79F6B; --copper-deep:#8C6635;    /* copper is 2.18 on paper; the variant is 4.61 */
+  --electric:#2061DE; --hazard:#E8672E; --hazard-deep:#BE4915;
+  --critical:#FF3B30; --confirm:#1FAA59; --confirm-deep:#177F43;
+  /* Strokes */
+  --hair:rgba(242,242,242,0.14); --hair-lt:rgba(10,10,10,0.12);
+  /* Type */
+  --f-display:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
+  --f-body:'Inter','Segoe UI Variable',-apple-system,system-ui,sans-serif;
+  --f-mono:'Space Mono',ui-monospace,Consolas,'SFMono-Regular',monospace;
+  --f-editorial:'Playfair Display',Georgia,serif;
+  /* Space — 4px base */
+  --s-3xs:4px;--s-2xs:8px;--s-xs:12px;--s-s:16px;--s-m:24px;--s-l:32px;
+  --s-xl:48px;--s-2xl:64px;--s-3xl:96px;--s-4xl:128px;
+  /* Motion */
+  --e-cinema:cubic-bezier(0.16,1,0.3,1); --e-shutter:cubic-bezier(0.9,0,0.2,1);
+  --d-instant:120ms; --d-fast:240ms; --d-cinema:600ms; --d-commit:3000ms;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+html{background:var(--void);-webkit-text-size-adjust:100%}
+body{
+  background:var(--void); color:var(--ink-inv);
+  font:400 15px/1.55 var(--f-body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  /* Scrollbars stay VISIBLE. They are the only indicator of how much page is left. */
+}
+/* Cursor is the DEFAULT. No `cursor:none`, no `cursor:crosshair` on the
+   universal selector — a crosshair over everything removes the only cue
+   distinguishing what can be clicked from what cannot. */
+button,a,[role="tab"],summary{cursor:pointer}
+
+/* ── Type scale · 13 roles ───────────────────────────────────────── */
+.t-display-xl{font:600 clamp(40px,7vw,56px)/0.95 var(--f-display);letter-spacing:-0.03em;text-wrap:balance}
+.t-display-l{font:600 clamp(32px,5vw,44px)/1.0 var(--f-display);letter-spacing:-0.03em;text-wrap:balance}
+.t-display-m{font:600 32px/1.1 var(--f-display);letter-spacing:-0.02em}
+.t-heading{font:600 24px/1.2 var(--f-display);letter-spacing:-0.02em}
+.t-subheading{font:500 20px/1.3 var(--f-display);letter-spacing:-0.01em}
+.t-body-l{font:400 17px/1.6 var(--f-body)}
+.t-body{font:400 15px/1.55 var(--f-body)}
+.t-body-s{font:400 13px/1.5 var(--f-body)}
+.t-caption{font:400 13px/1.4 var(--f-body)}
+.t-micro{font:400 11px/1.3 var(--f-mono);letter-spacing:0.14em;text-transform:uppercase}
+.t-mono{font:400 15px/1.4 var(--f-mono);font-variant-numeric:tabular-nums}
+.t-mono-s{font:400 11px/1.3 var(--f-mono);letter-spacing:0.06em;font-variant-numeric:tabular-nums}
+.t-editorial{font:400 italic 20px/1.5 var(--f-editorial)}
+
+/* Money is ALWAYS mono, tabular, right-aligned in tables. */
+.money{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--copper);letter-spacing:-0.01em}
+.pct{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.on-paper .money{color:var(--copper-deep)}
+
+/* IL — hierarchy is weight and opacity, never size alone */
+.il-1{font-weight:700;opacity:1}
+.il-2{font-weight:500;opacity:1}
+.il-3{font-weight:400;opacity:.85}
+.il-4{font-weight:400;opacity:.65}
+.il-5{font-weight:400;opacity:1;color:var(--steel-dim)}  /* opacity would drop it below AA */
+.il-6{font-weight:400;opacity:1;color:var(--steel)}
+
+.dim{color:var(--steel-dim)}      /* 7.04 on void — safe at body size */
+.label{color:var(--steel)}        /* 3.72 — micro/UI only */
+.on-panel .label{color:var(--steel-dim)}  /* steel is 3.52 on panel. Body text gets the dim. */
+
+/* ── Focus — visible, instant, no glow ───────────────────────────── */
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--electric);outline-offset:2px}
+.on-paper :focus-visible{outline-color:var(--electric)}
+
+/* ── The Aperture Ring ───────────────────────────────────────────── */
+/* CORRECTION: the prototype set `cursor:none` globally and drew a ring.
+   On touch there is no pointer, so the page had no cursor at all; on a
+   keyboard the ring never arrives. The ring is now an ornament that only
+   exists where a fine pointer does. */
+#ring{position:fixed;top:0;left:0;width:24px;height:24px;border:1px solid var(--forest-light);
+  border-radius:50%;pointer-events:none;z-index:9000;opacity:0;
+  transform:translate(-50%,-50%);
+  transition:width var(--d-fast) var(--e-cinema),height var(--d-fast) var(--e-cinema),
+             border-color var(--d-fast),opacity var(--d-fast)}
+@media (pointer:fine){ body.ring-on #ring{opacity:1} }
+body.over-aperture #ring{width:64px;height:64px;border-color:var(--copper);
+  background:rgba(199,159,107,.06)}
+@media (prefers-reduced-motion:reduce){ #ring{display:none} }
+
+/* ── The Shutter ─────────────────────────────────────────────────── */
+#shutter{position:fixed;inset:0;background:var(--void);z-index:8000;
+  transform:translateY(100%);pointer-events:none}
+#shutter.on{transform:translateY(0);transition:transform var(--d-cinema) var(--e-shutter)}
+#shutter.off{transform:translateY(-100%);transition:transform var(--d-cinema) var(--e-shutter)}
+@media (prefers-reduced-motion:reduce){ #shutter{display:none} }
+
+/* ── Signal Aperture (ticker) ────────────────────────────────────── */
+/* Reports what the SYSTEM did. Distinct from NT-01, which reports what
+   the MEMBER did. A system line may auto-dismiss because nothing was
+   asked of anyone. It is a live region so it is announced, not just seen. */
+#ticker{position:fixed;top:var(--s-s);right:var(--s-s);z-index:7000;
+  display:flex;gap:var(--s-2xs);align-items:center;padding:var(--s-2xs) var(--s-xs);
+  background:var(--void-panel);border:1px solid var(--hair);
+  opacity:0;transform:translateY(-6px);transition:opacity var(--d-fast),transform var(--d-fast)}
+#ticker.on{opacity:1;transform:translateY(0)}
+#ticker .k{color:var(--steel-dim)}
+#ticker.info .v{color:var(--ink-inv)}
+#ticker.ok   .v{color:var(--confirm)}
+#ticker.bad  .v{color:var(--critical)}
+
+/* ── HUD rail ────────────────────────────────────────────────────── */
+.hud{position:sticky;top:0;z-index:600;background:rgba(10,10,10,.94);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
+.hud-in{max-width:1400px;margin:0 auto;padding:var(--s-xs) var(--s-m);
+  display:flex;align-items:center;gap:var(--s-m);flex-wrap:wrap}
+.hud .brand{color:var(--forest-light);white-space:nowrap}
+.hud nav{display:flex;gap:var(--s-3xs);flex-wrap:wrap;margin-left:auto}
+.hud nav button{background:none;border:1px solid transparent;color:var(--steel-dim);
+  font:400 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
+  padding:var(--s-2xs) var(--s-xs);transition:color var(--d-instant),border-color var(--d-instant)}
+.hud nav button:hover{color:var(--ink-inv)}
+.hud nav button[aria-current="page"]{color:var(--ink-inv);border-color:var(--copper)}
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+.wrap{max-width:1400px;margin:0 auto;padding:0 var(--s-m)}
+.narrow{max-width:1100px;margin:0 auto;padding:0 var(--s-m)}
+.measure{max-width:65ch}  /* body copy, 65 characters */
+section[data-sec]{padding:var(--s-2xl) 0;border-bottom:1px solid var(--hair)}
+.on-paper section[data-sec]{border-bottom-color:var(--hair-lt)}
+.sec-head{display:flex;gap:var(--s-s);align-items:baseline;margin-bottom:var(--s-l);flex-wrap:wrap}
+.sec-ref{color:var(--steel);font:400 11px/1 var(--f-mono);letter-spacing:.14em}
+.stack{display:flex;flex-direction:column;gap:var(--s-m)}
+.row{display:flex;gap:var(--s-l);flex-wrap:wrap}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ── GROUND INVERSION ────────────────────────────────────────────── */
+/* Void while the page explains. Paper the moment it asserts. Light means
+   audited. Not decorative: it maps narrative-versus-assertion onto the
+   one property of a screen nobody can miss. */
+.on-paper{background:var(--paper);color:var(--ink)}
+.on-paper .dim{color:var(--steel)}
+.on-paper .label{color:var(--steel)}
+.on-paper .il-5,.on-paper .il-6{color:var(--steel)}
+.ground-note{display:inline-flex;gap:var(--s-2xs);align-items:center;
+  border:1px solid var(--hair-lt);padding:var(--s-3xs) var(--s-2xs);color:var(--steel)}
+
+/* ── AS-01 · Gateway apertures ───────────────────────────────────── */
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--s-s)}
+.ap-gateway{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--void-panel);
+  border:1px solid var(--hair);display:block;width:100%;text-align:left;color:inherit}
+.ap-gateway .plate{position:absolute;inset:0;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--forest) 82%,var(--paper)) 0%,color-mix(in srgb,var(--forest) 55%,var(--void)) 55%,var(--void) 100%);
+  transition:transform 700ms var(--e-cinema),filter 700ms var(--e-cinema);filter:brightness(.8)}
+.ap-gateway:hover .plate,.ap-gateway:focus-visible .plate{transform:scale(1.04);filter:brightness(1)}
+.ap-gateway .scrim{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.94) 0%,rgba(10,10,10,.25) 45%,transparent 100%)}
+.ap-gateway .body{position:absolute;inset:auto 0 0 0;padding:var(--s-m)}
+.ap-gateway h3{font:600 clamp(30px,4.4vw,42px)/0.86 var(--f-display);
+  letter-spacing:-0.04em;text-transform:uppercase}
+/* CORRECTION: the deferred row was `group-hover:opacity-100` and nothing
+   else. It is now revealed by hover, focus-visible OR tap, and it is in
+   the DOM and the accessibility tree at all times. A deferred field that
+   is unreachable is not deferred, it is missing. */
+.deferred{margin-top:var(--s-s);display:flex;gap:var(--s-s);align-items:center;flex-wrap:wrap;
+  opacity:0;transform:translateY(6px);
+  transition:opacity var(--d-fast) var(--e-cinema),transform var(--d-fast) var(--e-cinema)}
+.ap-gateway:hover .deferred,
+.ap-gateway:focus-visible .deferred,
+.ap-gateway[data-open="1"] .deferred{opacity:1;transform:translateY(0)}
+@media (hover:none){ .deferred{opacity:1;transform:none} }
+@media (prefers-reduced-motion:reduce){ .deferred{transition:none;transform:none} }
+.rule-x{width:36px;height:1px;background:var(--steel)}
+
+/* ── Confidence tag ──────────────────────────────────────────────── */
+/* A forward-looking figure rendered identically to a settled one is the
+   easiest way to mislead without stating anything false. */
+.conf{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--hair);
+  padding:2px 6px;color:var(--steel-dim);font:400 10px/1.2 var(--f-mono);
+  letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.on-paper .conf{border-color:var(--hair-lt);color:var(--steel)}
+.conf::before{content:"";width:5px;height:5px;flex:none;background:currentColor}
+.conf.observed::before{background:var(--confirm)}
+.conf.verified::before{background:var(--confirm)}
+.conf.modelled::before{background:var(--electric)}
+.conf.estimated::before{background:var(--hazard)}
+.conf.forecast::before{background:var(--hazard)}
+.conf.pending::before{background:var(--steel)}
+.prov{color:var(--steel-dim)}  /* the provisional mark ~ */
+
+/* ── AS-02 · Console apertures ───────────────────────────────────── */
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;
+  background:var(--hair);border:1px solid var(--hair)}
+.ap-console{background:var(--void-panel);padding:var(--s-m);display:flex;flex-direction:column;
+  gap:var(--s-m);transition:background var(--d-instant)}
+.ap-console{border:1px solid transparent}
+.ap-console:hover{border-color:var(--copper)}
+.ap-console .top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-s)}
+.field{border-bottom:1px solid var(--hair);padding-bottom:var(--s-2xs)}
+.field .k{display:block;margin-bottom:var(--s-3xs);color:var(--steel-dim)}
+.field .v{display:flex;align-items:baseline;gap:var(--s-2xs);flex-wrap:wrap}
+.figure{font:500 22px/1.1 var(--f-mono);font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+/* Valuation source sits DIRECTLY beneath the figure. Never a tooltip. */
+.source{margin-top:var(--s-3xs);color:var(--steel-dim);display:block}
+
+/* Status LED — one of only two places a circle is permitted. Always
+   carries a text label: colour is never the only carrier of meaning. */
+.led{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.led i{width:7px;height:7px;border-radius:50%;flex:none;background:var(--confirm)}
+.led.stale i{background:var(--hazard)}
+.led.stale{color:var(--hazard)}
+.led.live{color:var(--confirm)}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2xs);
+  background:none;border:1px solid var(--hair);color:var(--ink-inv);
+  font:400 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
+  padding:var(--s-xs) var(--s-s);
+  transition:background var(--d-instant),color var(--d-instant),border-color var(--d-instant)}
+.btn:hover{background:var(--ink-inv);color:var(--void);border-color:var(--ink-inv)}
+.btn.primary{background:var(--ink-inv);color:var(--void);border-color:var(--ink-inv)}
+.btn.primary:hover{background:var(--copper);border-color:var(--copper);color:var(--void)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.on-paper .btn{border-color:var(--hair-lt);color:var(--ink)}
+.on-paper .btn:hover{background:var(--ink);color:var(--paper)}
+.on-paper .btn.primary{background:var(--ink);color:var(--paper)}
+
+/* ── AS-03 · Trinity Lens ────────────────────────────────────────── */
+.lens{display:flex;gap:var(--s-xl);border-bottom:1px solid var(--hair);margin-bottom:var(--s-xl)}
+.lens button{background:none;border:none;padding:0 0 var(--s-s);position:relative;
+  color:var(--steel-dim);font:400 11px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  transition:color var(--d-instant)}
+.lens button:hover{color:var(--ink-inv)}
+.lens button[aria-selected="true"]{color:var(--ink-inv)}
+.lens button[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;
+  height:2px;background:var(--copper)}
+[role="tabpanel"][hidden]{display:none}
+.spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--s-m)}
+
+/* ── AS-04 · Waterfall (paper ground) ────────────────────────────── */
+.wf{display:flex;flex-direction:column;gap:2px;min-width:640px}
+.wf-row{display:grid;grid-template-columns:220px 1fr 130px;align-items:center;gap:var(--s-s)}
+.wf-row .k{text-align:right;color:var(--steel)}
+.wf-track{height:38px;background:rgba(10,10,10,.05);position:relative;overflow:hidden}
+.wf-bar{height:100%;width:0;background:var(--ink);display:flex;align-items:center;
+  padding-left:var(--s-xs);color:var(--paper);
+  transition:width 900ms var(--e-cinema)}
+.wf-bar.less{background:var(--steel);color:var(--paper)}
+.wf-bar.senior{background:var(--hazard-deep);color:var(--paper)}
+.wf-bar.out{background:var(--confirm-deep);color:var(--paper)}
+@media (prefers-reduced-motion:reduce){ .wf-bar{transition:none} }
+.wf-row .amt{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;
+  color:var(--copper-deep);font-weight:500}
+.wf-note{grid-column:2/-1;color:var(--steel);padding-bottom:var(--s-2xs)}
+.totals{border-top:2px solid var(--ink);margin-top:var(--s-2xs);padding-top:var(--s-s)}
+/* Axis is never truncated. A bar chart starting anywhere but zero
+   exaggerates every difference on it. */
+
+/* ── Reserve gauge ───────────────────────────────────────────────── */
+.gauge{border:1px solid var(--hair-lt);padding:var(--s-m);max-width:520px}
+.gauge-track{height:10px;background:rgba(10,10,10,.08);position:relative;margin:var(--s-s) 0}
+.gauge-fill{height:100%;background:var(--confirm-deep)}
+.gauge-floor{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--hazard-deep)}
+.gauge-floor::after{content:"Floor";position:absolute;top:-18px;left:-12px;
+  font:400 10px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--hazard-deep)}
+
+/* ── AS-05 · Member console ──────────────────────────────────────── */
+.panel{background:var(--void-panel);border:1px solid var(--hair);padding:var(--s-m)}
+.kv{display:flex;justify-content:space-between;gap:var(--s-s);
+  padding:var(--s-xs) 0;border-bottom:1px solid var(--hair)}
+.kv:last-child{border-bottom:none}
+.kv .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+/* A blocked distribution renders at the SAME weight as a paid one, with
+   its reason. A member whose payment did not land is owed the reason,
+   not a quieter number. */
+.blocked{border-left:2px solid var(--critical);padding-left:var(--s-s)}
+.blocked .why{color:var(--critical);margin-top:var(--s-3xs)}
+.needs-you{border-left:2px solid var(--hazard);padding-left:var(--s-s)}
+
+/* ── AS-06 · Commitment ──────────────────────────────────────────── */
+.commit{display:grid;grid-template-columns:1fr 380px;gap:var(--s-2xl);align-items:start}
+@media (max-width:900px){ .commit{grid-template-columns:1fr;gap:var(--s-l)}
+  .anchor{position:static !important;order:-1} }
+/* The anchor NEVER collapses and never scrolls away. On compact it pins
+   to the top rather than being dropped. */
+.anchor{position:sticky;top:88px;border:1px solid var(--hair);background:var(--void-panel)}
+.anchor .plate{aspect-ratio:4/3;background:linear-gradient(145deg,color-mix(in srgb,var(--forest) 82%,var(--paper)),color-mix(in srgb,var(--forest) 55%,var(--void)));
+  border-bottom:1px solid var(--hair)}
+.anchor .in{padding:var(--s-m)}
+.step{border-left:1px solid var(--hair);padding:0 0 var(--s-l) var(--s-l);position:relative}
+.step:last-child{border-left-color:transparent}
+.step::before{content:"";position:absolute;left:-4px;top:6px;width:7px;height:7px;
+  background:var(--void);border:1px solid var(--steel)}
+.step[data-state="active"]::before{background:var(--copper);border-color:var(--copper)}
+.step[data-state="done"]::before{border-color:var(--copper)}
+/* CORRECTION: completed steps were dimmed to 0.35 with pointer-events
+   none — near 2:1, and unreadable exactly when someone wanted to check
+   what they had typed. They stay legible and re-openable. */
+.step[data-state="done"] .step-body{display:none}
+.step[data-state="done"] .summary{display:block}
+.summary{display:none;color:var(--steel-dim);margin-top:var(--s-3xs)}
+.step[data-state="idle"] .step-body{display:none}
+.step h3{color:var(--steel-dim)}
+.step[data-state="active"] h3,.step[data-state="done"] h3{color:var(--ink-inv)}
+.step-body{margin-top:var(--s-s);max-width:520px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-s);margin-bottom:var(--s-m)}
+.fields .full{grid-column:1/-1}
+@media (max-width:560px){ .fields{grid-template-columns:1fr} }
+.f{display:flex;flex-direction:column;gap:6px}
+/* A real <label>, always. A placeholder standing in for a label
+   disappears exactly when it is needed. */
+.f label{color:var(--steel-dim)}
+.f input{background:transparent;border:1px solid var(--hair);color:var(--ink-inv);
+  padding:11px var(--s-xs);font:400 15px/1.4 var(--f-body);
+  transition:border-color var(--d-instant)}
+.f input:focus-visible{border-color:var(--electric);border-width:2px;padding:10px 11px}
+/* Uppercase ONLY on identifiers that genuinely are uppercase. Never on a
+   name or an email — it renders what someone typed as something they
+   did not type, on the screen where they check what they typed. */
+.f input.ident{font-family:var(--f-mono);text-transform:uppercase}
+.f input[type=email]{text-transform:none}
+.f .help{color:var(--steel-dim)}
+.saved{color:var(--confirm);opacity:0;transition:opacity var(--d-fast)}
+.saved.on{opacity:1}
+
+/* ── The Piston ──────────────────────────────────────────────────── */
+/* A bar, not a ring: a ring implies a duration that loops, and this fires
+   exactly once per commitment. Linear, 3000ms, never eased — an eased
+   fill would misreport how much time is left to let go. */
+.piston{width:100%;max-width:420px;border:1px solid var(--copper);background:transparent;
+  padding:0;position:relative;overflow:hidden;height:52px;color:var(--ink-inv);display:block}
+.piston .fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--copper);
+  transition:width var(--d-commit) linear}
+.piston.arm .fill{width:100%}
+.piston.rel .fill{width:0;transition:width var(--d-instant) linear}
+.piston .cap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;
+  height:100%;font:400 11px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
+  mix-blend-mode:difference;color:#fff}
+.piston .ticks{position:absolute;inset:0;pointer-events:none;display:flex}
+.piston .ticks i{flex:1;border-right:1px solid rgba(242,242,242,.22)}
+.piston .ticks i:last-child{border-right:none}
+.piston[disabled]{border-color:var(--steel);opacity:.5}
+
+/* ── Settled ─────────────────────────────────────────────────────── */
+.settled{border:1px solid var(--confirm);padding:var(--s-m);display:none}
+.settled.on{display:block}
+.settled h3{color:var(--confirm)}
+
+/* ── Data flash — 120ms, step-end. The figure does not animate; the
+   frame around it acknowledges the change. ───────────────────────── */
+@keyframes flash{0%{background:rgba(242,242,242,.9);color:var(--void)}100%{}}
+.flash{animation:flash var(--d-instant) step-end}
+@media (prefers-reduced-motion:reduce){ .flash{animation:none} }
+
+/* ── Correction badges ───────────────────────────────────────────── */
+.fix{display:inline-flex;gap:6px;align-items:baseline;border-left:2px solid var(--forest-light);
+  padding:2px 0 2px var(--s-2xs);color:var(--steel-dim);max-width:70ch}
+.fix b{color:var(--forest-light);font:400 10px/1.3 var(--f-mono);letter-spacing:.1em;
+  text-transform:uppercase;flex:none}
+.on-paper .fix{border-left-color:var(--confirm-deep);color:var(--steel)}
+.on-paper .fix b{color:var(--confirm-deep)}
+.fixes{display:flex;flex-direction:column;gap:var(--s-2xs);margin-top:var(--s-m)}
+
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font:400 11px/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--steel);padding:0 var(--s-s) var(--s-2xs) 0;border-bottom:1px solid var(--hair)}
+td{padding:var(--s-xs) var(--s-s) var(--s-xs) 0;border-bottom:1px solid rgba(242,242,242,.05);
+  vertical-align:top}
+td.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+th.num{text-align:right}
+/* Never blank. A blank cell is indistinguishable from a rendering failure. */
+.empty::after{content:"—";color:var(--steel)}
+
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+
+<div id="ring" aria-hidden="true"></div>
+<div id="shutter" aria-hidden="true"></div>
+<div id="ticker" class="t-mono-s info" role="status" aria-live="polite">
+  <span class="k">SYSTEM</span><span class="v" id="tickerMsg"></span>
+</div>
+
+<header class="hud">
+  <div class="hud-in">
+    <span class="brand t-micro">GC.SYSTEM</span>
+    <span class="t-micro label" id="hudVantage">gateway vantage</span>
+    <nav aria-label="Assemblies">
+      <button data-go="AS-01" aria-current="page">AS-01 Gateway</button>
+      <button data-go="AS-02">AS-02 Console</button>
+      <button data-go="AS-03">AS-03 Property</button>
+      <button data-go="AS-04">AS-04 Capital</button>
+      <button data-go="AS-05">AS-05 Member</button>
+      <button data-go="AS-06">AS-06 Commit</button>
+    </nav>
+  </div>
+</header>
+
+<main id="stage"></main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   ONE BUSINESS OBJECT. SIX VANTAGES.
+
+   This is the whole claim of the aperture system, and it is executed
+   literally: there is exactly one KYOTO record below, and every screen
+   reads from it. No screen holds its own copy of a valuation, so two
+   screens cannot drift into disagreeing — which is precisely how the
+   source prototypes ended up with four different valuations for the
+   same house.
+
+   An aperture may show LESS. It may never show DIFFERENT.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const PROPERTIES = [
+  {
+    ufr0060:"Kyoto House", assetId:"KYO-01",
+    ufr0063:"Kyoto, Japan",                       // jurisdiction
+    ufr0102:124000000_0000n,                      // valuation, minor units ×10^4
+    ufr0103:"Independent appraisal · Nomura Real Estate",
+    ufr0101:"2026-06-30",                         // valued on
+    ufr0061:"Coastal Collection SPV I",           // vehicle
+    ufr0065:"110 m²", ufr0066:"Stabilised", ufr0067:"2025-11-14",
+    ufr0068:"Machiya restoration · timber reuse 78%",
+    yield:{ v:8.4, conf:"modelled" },             // forward-looking. Carries its class.
+    availability:"Q3 2026",
+    telemetry:{ state:"live", at:"2026-07-31 09:12" },
+    units:12, held:1,
+  },
+  {
+    ufr0060:"Swiss Vault", assetId:"CHE-02",
+    ufr0063:"Valais, Switzerland",
+    ufr0102:186500000_0000n,
+    ufr0103:"Independent appraisal · Wüest Partner",
+    ufr0101:"2026-05-31",
+    ufr0061:"Alpine Collection SPV II",
+    ufr0065:"96 m²", ufr0066:"Stabilised", ufr0067:"2024-09-02",
+    ufr0068:"Passive house · certified",
+    yield:{ v:12.1, conf:"modelled" },
+    availability:"Allocated",
+    telemetry:{ state:"stale", at:"2026-07-24 04:40" },
+    units:12, held:0,
+  },
+  {
+    ufr0060:"Oslo Base", assetId:"NOR-03",
+    ufr0063:"Vestland, Norway",
+    ufr0102:98200000_0000n,
+    ufr0103:"Management estimate",                 // weaker source — and it SAYS so
+    ufr0101:"2026-07-15",
+    ufr0061:"Nordic Collection SPV I",
+    ufr0065:"140 m²", ufr0066:"Lease-up", ufr0067:null,
+    ufr0068:"Mass timber · district heat",
+    yield:{ v:9.7, conf:"estimated" },
+    availability:"Q1 2027",
+    telemetry:{ state:"live", at:"2026-07-31 09:08" },
+    units:12, held:0,
+  },
+];
+
+/* ── Money: exact decimal, never a float ─────────────────────────── */
+const SCALE = 4n, FACTOR = 10n ** SCALE;
+function inr(minor, opts = {}){
+  const neg = minor < 0n; let n = neg ? -minor : minor;
+  let whole = n / FACTOR, frac = n % FACTOR;
+  let s = whole.toString();
+  // Indian digit grouping: last three, then pairs.
+  if (s.length > 3){
+    const last3 = s.slice(-3); let rest = s.slice(0, -3), out = [];
+    while (rest.length > 2){ out.unshift(rest.slice(-2)); rest = rest.slice(0, -2); }
+    if (rest) out.unshift(rest);
+    s = out.join(",") + "," + last3;
+  }
+  let str = "₹" + s;
+  if (opts.paise){ str += "." + frac.toString().padStart(4,"0").slice(0,2); }
+  return (neg ? "−" : "") + str;
+}
+const rate = (minor, bps) => (minor * BigInt(bps)) / 10000n;
+
+/* Largest-remainder allocation, so a split sums EXACTLY to the total.
+   The prototype stated a fraction price separately; twelve of its figure
+   came four rupees short of its own valuation. */
+function allocate(total, weights){
+  const sum = weights.reduce((a,b)=>a+b, 0n);
+  if (sum === 0n) return weights.map(()=>0n);
+  const base = weights.map(w => (total * w) / sum);
+  let rem = total - base.reduce((a,b)=>a+b, 0n);
+  const order = weights
+    .map((w,i)=>({ i, r:(total*w) % sum }))
+    .sort((a,b)=> a.r < b.r ? 1 : a.r > b.r ? -1 : 0);
+  for (let k = 0; rem > 0n; k++, rem--) base[order[k % order.length].i] += 1n;
+  return base;
+}
+const fractionPrice = (p) => allocate(p.ufr0102, Array(p.units).fill(1n))[0];
+
+/* ── Provenance ──────────────────────────────────────────────────── */
+const CONF = {
+  observed:"Observed", verified:"Verified", modelled:"Modelled",
+  estimated:"Estimated", forecast:"Forecast", pending:"Pending",
+};
+const PROVISIONAL = new Set(["modelled","estimated","forecast","pending"]);
+const tag = (c) => `<span class="conf ${c}">${CONF[c]}</span>`;
+/* A provisional figure carries the mark. Trust it the same amount. */
+const pctOf = (y) => `<span class="pct">${PROVISIONAL.has(y.conf)?'<span class="prov">~</span>':''}${y.v.toFixed(1)}%</span>`;
+
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ── Signal aperture ─────────────────────────────────────────────── */
+let tickT;
+function signal(msg, kind="info"){
+  const el = document.getElementById("ticker");
+  document.getElementById("tickerMsg").textContent = msg;
+  el.className = "t-mono-s on " + kind;
+  clearTimeout(tickT);
+  /* Auto-dismisses because nothing was asked of anyone. A member-facing
+     toast (NT-01) does not; it reports what the MEMBER did. */
+  tickT = setTimeout(()=> el.classList.remove("on"), 4200);
+}
+
+/* ── Value transitions ───────────────────────────────────────────── */
+/* SCRAMBLE IS BARRED ON MONEY. For ~400ms a scramble renders digits that
+   were never the value, in the currency tone, at the currency's size,
+   indistinguishable from digits that are. Money COUNTS: every frame is a
+   real number between two real numbers. */
+function countTo(el, fromMinor, toMinor, ms=700){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches){
+    el.textContent = inr(toMinor); return;
+  }
+  const t0 = performance.now(), d = toMinor - fromMinor;
+  (function step(t){
+    const k = Math.min(1, (t - t0)/ms);
+    const eased = 1 - Math.pow(1-k, 3);
+    el.textContent = inr(fromMinor + (d * BigInt(Math.round(eased*10000))) / 10000n);
+    if (k < 1) requestAnimationFrame(step);
+    else { el.textContent = inr(toMinor); flash(el); }
+  })(t0);
+}
+/* Scramble stays permitted on an IDENTIFIER, which has no magnitude to
+   misread. The rule was never about the animation. */
+function scramble(el, final){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches){ el.textContent = final; return; }
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
+  let i = 0;
+  const iv = setInterval(()=>{
+    el.textContent = final.split("").map((c,n)=> n < i ? final[n] : chars[Math.floor(Math.random()*chars.length)]).join("");
+    if (i >= final.length){ clearInterval(iv); el.textContent = final; }
+    i += 1/2;
+  }, 30);
+}
+function flash(el){ el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE APERTURES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* AP-01 · gateway · narrow.
+   Withholds valuation, source, vehicle, lifecycle, reserve — not because
+   they are secret, but because a figure shown without its provenance
+   invites a decision it cannot support. */
+function AP01(p, i){
+  return `
+  <button class="ap-gateway" data-ap data-idx="${i}" data-open="0"
+          aria-expanded="false" aria-label="${esc(p.ufr0060)}, ${esc(p.ufr0063)}. Show indicative figures.">
+    <span class="plate" aria-hidden="true"></span>
+    <span class="scrim" aria-hidden="true"></span>
+    <span class="body">
+      <span class="t-micro label" style="display:block;margin-bottom:var(--s-2xs)">${esc(p.ufr0063)}</span>
+      <h3>${esc(p.ufr0060.replace(" ","<br>"))}</h3>
+      <span class="deferred">
+        <span class="t-mono-s" style="color:var(--copper)">YIELD ${pctOf(p.yield)}</span>
+        ${tag(p.yield.conf)}
+        <span class="rule-x" aria-hidden="true"></span>
+        <span class="t-mono-s">${esc(p.availability)}</span>
+      </span>
+    </span>
+  </button>`;
+}
+
+/* AP-02 · capital · wide. Withholds nothing, and the linter enforces
+   that literally: it may not omit a field any narrower vantage shows. */
+function AP02(p){
+  const live = p.telemetry.state === "live";
+  return `
+  <article class="ap-console on-panel">
+    <div class="top">
+      <span class="t-mono-s label">${esc(p.assetId)}</span>
+      <span class="led ${live?"live":"stale"} t-mono-s">
+        <i aria-hidden="true"></i>${live?"Live":"Stale"}
+      </span>
+    </div>
+
+    <div class="field">
+      <span class="k t-micro">Valuation</span>
+      <span class="v"><span class="figure money" data-val="${p.ufr0102}">${inr(p.ufr0102)}</span></span>
+      <!-- Source directly beneath the figure. Never a tooltip. -->
+      <span class="source t-mono-s">${esc(p.ufr0103)} · ${esc(p.ufr0101)}</span>
+    </div>
+
+    <div class="field">
+      <span class="k t-micro">Yield</span>
+      <span class="v"><span class="figure" style="color:var(--copper)">${pctOf(p.yield)}</span>${tag(p.yield.conf)}</span>
+    </div>
+
+    <div class="field">
+      <span class="k t-micro">Fraction · 1 of ${p.units}</span>
+      <!-- DERIVED by largest remainder. Never stated separately. -->
+      <span class="v"><span class="t-mono money">${inr(fractionPrice(p))}</span></span>
+      <span class="source t-mono-s">Derived from valuation</span>
+    </div>
+
+    <div class="field">
+      <span class="k t-micro">Vehicle · Lifecycle</span>
+      <span class="v t-body-s">${esc(p.ufr0061)} · ${esc(p.ufr0066)}</span>
+    </div>
+
+    <div class="field" style="border-bottom:none">
+      <span class="k t-micro">Land · Commitments</span>
+      <span class="v t-body-s">${esc(p.ufr0065)} · ${esc(p.ufr0068)}</span>
+    </div>
+
+    <div class="row" style="gap:var(--s-2xs)">
+      <button class="btn" data-sync="${esc(p.assetId)}">Sync telemetry</button>
+      <button class="btn">Ledger</button>
+    </div>
+  </article>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE ASSEMBLIES
+   ═══════════════════════════════════════════════════════════════════ */
+
+const A = {};
+
+/* ── AS-01 · THE GATEWAY GRID ────────────────────────────────────── */
+A["AS-01"] = { vantage:"gateway", render: () => `
+<section data-sec="AS-01.a">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-ref">AS-01.a</span>
+      <span class="t-micro label">Signal Line</span>
+    </div>
+    <h1 class="t-display-xl">The Collection</h1>
+    <p class="t-body-l dim measure" style="margin-top:var(--s-s)">
+      Three properties, held in three vehicles. What you can see here is what can be said
+      without a figure needing its provenance alongside it.
+    </p>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> No figure appears above the grid. A headline number here would be a
+        claim made before any context exists.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-01.b">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-ref">AS-01.b</span>
+      <span class="t-micro label">Property Grid · AP-01 narrow</span>
+    </div>
+    <div class="grid-3">${PROPERTIES.map(AP01).join("")}</div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The indicative figures are revealed on hover, on keyboard focus, or by
+        tap — and they are in the DOM and the accessibility tree at all times. The source revealed them on
+        hover alone, so on a phone they never appeared at all.</span>
+      <span class="fix"><b>Fixed</b> Yield carries its confidence class. A forward-looking figure rendered
+        identically to a settled one is the easiest way to mislead without stating anything false.</span>
+      <span class="fix"><b>Fixed</b> Labels use steel #6B6B6B (3.72:1) and steelDim #9A9A9A (7.04:1). The
+        source used #4A4A4A at 2.25:1, which carried every label it had.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-01.c" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-01.c</span><span class="t-micro label">Into the Console</span></div>
+    <p class="t-body measure dim" style="margin-bottom:var(--s-m)">
+      Valuation, valuation source, vehicle and lifecycle state are not withheld here because they are
+      private. They are withheld because each one needs its provenance beside it, and there is no room
+      for that on a photograph. All of it is one navigation away.
+    </p>
+    <button class="btn primary" data-go="AS-02">Open the console →</button>
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> The gateway never dead-ends. A route to a wider aperture is not a
+        widening — it is the narrow aperture saying where the rest is kept.</span>
+    </div>
+  </div>
+</section>` };
+
+/* ── AS-02 · THE PROPERTY CONSOLE ────────────────────────────────── */
+const RESERVE = { held: 4820000_0000n, floor: 3960000_0000n, basis:"6 months non-operational fixed obligations" };
+
+A["AS-02"] = { vantage:"capital", render: () => {
+  const pctFull = Number(RESERVE.held * 100n / (RESERVE.floor * 2n));
+  return `
+<section data-sec="AS-02.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-02.a</span><span class="t-micro label">Console Header</span></div>
+    <h1 class="t-display-l">Capital Console</h1>
+    <!-- The reserve band appears BEFORE any property does. A console that
+         shows assets before it shows whether the vehicle can meet its
+         obligations has the priority backwards. -->
+    <div class="panel on-panel" style="margin-top:var(--s-m);max-width:560px">
+      <span class="t-micro label">Reserve position</span>
+      <div class="row" style="gap:var(--s-xl);margin-top:var(--s-2xs);align-items:baseline">
+        <div>
+          <div class="figure money">${inr(RESERVE.held)}</div>
+          <span class="t-mono-s dim">held</span>
+        </div>
+        <div>
+          <div class="figure" style="color:var(--steel-dim)">${inr(RESERVE.floor)}</div>
+          <span class="t-mono-s dim">floor</span>
+        </div>
+        <span class="led live t-mono-s"><i aria-hidden="true"></i>Above floor</span>
+      </div>
+      <p class="t-body-s dim" style="margin-top:var(--s-s)">
+        The floor is the greater of ${RESERVE.basis} or the Board minimum. It is not NAV-linked.
+      </p>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The source showed <code>MAINTENANCE FUND: HEALTHY</code>. That is an
+        assessment presented as an observation — a member could not tell whether it meant "above floor" or
+        "someone thought it looked fine". The figure and its floor are stated.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-02.b">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-02.b</span><span class="t-micro label">Asset Grid · AP-02 wide</span></div>
+    <div class="grid-4">${PROPERTIES.map(AP02).join("")}</div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> Press <em>Sync telemetry</em>. The valuation COUNTS from its previous
+        value — every intermediate frame is a real number between two real numbers. The source scrambled
+        random digits into it for ~400ms, in the currency tone, at the currency's size.</span>
+      <span class="fix"><b>Fixed</b> The asset identifier still scrambles. An identifier has no magnitude
+        to misread, so the effect is legitimate there.</span>
+      <span class="fix"><b>Fixed</b> The live indicator is a dot <em>and</em> a word. Colour is never the
+        only carrier of meaning — and the source's dot was #123C32 at 1.63:1, invisible either way.</span>
+      <span class="fix"><b>Fixed</b> Oslo Base reads <em>Management estimate</em> where the others read an
+        independent appraisal. The source rendered every valuation identically regardless of who produced
+        it; the weaker source now says so, in the same place, at the same size.</span>
+    </div>
+  </div>
+</section>` } };
+
+/* ── AS-03 · THE PROPERTY MASTHEAD ───────────────────────────────── */
+A["AS-03"] = { vantage:"space", render: () => {
+  const p = PROPERTIES[0];
+  return `
+<section data-sec="AS-03.a" style="padding-top:0">
+  <div style="position:relative;min-height:52vh;display:flex;align-items:flex-end;
+              background:linear-gradient(145deg,color-mix(in srgb,var(--forest) 82%,var(--paper)) 0%,color-mix(in srgb,var(--forest) 55%,var(--void)) 55%,var(--void) 100%)">
+    <div style="position:absolute;inset:0;
+                background:linear-gradient(to top,var(--void) 0%,transparent 60%)"></div>
+    <div class="wrap" style="position:relative;padding-bottom:var(--s-xl);padding-top:var(--s-3xl)">
+      <span class="t-micro label">${esc(p.ufr0063)} · ${esc(p.assetId)}</span>
+      <h1 class="t-display-xl" style="margin-top:var(--s-2xs)">${esc(p.ufr0060)}</h1>
+    </div>
+  </div>
+  <div class="wrap" style="padding-top:var(--s-m)">
+    <span class="fix"><b>Fixed</b> One figure maximum over the image, and never the valuation — FB-1 bars
+      full-bleed treatment wherever numeric data is read.</span>
+  </div>
+</section>
+
+<section data-sec="AS-03.b">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-03.b</span><span class="t-micro label">Trinity Lens</span></div>
+
+    <div class="lens" role="tablist" aria-label="Trinity Lens">
+      <button role="tab" aria-selected="true"  aria-controls="lp-space"   id="lt-space">Space</button>
+      <button role="tab" aria-selected="false" aria-controls="lp-capital" id="lt-capital" tabindex="-1">Capital</button>
+      <button role="tab" aria-selected="false" aria-controls="lp-time"    id="lt-time" tabindex="-1">Time</button>
+    </div>
+
+    <div role="tabpanel" id="lp-space" aria-labelledby="lt-space" tabindex="0">
+      <div class="spec">
+        <div class="field"><span class="k t-micro">Land area</span><span class="v t-mono">${esc(p.ufr0065)}</span></div>
+        <div class="field"><span class="k t-micro">Lifecycle</span><span class="v t-mono">${esc(p.ufr0066)}</span></div>
+        <div class="field"><span class="k t-micro">Stabilised</span><span class="v t-mono">${esc(p.ufr0067)}</span></div>
+        <div class="field"><span class="k t-micro">Jurisdiction</span><span class="v t-mono">${esc(p.ufr0063)}</span></div>
+        <div class="field"><span class="k t-micro">Commitments</span><span class="v t-body-s">${esc(p.ufr0068)}</span></div>
+        <div class="field"><span class="k t-micro">Vehicle</span><span class="v t-body-s">${esc(p.ufr0061)}</span></div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="lp-capital" aria-labelledby="lt-capital" tabindex="0" hidden>
+      <!-- The Capital LENS renders the SPACE aperture's capital fields and
+           routes to the console for the rest. A visitor standing at the
+           space vantage does not receive console disclosure because a tab
+           happens to be labelled Capital. -->
+      <div class="spec">
+        <div class="field">
+          <span class="k t-micro">Valuation</span>
+          <span class="v t-mono money">${inr(p.ufr0102)}</span>
+          <span class="source t-mono-s">${esc(p.ufr0103)} · ${esc(p.ufr0101)}</span>
+        </div>
+        <div class="field">
+          <span class="k t-micro">Fraction · 1 of ${p.units}</span>
+          <span class="v t-mono money">${inr(fractionPrice(p))}</span>
+          <span class="source t-mono-s">Derived from valuation</span>
+        </div>
+        <div class="field">
+          <span class="k t-micro">Indicative yield</span>
+          <span class="v">${pctOf(p.yield)} ${tag(p.yield.conf)}</span>
+        </div>
+      </div>
+      <p class="t-body dim measure" style="margin-top:var(--s-m)">
+        Reserve position, waterfall detail, telemetry and the ledger sit at the capital vantage.
+      </p>
+      <button class="btn" data-go="AS-02" style="margin-top:var(--s-s)">Open the console →</button>
+      <div class="fixes">
+        <span class="fix"><b>Fixed</b> Fraction price is derived by largest-remainder from the valuation.
+          The source stated it separately at ₹1,03,33,333 — twelve of which is four rupees short of its
+          own valuation.</span>
+        <span class="fix"><b>Fixed</b> Removed <code>Digital Custody · Blockchain Backed Equity</code>.
+          Nothing in the canon tokenises equity, and how ownership is recorded is a legal representation,
+          not a design flourish. The share register is the record.</span>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="lp-time" aria-labelledby="lt-time" tabindex="0" hidden>
+      <p class="t-body-l measure">
+        Entitlement begins at settlement, not at acceptance. A holder of one twelfth draws
+        <strong>30 nights</strong> a year, scheduled from the member vantage.
+      </p>
+      <p class="t-body dim measure" style="margin-top:var(--s-s)">
+        Nothing is scheduled against this property from where you are standing, because nothing is held
+        from here.
+      </p>
+      <div class="fixes">
+        <span class="fix"><b>Fixed</b> The source read <code>Awaiting Console Synchronisation. Calendar
+          availability pending Digital Custody lock.</code> — a system failure described in the voice of a
+          system feature. A reader could not tell whether the calendar was broken or simply not yet
+          theirs.</span>
+      </div>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> Lenses, not steps. Tabs imply peers; a numbered sequence would imply an
+        order that does not exist. Arrow keys move between them.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-03.c" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-03.c</span><span class="t-micro label">Thesis</span></div>
+    <p class="t-editorial measure">
+      A restored machiya on the quiet edge of Higashiyama, held in a vehicle that owns the land outright
+      and answers to the people who funded it.
+    </p>
+    <p class="t-body dim measure" style="margin-top:var(--s-m)">
+      Scarcity here is structural rather than manufactured: the ward permits no new construction on the
+      lot line, and the restoration reused 78% of the original timber.
+    </p>
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> The one place editorial italic is permitted, once.</span>
+    </div>
+  </div>
+</section>` } };
+
+/* ── AS-04 · THE CAPITAL EXPLAINER ───────────────────────────────── */
+/* SIX STAGES. The source had four and no debt service — a waterfall that
+   omits the senior claim shows a distributable figure that is not
+   distributable. */
+const GROSS = 4000000_0000n;
+const WATERFALL = [
+  { k:"Gross revenue",       bps:10000, cls:"",       note:"Operating revenue for the period, before any claim." },
+  { k:"1 · Operating Partner", bps:3500, cls:"less",   note:"Contracted operator. Measured on SLA." },
+  { k:"2 · Brand",             bps:1000, cls:"less",   note:"Brand & Digital Co. licence." },
+  { k:"3 · Admin Reserve",     bps:250,  cls:"less",
+    note:"2.5% OF REVENUE — not a fee on asset value. A fee on asset value rewards holding assets at a high mark." },
+  { k:"4 · Sinking Fund",      bps:250,  cls:"less",   note:"CapEx reserve. Funds replacement before failure." },
+  { k:"5 · Debt Service",      bps:1200, cls:"senior",
+    note:"THE SENIOR CLAIM. Absent entirely from the source prototype." },
+  { k:"6 · To Partners",       bps:3800, cls:"out",
+    note:"No preferred return, no catch-up, no carry. Blocked if the reserve would fall below its floor." },
+];
+
+/* The six claims must account for ALL of gross revenue. A waterfall that
+   sums to anything but 100% has revenue going somewhere it does not name,
+   which is the same defect as omitting a stage — it is just harder to see.
+   Checked at render, not assumed. */
+(function closes(){
+  const bps = WATERFALL.slice(1).reduce((n,s)=> n + s.bps, 0);
+  const rupees = WATERFALL.slice(1).reduce((n,s)=> n + rate(GROSS, s.bps), 0n);
+  if (bps !== 10000 || rupees !== GROSS){
+    throw new Error(`Waterfall does not close: ${bps}bps, ${rupees} of ${GROSS}`);
+  }
+})();
+
+A["AS-04"] = { vantage:"capital", render: () => `
+<section data-sec="AS-04.a">
+  <div class="narrow">
+    <span class="t-micro label">The Capital Explainer</span>
+    <h1 class="t-display-xl" style="margin-top:var(--s-2xs)">Where the money goes,<br>and in what order.</h1>
+    <p class="t-body-l dim measure" style="margin-top:var(--s-m)">
+      You are last in line behind five claims. Here they are, in order, with what each one takes.
+    </p>
+  </div>
+</section>
+
+<section data-sec="AS-04.b">
+  <div class="narrow">
+    <div class="sec-head"><span class="sec-ref">AS-04.b</span><span class="t-micro label">The Structure</span></div>
+    <div class="row" style="gap:var(--s-s);align-items:stretch">
+      ${[["Getaway Collective","Governs. Holds NO equity in the vehicles it governs."],
+         ["The Vehicle","Owns the land title. Funded and owned by its Members."],
+         ["Sensory Getaways","Operates under contract. Measured on SLA."]]
+        .map(([h,b]) => `<div class="panel on-panel" style="flex:1 1 240px">
+          <h3 class="t-subheading">${h}</h3>
+          <p class="t-body-s dim" style="margin-top:var(--s-2xs)">${b}</p></div>`).join("")}
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The source diagram put the platform in the ownership chain at
+        <code>100% OWNERSHIP</code>. §27 as amended: Governance Without Ownership.</span>
+      <span class="fix"><b>Fixed</b> Removed <code>We do not sell membership. We sell Equity.</code> —
+        the Member Law makes membership the consequence of holding equity. They were never
+        alternatives.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GROUND INVERSION ══════════════════════════════════════════════
+     The page has been dark while it explained. It is about to make a
+     financial claim, so it flips to paper. Light means audited. -->
+<section data-sec="AS-04.c" class="on-paper">
+  <div class="narrow">
+    <div class="sec-head">
+      <span class="sec-ref">AS-04.c</span>
+      <span class="t-micro" style="color:var(--steel)">The Waterfall · six stages</span>
+      <span class="ground-note t-mono-s">Paper ground · assertion</span>
+    </div>
+    <div class="scroll-x">
+      <div class="wf" id="wf">
+        ${WATERFALL.map((s,i)=>{
+          const amt = rate(GROSS, s.bps);
+          return `<div class="wf-row">
+            <span class="k t-mono-s">${esc(s.k)}</span>
+            <div class="wf-track"><div class="wf-bar ${s.cls}" data-w="${s.bps/100}"
+              ><span class="t-mono-s">${(s.bps/100).toFixed(1)}%</span></div></div>
+            <span class="amt t-mono-s">${inr(amt)}</span>
+          </div>
+          <div class="wf-row"><span></span><span class="wf-note t-body-s">${esc(s.note)}</span></div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The source had four stages and no debt service. A waterfall that
+        omits the senior claim shows a distributable figure that is not distributable.</span>
+      <span class="fix"><b>Fixed</b> The source charged <code>MANAGEMENT FEE (AUM) 2.5% · Calculated on
+        Asset Value</code>. A fee on asset value and a reserve on revenue are different instruments with
+        different incentives.</span>
+      <span class="fix"><b>Rule</b> The axis starts at zero and is never truncated. Bars animate only
+        where reduced motion is not requested, and there is no white flash.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-04.d" class="on-paper" style="border-bottom:none">
+  <div class="narrow">
+    <div class="sec-head"><span class="sec-ref">AS-04.d</span>
+      <span class="t-micro" style="color:var(--steel)">The Floor</span></div>
+    <div class="gauge">
+      <span class="t-micro" style="color:var(--steel)">Reserve against floor</span>
+      <div class="gauge-track">
+        <div class="gauge-fill" style="width:60.8%"></div>
+        <div class="gauge-floor" style="left:50%"></div>
+      </div>
+      <div class="row" style="justify-content:space-between;gap:var(--s-s)">
+        <span class="t-mono-s money">${inr(RESERVE.held)} held</span>
+        <span class="t-mono-s" style="color:var(--steel)">${inr(RESERVE.floor)} floor</span>
+      </div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-s)">
+        Stage 6 does not run if paying it would take the reserve below this line. The floor is the
+        greater of six months' non-operational fixed obligations or the Board minimum, and it is
+        <strong>not NAV-linked</strong>.
+      </p>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The source stated <code>AVG TIME TO EXIT: 14 DAYS</code> and
+        <code>TARGET: 8-10%</code> as flat assertions. An average with no window and no basis is a
+        forecast wearing the typography of a fact.</span>
+    </div>
+  </div>
+</section>` };
+
+/* ── AS-05 · THE MEMBER CONSOLE ──────────────────────────────────── */
+const POSITION = {
+  value: 8450000_0000n, sinceEntry: 450000_0000n,
+  next: { amount: 62400_0000n, due:"2026-09-30", state:"scheduled" },
+  blocked: { amount: 18200_0000n, period:"Q2 2026", reason:
+    "Not paid. Stage 5 debt service was unmet in the period, so stage 6 did not run." },
+};
+
+A["AS-05"] = { vantage:"member", render: () => `
+<section data-sec="AS-05.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-05.a</span><span class="t-micro label">Position</span></div>
+    <h1 class="t-display-l">Your position</h1>
+
+    <div class="row" style="margin-top:var(--s-m);gap:var(--s-s);align-items:stretch">
+      <div class="panel on-panel" style="flex:1 1 260px">
+        <span class="t-micro label">Total position</span>
+        <div class="t-display-m money" style="margin-top:var(--s-2xs)">${inr(POSITION.value)}</div>
+        <span class="t-mono-s" style="color:var(--confirm)">▲ ${inr(POSITION.sinceEntry)} since entry</span>
+        <div style="margin-top:var(--s-2xs)">${tag("verified")}</div>
+      </div>
+
+      <div class="panel on-panel" style="flex:1 1 260px">
+        <span class="t-micro label">Next distribution</span>
+        <div class="t-display-m money" style="margin-top:var(--s-2xs)">${inr(POSITION.next.amount)}</div>
+        <span class="t-mono-s dim">Due ${POSITION.next.due}</span>
+        <div style="margin-top:var(--s-2xs)">${tag("forecast")}</div>
+      </div>
+
+      <!-- A blocked distribution renders at the SAME weight as a paid one,
+           with its reason. A member whose payment did not land is owed the
+           reason, not a quieter number. -->
+      <div class="panel on-panel blocked" style="flex:1 1 260px">
+        <span class="t-micro label">${POSITION.blocked.period}</span>
+        <div class="t-display-m money" style="margin-top:var(--s-2xs)">${inr(POSITION.blocked.amount)}</div>
+        <span class="t-mono-s why">Not paid</span>
+        <p class="t-body-s dim" style="margin-top:var(--s-2xs)">${esc(POSITION.blocked.reason)}</p>
+      </div>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> The blocked quarter is the same size, the same weight and in the same
+        row as the paid one. Its reason is stated, not linked to.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-05.b">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-05.b</span>
+      <span class="t-micro label">Assets · AP-04 member vantage</span></div>
+    <div class="panel on-panel" style="max-width:640px">
+      <div class="kv"><span class="t-body">${esc(PROPERTIES[0].ufr0060)}</span>
+        <span class="v t-body-s dim">${esc(PROPERTIES[0].ufr0063)}</span></div>
+      <div class="kv"><span class="label t-micro">Units held</span>
+        <span class="v">1 of ${PROPERTIES[0].units}</span></div>
+      <div class="kv"><span class="label t-micro">Voting rights</span>
+        <span class="v">8.33% · equity-weighted</span></div>
+      <div class="kv"><span class="label t-micro">Entitlement</span>
+        <span class="v">30 nights / year</span></div>
+      <div class="kv"><span class="label t-micro">Distributions to date</span>
+        <span class="v money">${inr(1248000_0000n)}</span></div>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> Removed <code>VIEW CCTV FEED</code> and the image-feed panel. The
+        asset is a place people occupy; a live camera feed shipped to equity holders is surveillance of
+        occupants, and no invariant permits it. Condition comes from inspection records and the
+        reserve.</span>
+      <span class="fix"><b>Fixed</b> Voting is equity-weighted, never per-capita.</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="AS-05.d" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-05.d</span><span class="t-micro label">Documents</span></div>
+    <div class="panel on-panel scroll-x">
+      <table>
+        <thead><tr><th>Document</th><th>State</th><th class="num">Filed</th></tr></thead>
+        <tbody>
+          <tr><td>Shareholder Agreement · v2</td>
+              <td><span class="led live t-mono-s"><i aria-hidden="true"></i>Signed</span></td>
+              <td class="num t-mono-s">2026-02-11</td></tr>
+          <tr><td>Ownership Certificate</td>
+              <td><span class="led live t-mono-s"><i aria-hidden="true"></i>Issued</span></td>
+              <td class="num t-mono-s">2026-02-14</td></tr>
+          <tr class="needs-you"><td>Tax Invoice · Q1</td>
+              <td><span class="t-mono-s" style="color:var(--hazard)">Needs your signature</span></td>
+              <td class="num empty"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> The unsigned document that needs the member is the only thing on this
+        screen permitted the hazard tone. A blank cell renders as an em dash, because a blank cell is
+        indistinguishable from a rendering failure.</span>
+      <span class="fix"><b>Fixed</b> The whole source screen was named after a term §25 forbids as an
+        actor noun, and its sidebar carried two more Operating Company concerns. Stewardship survives as
+        philosophy; the actor noun does not.</span>
+      <span class="fix"><b>Fixed</b> Removed the fixed scanline overlay at 10% opacity, which lowered the
+        contrast of every figure beneath it by a margin nobody had measured — on body copy that was
+        already at 3.55:1.</span>
+    </div>
+  </div>
+</section>` };
+
+/* ── AS-06 · THE COMMITMENT FLOW ─────────────────────────────────── */
+A["AS-06"] = { vantage:"capital", render: () => {
+  const p = PROPERTIES[0], frac = fractionPrice(p), commitment = 100000_0000n;
+  return `
+<section data-sec="AS-06" style="border-bottom:none">
+  <div class="wrap">
+    <div class="commit">
+      <div>
+        <h1 class="t-display-l" style="margin-bottom:var(--s-l)">Commitment</h1>
+
+        <div class="step" id="st1" data-state="active">
+          <span class="t-mono-s label">01</span>
+          <h3 class="t-heading">Your details</h3>
+          <span class="summary t-body-s" id="sum1"></span>
+          <div class="step-body">
+            <p class="t-body-s dim" style="margin-bottom:var(--s-s)">Used for the share register.</p>
+            <div class="fields">
+              <div class="f full"><label for="nm">Full legal name</label>
+                <input id="nm" type="text" autocomplete="name">
+                <span class="help t-body-s">As it appears on your identity document.</span></div>
+              <div class="f full"><label for="em">Email address</label>
+                <input id="em" type="email" autocomplete="email"></div>
+            </div>
+            <button class="btn primary" data-step="2">Continue</button>
+            <span class="saved t-mono-s" id="sv1">Draft saved</span>
+          </div>
+        </div>
+
+        <div class="step" id="st2" data-state="idle">
+          <span class="t-mono-s label">02</span>
+          <h3 class="t-heading">Accreditation</h3>
+          <span class="summary t-body-s" id="sum2"></span>
+          <div class="step-body">
+            <p class="t-body-s dim" style="margin-bottom:var(--s-s)">
+              PR-01. Resumable — each field saves on blur, so a partial application survives the session.
+            </p>
+            <div class="fields">
+              <div class="f full"><label for="pan">PAN</label>
+                <input id="pan" class="ident" type="text" inputmode="text" autocomplete="off"
+                       aria-describedby="panh">
+                <span class="help t-body-s" id="panh">Ten characters. Uppercase because a PAN is
+                  uppercase — your name and email are not transformed.</span></div>
+            </div>
+            <button class="btn primary" data-step="3">Continue</button>
+            <span class="saved t-mono-s" id="sv2">Draft saved</span>
+          </div>
+        </div>
+
+        <div class="step" id="st3" data-state="idle">
+          <span class="t-mono-s label">03</span>
+          <h3 class="t-heading">Review</h3>
+          <span class="summary t-body-s" id="sum3"></span>
+          <div class="step-body">
+            <div class="panel on-panel" style="max-width:520px">
+              <div class="kv"><span class="label t-micro">Property</span>
+                <span class="v t-body-s">${esc(p.ufr0060)}</span></div>
+              <div class="kv"><span class="label t-micro">Fraction</span>
+                <span class="v">1 of ${p.units}</span></div>
+              <div class="kv"><span class="label t-micro">Fraction price</span>
+                <span class="v money">${inr(frac)}</span></div>
+              <div class="kv"><span class="label t-micro">Committed now</span>
+                <span class="v money">${inr(commitment)}</span></div>
+              <div class="kv"><span class="label t-micro">Balance on settlement</span>
+                <span class="v money">${inr(frac - commitment)}</span></div>
+              <div class="kv"><span class="label t-micro">Completion window</span>
+                <span class="v">15 working days</span></div>
+            </div>
+            <p class="t-body-s dim" style="margin:var(--s-s) 0;max-width:520px">
+              Nothing new appears after this point. A term first shown on a confirmation screen was not
+              disclosed, it was sprung.
+            </p>
+            <button class="btn primary" data-step="4">Proceed to commit</button>
+          </div>
+        </div>
+
+        <div class="step" id="st4" data-state="idle" style="border-left-color:transparent">
+          <span class="t-mono-s label">04</span>
+          <h3 class="t-heading">Commit</h3>
+          <div class="step-body">
+            <p class="t-body-s dim" style="margin-bottom:var(--s-s)">
+              Press and hold for three seconds. Release to cancel.
+            </p>
+            <button class="piston" id="piston" aria-describedby="pd">
+              <span class="fill" aria-hidden="true"></span>
+              <span class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <span class="cap" id="pcap">Hold to commit ${inr(commitment)}</span>
+            </button>
+            <p class="t-body-s dim" id="pd" style="margin-top:var(--s-2xs);max-width:420px">
+              This is the only control that moves capital. No undo follows it.
+            </p>
+
+            <div class="settled" id="settled">
+              <h3 class="t-subheading">Commitment recorded</h3>
+              <p class="t-body" style="margin-top:var(--s-2xs);max-width:520px">
+                ${inr(commitment)} committed against ${esc(p.ufr0060)}. Your state is
+                <strong>Committed</strong>.
+              </p>
+              <p class="t-body-s dim" style="margin-top:var(--s-s);max-width:520px">
+                You are not yet a Member. The Member Law fires on <strong>settlement</strong> — when the
+                balance of ${inr(frac - commitment)} clears, within 15 working days. Governance rights
+                begin then, not now.
+              </p>
+            </div>
+
+            <div class="fixes">
+              <span class="fix"><b>Fixed</b> The source declared <code>STATUS: RESERVED</code> and then
+                said no further action was required — which was not true, and "Reserved" is not a state
+                in the lifecycle.</span>
+              <span class="fix"><b>Fixed</b> No recovery strip follows the piston. M-06 is only ever
+                offered for genuinely reversible actions.</span>
+              <span class="fix"><b>Fixed</b> Completion window is 15 working days. The source said 14. A
+                day short on a regulatory window is a breach, not a rounding.</span>
+              <span class="fix"><b>Fixed</b> Completed steps stay legible and re-openable. The source
+                dimmed them to 0.35 opacity with pointer-events none — near 2:1, unreadable exactly when
+                someone wanted to check what they had typed.</span>
+              <span class="fix"><b>Fixed</b> <code>user-scalable=no</code> removed. It disabled pinch zoom
+                on a form collecting a PAN number.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The anchor never collapses and never scrolls away. -->
+      <aside class="anchor" aria-label="What you are committing to">
+        <div class="plate"></div>
+        <div class="in on-panel">
+          <span class="t-micro label" id="anchorState">Awaiting commitment</span>
+          <h2 class="t-heading" style="margin:var(--s-2xs) 0">${esc(p.ufr0060)}</h2>
+          <p class="t-body-s dim">${esc(p.ufr0063)}</p>
+          <div style="margin-top:var(--s-s)">
+            <div class="kv"><span class="label t-micro">Commitment</span>
+              <span class="v money">${inr(commitment)}</span></div>
+            <div class="kv"><span class="label t-micro">Fraction price</span>
+              <span class="v money">${inr(frac)}</span></div>
+            <div class="kv"><span class="label t-micro">Entitlement</span>
+              <span class="v">30 nights / yr</span></div>
+            <div class="kv"><span class="label t-micro">Indicative yield</span>
+              <span class="v">${pctOf(p.yield)}</span></div>
+          </div>
+          <div style="margin-top:var(--s-2xs)">${tag(p.yield.conf)}</div>
+          <p class="t-body-s dim" style="margin-top:var(--s-s)">
+            Yield is modelled, not promised. It carries its class here and everywhere else it appears.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>` } };
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════════════ */
+const stage = document.getElementById("stage");
+let current = null;
+
+function mount(id){
+  const a = A[id]; if (!a) return;
+  current = id;
+  stage.innerHTML = a.render();
+  document.getElementById("hudVantage").textContent = a.vantage + " vantage";
+  document.querySelectorAll(".hud nav button").forEach(b =>
+    b.hasAttribute("aria-current") && b.dataset.go !== id ? b.removeAttribute("aria-current")
+      : b.dataset.go === id && b.setAttribute("aria-current","page"));
+  window.scrollTo(0,0);
+  wire();
+}
+
+function go(id){
+  if (id === current) return;
+  const sh = document.getElementById("shutter");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce){ mount(id); signal("Vantage " + A[id].vantage); return; }
+  sh.className = "on";
+  setTimeout(()=>{
+    mount(id);
+    signal("Vantage " + A[id].vantage);
+    sh.className = "off";
+    setTimeout(()=> sh.className = "", 600);
+  }, 600);
+}
+
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]");
+  if (g){ go(g.dataset.go); return; }
+});
+
+/* ── Per-assembly wiring ─────────────────────────────────────────── */
+function wire(){
+  /* AP-01 — tap toggles the deferred row. Hover and focus already do. */
+  stage.querySelectorAll("[data-ap]").forEach(el => {
+    el.addEventListener("click", () => {
+      const open = el.dataset.open === "1" ? "0" : "1";
+      el.dataset.open = open;
+      el.setAttribute("aria-expanded", open === "1");
+    });
+  });
+
+  /* AP-02 — sync telemetry. Money COUNTS. Identifier scrambles. */
+  stage.querySelectorAll("[data-sync]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".ap-console");
+      const fig = card.querySelector(".figure.money");
+      const id  = card.querySelector(".top .t-mono-s");
+      const from = BigInt(fig.dataset.val);
+      const to = from + (from * 37n) / 10000n;   // +0.37%
+      signal("Fetching telemetry…");
+      btn.disabled = true;
+      setTimeout(()=>{
+        scramble(id, btn.dataset.sync);
+        countTo(fig, from, to);
+        fig.dataset.val = to;
+        setTimeout(()=>{ signal("Telemetry synced", "ok"); btn.disabled = false; }, 800);
+      }, 500);
+    });
+  });
+
+  /* AS-03 — Trinity Lens. Arrow keys move between lenses. */
+  const tabs = [...stage.querySelectorAll('[role="tab"]')];
+  const select = (t) => {
+    tabs.forEach(x => {
+      const on = x === t;
+      x.setAttribute("aria-selected", on);
+      x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute("aria-controls")).hidden = !on;
+    });
+  };
+  tabs.forEach((t,i) => {
+    t.addEventListener("click", () => select(t));
+    t.addEventListener("keydown", e => {
+      const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      const n = tabs[(i + d + tabs.length) % tabs.length];
+      select(n); n.focus();
+    });
+  });
+
+  /* AS-04 — waterfall bars fill from zero, unless reduced motion. */
+  const bars = stage.querySelectorAll(".wf-bar");
+  if (bars.length){
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fill = () => bars.forEach((b,i) => {
+      const w = b.dataset.w + "%";
+      if (reduce){ b.style.width = w; return; }
+      setTimeout(()=> b.style.width = w, i * 90);
+    });
+    new IntersectionObserver((es, o) => es.forEach(en => {
+      if (en.isIntersecting){ fill(); o.disconnect(); }
+    }), { threshold:.25 }).observe(document.getElementById("wf"));
+  }
+
+  /* AS-06 — steps, autosave, piston. */
+  stage.querySelectorAll("[data-step]").forEach(b => {
+    b.addEventListener("click", () => {
+      const next = +b.dataset.step, cur = next - 1;
+      const c = document.getElementById("st"+cur);
+      if (cur === 1){
+        const nm = (document.getElementById("nm").value || "—").trim();
+        const em = (document.getElementById("em").value || "—").trim();
+        document.getElementById("sum1").textContent = nm + " · " + em;
+      }
+      if (cur === 2){
+        document.getElementById("sum2").textContent =
+          "PAN " + ((document.getElementById("pan").value || "—").trim().toUpperCase());
+      }
+      if (cur === 3) document.getElementById("sum3").textContent = "Reviewed";
+      c.dataset.state = "done";
+      document.getElementById("st"+next).dataset.state = "active";
+      document.getElementById("st"+next).scrollIntoView({behavior:"smooth", block:"center"});
+    });
+  });
+
+  /* Autosave per field on blur — what makes PR-01 genuinely resumable. */
+  stage.querySelectorAll(".f input").forEach(inp => {
+    inp.addEventListener("blur", () => {
+      if (!inp.value.trim()) return;
+      const sv = inp.closest(".step").querySelector(".saved");
+      if (!sv) return;
+      sv.classList.add("on");
+      setTimeout(()=> sv.classList.remove("on"), 1800);
+    });
+  });
+
+  /* THE PISTON. Linear, 3000ms, never eased — an eased fill would
+     misreport how much time is left to let go. */
+  const piston = document.getElementById("piston");
+  if (piston){
+    let timer = null, done = false;
+    const cap = document.getElementById("pcap");
+    const start = (e) => {
+      if (done) return;
+      if (e.type === "keydown" && e.key !== " " && e.key !== "Enter") return;
+      if (e.type === "keydown" && e.repeat) return;
+      e.preventDefault();
+      piston.classList.remove("rel"); piston.classList.add("arm");
+      cap.textContent = "Hold…";
+      timer = setTimeout(fire, 3000);
+    };
+    const stop = () => {
+      if (done || timer === null) return;
+      clearTimeout(timer); timer = null;
+      piston.classList.remove("arm"); piston.classList.add("rel");
+      cap.textContent = "Cancelled — hold to commit";
+    };
+    const fire = () => {
+      done = true; timer = null;
+      cap.textContent = "Committed";
+      piston.disabled = true;
+      document.getElementById("settled").classList.add("on");
+      document.getElementById("st4").dataset.state = "done";
+      const st = document.getElementById("anchorState");
+      st.textContent = "Committed · awaiting settlement";
+      st.style.color = "var(--copper)";
+      signal("Commitment recorded — settlement pending", "ok");
+      document.getElementById("settled").scrollIntoView({behavior:"smooth", block:"center"});
+    };
+    piston.addEventListener("pointerdown", start);
+    piston.addEventListener("keydown", start);
+    ["pointerup","pointerleave","pointercancel","keyup","blur"].forEach(ev =>
+      piston.addEventListener(ev, stop));
+  }
+
+  /* Aperture ring grows over an aperture. */
+  stage.querySelectorAll("[data-ap], .ap-console, .btn, .piston").forEach(el => {
+    el.addEventListener("mouseenter", ()=> document.body.classList.add("over-aperture"));
+    el.addEventListener("mouseleave", ()=> document.body.classList.remove("over-aperture"));
+  });
+}
+
+/* ── The ring, on fine pointers only ─────────────────────────────── */
+if (matchMedia("(pointer: fine)").matches &&
+    !matchMedia("(prefers-reduced-motion: reduce)").matches){
+  const ring = document.getElementById("ring");
+  document.addEventListener("pointermove", e => {
+    if (e.pointerType !== "mouse") return;
+    document.body.classList.add("ring-on");
+    ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
+  }, { passive:true });
+}
+
+mount("AS-01");
+signal("Aperture system online");
+</script>
+</body>
+</html>

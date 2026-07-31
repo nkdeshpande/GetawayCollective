@@ -1,0 +1,698 @@
+<title>Getaway Collective — The Periodic Build Plan</title>
+
+<style>
+:root{
+  /* ── Canonical GC tokens (GC-DesignSystem-Canonical v3.0) ───────────── */
+  --gc-void:#0A0A0A; --gc-void-panel:#121212;
+  --gc-paper:#F2F2F2; --gc-paper-panel:#FFFFFF; --gc-mist:#E8E8E6;
+  --gc-steel:#6B6B6B; --gc-steel-dim:#9A9A9A;
+  --gc-forest:#0C3024; --gc-copper:#C79F6B; --gc-electric:#2061DE;
+  --gc-hazard:#E8672E; --gc-critical:#FF3B30; --gc-confirm:#1FAA59;
+  --gc-radius:0px;
+  --gc-stroke-idle:1px; --gc-stroke-active:2px;
+  --gc-ease-cinema:cubic-bezier(0.16,1,0.3,1);
+  --gc-ease-shutter:cubic-bezier(0.9,0,0.2,1);
+  --gc-dur-instant:120ms; --gc-dur-fast:240ms; --gc-dur-cinema:600ms;
+  --sp-3xs:4px; --sp-2xs:8px; --sp-xs:12px; --sp-s:16px; --sp-m:24px;
+  --sp-l:32px; --sp-xl:48px; --sp-2xl:64px; --sp-3xl:96px;
+
+  --f-display:'Outfit','Segoe UI Variable Display','Inter',-apple-system,
+              'Helvetica Neue',Arial,sans-serif;
+  --f-body:'Inter','Segoe UI Variable Text','Segoe UI',-apple-system,
+           'Helvetica Neue',Arial,sans-serif;
+  --f-mono:'Space Mono','Cascadia Mono',ui-monospace,'Consolas',
+           'SFMono-Regular',monospace;
+  --f-edit:'Playfair Display',Georgia,'Times New Roman',serif;
+
+  /* ── Semantic surface mapping (light = Concrete mode) ────────────────── */
+  --bg:var(--gc-paper); --bg-panel:var(--gc-paper-panel);
+  --bg-sunken:var(--gc-mist);
+  --fg:var(--gc-void); --fg-dim:var(--gc-steel);
+  --hairline:rgba(10,10,10,0.12);
+  --hairline-strong:rgba(10,10,10,0.28);
+  --band-permanent:var(--gc-forest);
+  --band-active:var(--gc-electric);
+  --band-govern:#B34A17;              /* hazard, darkened for AA on paper */
+  --band-surface:var(--gc-void);
+  --seal:var(--gc-confirm);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:var(--gc-void); --bg-panel:var(--gc-void-panel);
+    --bg-sunken:#000000;
+    --fg:var(--gc-paper); --fg-dim:var(--gc-steel-dim);
+    --hairline:rgba(242,242,242,0.14);
+    --hairline-strong:rgba(242,242,242,0.34);
+    --band-permanent:#3E9C7C;         /* forest, lifted for AA on void */
+    --band-active:#5B92F0;            /* electric, lifted for AA on void */
+    --band-govern:var(--gc-hazard);
+    --band-surface:var(--gc-paper);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:var(--gc-void); --bg-panel:var(--gc-void-panel); --bg-sunken:#000000;
+  --fg:var(--gc-paper); --fg-dim:var(--gc-steel-dim);
+  --hairline:rgba(242,242,242,0.14); --hairline-strong:rgba(242,242,242,0.34);
+  --band-permanent:#3E9C7C; --band-active:#5B92F0;
+  --band-govern:var(--gc-hazard); --band-surface:var(--gc-paper);
+}
+:root[data-theme="light"]{
+  --bg:var(--gc-paper); --bg-panel:var(--gc-paper-panel); --bg-sunken:var(--gc-mist);
+  --fg:var(--gc-void); --fg-dim:var(--gc-steel);
+  --hairline:rgba(10,10,10,0.12); --hairline-strong:rgba(10,10,10,0.28);
+  --band-permanent:var(--gc-forest); --band-active:var(--gc-electric);
+  --band-govern:#B34A17; --band-surface:var(--gc-void);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:var(--f-body); font-size:15px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1440px; margin:0 auto; padding:var(--sp-xl) var(--sp-m) var(--sp-3xl)}
+@media(min-width:900px){.wrap{padding:var(--sp-3xl) var(--sp-xl) var(--sp-3xl)}}
+
+/* ── Type ───────────────────────────────────────────────────────────── */
+h1,h2,h3,h4{font-family:var(--f-display); font-weight:700; text-wrap:balance;
+  margin:0; letter-spacing:-0.02em; line-height:1.08}
+h1{font-size:clamp(2.1rem,5.2vw,3.9rem); text-transform:uppercase; letter-spacing:-0.03em}
+h2{font-size:clamp(1.35rem,2.6vw,1.85rem); text-transform:uppercase; letter-spacing:0.01em}
+h3{font-size:1.05rem; letter-spacing:0}
+.label{font-family:var(--f-mono); font-size:0.66rem; text-transform:uppercase;
+  letter-spacing:0.16em; color:var(--fg-dim)}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.epigraph{font-family:var(--f-edit); font-style:italic; font-size:1.12rem;
+  color:var(--fg-dim); max-width:62ch; line-height:1.55}
+a{color:var(--band-active)}
+:focus-visible{outline:var(--gc-stroke-active) solid var(--band-active); outline-offset:2px}
+
+/* ── Masthead ───────────────────────────────────────────────────────── */
+.mast{border-top:var(--gc-stroke-active) solid var(--fg);
+  padding-top:var(--sp-s); display:flex; flex-direction:column; gap:var(--sp-s)}
+.mast-rule{display:flex; justify-content:space-between; gap:var(--sp-s);
+  flex-wrap:wrap; border-bottom:var(--gc-stroke-idle) solid var(--hairline);
+  padding-bottom:var(--sp-xs)}
+.mast h1{margin-top:var(--sp-2xs)}
+.stat-row{display:grid; gap:var(--gc-stroke-idle); margin-top:var(--sp-l);
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  background:var(--hairline); border:var(--gc-stroke-idle) solid var(--hairline)}
+.stat{background:var(--bg); padding:var(--sp-s) var(--sp-s) var(--sp-xs)}
+.stat .v{font-family:var(--f-mono); font-size:1.55rem; font-weight:700;
+  font-variant-numeric:tabular-nums; line-height:1.1; display:block}
+.stat .k{margin-top:var(--sp-3xs)}
+
+/* ── Section frame ──────────────────────────────────────────────────── */
+section{margin-top:var(--sp-3xl)}
+.sec-head{display:flex; align-items:baseline; gap:var(--sp-s);
+  border-bottom:var(--gc-stroke-active) solid var(--fg);
+  padding-bottom:var(--sp-2xs); margin-bottom:var(--sp-m); flex-wrap:wrap}
+.sec-head .label{margin-left:auto}
+.note{max-width:74ch; color:var(--fg-dim); margin:0 0 var(--sp-m)}
+
+/* ── Periodic grid ──────────────────────────────────────────────────── */
+.table-scroll{overflow-x:auto; padding-bottom:var(--sp-xs);
+  border:var(--gc-stroke-idle) solid var(--hairline); background:var(--bg-sunken)}
+.ptable{
+  display:grid; min-width:1180px;
+  grid-template-columns:112px repeat(12,1fr);
+  gap:var(--gc-stroke-idle); padding:var(--gc-stroke-idle);
+}
+.ph{ /* column header */
+  padding:var(--sp-2xs) var(--sp-3xs) var(--sp-xs); background:var(--bg);
+  border-bottom:var(--gc-stroke-active) solid var(--fg);
+  display:flex; flex-direction:column; gap:2px; min-height:64px;
+}
+.ph .ly{font-family:var(--f-mono); font-size:0.72rem; font-weight:700; letter-spacing:0.06em}
+.ph .nm{font-size:0.68rem; line-height:1.25; color:var(--fg-dim)}
+.ph.corner{border-bottom-color:var(--fg); background:var(--bg)}
+.pw{ /* row header */
+  background:var(--bg); padding:var(--sp-2xs);
+  border-right:var(--gc-stroke-active) solid var(--fg);
+  display:flex; flex-direction:column; justify-content:center; gap:2px;
+}
+.pw .wv{font-family:var(--f-mono); font-size:0.9rem; font-weight:700}
+.pw .wt{font-size:0.62rem; line-height:1.2; color:var(--fg-dim);
+  text-transform:uppercase; letter-spacing:0.06em}
+
+.el{
+  background:var(--bg-panel); border:var(--gc-stroke-idle) solid var(--hairline);
+  border-radius:var(--gc-radius);
+  padding:var(--sp-2xs) var(--sp-3xs) var(--sp-3xs); min-height:82px;
+  display:flex; flex-direction:column; gap:2px; text-align:left;
+  font:inherit; color:inherit; cursor:pointer; position:relative;
+  transition:background var(--gc-dur-instant) linear,
+             border-color var(--gc-dur-instant) linear,
+             transform var(--gc-dur-fast) var(--gc-ease-shutter);
+}
+.el::before{content:""; position:absolute; inset:0 auto 0 0; width:3px;
+  background:var(--band); }
+.el:hover,.el:focus-visible{background:var(--bg-sunken);
+  border-color:var(--hairline-strong); transform:translateY(-2px); z-index:2}
+.el[aria-pressed="true"]{border-color:var(--band); border-width:var(--gc-stroke-active)}
+.el .num{font-family:var(--f-mono); font-size:0.6rem; color:var(--fg-dim);
+  font-variant-numeric:tabular-nums; padding-left:var(--sp-3xs)}
+.el .sym{font-family:var(--f-display); font-size:1.5rem; font-weight:700;
+  line-height:1; letter-spacing:-0.03em; color:var(--band); padding-left:var(--sp-3xs)}
+.el .nm{font-size:0.63rem; line-height:1.22; margin-top:auto;
+  padding-left:var(--sp-3xs); color:var(--fg)}
+.el.b-surface .sym{color:var(--band-surface)}
+
+/* band assignment */
+.b-permanent{--band:var(--band-permanent)}
+.b-active{--band:var(--band-active)}
+.b-govern{--band:var(--band-govern)}
+.b-surface{--band:var(--band-surface)}
+
+/* ── Legend ─────────────────────────────────────────────────────────── */
+.legend{display:grid; gap:var(--sp-s); margin-top:var(--sp-m);
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.lg{border-left:3px solid var(--c); padding-left:var(--sp-2xs)}
+.lg h4{font-size:0.8rem; text-transform:uppercase; letter-spacing:0.1em;
+  font-family:var(--f-mono); font-weight:700}
+.lg p{margin:var(--sp-3xs) 0 0; font-size:0.8rem; color:var(--fg-dim); line-height:1.45}
+
+/* ── Detail readout ─────────────────────────────────────────────────── */
+.readout{margin-top:var(--sp-s); border:var(--gc-stroke-idle) solid var(--hairline);
+  background:var(--bg-panel); padding:var(--sp-s) var(--sp-m); min-height:96px}
+.readout .hd{display:flex; align-items:baseline; gap:var(--sp-2xs); flex-wrap:wrap}
+.readout .sym{font-family:var(--f-display); font-size:1.5rem; font-weight:700;
+  letter-spacing:-0.03em}
+.readout .nm{font-family:var(--f-display); font-size:1.1rem; font-weight:700}
+.readout p{margin:var(--sp-2xs) 0 0; max-width:78ch; font-size:0.9rem}
+.readout .meta{display:flex; gap:var(--sp-s); flex-wrap:wrap; margin-top:var(--sp-2xs)}
+
+/* ── Wave dossiers ──────────────────────────────────────────────────── */
+.waves{display:flex; flex-direction:column; gap:var(--gc-stroke-idle);
+  background:var(--hairline); border-block:var(--gc-stroke-idle) solid var(--hairline)}
+.wave{background:var(--bg); padding:var(--sp-m) 0}
+.wave-top{display:flex; align-items:baseline; gap:var(--sp-s); flex-wrap:wrap;
+  margin-bottom:var(--sp-2xs)}
+.wave-id{font-family:var(--f-mono); font-size:0.95rem; font-weight:700;
+  color:var(--band); letter-spacing:0.04em}
+.wave-sub{color:var(--fg-dim); font-size:0.85rem}
+.wave-grid{display:grid; gap:var(--sp-m) var(--sp-l); margin-top:var(--sp-s);
+  grid-template-columns:1fr}
+@media(min-width:820px){.wave-grid{grid-template-columns:1.15fr 1fr 1fr}}
+.blk h4{font-family:var(--f-mono); font-size:0.64rem; text-transform:uppercase;
+  letter-spacing:0.16em; color:var(--fg-dim); font-weight:700;
+  border-bottom:var(--gc-stroke-idle) solid var(--hairline);
+  padding-bottom:var(--sp-3xs); margin-bottom:var(--sp-2xs)}
+.blk ul{margin:0; padding-left:1.15em; font-size:0.87rem; line-height:1.55}
+.blk li{margin-bottom:var(--sp-3xs)}
+.blk p{margin:0; font-size:0.87rem; line-height:1.55}
+.gate{border-left:3px solid var(--band); padding-left:var(--sp-2xs); font-size:0.87rem}
+.chips{display:flex; flex-wrap:wrap; gap:var(--sp-3xs); margin-top:var(--sp-2xs)}
+.chip{font-family:var(--f-mono); font-size:0.62rem; letter-spacing:0.06em;
+  border:var(--gc-stroke-idle) solid var(--hairline-strong);
+  padding:2px var(--sp-3xs); white-space:nowrap}
+.chip.k{border-color:var(--band); color:var(--band)}
+
+table.matrix{width:100%; border-collapse:collapse; font-size:0.82rem;
+  font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+table.matrix th,table.matrix td{border:var(--gc-stroke-idle) solid var(--hairline);
+  padding:var(--sp-2xs) var(--sp-xs); text-align:left; vertical-align:top}
+table.matrix th{background:var(--bg-sunken); text-transform:uppercase;
+  font-size:0.64rem; letter-spacing:0.12em; color:var(--fg-dim)}
+.tbl-scroll{overflow-x:auto; border:var(--gc-stroke-idle) solid var(--hairline)}
+
+footer{margin-top:var(--sp-3xl); border-top:var(--gc-stroke-active) solid var(--fg);
+  padding-top:var(--sp-s); display:flex; justify-content:space-between;
+  gap:var(--sp-s); flex-wrap:wrap}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important; animation:none!important}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <div class="mast-rule">
+      <span class="label">Getaway Collective™ · Enterprise Architecture</span>
+      <span class="label mono">Build Plan · Rev 1 · 30 Jul 2026</span>
+    </div>
+    <h1>The Periodic<br>Build Plan</h1>
+    <p class="epigraph">Sixty-three modules, twelve constitutional layers, ten waves. Purpose
+      before semantics, semantics before execution — never technology before truth.</p>
+    <div class="mast-rule" style="border-bottom:none;padding-bottom:0">
+      <span class="label">Derived from: Enterprise Constitution (L1–L12) · Business Objects
+        BO-01…BO-12 · Workspaces WS-01…WS-10 · Elements E01…E12 ·
+        GC-DesignSystem-Canonical v3.0</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><span class="v">63</span><span class="k label">Modules</span></div>
+      <div class="stat"><span class="v">12</span><span class="k label">Layers L1–L12</span></div>
+      <div class="stat"><span class="v">10</span><span class="k label">Waves</span></div>
+      <div class="stat"><span class="v">12</span><span class="k label">Business objects</span></div>
+      <div class="stat"><span class="v">10</span><span class="k label">Workspaces</span></div>
+      <div class="stat"><span class="v">0px</span><span class="k label">Corner radius</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <h2>The Table</h2>
+      <span class="label">Columns = constitutional layer · Rows = build wave · Select a module</span>
+    </div>
+    <p class="note">Every module occupies exactly one cell: one layer, one wave. A module may
+      not be built before the modules above it in its own column, and may not be built before
+      its wave opens. The sparse diagonal is the plan — early waves settle the permanent
+      layers, later waves spend them.</p>
+
+    <div class="table-scroll">
+      <div class="ptable" id="ptable" role="grid" aria-label="Periodic build plan"></div>
+    </div>
+
+    <div class="readout" id="readout" aria-live="polite">
+      <div class="hd"><span class="label">Readout</span></div>
+      <p>Select any module in the table to read its charter, dependency and exit test.</p>
+    </div>
+
+    <div class="legend">
+      <div class="lg" style="--c:var(--band-permanent)">
+        <h4>Permanent · L1–L4</h4>
+        <p>Constitution, semantics, graph, lifecycle. Written once, versioned constitutionally,
+          never refactored casually. Forest — the heritage band.</p>
+      </div>
+      <div class="lg" style="--c:var(--band-surface)">
+        <h4>Surface · L7</h4>
+        <p>The design system itself, built as a ten-step ladder: tokens → colour → type →
+          atoms → molecules → organisms → assemblies → shell → canvas → sovereign.</p>
+      </div>
+      <div class="lg" style="--c:var(--band-active)">
+        <h4>Active · L5–L11</h4>
+        <p>Capability, journey, cognition, events, data, runtime. Electric — the action and
+          state-transition band. These layers change every release.</p>
+      </div>
+      <div class="lg" style="--c:var(--band-govern)">
+        <h4>Governance · L12</h4>
+        <p>One governance module in every wave without exception. Hazard — no wave closes
+          without its control in place.</p>
+      </div>
+      <div class="lg" style="--c:var(--gc-copper)">
+        <h4>Copper · reserved</h4>
+        <p>Copper carries currency and yield only. It appears nowhere in this plan because
+          this plan moves no capital. The restraint is the system working.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Ten Waves</h2>
+      <span class="label">Entry gate · Modules · Exit conditions</span>
+    </div>
+    <p class="note">A wave is not a sprint. It is a constitutional state transition: the entry
+      gate is a proof obligation, the exit condition is a test another team can run without you.
+      Waves 7 and 8 are the only pair that may run concurrently, and only because they share
+      no layer below L6.</p>
+    <div class="waves" id="waves"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Scale &amp; Parallelism</h2>
+      <span class="label">Where the plan absorbs growth</span>
+    </div>
+    <p class="note">Modularity is only real if adding the eleventh workspace or the thirteenth
+      business object costs a wave-local change, not a re-plan. These are the four seams that
+      make that true.</p>
+    <div class="tbl-scroll">
+      <table class="matrix">
+        <thead><tr>
+          <th>Seam</th><th>Add one of these</th><th>Waves touched</th><th>Layers touched</th>
+          <th>Cost</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>Object seam</td><td>Business object BO-13+</td><td>W2, W3</td>
+            <td>L2, L3, L4, L10</td><td>Registry entry + relationship constitution + migration</td></tr>
+          <tr><td>Workspace seam</td><td>Workspace WS-11+</td><td>W7 or W8</td>
+            <td>L6, L7, L10</td><td>Assembly composition only — no new atoms</td></tr>
+          <tr><td>Capability seam</td><td>Capability / automation</td><td>W5, W8</td>
+            <td>L5, L9</td><td>Command + event contract, no surface change</td></tr>
+          <tr><td>Surface seam</td><td>Organism / financial object</td><td>W6</td>
+            <td>L7</td><td>Composition of existing atoms; zero new tokens</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span class="label">Getaway Collective™ · Constitutional build plan · Authority: Enterprise Governance (L12)</span>
+    <span class="label mono">63 modules · 10 waves</span>
+  </footer>
+</div>
+
+<script>
+/* ── Layer definitions (columns) ─────────────────────────────────────── */
+const LAYERS=[
+ ["L1","Enterprise Constitution","permanent"],
+ ["L2","Business Objects","permanent"],
+ ["L3","Relationships & Graph","permanent"],
+ ["L4","State & Lifecycle","permanent"],
+ ["L5","Business Capabilities","active"],
+ ["L6","Experiences & Journeys","active"],
+ ["L7","Applications & Surface","surface"],
+ ["L8","Intelligence & Knowledge","active"],
+ ["L9","Events & Automation","active"],
+ ["L10","Data & Persistence","active"],
+ ["L11","Infrastructure & Runtime","active"],
+ ["L12","Governance & Evolution","govern"]
+];
+
+/* ── Wave definitions (rows) ─────────────────────────────────────────── */
+const WAVES=[
+ {w:1,t:"Foundation Lock",band:"permanent",
+  auth:"Business · Enterprise Constitution",
+  gate:"Nothing. W1 is the origin — it may not cite any prior artefact, only intent.",
+  aim:"Freeze what exists and what may never exist. One vocabulary, one token source, one invariant register. Every later wave quotes this wave; no later wave amends it without a constitutional amendment record.",
+  does:["Ratify the Enterprise Constitution and the twelve-layer authority map.",
+        "Publish the approved business-object taxonomy — the closed list of enterprise nouns.",
+        "Extract GC-DesignSystem-Canonical v3.0 into a machine-readable token package: colour ontology, 4px spacing, IL-1…IL-6, metric grammar, motion, density and visual modes.",
+        "Open the invariant register with the founding invariants (Studio requires Property; Ledger is append-only; Knowledge is immutable; every capability publishes events; every decision has provenance)."],
+  exit:["Token package builds and is consumed by a throwaway page; no hard-coded hex, no non-zero radius, no off-scale spacing anywhere in it.",
+        "Vocabulary linter fails a commit containing Room, Customer, Booking or Housekeeping.",
+        "Every invariant has an owning layer and a named test, even if unimplemented.",
+        "A reviewer can answer \"may this exist?\" for any proposed noun using only W1 artefacts."],
+  par:"Sequential. Blocks all nine remaining waves."},
+
+ {w:2,t:"Semantic Core",band:"permanent",
+  auth:"Domain · Business Object Authority",
+  gate:"W1 taxonomy ratified and vocabulary linter live in CI.",
+  aim:"Turn twelve approved nouns into twelve canonical field registries. This is where ambiguity dies: one definition of Identity, Property, Studio, Ownership, Ledger — cited by every workspace and every API for the life of the enterprise.",
+  does:["Author BO-01 Identity through BO-12 Knowledge to the universal template: mission, classification, field registry, security model, object graph, constitutional contract.",
+        "Publish the canonical field registry as the single source of names, types, units and nullability.",
+        "Bind the colour ontology to the object model — asset class, capital, action, risk — so semantics select colour, never preference.",
+        "Ratify enterprise policy: privacy, security, accessibility, sustainability, ethics, luxury standard."],
+  exit:["No field name appears twice with two meanings across all twelve registries.",
+        "Every registry field carries a unit and a provenance class.",
+        "Colour cannot be selected in code except through a semantic token.",
+        "Two engineers independently model the same entity and produce the same field set."],
+  par:"Sequential. Blocks W3–W10."},
+
+ {w:3,t:"Graph & Lifecycle",band:"permanent",
+  auth:"Enterprise Graph · State Machine Authority",
+  gate:"All twelve field registries signed off; zero name collisions.",
+  aim:"Objects that cannot connect are a spreadsheet. This wave makes the enterprise a graph and gives every object a lawful life: which relationships may exist, which transitions are legal, and what may never be silently deleted.",
+  does:["Author the twelve relationship constitutions (BO-REL-01…12): owns, references, creates, consumes, produces, depends-on, upstream, downstream.",
+        "Author the state machines and legal transition sets for every object with a lifecycle.",
+        "Derive the database blueprint from the registries — persistence follows semantics, not the reverse.",
+        "Stand up the provenance spine: every value knows its origin, confidence class and observer.",
+        "Open the architectural decision register; W1–W3 decisions are backfilled into it."],
+  exit:["The graph has no orphan object and no undeclared relationship.",
+        "Every illegal transition is rejected by the state machine, not by a UI guard.",
+        "Schema is generated from the registry; a hand-edit to schema fails the build.",
+        "Every stored figure resolves to observed, verified, modelled, forecast, estimated or pending."],
+  par:"Sequential. Last wholly permanent wave."},
+
+ {w:4,t:"Primitive Surface",band:"surface",
+  auth:"Design Constitution",
+  gate:"Graph and lifecycle locked; token package versioned and immutable.",
+  aim:"Build the smallest visible things and nothing larger. Atoms are where the design system earns the right to scale — every organism in W6 and every workspace in W7–W8 is assembled from what ships here, or it is not built.",
+  does:["Ratify the Design Constitution: visual silence, information hierarchy IL-1…IL-6, zero radius, hairline discipline.",
+        "Build the atom tier against the token package — no atom may declare a literal value.",
+        "Publish the enumeration catalogue so every status, class and mode has one rendering.",
+        "Implement lifecycle guards in the surface layer so state is never a free-text field.",
+        "Publish the validation catalogue and the accessibility standard as gates, not guidance."],
+  exit:["Every atom passes AA in both Concrete and Obsidian visual modes.",
+        "No atom contains a colour, radius, duration or spacing literal.",
+        "Every enumerated value has exactly one visual treatment across the whole tier.",
+        "Keyboard traversal of every atom is complete with a visible focus state."],
+  par:"Sequential, but staffable in parallel with W5 planning."},
+
+ {w:5,t:"Capability & Nervous System",band:"active",
+  auth:"Capability Architecture · Event Architecture",
+  gate:"Atom tier published; validation and accessibility gates enforcing in CI.",
+  aim:"Give the enterprise abilities and a nervous system in the same wave, because a capability that does not publish an event is invisible to governance. Commands in, events out, API as constitution rather than convenience.",
+  does:["Author the enterprise capability map (E02) and its choreography and boundaries.",
+        "Define the command set per object; commands are the only legal path to state change.",
+        "Publish the domain event catalogue and stand up the event spine.",
+        "Ratify the API constitution: resource naming, error shape, pagination, idempotency.",
+        "Establish the runtime baseline and the permission matrix — every command has a permitted role.",
+        "Build the molecule tier and the first journey skeletons."],
+  exit:["No state change is reachable except through a command.",
+        "Every command emits at least one catalogued domain event with a stable schema.",
+        "Replaying the event log reconstructs object state exactly.",
+        "Permission matrix denies by default; every allow is explicit and tested.",
+        "API contract tests pass against a consumer written by a different team."],
+  par:"Sequential. The hinge wave — everything after it consumes its contracts."},
+
+ {w:6,t:"Composite Surface",band:"surface",
+  auth:"Product Architecture · Financial Object Authority",
+  gate:"Event spine live; commands and permissions enforcing; molecule tier published.",
+  aim:"Assemble organisms and the financial objects that carry money and yield. This is the wave where metric grammar stops being a document and becomes the only way a number can appear on a screen.",
+  does:["Build the organism tier from molecules only.",
+        "Build the financial object set under metric grammar — currency, percentage, ratio, forecast, risk, loss each render one way and one way only.",
+        "Materialise the graph into queryable projections for the surface layer.",
+        "Publish service contracts between capabilities.",
+        "Wire the signal layer that later feeds intelligence — telemetry emitted, not inferred.",
+        "Ratify the test constitution and bring coverage gates online."],
+  exit:["Every figure on screen resolves to a metric-grammar class; an unclassed number fails review.",
+        "Forecast and observed figures are visually distinguishable without a legend.",
+        "No organism issues its own query; all data arrives through a projection.",
+        "Density modes — compact, comfortable, audit, presentation — render every organism without layout break.",
+        "Hold-to-commit is enforced on every capital-moving control at the canonical 3000ms."],
+  par:"Sequential. Unblocks W7 and W8 together."},
+
+ {w:7,t:"Investor Workspaces",band:"active",
+  auth:"Experience Architecture · Investor Domain",
+  gate:"Organism tier and financial objects published; projections serving reads.",
+  aim:"Compose the five investor-facing workspaces as assemblies. No new atoms, no new tokens, no bespoke components — if a workspace needs something new, that is a W6 defect, not a W7 licence.",
+  does:["Assemble WS-01 Investment Hub, WS-02 Investor Workspace, WS-03 Investment Journey, WS-04 Portfolio, WS-05 Property.",
+        "Deliver the Investor Passport as one constitutional journey — eligibility, identity, address, tax residency, AML screening, accreditation, suitability, source of funds, risk profile, decision, annual review.",
+        "Build the assembly tier and the read models each workspace needs.",
+        "Stand up the context graph so a workspace knows what the user is looking at.",
+        "Publish the error catalogue: every failure explains what happened and what to do next.",
+        "Configure edge delivery and offline-first behaviour."],
+  exit:["Each workspace satisfies its own documented exit conditions from the workspace catalogue.",
+        "Zero new atoms or tokens introduced — verified by diff against W1 and W4 packages.",
+        "Passport completes end to end for a real accreditation path, including the failure branches.",
+        "Every workspace renders usably offline and reconciles on reconnect.",
+        "No error message apologises, and none is a status code."],
+  par:"Concurrent with W8. Shares no layer below L6."},
+
+ {w:8,t:"Enterprise Workspaces",band:"active",
+  auth:"Operations · Capital · Governance · Platform",
+  gate:"Same as W7. Must not consume any W7 artefact.",
+  aim:"Compose the five operator and enterprise workspaces — the side guests never see and the enterprise cannot run without. Service invisibility is a product requirement here, not a tone.",
+  does:["Assemble WS-06 Service & Experience, WS-07 Capital, WS-08 Governance, WS-09 Platform, WS-10 Knowledge.",
+        "Build the guest journey and the approval workflows that gate operational and capital actions.",
+        "Bring automation online — rules that act, with an event trail for every action taken.",
+        "Build the application shell: navigation, workspace registry, density and mode switching.",
+        "Stand up the notification centre and observability across the event spine.",
+        "Open the risk register and control library with owners against every control."],
+  exit:["Each workspace satisfies its documented exit conditions.",
+        "Every automated action is attributable, reversible and logged as an event.",
+        "Approval chains cannot be bypassed by any role, including platform administrators.",
+        "Staff and guest paths are separable in the shell — no operational surface leaks to a guest context.",
+        "Observability answers \"what happened to this object\" from events alone."],
+  par:"Concurrent with W7."},
+
+ {w:9,t:"Cognition",band:"active",
+  auth:"Knowledge Architecture · AI Studio",
+  gate:"All ten workspaces at exit; event spine complete; observability live.",
+  aim:"Intelligence last, and deliberately. A copilot built before the graph is a guess with a confident voice. Now that every object, event and decision is constitutional, cognition has something true to reason over.",
+  does:["Build the knowledge object and the immutable decision record.",
+        "Expose graph queries and the enterprise search index across objects, events and documents.",
+        "Model the enterprise operating cycle so intelligence understands time, not just state.",
+        "Build the AI canvas surface — the one place a copilot may act, inside the design system.",
+        "Deliver per-workspace copilots. AI assists; humans decide.",
+        "Bring assurance online: adversarial review of every AI-reachable command."],
+  exit:["Every copilot answer cites its provenance and its confidence class.",
+        "No copilot can execute a command a human in that role could not.",
+        "Decision records are append-only and independently auditable.",
+        "Search returns results respecting the permission matrix per user, not per index.",
+        "A copilot with no grounded answer says so rather than producing one."],
+  par:"Sequential. Requires both workspace waves at exit."},
+
+ {w:10,t:"Sovereign Governance",band:"govern",
+  auth:"Enterprise Governance · Stewardship",
+  gate:"Cognition at exit; assurance operating; all invariants implemented and tested.",
+  aim:"Close the loop. The enterprise must be able to change itself without breaking itself — amendment procedure, retention, release discipline, stewardship. This wave is what makes waves 1 through 9 survivable.",
+  does:["Ratify the evolution and amendment procedure: how L1 changes, who may change it, what re-ratification it forces downstream.",
+        "Build the sovereign tier — the highest-authority surfaces, constitutional organism declaration and lock reconciliation.",
+        "Establish cognitive governance: model change control, drift monitoring, AI decision audit.",
+        "Deliver event replay and the immutable audit trail as an operable capability.",
+        "Set retention, residency and sovereignty policy per object class.",
+        "Institute release trains and the stewardship model — named custodians per layer."],
+  exit:["An L1 amendment can be executed end to end in a rehearsal, with downstream impact enumerated automatically.",
+        "Any object's full history is reconstructible from the audit trail alone.",
+        "Every layer has a named steward and a documented succession.",
+        "Retention and residency are enforced by the platform, not by convention.",
+        "Design system lock reconciliation passes: no drift between canonical tokens and shipped surface."],
+  par:"Sequential. Terminal wave; then continuous."}
+];
+
+/* ── Modules: [num, symbol, name, layer, wave, charter, dependency, exit test] ── */
+const MODULES=[
+ [1,"Ct","Constitution",1,1,"The immutable principles every product, property, experience, API, workflow and agent must obey. Contains truth, never implementation.","Origin — cites nothing.","A reviewer resolves any authority dispute using L1 alone."],
+ [2,"Tx","Object Taxonomy",2,1,"The closed list of approved enterprise nouns and their classification. Only approved business objects may exist.","Ct","A proposed noun outside the taxonomy is rejected without debate."],
+ [3,"Tk","Token Core",7,1,"GC-DesignSystem-Canonical v3.0 as a machine-readable package: colour, 4px spacing, IL-1…IL-6, metric grammar, motion, stroke, density, visual modes.","Ct","A page consuming only the package contains no literal values."],
+ [4,"Iv","Invariant Register",12,1,"The founding invariants and their owning layers. Studio requires Property. Ledger is append-only. Knowledge is immutable.","Ct, Tx","Every invariant has a named test."],
+
+ [5,"Vo","Enterprise Vocabulary",1,2,"Mandatory enterprise language across UX, APIs, docs and code. Studio not Room. Guest not Customer. Journey not Booking. Studio Care not Housekeeping.","Ct","Linter fails a commit containing a forbidden term."],
+ [6,"Bo","Business Objects",2,2,"BO-01 Identity through BO-12 Knowledge, each to the universal template: mission, classification, security model, object graph, constitutional contract.","Tx, Vo","Two engineers model the same entity identically."],
+ [7,"Cl","Colour Ontology",7,2,"Semantic binding of colour to meaning. Forest for heritage assets, copper for capital only, electric for action and state, hazard for risk, critical for system alert alone.","Tk, Bo","Colour is unreachable in code except via a semantic token."],
+ [8,"Fr","Field Registry",10,2,"The canonical registry of every field name, type, unit and nullability across all twelve objects.","Bo","No field name carries two meanings."],
+ [9,"Pl","Enterprise Policy",12,2,"Privacy, security, accessibility, sustainability, ethics and luxury standard as binding policy.","Iv","Each policy has an enforcement point, not an owner only."],
+
+ [10,"Rl","Relationship Constitution",3,3,"BO-REL-01…12. Which relationships may exist: owns, references, creates, consumes, produces, depends-on, upstream, downstream.","Bo, Fr","No orphan object, no undeclared relationship."],
+ [11,"Sm","State Machines",4,3,"The legal transition set for every object with a lifecycle. Illegal transitions are impossible, not merely discouraged.","Bo, Rl","Illegal transitions are rejected below the UI."],
+ [12,"Ty","Type Matrix",7,3,"Display, body, mono and editorial roles with their scale and permitted use. Mono carries measurable values and metadata; editorial is italic only.","Tk","A type role cannot be used outside its permitted context."],
+ [13,"Pr","Provenance Spine",8,3,"Every value knows its origin and confidence: observed, verified, modelled, forecast, estimated, pending.","Fr","Every stored figure resolves to a confidence class."],
+ [14,"Db","Database Blueprint",10,3,"Persistence derived from the field registry. Semantics lead; schema follows.","Fr, Rl","A hand-edit to schema fails the build."],
+ [15,"Ad","Decision Register",12,3,"The architectural decision record. W1–W3 decisions backfilled; nothing undocumented thereafter.","Pl","Every structural choice has a dated record with alternatives."],
+
+ [16,"Dc","Design Constitution",1,4,"Visual silence, information hierarchy, zero radius, hairline discipline. Circles permitted only for status indicators and the Trinity Lens.","Ct, Tk","A rounded corner fails review on sight."],
+ [17,"En","Enumeration Catalogue",2,4,"Every status, class and mode with exactly one rendering across the system.","Bo, Sm","One enumerated value never renders two ways."],
+ [18,"Lc","Lifecycle Guards",4,4,"State expressed in the surface layer as constrained transitions, never as free text.","Sm, En","No status is editable as a string."],
+ [19,"At","Atoms",7,4,"The atom tier, built strictly against the token package.","Tk, Cl, Ty, Dc","AA in both Concrete and Obsidian; no literal values."],
+ [20,"Vl","Validation Catalogue",10,4,"Field-level and cross-field rules derived from the registry, enforced identically in surface and API.","Fr, Db","Same input is rejected identically by UI and API."],
+ [21,"Ax","Accessibility Standard",12,4,"AA minimum, visible focus, keyboard completeness, reduced-motion honoured — as a gate.","Dc, At","Traversal of every atom is complete by keyboard."],
+
+ [22,"Cm","Commands",4,5,"The only legal path to state change, one set per object.","Sm, Lc","No state change is reachable except through a command."],
+ [23,"Cp","Capability Map",5,5,"E02 enterprise abilities with choreography and boundaries.","Bo, Cm","Every capability has a boundary and an owner."],
+ [24,"Jy","Journey Skeleton",6,5,"E04 journey taxonomy and state machine — the enterprise time stack.","Cp, Sm","Every journey has a terminal state and a resume path."],
+ [25,"Ml","Molecules",7,5,"The molecule tier, composed from atoms only.","At","No molecule declares a token or a literal."],
+ [26,"De","Domain Events",9,5,"The catalogued events every command emits, with stable schemas.","Cm","Replaying the log reconstructs state exactly."],
+ [27,"Ap","API Constitution",10,5,"Resource naming, error shape, pagination and idempotency as constitution.","Vl, Cm","A consumer written by another team passes contract tests."],
+ [28,"Rt","Runtime Baseline",11,5,"Execution environment, offline-first posture and local sovereignty defaults.","Ap","The baseline runs with no external dependency reachable."],
+ [29,"Pm","Permission Matrix",12,5,"Deny by default. Every command has an explicit, tested allow.","Cm, Ax","An unlisted role can invoke nothing."],
+
+ [30,"Fo","Financial Objects",2,6,"Money and yield objects rendered under metric grammar — currency, percentage, ratio, forecast, risk, loss.","Bo, Cl","An unclassed number fails review."],
+ [31,"Gm","Graph Materialisation",3,6,"Queryable projections of the graph for the surface layer.","Rl, Db","No organism issues its own query."],
+ [32,"Sc","Service Contracts",5,6,"Explicit contracts between capabilities, versioned independently.","Cp, Ap","A capability can be replaced behind its contract."],
+ [33,"Og","Organisms",7,6,"The organism tier, composed from molecules only.","Ml","All density modes render without layout break."],
+ [34,"Sg","Signal Layer",8,6,"Telemetry emitted deliberately at the point of truth, never inferred later.","De, Pr","Every signal has a declared source and cadence."],
+ [35,"Es","Event Spine",9,6,"The enterprise nervous system carrying every domain event.","De","Every capability publishes; nothing polls."],
+ [36,"Ts","Test Constitution",12,6,"What must be tested, at which layer, and what blocks a release.","Vl, Pm","Coverage gates block merge, not warn."],
+
+ [37,"Pp","Investor Passport",6,7,"One constitutional journey from eligibility through identity, tax residency, AML screening, accreditation, suitability, source of funds, decision and annual review.","Jy, Fo","Completes end to end including failure branches."],
+ [38,"As","Assemblies",7,7,"The assembly tier — workspaces composed from organisms. WS-01 through WS-05.","Og","Zero new atoms introduced, verified by diff."],
+ [39,"Cx","Context Graph",8,7,"What the user is looking at, carried across surfaces so nothing must be re-stated.","Gm, Sg","Context survives navigation and reload."],
+ [40,"Rd","Read Models",10,7,"Purpose-built projections per workspace view.","Gm","No view reads a write model."],
+ [41,"Ed","Edge Delivery",11,7,"Offline-first delivery and reconciliation at the edge.","Rt","Every workspace renders usably offline."],
+ [42,"Er","Error Catalogue",12,7,"Every failure states what happened and what to do next. No apologies, no status codes.","Ts","No error message is a code or an apology."],
+
+ [43,"Aw","Approval Workflows",4,8,"Gates on operational and capital actions, unbypassable by any role.","Cm, Pm","No role bypasses an approval chain."],
+ [44,"Au","Automation",5,8,"Rules that act, each leaving an attributable and reversible event trail.","Cp, Es","Every automated action is reversible and logged."],
+ [45,"Gj","Guest Journey",6,8,"The guest-facing arc: presence before procedure, anticipation over reaction, silence never interrupted.","Jy","Staff and guest paths are separable in the shell."],
+ [46,"Sh","Application Shell",7,8,"Navigation, workspace registry, density and visual mode switching. WS-06 through WS-10.","As","No operational surface leaks to a guest context."],
+ [47,"Nt","Notification Centre",9,8,"Event-driven notification with per-recipient preference and quiet hours.","Es","No notification originates outside the event spine."],
+ [48,"Ob","Observability",11,8,"Full traceability across the event spine and runtime.","Es, Rt","\"What happened to this object\" is answerable from events alone."],
+ [49,"Rk","Risk & Controls",12,8,"Risk register and control library with a named owner per control.","Pl, Aw","Every control has an owner and a test date."],
+
+ [50,"Kn","Knowledge Object",2,9,"BO-12. Immutable, versioned enterprise knowledge with provenance.","Bo, Pr","Knowledge is append-only; edits create versions."],
+ [51,"Gq","Graph Queries",3,9,"Traversal across objects, events and time for intelligence and search.","Gm","Traversals respect the permission matrix."],
+ [52,"Oc","Operating Cycle",6,9,"The enterprise rhythm — daily, seasonal, fiscal — so intelligence understands time.","Jy, Gj","Every recurring obligation has a modelled cycle."],
+ [53,"Cv","AI Canvas",7,9,"The one surface where a copilot may act, inside the design system rather than beside it.","Sh","No AI surface exists outside the canvas."],
+ [54,"Co","Copilots",8,9,"Per-workspace assistance. AI assists; humans decide.","Cv, Gq, Kn","Every answer cites provenance and confidence."],
+ [55,"Ix","Search Index",10,9,"Enterprise search across objects, events and documents, permission-filtered per user.","Gq, Rd","Results respect permissions per user, not per index."],
+ [56,"Qa","Assurance",12,9,"Adversarial review of every AI-reachable command and every automated path.","Ts, Co","A copilot cannot exceed its user's permissions."],
+
+ [57,"Ev","Evolution Procedure",1,10,"How L1 changes: who may amend, what re-ratification it forces, what it costs downstream.","Ct, Ad","An amendment rehearsal enumerates downstream impact automatically."],
+ [58,"So","Sovereign Tier",7,10,"Highest-authority surfaces, the constitutional organism declaration and lock reconciliation.","Sh, Cv","No drift between canonical tokens and shipped surface."],
+ [59,"Cg","Cognitive Governance",8,10,"Model change control, drift monitoring and AI decision audit.","Co, Qa","Every model change has an approval and a rollback."],
+ [60,"Rp","Replay & Audit Trail",9,10,"Event replay and the immutable trail as an operable capability.","Es, Ob","Any object's full history is reconstructible."],
+ [61,"Rn","Retention & Residency",10,10,"Retention, residency and data sovereignty per object class, platform-enforced.","Db, Pl","Enforced by the platform, never by convention."],
+ [62,"Rs","Release Trains",11,10,"Scheduled, reversible releases with constitutional gates.","Ob, Ts","Any release is reversible within one train."],
+ [63,"Sw","Stewardship",12,10,"Named custodians per layer with documented succession.","Ev, Rk","Every layer has a steward and a successor."]
+];
+
+/* ── Render table ────────────────────────────────────────────────────── */
+const bandOf=n=>LAYERS[n-1][2];
+const pt=document.getElementById("ptable");
+const frag=document.createDocumentFragment();
+
+const corner=document.createElement("div");
+corner.className="ph corner";
+corner.innerHTML='<span class="ly">WAVE</span><span class="nm">Constitutional layer &rarr;</span>';
+corner.style.gridArea="1 / 1";
+frag.appendChild(corner);
+
+LAYERS.forEach(([ly,nm],i)=>{
+  const h=document.createElement("div");
+  h.className="ph";
+  h.style.gridArea=`1 / ${i+2}`;
+  h.innerHTML=`<span class="ly">${ly}</span><span class="nm">${nm}</span>`;
+  frag.appendChild(h);
+});
+
+WAVES.forEach(w=>{
+  const h=document.createElement("div");
+  h.className="pw";
+  h.style.gridArea=`${w.w+1} / 1`;
+  h.innerHTML=`<span class="wv">W${String(w.w).padStart(2,"0")}</span>`+
+              `<span class="wt">${w.t}</span>`;
+  frag.appendChild(h);
+});
+
+MODULES.forEach(m=>{
+  const [num,sym,name,layer,wave]=m;
+  const b=document.createElement("button");
+  b.type="button";
+  b.className=`el b-${bandOf(layer)}`;
+  b.style.gridArea=`${wave+1} / ${layer+1}`;
+  b.setAttribute("aria-pressed","false");
+  b.dataset.num=num;
+  b.innerHTML=`<span class="num">${String(num).padStart(2,"0")}</span>`+
+              `<span class="sym">${sym}</span>`+
+              `<span class="nm">${name}</span>`;
+  frag.appendChild(b);
+});
+pt.appendChild(frag);
+
+/* ── Readout ─────────────────────────────────────────────────────────── */
+const ro=document.getElementById("readout");
+let active=null;
+pt.addEventListener("click",e=>{
+  const el=e.target.closest(".el"); if(!el) return;
+  if(active) active.setAttribute("aria-pressed","false");
+  el.setAttribute("aria-pressed","true"); active=el;
+  const m=MODULES.find(x=>x[0]===Number(el.dataset.num));
+  const [num,sym,name,layer,wave,charter,dep,test]=m;
+  const w=WAVES.find(x=>x.w===wave);
+  ro.innerHTML=
+    `<div class="hd"><span class="label mono">${String(num).padStart(2,"0")}</span>`+
+    `<span class="sym" style="color:var(--band-${bandOf(layer)})">${sym}</span>`+
+    `<span class="nm">${name}</span></div>`+
+    `<div class="meta"><span class="chip k" style="--band:var(--band-${bandOf(layer)})">`+
+      `${LAYERS[layer-1][0]} · ${LAYERS[layer-1][1]}</span>`+
+    `<span class="chip">W${String(wave).padStart(2,"0")} · ${w.t}</span>`+
+    `<span class="chip">Depends: ${dep}</span></div>`+
+    `<p>${charter}</p>`+
+    `<p style="color:var(--fg-dim)"><span class="label">Exit test</span> &nbsp;${test}</p>`;
+});
+
+/* ── Wave dossiers ───────────────────────────────────────────────────── */
+const wv=document.getElementById("waves");
+WAVES.forEach(w=>{
+  const mods=MODULES.filter(m=>m[4]===w.w);
+  const d=document.createElement("article");
+  d.className="wave";
+  d.style.setProperty("--band",`var(--band-${w.band})`);
+  d.innerHTML=
+   `<div class="wave-top">`+
+     `<span class="wave-id">WAVE ${String(w.w).padStart(2,"0")}</span>`+
+     `<h3>${w.t}</h3>`+
+     `<span class="wave-sub">${w.auth}</span>`+
+     `<span class="label mono" style="margin-left:auto">${mods.length} modules</span>`+
+   `</div>`+
+   `<p class="gate"><span class="label">Entry gate</span><br>${w.gate}</p>`+
+   `<div class="chips">`+mods.map(m=>
+      `<span class="chip">${String(m[0]).padStart(2,"0")} ${m[1]} · ${LAYERS[m[3]-1][0]}</span>`
+    ).join("")+`</div>`+
+   `<div class="wave-grid">`+
+     `<div class="blk"><h4>Constitutional aim</h4><p>${w.aim}</p>`+
+       `<p style="margin-top:var(--sp-2xs);color:var(--fg-dim)">`+
+       `<span class="label">Sequencing</span> ${w.par}</p></div>`+
+     `<div class="blk"><h4>What this wave builds</h4><ul>`+
+       w.does.map(x=>`<li>${x}</li>`).join("")+`</ul></div>`+
+     `<div class="blk"><h4>Exit conditions</h4><ul>`+
+       w.exit.map(x=>`<li>${x}</li>`).join("")+`</ul></div>`+
+   `</div>`;
+  wv.appendChild(d);
+});
+</script>

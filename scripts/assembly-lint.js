@@ -188,6 +188,50 @@ for (const a of ASSEMBLIES) {
   }
 }
 
+// 8. the working implementation ships only locked tokens
+//
+// GC-ASSEMBLIES.html is the built form of this registry, so it is subject
+// to the same rule as the registry: no design literals. The scan covers
+// the stylesheet and inline styles only — a hex quoted in a correction is
+// DOCUMENTING a defect ("the source used #4A4A4A at 2.25:1"), which is
+// the opposite of committing one.
+{
+  const BUILT = path.join(ROOT, "GC-ASSEMBLIES.html");
+  if (fs.existsSync(BUILT)) {
+    const h = fs.readFileSync(BUILT, "utf8");
+    const locked = new Set(
+      [...read("constants", "tokens.ts").matchAll(/"(#[0-9A-Fa-f]{6})"/g)].map((m) => m[1].toUpperCase()),
+    );
+    if (locked.size === 0) {
+      fail.push("Parsed zero locked colours from tokens.ts. Refusing to check vacuously.");
+    } else {
+      const css = h.slice(h.indexOf("<style>"), h.indexOf("</style>"));
+      const inline = (h.match(/style="[^"]*"/g) || []).join(" ");
+      const used = new Set(
+        ((css + inline).match(/#[0-9A-Fa-f]{6}\b/g) || []).map((c) => c.toUpperCase()),
+      );
+      const literals = [...used].filter((c) => !locked.has(c));
+      if (literals.length) {
+        fail.push(
+          `GC-ASSEMBLIES.html styles with ${literals.join(", ")} — not in the locked palette. ` +
+            `The built form is subject to the same rule as the registry.`,
+        );
+      }
+    }
+    // The waterfall in the built form must account for all of gross revenue.
+    const bps = [...h.matchAll(/\{\s*k:"\d+\s*·[^"]*",\s*bps:(\d+)/g)].map((m) => Number(m[1]));
+    if (bps.length !== 6) {
+      fail.push(`GC-ASSEMBLIES.html declares ${bps.length} waterfall stages, not 6.`);
+    } else if (bps.reduce((a, b) => a + b, 0) !== 10000) {
+      fail.push(
+        `GC-ASSEMBLIES.html waterfall sums to ${bps.reduce((a, b) => a + b, 0) / 100}%. Revenue ` +
+          `going somewhere the waterfall does not name is the same defect as omitting a stage, ` +
+          `only harder to see.`,
+      );
+    }
+  }
+}
+
 // 6. the ground inversion points at real sections
 {
   const allRefs = new Set(ASSEMBLIES.flatMap((a) => a.sections.map((s) => s.ref)));
