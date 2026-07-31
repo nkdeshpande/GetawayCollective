@@ -30,7 +30,7 @@
     "lint:sm": "node scripts/sm-lint.js",
     "lint:enum": "node scripts/enum-lint.js",
     "lint:token": "node scripts/token-lint.js",
-    "design": "node scripts/gen-design-reference.js && node scripts/gen-assembly-reference.js",
+    "design": "node scripts/gen-design-reference.js && node scripts/gen-assembly-reference.js && node scripts/gen-pending-brief.js",
     "lint:voice": "node scripts/voice-lint.js",
     "lint:organism": "node scripts/organism-lint.js",
     "lint:aperture": "node scripts/aperture-lint.js",

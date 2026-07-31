@@ -326,7 +326,7 @@ footer{margin-top:80px;padding-top:28px;border-top:1px solid var(--hair);
       <span class="mt">3 of 27 objects<br>11% coverage</span><span class="st">Partial</span></div>
     <div class="el pt"><span class="z">41</span><span class="sym">Am</span>
       <span class="nm">Assemblies</span>
-      <span class="mt">28 registered<br>13 built · 46%</span><span class="st">Partial</span></div>
+      <span class="mt">28 registered<br>17 built · 61%</span><span class="st">Partial</span></div>
     <div class="el lk"><span class="z">42</span><span class="sym">Cr</span>
       <span class="nm">Correction Record</span>
       <span class="mt">109 recorded<br>each with a reason</span><span class="st">Locked</span></div>
@@ -423,14 +423,18 @@ never performed     visual inspection · browser render · device test</div>
 
   <div class="finding">
     <span class="rk">Severity 2 · Coverage</span>
-    <h3>Fifteen of twenty-eight assemblies exist only as specification.</h3>
+    <h3>Eleven of twenty-eight assemblies exist only as specification.</h3>
     <p>The registry is the deliverable people read as complete, and it is complete. The build is
-    not. AS-07, AS-08, AS-14 through AS-23, and AS-26 through AS-28 have sections, rules and
-    corrections recorded — and no implementation. That includes all three chrome components, both
-    regions, and the ballot.</p>
+    not. Eleven assemblies have sections, rules and corrections recorded and no implementation —
+    32 sections and 40 corrections that exist only as text.</p>
+    <p><strong>Correction to an earlier count.</strong> This finding first read "fifteen, including
+    all three chrome components and both regions". That was wrong: chrome and regions are built as
+    helper functions rather than screen entries, and my audit only counted the latter. The header,
+    spine, footer and hero viewport are all built and invoked. The real figure is eleven.</p>
     <div class="ev">registered  28
-built       13   (46%)
-spec only   15   AS-07 AS-08 AS-14…AS-23 AS-26 AS-27 AS-28</div>
+built       17   (61%)   13 screens + 3 chrome + 1 region
+spec only   11   AS-07 AS-08 AS-14 AS-15 AS-16 AS-17 AS-18 AS-19 AS-26 AS-27 AS-28
+             gateway 6 · capital 3 · member 2</div>
   </div>
 
   <div class="finding">
@@ -534,7 +538,8 @@ never tested            axe · pa11y · NVDA/JAWS/VoiceOver · keyboard walk
   Wave 6 exit assessment · generated from measurement, not recollection · 31 Jul 2026<br>
   Counts verified against constants/, lib/, tests/, migrations/ and GC-ASSEMBLIES.html at commit affd7cd.<br>
   Two figures in earlier reports were wrong and are corrected here: the test count is 542 (not 605),
-  and there are 27 business objects (not 33 — the earlier count included the Domain enum).
+  there are 27 business objects (not 33 — the earlier count included the Domain enum), and 17 of 28
+  assemblies are built (not 13 — chrome and regions ship as helper functions, which the first audit missed).
 </footer>
 
 </div>
