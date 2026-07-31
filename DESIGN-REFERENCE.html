@@ -179,6 +179,81 @@
   }
 }
 
+/* -- TYPE SCALE -- */
+:root {
+  --gc-t-display-xl-size: 56px;
+  --gc-t-display-xl-lh: 1.05;
+  --gc-t-display-xl-ls: -0.02em;
+  --gc-t-display-xl-weight: 200;
+  --gc-t-display-l-size: 44px;
+  --gc-t-display-l-lh: 1.10;
+  --gc-t-display-l-ls: -0.01em;
+  --gc-t-display-l-weight: 200;
+  --gc-t-display-m-size: 32px;
+  --gc-t-display-m-lh: 1.15;
+  --gc-t-display-m-ls: -0.01em;
+  --gc-t-display-m-weight: 300;
+  --gc-t-heading-size: 24px;
+  --gc-t-heading-lh: 1.25;
+  --gc-t-heading-ls: 0em;
+  --gc-t-heading-weight: 300;
+  --gc-t-subheading-size: 18px;
+  --gc-t-subheading-lh: 1.35;
+  --gc-t-subheading-ls: 0em;
+  --gc-t-subheading-weight: 400;
+  --gc-t-body-l-size: 17px;
+  --gc-t-body-l-lh: 1.55;
+  --gc-t-body-l-ls: 0em;
+  --gc-t-body-l-weight: 400;
+  --gc-t-body-size: 15px;
+  --gc-t-body-lh: 1.55;
+  --gc-t-body-ls: 0em;
+  --gc-t-body-weight: 400;
+  --gc-t-body-s-size: 13px;
+  --gc-t-body-s-lh: 1.50;
+  --gc-t-body-s-ls: 0em;
+  --gc-t-body-s-weight: 400;
+  --gc-t-caption-size: 12px;
+  --gc-t-caption-lh: 1.40;
+  --gc-t-caption-ls: 0.01em;
+  --gc-t-caption-weight: 400;
+  --gc-t-micro-size: 11px;
+  --gc-t-micro-lh: 1.30;
+  --gc-t-micro-ls: 0.08em;
+  --gc-t-micro-weight: 400;
+  --gc-t-mono-l-size: 20px;
+  --gc-t-mono-l-lh: 1.30;
+  --gc-t-mono-l-ls: 0em;
+  --gc-t-mono-l-weight: 400;
+  --gc-t-mono-size: 14px;
+  --gc-t-mono-lh: 1.45;
+  --gc-t-mono-ls: 0em;
+  --gc-t-mono-weight: 400;
+  --gc-t-mono-s-size: 11px;
+  --gc-t-mono-s-lh: 1.40;
+  --gc-t-mono-s-ls: 0em;
+  --gc-t-mono-s-weight: 400;
+
+  --gc-measure: 65ch;
+}
+
+/* -- GRID & BREAKPOINTS -- */
+:root {
+  --gc-max-width: 1600px;
+  --gc-bp-compact: 0px;
+  --gc-cols-compact: 4;
+  --gc-gutter-compact: 16px;
+  --gc-bp-medium: 768px;
+  --gc-cols-medium: 8;
+  --gc-gutter-medium: 24px;
+  --gc-bp-wide: 1180px;
+  --gc-cols-wide: 12;
+  --gc-gutter-wide: 24px;
+  --gc-bp-ultra: 1680px;
+  --gc-cols-ultra: 12;
+  --gc-gutter-ultra: 32px;
+}
+
 
   *,*::before,*::after{box-sizing:border-box}
   body{margin:0;background:var(--gc-void);color:var(--gc-ink-inverse);
@@ -1122,6 +1197,154 @@
     <div class="chip" style="background:#5A7D9A"></div>
     <div class="meta"><span class="k">technology</span><span class="mono">#5A7D9A</span></div>
   </div></div>
+
+  <h2>Type scale &mdash; 13 roles</h2>
+  <div class="note">
+    Structural sizes land on the 4px grid. Reading sizes (17 / 15 / 13 / 11) are deliberately
+    odd, because reading sizes are optical rather than geometric &mdash; rounding 15 to 16 to
+    satisfy a grid trades legibility for tidiness. <strong>Type does not change with density;
+    only spacing does</strong>, so a figure is the same size in every mode and two screenshots
+    of one table stay comparable.
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Role</th><th>Sample</th><th class="num">Size</th><th class="num">LH</th><th class="num">Tracking</th><th class="num">Weight</th><th>Use</th></tr></thead>
+    <tbody>
+    <tr>
+        <td class="mono">display-xl</td>
+        <td style="font-family:var(--gc-f-display);font-size:30px;line-height:1.2;font-weight:200;letter-spacing:-0.02em;text-transform:uppercase;">Getaway</td>
+        <td class="num">56</td><td class="num">1.05</td><td class="num">-0.02em</td><td class="num">200</td>
+        <td style="color:var(--gc-steel)">Full-bleed hero only</td>
+      </tr>
+    <tr>
+        <td class="mono">display-l</td>
+        <td style="font-family:var(--gc-f-display);font-size:30px;line-height:1.2;font-weight:200;letter-spacing:-0.01em;text-transform:uppercase;">Getaway</td>
+        <td class="num">44</td><td class="num">1.10</td><td class="num">-0.01em</td><td class="num">200</td>
+        <td style="color:var(--gc-steel)">Page title</td>
+      </tr>
+    <tr>
+        <td class="mono">display-m</td>
+        <td style="font-family:var(--gc-f-display);font-size:30px;line-height:1.2;font-weight:300;letter-spacing:-0.01em;text-transform:uppercase;">Getaway</td>
+        <td class="num">32</td><td class="num">1.15</td><td class="num">-0.01em</td><td class="num">300</td>
+        <td style="color:var(--gc-steel)">Section opener</td>
+      </tr>
+    <tr>
+        <td class="mono">heading</td>
+        <td style="font-family:var(--gc-f-display);font-size:24px;line-height:1.2;font-weight:300;letter-spacing:0em;">Getaway</td>
+        <td class="num">24</td><td class="num">1.25</td><td class="num">0em</td><td class="num">300</td>
+        <td style="color:var(--gc-steel)">Card group heading</td>
+      </tr>
+    <tr>
+        <td class="mono">subheading</td>
+        <td style="font-family:var(--gc-f-display);font-size:18px;line-height:1.2;font-weight:400;letter-spacing:0em;">Getaway</td>
+        <td class="num">18</td><td class="num">1.35</td><td class="num">0em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Card title</td>
+      </tr>
+    <tr>
+        <td class="mono">body-l</td>
+        <td style="font-family:var(--gc-f-body);font-size:17px;line-height:1.2;font-weight:400;letter-spacing:0em;">Getaway</td>
+        <td class="num">17</td><td class="num">1.55</td><td class="num">0em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Narrative copy</td>
+      </tr>
+    <tr>
+        <td class="mono">body</td>
+        <td style="font-family:var(--gc-f-body);font-size:15px;line-height:1.2;font-weight:400;letter-spacing:0em;">Getaway</td>
+        <td class="num">15</td><td class="num">1.55</td><td class="num">0em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Default</td>
+      </tr>
+    <tr>
+        <td class="mono">body-s</td>
+        <td style="font-family:var(--gc-f-body);font-size:13px;line-height:1.2;font-weight:400;letter-spacing:0em;">Getaway</td>
+        <td class="num">13</td><td class="num">1.50</td><td class="num">0em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Dense tables</td>
+      </tr>
+    <tr>
+        <td class="mono">caption</td>
+        <td style="font-family:var(--gc-f-body);font-size:12px;line-height:1.2;font-weight:400;letter-spacing:0.01em;">Getaway</td>
+        <td class="num">12</td><td class="num">1.40</td><td class="num">0.01em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Metadata, IL-5</td>
+      </tr>
+    <tr>
+        <td class="mono">micro</td>
+        <td style="font-family:var(--gc-f-mono);font-size:11px;line-height:1.2;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;color:var(--gc-copper);">Getaway</td>
+        <td class="num">11</td><td class="num">1.30</td><td class="num">0.08em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Eyebrows, labels, table headers, IL-6</td>
+      </tr>
+    <tr>
+        <td class="mono">mono-l</td>
+        <td style="font-family:var(--gc-f-mono);font-size:20px;line-height:1.2;font-weight:400;letter-spacing:0em;color:var(--gc-copper);">Getaway</td>
+        <td class="num">20</td><td class="num">1.30</td><td class="num">0em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Headline figures</td>
+      </tr>
+    <tr>
+        <td class="mono">mono</td>
+        <td style="font-family:var(--gc-f-mono);font-size:14px;line-height:1.2;font-weight:400;letter-spacing:0em;color:var(--gc-copper);">Getaway</td>
+        <td class="num">14</td><td class="num">1.45</td><td class="num">0em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Table figures, IDs</td>
+      </tr>
+    <tr>
+        <td class="mono">mono-s</td>
+        <td style="font-family:var(--gc-f-mono);font-size:11px;line-height:1.2;font-weight:400;letter-spacing:0em;color:var(--gc-copper);">Getaway</td>
+        <td class="num">11</td><td class="num">1.40</td><td class="num">0em</td><td class="num">400</td>
+        <td style="color:var(--gc-steel)">Audit density</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h2>Grid &amp; surface strategy</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Breakpoint</th><th class="num">Min</th><th class="num">Cols</th><th class="num">Gutter</th><th>Margin</th><th>Note</th></tr></thead>
+    <tbody><tr><td class="mono">compact</td><td class="num">0</td>
+      <td class="num">4</td><td class="num">16</td><td class="mono">16</td>
+      <td style="color:var(--gc-steel)">Phone. Tables become stacked cards.</td></tr><tr><td class="mono">medium</td><td class="num">768</td>
+      <td class="num">8</td><td class="num">24</td><td class="mono">32</td>
+      <td style="color:var(--gc-steel)">Tablet.</td></tr><tr><td class="mono">wide</td><td class="num">1180</td>
+      <td class="num">12</td><td class="num">24</td><td class="mono">48</td>
+      <td style="color:var(--gc-steel)">Default desktop.</td></tr><tr><td class="mono">ultra</td><td class="num">1680</td>
+      <td class="num">12</td><td class="num">32</td><td class="mono">auto</td>
+      <td style="color:var(--gc-steel)">Trading-desk width. Container centres at max width.</td></tr></tbody>
+  </table></div>
+  <div class="note">
+    <strong>If the route starts with (capital) or (admin), design desktop-first; otherwise
+    design phone-parity.</strong> A capital allocation terminal and a member checking whether
+    they were paid are different products, and one blanket answer would have misdesigned one
+    of them.
+    <div style="margin-top:var(--gc-sp-s)">
+    <span class="pill t-steel" style="margin-right:6px">capital &middot; desktop-first</span><span class="pill t-steel" style="margin-right:6px">admin &middot; desktop-first</span><span class="pill t-steel" style="margin-right:6px">space &middot; desktop-first</span><span class="pill t-confirm" style="margin-right:6px">member &middot; phone-parity</span><span class="pill t-confirm" style="margin-right:6px">gateway &middot; phone-parity</span><span class="pill t-confirm" style="margin-right:6px">time &middot; phone-parity</span>
+    </div>
+  </div>
+
+  <h2>Charts</h2>
+  <div class="note">
+    <strong>There is no chart palette.</strong> A series is coloured by what it measures, from
+    the metric grammar &mdash; otherwise the same quantity is copper in a table and blue in the
+    chart beside it. A forecast segment is dashed <em>and</em> electric, never colour alone.
+    <strong>A truncated y-axis is barred on financial data</strong>: an axis that does not start
+    at zero makes a 2% move look like a collapse.
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Chart</th><th>For</th></tr></thead>
+    <tbody><tr><td>Waterfall Bar</td><td style="color:var(--gc-steel)">The six distribution stages</td></tr><tr><td>NAV Over Time</td><td style="color:var(--gc-steel)">Valuation history per property or vehicle</td></tr><tr><td>IRR Curve</td><td style="color:var(--gc-steel)">Cash flows and return</td></tr><tr><td>Allocation Bar</td><td style="color:var(--gc-steel)">Capital table by holder</td></tr><tr><td>Reserve Gauge</td><td style="color:var(--gc-steel)">Balance against floor</td></tr><tr><td>Sparkline</td><td style="color:var(--gc-steel)">Inline trend in a table row</td></tr></tbody>
+  </table></div>
+
+  <h2>Atoms &amp; molecules</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Ref</th><th>Name</th><th>Tier</th></tr></thead>
+    <tbody><tr><td class="mono">A-01</td><td>Tag Pill</td>
+      <td><span class="pill t-steel">atom</span></td></tr><tr><td class="mono">A-03</td><td>Mono Input Field</td>
+      <td><span class="pill t-steel">atom</span></td></tr><tr><td class="mono">A-10</td><td>Confidence Tag</td>
+      <td><span class="pill t-steel">atom</span></td></tr><tr><td class="mono">A-11</td><td>Health Score Ring</td>
+      <td><span class="pill t-steel">atom</span></td></tr><tr><td class="mono">M-04</td><td>The Piston</td>
+      <td><span class="pill t-electric">molecule</span></td></tr><tr><td class="mono">M-06</td><td>Recovery Strip</td>
+      <td><span class="pill t-electric">molecule</span></td></tr><tr><td class="mono">M-16</td><td>Ledger Row</td>
+      <td><span class="pill t-electric">molecule</span></td></tr></tbody>
+  </table></div>
+  <div class="note">
+    <strong>The Piston is a bar.</strong> A ring implies a duration that loops; this control
+    fires exactly once per commitment. Filling text is illegible during a three-second hold.
+    Three tick marks at 25/50/75% give the linear fill legible progress &mdash; without them a
+    3000ms fill reads as an undifferentiated blur. Under reduced motion it becomes a static
+    countdown numeral and <strong>keeps its full 3000ms</strong>.
+  </div>
 
   <h2>Atom specifications</h2>
   <div class="scroll"><table>

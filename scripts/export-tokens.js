@@ -133,9 +133,68 @@ function main() {
       fn(t.COLOUR).trimStart();
   }
 
+  // ── Bridge Document: type scale and layout grid ─────────────────────
+  //
+  // PARSED, not evaluated. An earlier attempt stripped TypeScript and ran
+  // the result through `new Function` — that works for the addendum, whose
+  // exports are plain objects, but typography.ts and layout.ts carry union
+  // types and generics that a regex strip mangles. Parsing the values
+  // directly is duller and cannot break on a type annotation.
+  let bridgeCss = '';
+
+  const typoSrc = path.join(ROOT, 'constants', 'typography.ts');
+  if (fs.existsSync(typoSrc)) {
+    const raw = fs.readFileSync(typoSrc, 'utf8');
+    const block = raw.match(/export const TYPE:[^=]*=\s*\{([\s\S]*?)\n\};/);
+    const measure = (raw.match(/MEASURE_CH\s*=\s*(\d+)/) || [, '65'])[1];
+    const rows = [];
+    if (block) {
+      const re = /"([\w-]+)":\s*T\(\s*"(\w+)"\s*,\s*(\d+)\s*,\s*([\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(\d+)/g;
+      let m;
+      while ((m = re.exec(block[1])) !== null) {
+        rows.push(
+          `  --gc-t-${m[1]}-size: ${m[3]}px;`,
+          `  --gc-t-${m[1]}-lh: ${m[4]};`,
+          `  --gc-t-${m[1]}-ls: ${m[5]}em;`,
+          `  --gc-t-${m[1]}-weight: ${m[6]};`,
+        );
+      }
+    }
+    if (rows.length === 0) {
+      console.error('[export-tokens] parsed zero type roles from typography.ts');
+      process.exit(1);
+    }
+    bridgeCss += '\n/* -- TYPE SCALE -- */\n:root {\n' + rows.join('\n') +
+                 '\n\n  --gc-measure: ' + measure + 'ch;\n}\n';
+  }
+
+  const layoutSrc = path.join(ROOT, 'constants', 'layout.ts');
+  if (fs.existsSync(layoutSrc)) {
+    const raw = fs.readFileSync(layoutSrc, 'utf8');
+    const block = raw.match(/export const BREAKPOINTS:[^=]*=\s*\{([\s\S]*?)\n\};/);
+    const maxW = (raw.match(/MAX_CONTENT_WIDTH\s*=\s*(\d+)/) || [, '1600'])[1];
+    const rows = ['  --gc-max-width: ' + maxW + 'px;'];
+    if (block) {
+      const re = /(\w+):\s*\{\s*minWidth:\s*(\d+),\s*columns:\s*(\d+),\s*gutter:\s*(\d+)/g;
+      let m;
+      while ((m = re.exec(block[1])) !== null) {
+        rows.push(
+          `  --gc-bp-${m[1]}: ${m[2]}px;`,
+          `  --gc-cols-${m[1]}: ${m[3]};`,
+          `  --gc-gutter-${m[1]}: ${m[4]}px;`,
+        );
+      }
+    }
+    if (rows.length <= 1) {
+      console.error('[export-tokens] parsed zero breakpoints from layout.ts');
+      process.exit(1);
+    }
+    bridgeCss += '\n/* -- GRID & BREAKPOINTS -- */\n:root {\n' + rows.join('\n') + '\n}\n';
+  }
+
   fs.writeFileSync(
     path.join(OUT_DIR, 'tokens.css'),
-    header + t.CSS_VARS.trimStart() + addendumCss,
+    header + t.CSS_VARS.trimStart() + addendumCss + bridgeCss,
     'utf8',
   );
 

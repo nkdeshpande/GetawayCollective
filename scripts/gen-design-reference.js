@@ -109,6 +109,55 @@ const ATOMS = [
   ["Hold-to-Commit", "3s hold before a capital-moving action", "idle → engaged → sealed → locked"],
 ];
 
+
+// ── Bridge Document additions ─────────────────────────────────────────
+const TYPE_ROLES = (() => {
+  const raw = read("constants/typography.ts");
+  const b = raw.match(/export const TYPE:[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!b) return [];
+  const re = /"([\w-]+)":\s*T\(\s*"(\w+)"\s*,\s*(\d+)\s*,\s*([\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(\d+)\s*,\s*(true|false)\s*,\s*"([^"]*)"/g;
+  const out = []; let m;
+  while ((m = re.exec(b[1])) !== null) {
+    out.push({ role: m[1], family: m[2], size: +m[3], lh: m[4], ls: m[5], weight: m[6], upper: m[7] === "true", use: m[8] });
+  }
+  return out;
+})();
+
+const BREAKPOINTS = (() => {
+  const raw = read("constants/layout.ts");
+  const b = raw.match(/export const BREAKPOINTS:[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!b) return [];
+  const re = /(\w+):\s*\{\s*minWidth:\s*(\d+),\s*columns:\s*(\d+),\s*gutter:\s*(\d+),\s*margin:\s*([^,]+),\s*\n?\s*note:\s*"([^"]*)"/g;
+  const out = []; let m;
+  while ((m = re.exec(b[1])) !== null) {
+    out.push({ name: m[1], min: m[2], cols: m[3], gutter: m[4], margin: m[5].replace(/"/g, "").trim(), note: m[6] });
+  }
+  return out;
+})();
+
+const STRATEGY = (() => {
+  const raw = read("constants/layout.ts");
+  const b = raw.match(/export const SURFACE_STRATEGY:[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!b) return [];
+  return [...b[1].matchAll(/(\w+):\s*"([\w-]+)"/g)].map((m) => [m[1], m[2]]);
+})();
+
+const CHARTS = (() => {
+  const raw = read("constants/charts.ts");
+  const b = raw.match(/export const CHARTS:[^=]*=\s*\[([\s\S]*?)\n\];/);
+  if (!b) return [];
+  return [...b[1].matchAll(/kind:\s*"([\w-]+)",\s*name:\s*"([^"]+)",\s*for:\s*"([^"]+)"/g)]
+    .map((m) => ({ kind: m[1], name: m[2], for: m[3] }));
+})();
+
+const COMPONENTS = (() => {
+  const raw = read("constants/components.ts");
+  const b = raw.match(/export const COMPONENTS:[^=]*=\s*\[([\s\S]*?)\n\];/);
+  if (!b) return [];
+  return [...b[1].matchAll(/ref:\s*"([^"]+)",\s*name:\s*"([^"]+)",\s*tier:\s*"(\w+)"/g)]
+    .map((m) => ({ ref: m[1], name: m[2], tier: m[3] }));
+})();
+
 // ── Render ────────────────────────────────────────────────────────────
 const swatch = (name, hex) => `
   <div class="sw">
@@ -290,6 +339,74 @@ ${tokenCss}
     because the registry does not track them.
   </div>
   <div class="sws">${RISKS.map(([k,v]) => swatch(k, v)).join("")}</div>
+
+  <h2>Type scale &mdash; 13 roles</h2>
+  <div class="note">
+    Structural sizes land on the 4px grid. Reading sizes (17 / 15 / 13 / 11) are deliberately
+    odd, because reading sizes are optical rather than geometric &mdash; rounding 15 to 16 to
+    satisfy a grid trades legibility for tidiness. <strong>Type does not change with density;
+    only spacing does</strong>, so a figure is the same size in every mode and two screenshots
+    of one table stay comparable.
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Role</th><th>Sample</th><th class="num">Size</th><th class="num">LH</th><th class="num">Tracking</th><th class="num">Weight</th><th>Use</th></tr></thead>
+    <tbody>
+    ${TYPE_ROLES.map((t) => {
+      const fam = t.family === "mono" ? "var(--gc-f-mono)" : t.family === "display" ? "var(--gc-f-display)" : "var(--gc-f-body)";
+      const shown = Math.min(t.size, 30);
+      return `<tr>
+        <td class="mono">${esc(t.role)}</td>
+        <td style="font-family:${fam};font-size:${shown}px;line-height:1.2;font-weight:${t.weight};letter-spacing:${t.ls}em;${t.upper ? "text-transform:uppercase;" : ""}${t.family === "mono" ? "color:var(--gc-copper);" : ""}">Getaway</td>
+        <td class="num">${t.size}</td><td class="num">${t.lh}</td><td class="num">${t.ls}em</td><td class="num">${t.weight}</td>
+        <td style="color:var(--gc-steel)">${esc(t.use)}</td>
+      </tr>`;
+    }).join("\n    ")}
+    </tbody>
+  </table></div>
+
+  <h2>Grid &amp; surface strategy</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Breakpoint</th><th class="num">Min</th><th class="num">Cols</th><th class="num">Gutter</th><th>Margin</th><th>Note</th></tr></thead>
+    <tbody>${BREAKPOINTS.map((b) => `<tr><td class="mono">${esc(b.name)}</td><td class="num">${esc(b.min)}</td>
+      <td class="num">${esc(b.cols)}</td><td class="num">${esc(b.gutter)}</td><td class="mono">${esc(b.margin)}</td>
+      <td style="color:var(--gc-steel)">${esc(b.note)}</td></tr>`).join("")}</tbody>
+  </table></div>
+  <div class="note">
+    <strong>If the route starts with (capital) or (admin), design desktop-first; otherwise
+    design phone-parity.</strong> A capital allocation terminal and a member checking whether
+    they were paid are different products, and one blanket answer would have misdesigned one
+    of them.
+    <div style="margin-top:var(--gc-sp-s)">
+    ${STRATEGY.map(([g, st]) => `<span class="pill t-${st === "desktop-first" ? "steel" : "confirm"}" style="margin-right:6px">${esc(g)} &middot; ${esc(st)}</span>`).join("")}
+    </div>
+  </div>
+
+  <h2>Charts</h2>
+  <div class="note">
+    <strong>There is no chart palette.</strong> A series is coloured by what it measures, from
+    the metric grammar &mdash; otherwise the same quantity is copper in a table and blue in the
+    chart beside it. A forecast segment is dashed <em>and</em> electric, never colour alone.
+    <strong>A truncated y-axis is barred on financial data</strong>: an axis that does not start
+    at zero makes a 2% move look like a collapse.
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Chart</th><th>For</th></tr></thead>
+    <tbody>${CHARTS.map((c) => `<tr><td>${esc(c.name)}</td><td style="color:var(--gc-steel)">${esc(c.for)}</td></tr>`).join("")}</tbody>
+  </table></div>
+
+  <h2>Atoms &amp; molecules</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Ref</th><th>Name</th><th>Tier</th></tr></thead>
+    <tbody>${COMPONENTS.map((c) => `<tr><td class="mono">${esc(c.ref)}</td><td>${esc(c.name)}</td>
+      <td><span class="pill ${c.tier === "atom" ? "t-steel" : "t-electric"}">${esc(c.tier)}</span></td></tr>`).join("")}</tbody>
+  </table></div>
+  <div class="note">
+    <strong>The Piston is a bar.</strong> A ring implies a duration that loops; this control
+    fires exactly once per commitment. Filling text is illegible during a three-second hold.
+    Three tick marks at 25/50/75% give the linear fill legible progress &mdash; without them a
+    3000ms fill reads as an undifferentiated blur. Under reduced motion it becomes a static
+    countdown numeral and <strong>keeps its full 3000ms</strong>.
+  </div>
 
   <h2>Atom specifications</h2>
   <div class="scroll"><table>
