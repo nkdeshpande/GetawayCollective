@@ -2459,6 +2459,96 @@ export const PUBLIC_SURFACE: Assembly = {
 };
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   AS-33 · THE MEMBER SURFACE
+
+   MEM.01, MEM.02, MEM.05 through MEM.08. The copy lives in
+   content/member.ts.
+   ═══════════════════════════════════════════════════════════════════ */
+export const MEMBER_SURFACE: Assembly = {
+  id: "AS-33",
+  name: "The Member Surface",
+  scope: "screen",
+  route: "member",
+  vantage: "member",
+  intent: "Give a settled partner every operational surface for their vehicle, on one register.",
+  answers: "What do I hold, what may I set, what have I agreed to, and who answers?",
+  sections: [
+    S("AS-33.a", "Masthead", "masthead",
+      "Surface id, alias, title and standfirst.",
+      [],
+      "The wireframe id is shown because these surfaces are referred to by it internally."),
+    S("AS-33.b", "Position", "figure",
+      "Contribution, indicative distribution and nights, on every surface.",
+      ["O-03"],
+      "Read from the vehicle record. The source dashboard shows a trailing twelve-month yield " +
+      "against a property at pre-construction, which has no trailing twelve months, and a NAV a " +
+      "hundredfold apart from the fraction beside it."),
+    S("AS-33.c", "Blocks", "narrative",
+      "Numbered blocks, each declaring its ground.",
+      [],
+      "Ground is a property of what is being said. A block stating what will happen sits on " +
+      "paper; a block explaining why sits on void."),
+    S("AS-33.d", "Undrafted", "figure",
+      "A capability the source specifies that is deliberately not built.",
+      [],
+      "Rendered as a marked panel rather than as body copy. MEM.07 specifies a conduct-linked " +
+      "forced buyback at a punitive discount with no appeal; a reader must not mistake that for " +
+      "something in force, because the first person to rely on it will rely on it against us."),
+  ],
+  corrections: [
+    {
+      source: "GC 2.0 Wireframes · MEM.07 §2.4",
+      was: "A satisfaction score below 70 for two consecutive visits triggers a forced buyback at NAV minus 10%, appeal irrevocable.",
+      now: "The conduct standard is carried; the consequence is marked as specified, not drafted, and not in force.",
+      because:
+        "It is expropriation of a capital interest on a subjective score, at a punitive discount, " +
+        "with the appeal closed. §24a does not permit that by ordinary resolution and it is " +
+        "unlikely to hold under the LLP Act. A conduct-linked exit needs its own instrument, a " +
+        "defined standard, an appeal, and a vote of the partners.",
+      kind: "constitutional",
+    },
+    {
+      source: "GC 2.0 Wireframes · MEM.03",
+      was: "Blended yield (TTM) 14.8%, up 4.2% YTD, with no confidence class.",
+      now: "The modelled distribution from the vehicle record, carrying its class.",
+      because:
+        "The property is at pre-construction. A property that has never traded has no trailing " +
+        "twelve months, and an unclassed figure on a member surface is the one most likely to be " +
+        "believed.",
+      kind: "numeric",
+    },
+    {
+      source: "GC 2.0 Wireframes · MEM.05, MEM.06",
+      was: "Live grid status, sync state, thermal readings and a host presence light.",
+      now: "The controls described, with the state saying why nothing can be transmitted yet.",
+      because:
+        "Every property is at pre-construction or lease-up. A green grid indicator would be a " +
+        "reading from a building that is not sending one.",
+      kind: "interaction",
+    },
+    {
+      source: "GC 2.0 Wireframes · MEM.08",
+      was: "Revoke access instantly, at any time, with no confirmation.",
+      now: "Immediate before arrival; confirmed, and stating the consequence, while somebody is inside.",
+      because:
+        "Withdrawing a credential from a person standing at the property strands them. Instant is " +
+        "right for a session and wrong for a door.",
+      kind: "interaction",
+    },
+    {
+      source: "L1-01 §25",
+      now: "The account holder is a Member, or a partner where the vehicle is meant.",
+      because:
+        "The source uses a forbidden actor noun throughout, including in schema enums. It is " +
+        "philosophy only, and a surface that addressed the holder by it would be the document " +
+        "people quote.",
+      kind: "vocabulary",
+    },
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -2492,6 +2582,7 @@ export const ASSEMBLIES: readonly Assembly[] = [
   JOURNAL_ASSEMBLY,
   VEHICLE_CONSOLE,
   PUBLIC_SURFACE,
+  MEMBER_SURFACE,
 ];
 
 /**

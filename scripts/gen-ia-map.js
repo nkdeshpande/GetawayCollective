@@ -186,6 +186,27 @@ if (publicPages.size === 0) {
   process.exit(2);
 }
 
+/** The member surfaces: path -> its blocks, from content/member.ts. */
+const memberSrc = read("content", "member.ts");
+const memberSurfaces = new Map();
+for (const m of memberSrc.matchAll(/export const \w+: MemberSurface = \{([\s\S]*?)\n\};/g)) {
+  const b = m[1];
+  const mpath = (b.match(/\bpath:\s*"([^"]+)"/) || [])[1];
+  if (!mpath) continue;
+  const blocks = [...b.matchAll(/ref:\s*"(\d\d)",\s*title:\s*"([^"]*)",\s*ground:\s*"(\w+)"/g)]
+    .map((x) => ({ ref: x[1], title: unescapeTs(x[2]), ground: x[3] }));
+  memberSurfaces.set(mpath, {
+    id: (b.match(/\bid:\s*"([^"]+)"/) || [])[1],
+    alias: (b.match(/\balias:\s*"([^"]*)"/) || [])[1],
+    undrafted: /\bundrafted:/.test(b),
+    blocks,
+  });
+}
+if (memberSurfaces.size === 0) {
+  console.error("[ia-map] Parsed zero member surfaces. Refusing to write with them missing.");
+  process.exit(2);
+}
+
 /** Declared contents for routes that render no assembly. */
 const pageContents = new Map();
 {
@@ -321,6 +342,16 @@ function contentsOf(r) {
     for (const pane of pub.panes) {
       out.push({ h: `${pane.n} ${pane.eyebrow}`, t: `${pane.title}  ⟨${pane.ground}⟩` });
     }
+    return out;
+  }
+
+  const mem = memberSurfaces.get(r.path);
+  if (mem && mem.blocks.length) {
+    out.push({ h: `${mem.id} · ${mem.alias}`,
+               t: `${mem.blocks.length} blocks · ` +
+                  `${mem.blocks.filter((x) => x.ground === "paper").length} on paper` +
+                  (mem.undrafted ? " · carries a capability marked NOT IN FORCE" : "") });
+    for (const bl of mem.blocks) out.push({ h: `${bl.ref} ${bl.title}`, t: `⟨${bl.ground}⟩` });
     return out;
   }
 

@@ -4081,6 +4081,76 @@ A["AS-32"] = { vantage:"gateway", render: () => {
 </div>` } };
 
 
+/* AS-33 - THE MEMBER SURFACE
+   ---------------------------------------------------------------
+   MEM.01, MEM.02 and MEM.05 through MEM.08 of the 2.0 wireframes.
+   Copy lives in content/member.ts.
+
+   One block type is unusual: `undrafted`. It renders a capability the
+   source specifies that is deliberately NOT built, as a marked panel
+   rather than as body copy, so a reader cannot mistake it for something
+   in force.
+   --------------------------------------------------------------- */
+A["AS-33"] = { vantage:"member", render: () => {
+  const SURFACES = [
+    { id:"MEM.01", p:"/member/profile", a:"The Key", t:"Passport", n:4 },
+    { id:"MEM.02", p:"/member/resolutions", a:"Consensus", t:"Resolutions", n:3 },
+    { id:"MEM.05", p:"/member/calibration", a:"The Setup", t:"Unit calibration", n:5 },
+    { id:"MEM.06", p:"/member/signal", a:"The Signal", t:"The Signal", n:3 },
+    { id:"MEM.07", p:"/member/codex", a:"The Manual", t:"The Codex", n:4 },
+    { id:"MEM.08", p:"/member/pass", a:"The Credential", t:"Access credentials", n:3 },
+  ];
+  return `
+<div class="wrap">
+  <span class="t-micro" style="color:var(--steel)">AS-33 &middot; Member vantage</span>
+  <h1 class="t-display-l" style="margin:var(--s-2xs) 0 var(--s-s)">The Member Surface</h1>
+  <p class="t-body-l" style="color:var(--steel);max-width:65ch">
+    Six surfaces for a settled partner: the passport, the boardroom, calibration, the signal log,
+    the codex and access credentials.
+  </p>
+
+  <div class="stack" style="margin-top:var(--s-xl)">
+    ${SURFACES.map(x => `<div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:var(--s-s);flex-wrap:wrap">
+        <span class="t-mono-s" style="color:var(--steel)">${x.id} &middot; ${esc(x.a)}</span>
+        <span class="t-mono-s" style="color:var(--steel)">${esc(x.p)} &middot; ${x.n} blocks</span>
+      </div>
+      <h2 class="t-display-s" style="margin-top:var(--s-2xs)">${esc(x.t)}</h2>
+    </div>`).join("")}
+  </div>
+
+  <div class="panel on-paper" style="margin-top:var(--s-xl);max-width:76ch;
+       border-left:2px solid var(--critical-deep)">
+    <span class="t-micro" style="color:var(--critical-deep)">Specified, not drafted, not in force</span>
+    <p class="t-body" style="margin-top:var(--s-2xs)">
+      MEM.07 &sect;2.4 specifies that an operator satisfaction score below 70 for two consecutive
+      visits triggers a forced buyback of the position at NAV minus ten per cent, appeal
+      irrevocable. That is expropriation of a capital interest on a subjective score, at a
+      punitive discount, with the appeal closed. It is rendered as this panel and not as body
+      copy.
+    </p>
+  </div>
+
+  <div class="fixes">
+    <span class="fix"><b>Fixed</b> MEM.03 shows a trailing twelve-month yield of 14.8% against a
+      property at pre-construction, which has never traded and has no trailing twelve months. The
+      modelled figure from the vehicle record is shown with its class.</span>
+    <span class="fix"><b>Fixed</b> MEM.03 shows a NAV of &#8377;8,00,00,000 beside 2/10 fractions.
+      Two tenths of the equity layer is &#8377;80,00,000 &mdash; the two lines are a hundredfold
+      apart. Read from the record.</span>
+    <span class="fix"><b>Fixed</b> MEM.05 and MEM.06 show live grid status, sync state and a host
+      presence light. Every property is at pre-construction or lease-up, so those would be
+      readings from a building that is not sending any.</span>
+    <span class="fix"><b>Fixed</b> MEM.08 revokes access instantly at any time with no
+      confirmation. Instant is right for a session and wrong for a door: withdrawing a credential
+      from somebody standing at the property strands them.</span>
+    <span class="fix"><b>Rule</b> The account holder is a Member, or a partner where the vehicle is
+      meant. The source uses a &sect;25 forbidden actor noun throughout, including in schema
+      enums.</span>
+  </div>
+</div>` } };
+
+
 /* ═══════════════════════════════════════════════════════════════════
    AS-16 · SIGNAL LOST
 

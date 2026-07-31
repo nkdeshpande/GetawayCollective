@@ -79,14 +79,14 @@ code{font-family:var(--fm);font-size:.88em;background:rgba(242,242,242,.07);padd
 <div class="eb">GC.SYSTEM · Wave 7 · Information Architecture</div>
 <h1>Every URL<br>in the system.</h1>
 <p class="lede">
-<strong>113 routes</strong> across seven sections, plus 16 generated passport
+<strong>117 routes</strong> across seven sections, plus 16 generated passport
 stages. Access is <strong>derived from the assembly's vantage</strong> rather than declared — the
 aperture tier already decided what each vantage may see, and a route restating it would be a second
 source of truth. 12 routes override that derivation, and every
 one states why.
 </p>
 <div class="tally">
-<div><b style="color:#1FAA59">51</b><span>public</span></div><div><b style="color:#7FA4EE">3</b><span>identified</span></div><div><b style="color:#C79F6B">3</b><span>accredited</span></div><div><b style="color:#E8672E">22</b><span>member</span></div><div><b style="color:#FF3B30">34</b><span>office</span></div>
+<div><b style="color:#1FAA59">51</b><span>public</span></div><div><b style="color:#7FA4EE">3</b><span>identified</span></div><div><b style="color:#C79F6B">3</b><span>accredited</span></div><div><b style="color:#E8672E">26</b><span>member</span></div><div><b style="color:#FF3B30">34</b><span>office</span></div>
 <div><b>12</b><span>Overrides</span></div>
 <div><b>21</b><span>Rights used</span></div>
 </div>
@@ -456,7 +456,7 @@ one states why.
 <span class="t">annual review</span></div>
 </div>
 </section><section class="grp">
-<div class="grp-h"><span class="n">21 routes</span>
+<div class="grp-h"><span class="n">25 routes</span>
 <h2>Member Workspace</h2><p>Requires a settled position. The Member Law has fired.</p></div>
 <div class="rt">
 <span class="pth">/member</span>
@@ -570,14 +570,14 @@ one states why.
 </div>
 </div><div class="rt">
 <span class="pth">/member/resolutions</span>
-<span><span class="nm">Resolutions</span><br><span class="asm">AS-27 · The Ballot</span></span>
+<span><span class="nm">Resolutions</span><br><span class="asm">AS-33 · The Member Surface</span></span>
 <span class="ac" style="color:#E8672E">member</span>
 <span class="rg"></span>
 
 
 <div class="cts">
 <b>Ending <code>/resolutions</code> &middot; contents</b>
-<div class="ct"><span class="ch">AS-27.a Resolution</span><span class="cp">The text as it will be minuted, its threshold, and the closing time.  ⟨renders O-06⟩</span></div><div class="ct"><span class="ch">AS-27.b Weight</span><span class="cp">The viewer's own voting weight, and how it was derived.</span></div><div class="ct"><span class="ch">AS-27.c Cast</span><span class="cp">For, against, abstain. Irreversible once the window closes.</span></div><div class="ct"><span class="ch">AS-27.d Outcome</span><span class="cp">The aggregate, once the window closes.</span></div>
+<div class="ct"><span class="ch">MEM.02 · Consensus</span><span class="cp">3 blocks · 1 on paper</span></div><div class="ct"><span class="ch">01 How a vote is counted</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">02 The ledger</span><span class="cp">⟨void⟩</span></div><div class="ct"><span class="ch">03 Casting</span><span class="cp">⟨void⟩</span></div>
 </div>
 </div><div class="rt">
 <span class="pth">/member/resolutions/<em>[ref]</em></span>
@@ -636,14 +636,58 @@ one states why.
 </div>
 </div><div class="rt">
 <span class="pth">/member/profile</span>
-<span><span class="nm">Profile</span></span>
+<span><span class="nm">Passport</span><br><span class="asm">AS-33 · The Member Surface</span></span>
 <span class="ac" style="color:#E8672E">member</span>
 <span class="rg"></span>
 
 
 <div class="cts">
 <b>Ending <code>/profile</code> &middot; contents</b>
-<div class="ct"><span class="ch">Identity</span><span class="cp">Name, contact, and tax residency as recorded. Changes are proposed, not applied — an identity on a register is not edited in place.</span></div><div class="ct"><span class="ch">Verification</span><span class="cp">What has been verified, when, and against which document.</span></div><div class="ct"><span class="ch">Positions</span><span class="cp">Every vehicle this identity is a partner in, with the date settlement fired.</span></div>
+<div class="ct"><span class="ch">MEM.01 · The Key</span><span class="cp">4 blocks · 2 on paper</span></div><div class="ct"><span class="ch">01 Identity</span><span class="cp">⟨void⟩</span></div><div class="ct"><span class="ch">02 Jurisdiction</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">03 Sessions</span><span class="cp">⟨void⟩</span></div><div class="ct"><span class="ch">04 Privacy</span><span class="cp">⟨paper⟩</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/member/calibration</span>
+<span><span class="nm">Unit Calibration</span><br><span class="asm">AS-33 · The Member Surface</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+<span class="nt">MEM.05. Every control is real and none can be transmitted: the property is at pre-construction, so there is no management system to reach.</span>
+<div class="cts">
+<b>Ending <code>/calibration</code> &middot; contents</b>
+<div class="ct"><span class="ch">MEM.05 · The Setup</span><span class="cp">5 blocks · 4 on paper</span></div><div class="ct"><span class="ch">01 State</span><span class="cp">⟨void⟩</span></div><div class="ct"><span class="ch">02 Thermal</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">03 Light</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">04 Acoustic</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">05 Provisioning</span><span class="cp">⟨paper⟩</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/member/signal</span>
+<span><span class="nm">The Signal</span><br><span class="asm">AS-33 · The Member Surface</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+<span class="nt">MEM.06. A written, asynchronous record with the operating partner. No presence indicator and no typing state — both promise an immediacy the queue does not have.</span>
+<div class="cts">
+<b>Ending <code>/signal</code> &middot; contents</b>
+<div class="ct"><span class="ch">MEM.06 · The Signal</span><span class="cp">3 blocks · 1 on paper</span></div><div class="ct"><span class="ch">01 What this is</span><span class="cp">⟨void⟩</span></div><div class="ct"><span class="ch">02 Directives</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">03 Who answers</span><span class="cp">⟨void⟩</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/member/codex</span>
+<span><span class="nm">The Codex</span><br><span class="asm">AS-33 · The Member Surface</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+<span class="nt">MEM.07. The manual for one property. The conduct-linked forced buyback the source specifies is marked as not drafted and not in force.</span>
+<div class="cts">
+<b>Ending <code>/codex</code> &middot; contents</b>
+<div class="ct"><span class="ch">MEM.07 · The Manual</span><span class="cp">4 blocks · 4 on paper · carries a capability marked NOT IN FORCE</span></div><div class="ct"><span class="ch">01 What binds and what does not</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">02 Physical tolerances</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">03 Conduct</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">04 Acknowledgement</span><span class="cp">⟨paper⟩</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/member/pass</span>
+<span><span class="nm">Access Credentials</span><br><span class="asm">AS-33 · The Member Surface</span></span>
+<span class="ac" style="color:#E8672E">member</span>
+<span class="rg"></span>
+
+<span class="nt">MEM.08. Issuing spends your nights and puts the visitor's conduct on your record.</span>
+<div class="cts">
+<b>Ending <code>/pass</code> &middot; contents</b>
+<div class="ct"><span class="ch">MEM.08 · The Credential</span><span class="cp">3 blocks · 2 on paper</span></div><div class="ct"><span class="ch">01 What issuing costs</span><span class="cp">⟨paper⟩</span></div><div class="ct"><span class="ch">02 Revocation</span><span class="cp">⟨void⟩</span></div><div class="ct"><span class="ch">03 The record</span><span class="cp">⟨paper⟩</span></div>
 </div>
 </div><div class="rt">
 <span class="pth">/member/settings</span>

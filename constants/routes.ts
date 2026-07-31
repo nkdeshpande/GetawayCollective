@@ -239,7 +239,7 @@ export const MEMBER_ROUTES: readonly Route[] = [
     notes: "Default consequences render in full above the payment control." }),
   R("/member/entitlement", "Entitlement", "time", "AS-25"),
   R("/member/entitlement/[year]", "Entitlement Year", "time", "AS-25", { params: ["year"] }),
-  R("/member/resolutions", "Resolutions", "member", "AS-27"),
+  R("/member/resolutions", "Resolutions", "member", "AS-33"),
   R("/member/resolutions/[ref]", "Ballot", "member", "AS-27", { params: ["ref"],
     notes: "Sealed at every vantage. The confirmation never echoes the choice." }),
   R("/member/documents", "Documents", "member", "AS-05"),
@@ -248,7 +248,21 @@ export const MEMBER_ROUTES: readonly Route[] = [
   R("/member/notifications", "Notifications", "member", null,
     { notes: "The alert centre. A system ticker (SIGNAL_APERTURE) never lands here; only things " +
              "asked of the member do." }),
-  R("/member/profile", "Profile", "member", null),
+  R("/member/profile", "Passport", "member", "AS-33"),
+  /* MEM.05 through MEM.08. Member access: the guard fails closed, so
+     these deny for anyone who has not settled a position. */
+  R("/member/calibration", "Unit Calibration", "member", "AS-33",
+    { notes: "MEM.05. Every control is real and none can be transmitted: the property is at " +
+             "pre-construction, so there is no management system to reach." }),
+  R("/member/signal", "The Signal", "member", "AS-33",
+    { notes: "MEM.06. A written, asynchronous record with the operating partner. No presence " +
+             "indicator and no typing state — both promise an immediacy the queue does not have." }),
+  R("/member/codex", "The Codex", "member", "AS-33",
+    { notes: "MEM.07. The manual for one property. The conduct-linked forced buyback the source " +
+             "specifies is marked as not drafted and not in force." }),
+  R("/member/pass", "Access Credentials", "member", "AS-33",
+    { notes: "MEM.08. Issuing spends your nights and puts the visitor's conduct on your record." }),
+
   R("/member/settings", "Settings", "member", null),
   R("/member/settings/notifications", "Notification Settings", "member", null),
   R("/member/settings/security", "Security", "member", null),

@@ -241,10 +241,35 @@ export const MODE = {
  * colour-scheme root — because a ground arrives by both routes and each
  * one needs the same remap. Built once here so they cannot drift.
  */
-const PAPER_SCOPE_VARS = Object.entries(ON_GROUND.paper)
-  .map(([semantic, hex]) =>
-    `  --gc-${semantic.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase())}: ${hex};`)
-  .join("\n");
+/* No type annotation: scripts/export-tokens.js evaluates this file as
+   plain JS, stripping only `export` and `as const`. An annotation here
+   is a syntax error there, and the failure is at generation time rather
+   than compile time. */
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+// @ts-expect-error - untyped on purpose; see the note above.
+const scopeVars = (ground) =>
+  Object.entries(ground)
+    .map(([semantic, hex]) =>
+      `  --gc-${semantic.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase())}: ${hex};`)
+    .join("\n");
+
+/**
+ * The VOID scope, for a dark panel nested inside a paper section.
+ *
+ * .on-paper re-points the neutrals and accents for a light ground, and
+ * that scope inherits into everything beneath it — including a panel
+ * that is deliberately dark. The undrafted-clause panel on the Codex
+ * rendered ink on void-panel at 1.06:1, and its critical accent came out
+ * as the paper variant at 3.68:1.
+ *
+ * This is the exact mirror of the .panel.on-paper defect, and it is
+ * fixed the same way: the ground restores its own values, so nesting
+ * either way round is correct by construction rather than by the author
+ * remembering which way round they are.
+ */
+const VOID_SCOPE_VARS = scopeVars(ON_GROUND.void);
+
+const PAPER_SCOPE_VARS = scopeVars(ON_GROUND.paper);
 
 // ── Export as CSS custom properties (for runtime use) ──────────────────
 export const CSS_VARS = `
@@ -375,5 +400,14 @@ export const CSS_VARS = `
    whole of adding it here. */
 .on-paper {
 ${PAPER_SCOPE_VARS}
+}
+
+/* A dark panel inside a paper section restores the dark ground.
+   See the note beside VOID_SCOPE_VARS: without this the paper scope
+   inherits into it and puts ink on a void panel at 1.06:1. */
+.on-paper .on-panel {
+  background: ${COLOUR.voidPanel};
+  color: ${COLOUR.inkInverse};
+${VOID_SCOPE_VARS}
 }
 `;

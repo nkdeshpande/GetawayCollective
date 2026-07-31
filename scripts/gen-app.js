@@ -184,6 +184,14 @@ const BY_PATH = {
   "/structure": { component: "Structure", from: "@/app/_assemblies/publicpages" },
   "/auth/sign-in": { component: "Identify", from: "@/app/_assemblies/publicpages" },
 
+  /* The member surfaces: MEM.01, MEM.02, MEM.05-MEM.08. */
+  "/member/profile": { component: "Passport", from: "@/app/_assemblies/memberpages" },
+  "/member/resolutions": { component: "Boardroom", from: "@/app/_assemblies/memberpages" },
+  "/member/calibration": { component: "Calibration", from: "@/app/_assemblies/memberpages" },
+  "/member/signal": { component: "SignalLog", from: "@/app/_assemblies/memberpages" },
+  "/member/codex": { component: "Codex", from: "@/app/_assemblies/memberpages" },
+  "/member/pass": { component: "Pass", from: "@/app/_assemblies/memberpages" },
+
   /* The legal corpus: one renderer, seven documents, chosen by path.
      AS-29 takes the path as a prop rather than being seven components. */
   "/legal": { component: "DocumentIndex", from: "@/app/_assemblies/documents" },
