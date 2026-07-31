@@ -252,9 +252,38 @@ const DESIGN = {
 const all = parse();
 const pending = all.filter((a) => !shipped.has(a.id));
 
-if (pending.length === 0) {
-  console.error("[pending-brief] Parsed zero pending assemblies. Refusing to write an empty brief.");
+// Zero pending has two very different causes and the guard could not tell
+// them apart. A broken parse yields zero assemblies AND zero pending; a
+// finished build yields many assemblies and zero pending. Only the first
+// is a failure.
+if (all.length === 0) {
+  console.error("[pending-brief] Parsed zero assemblies at all. The parser is broken. Refusing to run.");
   process.exit(2);
+}
+if (pending.length === 0) {
+  const done = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GC.SYSTEM · No pending assemblies</title><style>
+body{background:#0A0A0A;color:#F2F2F2;font:400 16px/1.6 'Inter',system-ui,sans-serif;
+margin:0;-webkit-font-smoothing:antialiased}
+.w{max-width:720px;margin:0 auto;padding:96px 24px}
+h1{font:600 clamp(34px,5vw,52px)/1 'Outfit',system-ui,sans-serif;letter-spacing:-.035em}
+p{margin-top:20px;color:#D8D8D8}
+.m{font:400 12px/1.8 'Space Mono',ui-monospace,monospace;color:#9A9A9A;
+background:rgba(242,242,242,.04);padding:16px 18px;margin-top:28px;white-space:pre}
+</style></head><body><div class="w">
+<h1>Every registered assembly<br>is built.</h1>
+<p>${all.length} assemblies registered, ${all.length} shipping. This document lists the ones that
+are specified and not yet implemented, and there are none.</p>
+<p>It regenerates the moment one is added to the registry — and the generator refuses to run if a
+new assembly has no design authored against it, so the gap cannot be introduced silently.</p>
+<div class="m">registered  ${all.length}
+built       ${all.length}
+pending     0</div>
+</div></body></html>`;
+  fs.writeFileSync(path.join(ROOT, "PENDING-ASSEMBLIES.html"), done);
+  console.log(`[pending-brief] 0 pending of ${all.length} registered — wrote the completion page.`);
+  process.exit(0);
 }
 const missing = pending.filter((p) => !DESIGN[p.id]).map((p) => p.id);
 if (missing.length) {

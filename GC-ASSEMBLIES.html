@@ -726,6 +726,307 @@ th.num{text-align:right}
   padding:var(--s-2xs) 0}
 .expiry{border-left:2px solid var(--hazard);padding-left:var(--s-s);max-width:60ch}
 
+
+/* ── AS-14 · The Risk Disclosure ─────────────────────────────────── */
+/* Paper throughout. Every sentence here is an assertion, so the ground
+   never leaves it. */
+.risk{background:var(--paper);color:var(--ink);padding:var(--s-2xl) 0 var(--s-3xl)}
+.risk-col{max-width:720px;margin:0 auto;padding:0 var(--s-m)}
+.risk h1{font:600 clamp(34px,5vw,50px)/1 var(--f-display);letter-spacing:-.03em;
+  text-transform:uppercase;margin-bottom:var(--s-s)}
+.risk .ver{font:400 11px/1.4 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--steel);border-top:1px solid var(--ink);padding-top:var(--s-s);display:block}
+/* No accordion and no tabs. A risk behind a click is a risk somebody
+   skipped, and this is the one screen that may not be skimmable. */
+.clause{margin-top:var(--s-xl);padding-left:var(--s-s);border-left:3px solid var(--hazard-deep)}
+.clause.sev1{border-left-color:var(--critical-deep)}
+.clause h2{font:600 24px/1.2 var(--f-display);letter-spacing:-.02em;margin-bottom:var(--s-2xs)}
+.clause .sev{font:400 10px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--hazard-deep)}
+.clause.sev1 .sev{color:var(--critical-deep)}
+.clause p{font:400 16px/1.65 var(--f-body);max-width:65ch;margin-top:var(--s-2xs)}
+.clause .terms{margin-top:var(--s-s);font:400 12.5px/1.6 var(--f-mono);color:var(--steel);
+  background:rgba(10,10,10,.05);padding:11px 14px}
+/* Visible from the first scroll, disabled with the reason in WORDS.
+   A control held at half opacity with pointer-events off is invisible to
+   the eye and absent from the keyboard, so nothing says what to do. */
+.ackbar{position:sticky;bottom:0;background:var(--paper-panel);border-top:2px solid var(--ink);
+  padding:var(--s-m);margin-top:var(--s-2xl);z-index:40}
+.ackbar .in{max-width:720px;margin:0 auto;display:flex;gap:var(--s-m);align-items:center;
+  flex-wrap:wrap;padding:0 var(--s-m)}
+.ackbar label{display:flex;gap:var(--s-2xs);align-items:flex-start;cursor:pointer;
+  font-size:14.5px;max-width:52ch;line-height:1.5}
+.ackbar input[type=checkbox]{width:19px;height:19px;flex:none;margin-top:1px;accent-color:var(--ink)}
+.ackbar input:disabled + span{color:var(--steel)}
+.ackbar .why{font:400 12px/1.5 var(--f-mono);color:var(--hazard-deep);flex-basis:100%}
+.ackbar .go{margin-left:auto}
+.risk .btn{border-color:var(--ink);color:var(--ink)}
+.risk .btn:hover:not([disabled]){background:var(--ink);color:var(--paper)}
+.risk .btn[disabled]{opacity:1;border-color:var(--steel);color:var(--steel);pointer-events:none}
+.skipend{background:none;border:none;text-decoration:underline;color:var(--ink);
+  font:400 13px/1 var(--f-body);padding:var(--s-2xs) 0}
+
+/* ── AS-26 · The Capital Call ────────────────────────────────────── */
+.call{display:grid;grid-template-columns:1fr 400px;gap:var(--s-2xl);align-items:start}
+@media (max-width:900px){ .call{grid-template-columns:1fr;gap:var(--s-l)}
+  .call .deriv{order:-1} }
+.call-amt{display:flex;gap:var(--s-2xl);flex-wrap:wrap;align-items:baseline;
+  padding-bottom:var(--s-m);border-bottom:1px solid var(--hair)}
+.call-amt .big{font:500 clamp(38px,6vw,56px)/1 var(--f-mono);font-variant-numeric:tabular-nums;
+  letter-spacing:-.03em;color:var(--copper)}
+/* The due date renders at EQUAL weight to the amount. A due date smaller
+   than the figure is a suggestion. */
+.call-amt .due-big{font:500 clamp(28px,4vw,40px)/1 var(--f-mono);letter-spacing:-.02em}
+.call-amt .lb{display:block;font:400 10px/1 var(--f-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--steel-dim);margin-bottom:var(--s-2xs)}
+/* Default provisions render in FULL above the payment control. Dilution
+   and forfeiture are the terms most often placed after the act. */
+.default-terms{border-left:3px solid var(--critical);padding-left:var(--s-s);
+  margin-top:var(--s-xl);max-width:70ch}
+.default-terms h3{font:600 19px/1.3 var(--f-display);color:var(--critical);margin-bottom:var(--s-2xs)}
+.default-terms li{margin-left:var(--s-s);margin-top:var(--s-2xs);color:var(--ink-inv)}
+.deriv{background:var(--paper);color:var(--ink);padding:var(--s-m);position:sticky;top:88px}
+.deriv h3{font:600 11px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--steel);padding-bottom:var(--s-2xs);border-bottom:1px solid var(--ink);
+  margin-bottom:var(--s-2xs)}
+.deriv .row{display:flex;justify-content:space-between;gap:var(--s-s);padding:10px 0;
+  border-bottom:1px solid rgba(10,10,10,.12);font-size:13.5px}
+.deriv .row:last-child{border-bottom:none}
+.deriv .row .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--copper-deep)}
+.deriv .row.tot{border-top:2px solid var(--ink);margin-top:var(--s-2xs);padding-top:12px;
+  border-bottom:none;font-weight:700}
+.deriv .note{font-size:12px;color:var(--steel);margin-top:var(--s-s);line-height:1.5}
+
+/* ── AS-27 · The Ballot ──────────────────────────────────────────── */
+.ballot{max-width:720px}
+/* The resolution renders VERBATIM as it will be minuted. A summary of a
+   resolution is a different document from the one being voted on. */
+.resolution{border:1px solid var(--hair);background:var(--void-panel);padding:var(--s-m);
+  font:400 17px/1.65 var(--f-body);max-width:65ch}
+.res-meta{display:flex;gap:var(--s-l);flex-wrap:wrap;margin-top:var(--s-m);
+  padding-top:var(--s-m);border-top:1px solid var(--hair)}
+.res-meta div span{display:block;font:400 10px/1 var(--f-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--steel-dim);margin-bottom:5px}
+.res-meta div b{font:500 18px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.countdown{color:var(--hazard)}
+/* Three choices at EQUAL visual weight, fixed order, none preselected.
+   A default on a governance ballot is a nudge. */
+.choices{display:grid;gap:var(--s-2xs);margin-top:var(--s-l);max-width:520px}
+.choice{display:flex;gap:var(--s-s);align-items:center;padding:var(--s-s);
+  border:1px solid var(--hair);cursor:pointer;transition:border-color var(--d-instant)}
+.choice:hover{border-color:var(--steel-dim)}
+.choice:has(input:checked){border-color:var(--copper);background:rgba(199,159,107,.06)}
+.choice input{width:18px;height:18px;flex:none;accent-color:var(--copper)}
+.choice .t{font-size:16px}
+.choice .d{display:block;font-size:12.5px;color:var(--steel-dim);margin-top:2px}
+.seal{border-left:2px solid var(--forest-light);padding-left:var(--s-s);
+  margin-top:var(--s-m);max-width:66ch}
+.tally-row{display:grid;grid-template-columns:110px 1fr 84px;gap:var(--s-s);
+  align-items:center;padding:var(--s-2xs) 0}
+.tally-bar{height:26px;background:rgba(242,242,242,.07);position:relative}
+.tally-bar i{display:block;height:100%;background:var(--steel-dim)}
+.tally-row.for .tally-bar i{background:var(--confirm)}
+.tally-row.against .tally-bar i{background:var(--critical)}
+.tally-row .n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.threshold-mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--copper)}
+
+/* ── AS-19 · The Ledger Lock ─────────────────────────────────────── */
+/* A constrained column is right exactly once in this system: a single
+   sequence with one thing to do at each step. */
+.terminal{max-width:480px;margin:0 auto;border:1px solid var(--hair);background:var(--void-panel)}
+.term-head{position:relative;min-height:180px;display:flex;align-items:flex-end;
+  border-bottom:1px solid var(--hair);overflow:hidden}
+.term-head .bed{position:absolute;inset:0}
+.term-head .sc{position:absolute;inset:0;
+  background:linear-gradient(to top,var(--void-panel) 0%,rgba(10,10,10,.3) 70%,transparent 100%)}
+.term-head .tt{position:relative;padding:var(--s-m)}
+.term-head h2{font:600 32px/0.92 var(--f-display);letter-spacing:-.035em;text-transform:uppercase}
+.lock-stage{padding:var(--s-m)}
+.lock-stage[hidden]{display:none}
+.lock-stage h3{font:400 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--steel-dim);margin-bottom:var(--s-m)}
+/* Real checkboxes with real labels. Each one is a separate acknowledgement
+   of a separate fact — bundling them makes the bundle the thing agreed. */
+.inv-item{display:flex;gap:var(--s-s);align-items:flex-start;padding:var(--s-s);
+  border:1px solid var(--hair);margin-bottom:var(--s-2xs);cursor:pointer}
+.inv-item:has(input:checked){border-color:var(--forest-light);background:rgba(34,138,104,.07)}
+.inv-item input{width:18px;height:18px;flex:none;margin-top:2px;accent-color:var(--forest-light)}
+.inv-item span{font-size:13.5px;line-height:1.5;color:var(--ink-inv)}
+.lock-rec{background:var(--paper);color:var(--ink);padding:var(--s-m);margin-top:var(--s-s)}
+.lock-rec .ref{font:500 17px/1.3 var(--f-mono);letter-spacing:-.01em}
+
+
+/* ── AS-28 · The Risk Register ───────────────────────────────────── */
+/* Paper. A register is assertion end to end. */
+.reg{background:var(--paper);color:var(--ink);padding:var(--s-2xl) 0 var(--s-3xl)}
+.reg table{min-width:940px}
+/* Severity is a figure AND a band. A 4x4 matrix reduced to colour alone
+   is unreadable to a large minority. */
+.sev-cell{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.sev-cell b{font:600 15px/1 var(--f-mono);font-variant-numeric:tabular-nums;min-width:18px;
+  text-align:right}
+.sev-cell span{font:400 9.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid currentColor;padding:2px 6px}
+.sev-cell.s1{color:var(--steel)}
+.sev-cell.s2{color:var(--confirm-deep)}
+.sev-cell.s3{color:var(--hazard-deep)}
+.sev-cell.s4{color:var(--critical-deep)}
+.stale-mark{display:inline-block;font:400 9.5px/1 var(--f-mono);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--critical-deep);border:1px solid currentColor;
+  padding:2px 6px;margin-top:4px}
+.matrix-key{display:grid;grid-template-columns:auto repeat(4,52px);gap:1px;background:rgba(10,10,10,.16);
+  border:1px solid rgba(10,10,10,.16);max-width:340px;margin-top:var(--s-s)}
+.matrix-key div{background:var(--paper);padding:8px 4px;text-align:center;
+  font:400 10px/1.3 var(--f-mono)}
+.matrix-key div.h{background:var(--mist);color:var(--steel)}
+
+/* ── AS-16 · Signal Lost ─────────────────────────────────────────── */
+/* One screen, no scroll. Static: no parallax, no glitch, no noise, no
+   timer. That is the whole design and it should stay that way. */
+.lost{min-height:78vh;display:flex;flex-direction:column;justify-content:center;
+  max-width:64ch}
+.lost h1{font:600 clamp(56px,13vw,132px)/0.84 var(--f-display);letter-spacing:-.05em}
+.lost .path{margin-top:var(--s-l);padding:var(--s-s) var(--s-m);border:1px solid var(--hair);
+  font:400 14px/1.5 var(--f-mono);word-break:break-all;color:var(--steel-dim)}
+.lost .outs{display:flex;gap:var(--s-2xs);flex-wrap:wrap;margin-top:var(--s-xl)}
+
+/* ── AS-17 · The Knowledge Base ──────────────────────────────────── */
+.kb-search{position:relative;max-width:640px;margin-top:var(--s-l)}
+.kb-search label{display:block;font:400 10px/1 var(--f-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--steel-dim);margin-bottom:var(--s-2xs)}
+/* A real label. No text-transform: uppercasing renders what someone typed
+   as something they did not type. */
+.kb-search input{width:100%;background:transparent;border:none;
+  border-bottom:2px solid var(--hair);padding:var(--s-xs) 0;color:var(--ink-inv);
+  font:400 22px/1.3 var(--f-display);outline:none}
+.kb-search input:focus-visible{border-bottom-color:var(--electric)}
+.kb-cat{font:400 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--steel-dim);margin:var(--s-2xl) 0 var(--s-2xs);padding-bottom:var(--s-2xs);
+  border-bottom:1px solid var(--hair);display:block}
+.qa{border-bottom:1px solid var(--hair)}
+.qa > button{width:100%;background:none;border:none;color:inherit;text-align:left;
+  padding:var(--s-m) 0;display:flex;justify-content:space-between;gap:var(--s-s);
+  align-items:baseline;font:500 17px/1.35 var(--f-display);letter-spacing:-.01em}
+.qa > button:hover{color:var(--copper)}
+.qa .ic{font:400 20px/1 var(--f-mono);color:var(--steel-dim);flex:none}
+/* No height cap. Any answer over 600px was silently clipped in the
+   source — including the exit-mechanism answer, which was the longest. */
+.qa .ans{padding:0 0 var(--s-m);max-width:70ch}
+.qa .ans[hidden]{display:none}
+.cite{display:inline-flex;align-items:center;gap:6px;margin-top:var(--s-s);margin-right:var(--s-2xs);
+  border:1px solid var(--hair);padding:5px 10px;font:400 10px/1.4 var(--f-mono);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--steel-dim);
+  background:none;transition:color var(--d-instant),border-color var(--d-instant)}
+.cite:hover{color:var(--copper);border-color:var(--copper)}
+.kb-none{padding:var(--s-2xl) 0;color:var(--steel-dim)}
+
+/* ── AS-15 · System Status ───────────────────────────────────────── */
+/* The headline is a WORD, not a dashboard. Someone arriving here has a
+   yes/no question. */
+.status-hero{padding:var(--s-2xl) 0;border-bottom:1px solid var(--hair)}
+.status-hero h1{font:600 clamp(40px,8vw,84px)/0.95 var(--f-display);letter-spacing:-.04em}
+.status-hero h1.ok{color:var(--confirm)}
+.status-hero h1.deg{color:var(--hazard)}
+.status-hero h1.down{color:var(--critical)}
+.comp{display:flex;justify-content:space-between;gap:var(--s-s);align-items:baseline;
+  padding:var(--s-s) 0;border-bottom:1px solid var(--hair);flex-wrap:wrap}
+.comp .last{font:400 11px/1.4 var(--f-mono);color:var(--steel-dim)}
+/* A component nobody has heard from renders UNKNOWN, never healthy.
+   Silence is not health. */
+.comp .s{font:400 10px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid currentColor;padding:3px 8px;white-space:nowrap}
+.comp .s.up{color:var(--confirm)}
+.comp .s.deg{color:var(--hazard)}
+.comp .s.down{color:var(--critical)}
+.comp .s.unk{color:var(--steel-dim)}
+.inc{border-left:2px solid var(--hazard);padding-left:var(--s-s);margin-bottom:var(--s-m)}
+.inc.resolved{border-left-color:var(--confirm)}
+.inc .when{font:400 11px/1.4 var(--f-mono);color:var(--steel-dim)}
+
+
+/* ── AS-07 · The Portfolio Narrative ─────────────────────────────── */
+.brand{padding:var(--s-3xl) 0;border-bottom:1px solid var(--hair)}
+.brand-h{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s-m);
+  flex-wrap:wrap;margin-bottom:var(--s-l)}
+.brand-h h2{font:600 clamp(38px,6vw,68px)/0.92 var(--f-display);letter-spacing:-.04em;
+  text-transform:uppercase}
+.brand-h .say{font:400 italic 20px/1.4 var(--f-editorial);color:var(--copper);
+  text-align:right;max-width:30ch}
+.brand-media{height:min(48vh,420px);border:1px solid var(--hair);overflow:hidden;position:relative}
+.brand-media span{position:absolute;inset:0;transition:transform 1200ms var(--e-cinema)}
+.brand:hover .brand-media span{transform:scale(1.03)}
+@media (prefers-reduced-motion:reduce){ .brand-media span{transition:none} }
+.brand-cols{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-l);margin:var(--s-l) 0}
+@media (max-width:820px){ .brand-cols{grid-template-columns:1fr} }
+/* Attributes are DESCRIPTIVE. No figure enters this grid — a grid of
+   figures is a comparison table, and this is not one. */
+.attrs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
+  background:var(--hair);border:1px solid var(--hair)}
+.attrs div{background:var(--void);padding:var(--s-m);min-height:150px;
+  display:flex;flex-direction:column;justify-content:space-between}
+.attrs .k{font:400 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--steel-dim)}
+.attrs .v{font:500 19px/1.2 var(--f-display);letter-spacing:-.01em;margin-top:var(--s-s)}
+.attrs .d{font-size:13px;color:var(--steel-dim);margin-top:6px;line-height:1.45}
+
+/* ── AS-18 · Recruitment ─────────────────────────────────────────── */
+.axiom{max-width:62ch;margin-bottom:var(--s-xl)}
+.axiom .n{font:400 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--forest-light)}
+.axiom h3{font:600 26px/1.25 var(--f-display);letter-spacing:-.025em;margin:var(--s-2xs) 0}
+.role{display:grid;grid-template-columns:96px 1fr 150px 130px;gap:var(--s-m);
+  padding:var(--s-m) 0;border-bottom:1px solid var(--hair);align-items:start}
+@media (max-width:820px){ .role{grid-template-columns:1fr;gap:var(--s-2xs)} }
+.role .cd{font:400 11px/1.5 var(--f-mono);color:var(--steel-dim)}
+.role h4{font:500 19px/1.25 var(--f-display);letter-spacing:-.01em}
+.role .own{font-size:13.5px;color:var(--steel-dim);margin-top:4px;max-width:56ch}
+.role .sen{font:400 11px/1.5 var(--f-mono);color:var(--steel-dim)}
+/* A filled role stays FULLY legible. Someone reading it is deciding
+   whether to watch for the next one. */
+.role .filled{font:400 10px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--hair);padding:5px 9px;color:var(--steel-dim);display:inline-block}
+.apply{border:1px solid var(--hair);background:var(--void-panel);padding:var(--s-m);
+  max-width:560px;margin-top:var(--s-xl)}
+/* A real file input. A drop zone alone cannot be reached from a keyboard. */
+.apply input[type=file]{display:block;margin-top:var(--s-2xs);color:var(--steel-dim);
+  font:400 13px/1.5 var(--f-body);width:100%}
+.apply input[type=file]::file-selector-button{background:transparent;border:1px solid var(--hair);
+  color:var(--ink-inv);font:400 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
+  padding:10px 14px;margin-right:var(--s-s)}
+.apply input[type=file]::file-selector-button:hover{background:var(--ink-inv);color:var(--void)}
+
+/* ── AS-08 · The Story Playback ──────────────────────────────────── */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;
+  background:var(--hair);border:1px solid var(--hair)}
+.tile{background:var(--void);position:relative;aspect-ratio:4/5;overflow:hidden;
+  border:none;padding:0;text-align:left;color:inherit;width:100%}
+.tile .bed{position:absolute;inset:0;transition:transform 600ms var(--e-cinema)}
+.tile:hover .bed,.tile:focus-visible .bed{transform:scale(1.04)}
+@media (prefers-reduced-motion:reduce){ .tile .bed{transition:none} }
+.tile .sc{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.92) 0%,rgba(10,10,10,.15) 55%,transparent 100%)}
+.tile .cap{position:absolute;inset:auto 0 0 0;padding:var(--s-s)}
+.tile h3{font:600 20px/1.05 var(--f-display);letter-spacing:-.025em;text-transform:uppercase}
+#player{position:fixed;inset:0;z-index:7500;background:var(--void);display:none}
+#player.on{display:flex;flex-direction:column}
+.pl-bars{display:flex;gap:4px;padding:var(--s-s) var(--s-m) 0}
+.pl-bars i{flex:1;height:3px;background:rgba(242,242,242,.22);overflow:hidden;display:block}
+.pl-bars i b{display:block;height:100%;width:0;background:var(--ink-inv)}
+.pl-top{display:flex;justify-content:space-between;align-items:center;gap:var(--s-s);
+  padding:var(--s-s) var(--s-m)}
+.pl-stage{flex:1;position:relative;margin:0 var(--s-m) var(--s-m);overflow:hidden;
+  border:1px solid var(--hair)}
+.pl-card{position:absolute;inset:0;display:none}
+.pl-card.on{display:block}
+.pl-card .bed{position:absolute;inset:0}
+.pl-card .sc{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.94) 0%,rgba(10,10,10,.2) 60%,transparent 100%)}
+.pl-card .cap{position:absolute;inset:auto 0 0 0;padding:var(--s-xl)}
+.pl-card h2{font:600 clamp(30px,6vw,58px)/0.9 var(--f-display);letter-spacing:-.04em;
+  text-transform:uppercase;max-width:16ch}
+.pl-card p{margin-top:var(--s-s);max-width:52ch}
+.pl-ctl{display:flex;gap:var(--s-2xs);align-items:center}
+
 [hidden]{display:none !important}
 </style>
 </head>
@@ -755,6 +1056,17 @@ th.num{text-align:right}
       <button data-go="AS-13">AS-13 Docket</button>
       <button data-go="AS-25">AS-25 Time</button>
       <button data-go="AS-24">AS-24 Voices</button>
+      <button data-go="AS-14">AS-14 Risk</button>
+      <button data-go="AS-26">AS-26 Call</button>
+      <button data-go="AS-27">AS-27 Ballot</button>
+      <button data-go="AS-19">AS-19 Lock</button>
+      <button data-go="AS-28">AS-28 Risk Reg</button>
+      <button data-go="AS-17">AS-17 Answers</button>
+      <button data-go="AS-15">AS-15 Status</button>
+      <button data-go="AS-16">AS-16 404</button>
+      <button data-go="AS-07">AS-07 Brands</button>
+      <button data-go="AS-18">AS-18 Roles</button>
+      <button data-go="AS-08">AS-08 Story</button>
     </nav>
   </div>
 </header>
@@ -2748,6 +3060,1190 @@ A["AS-25"] = { vantage:"time", render: () => {
 
 ${footer()}` } };
 
+
+/* What each piston does once it has been held for its full 3000ms.
+   Keyed by data-fires so the control stays generic and the consequence
+   stays with the screen that owns it. */
+const PISTON_FIRES = {
+  commit(){
+    document.getElementById("settled").classList.add("on");
+    document.getElementById("st4").dataset.state = "done";
+    const st = document.getElementById("anchorState");
+    st.textContent = "Committed · awaiting settlement";
+    st.style.color = "var(--copper)";
+    signal("Commitment recorded — settlement pending", "ok");
+    document.getElementById("settled").scrollIntoView({ behavior:"smooth", block:"center" });
+  },
+  call(){
+    const r = document.getElementById("callSettled");
+    r.hidden = false;
+    document.getElementById("callState").textContent = "Met · settlement pending";
+    signal("Capital call payment recorded", "ok");
+    r.scrollIntoView({ behavior:"smooth", block:"center" });
+  },
+  lock(){
+    lockStage(4);
+    signal("Ledger locked", "ok");
+  },
+};
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-14 · THE RISK DISCLOSURE
+
+   The gate before AS-06. Paper throughout, because every sentence on the
+   screen is an assertion.
+
+   The gate opens when the end has been reached by ANY means — scroll,
+   keyboard, or the skip control. The source unlocked on scroll position
+   at 99%, which is not reading, and which someone tabbing to the end
+   never triggered at all: it locked out the people most likely to have
+   read it.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const DISCLOSURE = { version: "3.1", dated: "2026-06-30" };
+
+/* Terms are READ from the vehicle record, never typed into the prose. A
+   disclosure that restates commercial terms will drift from the
+   instrument it describes, and the prose is what people rely on. */
+const RISK_TERMS = {
+  lockIn: "36 months from settlement",
+  secondary: "Internal transfer only, subject to Board consent",
+  opCoShare: "35% of gross revenue",
+  reserveFloor: "6 months non-operational fixed obligations",
+};
+
+const CLAUSES = [
+  { sev: 1, t: "You can lose the whole of it",
+    p: "This is equity in a private company that owns a building. If the vehicle cannot meet its " +
+       "obligations, partners are paid last and may be paid nothing. There is no capital " +
+       "protection, no guarantee, and no compensation scheme standing behind this." },
+  { sev: 1, t: "You cannot get out quickly",
+    p: "There is no public market. Your position is locked for a period, and after that a transfer " +
+       "needs a buyer and consent. An internal market is operated, not guaranteed — it has no " +
+       "obligation to find you a counterparty and no timetable in which to do it.",
+    terms: ["lockIn", "secondary"] },
+  { sev: 2, t: "Yield depends on operations, and operations stop",
+    p: "Distributions come from what the property earns after five prior claims. A closure, a " +
+       "regulatory change, a disaster or a season of weak demand reduces that to zero for the " +
+       "period. You are buying a business, not a bond.",
+    terms: ["opCoShare"] },
+  { sev: 2, t: "Distributions can be blocked while the vehicle is healthy",
+    p: "Stage six does not run if paying it would take the reserve below its floor. That is the " +
+       "mechanism working as designed, and it means a profitable period can still pay you nothing.",
+    terms: ["reserveFloor"] },
+  { sev: 2, t: "The valuation is an opinion, and the exit price is a negotiation",
+    p: "Appraisals are independent and periodic. They are not offers. The figure shown on any " +
+       "screen is what a valuer concluded on a date, not what a buyer will pay on another one." },
+  { sev: 3, t: "Regulation can change what this is",
+    p: "Land ceiling rules, coastal zone regulation, tax treatment and foreign ownership limits all " +
+       "move. Compliance today is not a forecast of compliance tomorrow." },
+];
+
+A["AS-14"] = { vantage:"capital", render: () => `
+<div class="risk on-paper">
+  <div class="risk-col">
+    <span class="t-micro" style="color:var(--steel)">AS-14 · Mandatory before commitment</span>
+    <h1>How this<br>loses money.</h1>
+    <span class="ver">Risk disclosure v${DISCLOSURE.version} · dated ${DISCLOSURE.dated} ·
+      read this before you can commit</span>
+
+    <p class="t-body-l" style="max-width:65ch;margin-top:var(--s-l)">
+      Six ways, in order of how badly. None of them is unlikely enough to leave out.
+    </p>
+
+    <button class="skipend" data-skipend>Skip to the acknowledgement &darr;</button>
+
+    ${CLAUSES.map((c,i)=>`
+      <section class="clause ${c.sev===1?"sev1":""}">
+        <span class="sev">${c.sev===1?"Severity 1 · total loss possible":c.sev===2?"Severity 2 · material":"Severity 3"}</span>
+        <h2>${String(i+1).padStart(2,"0")} &nbsp;${esc(c.t)}</h2>
+        <p>${esc(c.p)}</p>
+        ${c.terms?`<div class="terms">${c.terms.map(k=>
+          `${k.replace(/([A-Z])/g," $1").replace(/^./,m=>m.toUpperCase())}: ${esc(RISK_TERMS[k])}`
+        ).join("<br>")}<br><span style="opacity:.75">Read from the vehicle record, not written here.</span></div>`:""}
+      </section>`).join("")}
+
+    <p class="t-body" style="max-width:65ch;margin-top:var(--s-2xl)">
+      By acknowledging, you confirm you have read this and can sustain a total loss of the capital
+      you commit.
+    </p>
+    <span id="riskEnd" tabindex="-1" style="display:block;height:1px"></span>
+  </div>
+
+  <!-- Visible from the first scroll. Disabled with its reason in WORDS. -->
+  <div class="ackbar">
+    <div class="in">
+      <label>
+        <input type="checkbox" id="ackBox" disabled>
+        <span>I have read the risk disclosure v${DISCLOSURE.version} and understand I can lose the
+          whole of my capital.</span>
+      </label>
+      <span class="go"><button class="btn" id="ackGo" disabled>Continue to commitment</button></span>
+      <span class="why" id="ackWhy">Reach the end of the statement to enable this — scroll, tab, or
+        use the skip link above.</span>
+    </div>
+  </div>
+</div>` };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-26 · THE CAPITAL CALL
+
+   The most consequential message the platform sends, and it had no
+   surface at all. Amount, date and consequence render together, because
+   a due date without its consequence is a suggestion.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const CALL = {
+  ref: "CC-2026-03",
+  vehicle: "Coastal Collection I LLP",
+  purpose: "Second tranche · Coorg Ridge fit-out",
+  commitment: 10333333_0000n,
+  drawnToDate: 4133333_0000n,
+  thisCall: 3100000_0000n,
+  due: "2026-09-15",
+  issued: "2026-08-14",
+};
+CALL.remaining = CALL.commitment - CALL.drawnToDate - CALL.thisCall;
+
+A["AS-26"] = { vantage:"member", render: () => `
+<section data-sec="AS-26.a">
+  <div class="wrap with-spine">
+    ${spine("Capital calls")}
+    <div style="padding-left:var(--s-l);min-width:0">
+      <div class="sec-head"><span class="sec-ref">AS-26.a</span>
+        <span class="t-micro label">Capital Call · ${esc(CALL.ref)}</span></div>
+
+      <div class="call">
+        <div>
+          <h1 class="t-display-l" style="margin-bottom:var(--s-m)">A call has been made</h1>
+
+          <!-- Amount, date and consequence in ONE block. -->
+          <div class="call-amt">
+            <div>
+              <span class="lb">Amount called</span>
+              <span class="big">${inr(CALL.thisCall)}</span>
+            </div>
+            <div>
+              <span class="lb">Due in full by</span>
+              <span class="due-big">${esc(CALL.due)}</span>
+            </div>
+          </div>
+
+          <p class="t-body-l dim measure" style="margin-top:var(--s-m)">
+            ${esc(CALL.purpose)}, drawn against your commitment to ${esc(CALL.vehicle)}.
+            Issued ${esc(CALL.issued)}.
+          </p>
+
+          <!-- IN FULL, ABOVE the payment control. -->
+          <div class="default-terms">
+            <h3>If this is not met by ${esc(CALL.due)}</h3>
+            <p class="t-body-s dim">Three provisions apply, in this order, under the LLP Agreement:</p>
+            <ol>
+              <li class="t-body">Interest accrues at 12% per annum on the unpaid amount, from the
+                due date, not from any later notice.</li>
+              <li class="t-body">After 30 days your profit share is <strong>diluted</strong> in
+                proportion to the shortfall against total contribution. This is permanent and is
+                not restored by paying late.</li>
+              <li class="t-body">After 90 days the partners may resolve, at a ≥76% special
+                threshold, to <strong>forfeit</strong> the unpaid portion of your position.</li>
+            </ol>
+            <p class="t-body-s dim" style="margin-top:var(--s-2xs)">
+              These are stated here rather than after payment. A default provision disclosed after
+              the act it applies to has not been disclosed.
+            </p>
+          </div>
+
+          <div style="margin-top:var(--s-xl)">
+            <span class="t-micro label">Settle</span>
+            <p class="t-body-s dim" style="margin:var(--s-2xs) 0 var(--s-s);max-width:60ch">
+              Press and hold for three seconds. This moves capital.
+            </p>
+            <button class="piston" data-fires="call" data-done="Payment recorded"
+                    aria-describedby="callHelp">
+              <span class="fill" aria-hidden="true"></span>
+              <span class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <span class="cap">Hold to pay ${inr(CALL.thisCall)}</span>
+            </button>
+            <p class="t-body-s dim" id="callHelp" style="margin-top:var(--s-2xs);max-width:60ch">
+              Payment is by bank transfer to the vehicle's account. No undo follows this.
+            </p>
+
+            <div class="panel on-panel" id="callSettled" hidden
+                 style="margin-top:var(--s-m);border-left:2px solid var(--confirm);max-width:520px">
+              <span class="t-micro" style="color:var(--confirm)">Recorded</span>
+              <p class="t-body" style="margin-top:var(--s-2xs)">
+                ${inr(CALL.thisCall)} recorded against ${esc(CALL.ref)}. Drawn to date is now
+                ${inr(CALL.drawnToDate + CALL.thisCall)}; ${inr(CALL.remaining)} of your commitment
+                remains uncalled.
+              </p>
+            </div>
+          </div>
+
+          <div class="fixes">
+            <span class="fix"><b>Fixed</b> Capital Call is a declared lifecycle and one of the six
+              state machines, and it had no screen at all.</span>
+            <span class="fix"><b>Rule</b> Default consequences render in full above the payment
+              control. Dilution and forfeiture are the terms that matter most and are the ones most
+              often placed after the act they apply to.</span>
+            <span class="fix"><b>Rule</b> The due date renders at the same weight as the amount. A
+              date set smaller than the figure reads as a suggestion.</span>
+          </div>
+        </div>
+
+        <!-- Every line reconstructible by hand. -->
+        <aside class="deriv on-paper" aria-label="How this amount was derived">
+          <h3>Derivation</h3>
+          <div class="row"><span>Your commitment</span><span class="v">${inr(CALL.commitment)}</span></div>
+          <div class="row"><span>Drawn to date</span><span class="v">− ${inr(CALL.drawnToDate)}</span></div>
+          <div class="row"><span>Undrawn before this call</span>
+            <span class="v">${inr(CALL.commitment - CALL.drawnToDate)}</span></div>
+          <div class="row tot"><span>This call</span><span class="v">${inr(CALL.thisCall)}</span></div>
+          <div class="row"><span>Uncalled after this</span><span class="v">${inr(CALL.remaining)}</span></div>
+          <p class="note">
+            A capital call is the one figure a member is most entitled to reconstruct for
+            themselves, so every line that produced it is here rather than behind a link.
+          </p>
+          <p class="note" id="callState"><strong>Outstanding</strong></p>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+${footer()}` };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-27 · THE BALLOT
+
+   AS-13 could display resolution RESULTS and nobody could produce one.
+   Governance rights are the substance of the Member Law, and they were
+   unexercisable.
+
+   The ballot is SEALED at every vantage. The confirmation says a vote was
+   recorded and never which — a confirmation echoing the choice leaves it
+   in a screenshot, a cache and a support transcript.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const RESOLUTION = {
+  ref: "PR-2026-06",
+  title: "Additional borrowing beyond ₹20 crore",
+  /* VERBATIM as it will be minuted. A summary is a different document. */
+  text: "RESOLVED THAT the Designated Partners be and are hereby authorised to negotiate and " +
+        "execute borrowing facilities on behalf of the LLP up to an aggregate principal of " +
+        "₹32,00,00,000 (Rupees Thirty-Two Crore only), secured against the immovable property at " +
+        "Survey 118/2, Coorg, and THAT any single facility exceeding ₹12,00,00,000 shall require " +
+        "a further resolution of the partners at the same threshold.",
+  threshold: "Special · ≥76% of total contribution",
+  thresholdBps: 7600,
+  opened: "2026-07-24",
+  closes: "2026-08-07 17:00 IST",
+  myWeight: 1100,          // basis points, from the register
+  myContribution: 10000000_0000n,
+  totalContribution: 100000000_0000n,
+  closed: false,
+};
+
+A["AS-27"] = { vantage:"member", render: () => {
+  const r = RESOLUTION;
+  return `
+<section data-sec="AS-27.a">
+  <div class="wrap with-spine">
+    ${spine("Resolutions")}
+    <div style="padding-left:var(--s-l);min-width:0">
+      <div class="sec-head"><span class="sec-ref">AS-27.a</span>
+        <span class="t-micro label">Ballot · ${esc(r.ref)}</span></div>
+      <h1 class="t-display-l" style="max-width:20ch">${esc(r.title)}</h1>
+
+      <div class="ballot">
+        <p class="t-body-s dim" style="margin:var(--s-m) 0 var(--s-2xs)">
+          The resolution as it will be minuted, in full:
+        </p>
+        <blockquote class="resolution">${esc(r.text)}</blockquote>
+
+        <div class="res-meta">
+          <div><span>Threshold</span><b style="font-size:14px">${esc(r.threshold)}</b></div>
+          <div><span>Closes</span><b class="countdown" id="cdown">${esc(r.closes)}</b></div>
+          <div><span>Your weight</span><b>${(r.myWeight/100).toFixed(2)}%</b></div>
+        </div>
+
+        <p class="t-body-s dim" style="margin-top:var(--s-s);max-width:66ch">
+          Your weight is your contribution of ${inr(r.myContribution)} against total contribution of
+          ${inr(r.totalContribution)}. Voting is contribution-weighted per §24a, never per-capita —
+          there is no one-partner-one-vote mechanism at any threshold.
+        </p>
+
+        <div class="choices" role="radiogroup" aria-label="Your vote">
+          ${[["for","For","The resolution passes if the threshold is met."],
+             ["against","Against","Counts against the threshold."],
+             ["abstain","Abstain","Recorded as present. Does not count toward the threshold."]]
+            .map(([v,t,d])=>`
+            <label class="choice">
+              <input type="radio" name="ballot" value="${v}">
+              <span><span class="t">${t}</span><span class="d">${d}</span></span>
+            </label>`).join("")}
+        </div>
+
+        <button class="btn primary" id="castBtn" disabled style="margin-top:var(--s-m)">
+          Cast vote</button>
+        <p class="t-body-s dim" style="margin-top:var(--s-2xs)" id="castHelp">
+          Choose one. Casting is irreversible once the window closes.
+        </p>
+
+        <div class="seal">
+          <p class="t-body-s dim">
+            <strong style="color:var(--forest-light)">Your ballot is sealed.</strong> What you cast
+            is never rendered back at any vantage, including admin. The confirmation below will say
+            that a vote was recorded and will not say which — I-05.
+          </p>
+        </div>
+
+        <div class="panel on-panel" id="ballotDone" hidden
+             style="margin-top:var(--s-m);border-left:2px solid var(--confirm)">
+          <span class="t-micro" style="color:var(--confirm)">Recorded</span>
+          <p class="t-body" style="margin-top:var(--s-2xs)">
+            Your vote was recorded at ${esc(r.opened)} against ${esc(r.ref)}, carrying
+            ${(r.myWeight/100).toFixed(2)}% of total contribution.
+          </p>
+          <p class="t-body-s dim" style="margin-top:var(--s-2xs)">
+            The aggregate is published when the window closes on ${esc(r.closes)}.
+          </p>
+        </div>
+
+        <div style="margin-top:var(--s-2xl)">
+          <span class="t-micro label">Outcome · published on close</span>
+          <p class="t-body-s dim" style="margin:var(--s-2xs) 0 var(--s-s);max-width:66ch">
+            Aggregate only, by weight. A tie or a shortfall against the threshold is
+            <strong>NOT APPROVED</strong> — there is no deferral state and this screen offers none.
+          </p>
+          <div style="max-width:520px">
+            ${[["for","For","0.00"],["against","Against","0.00"],["abstain","Abstain","0.00"]]
+              .map(([k,t,v])=>`
+              <div class="tally-row ${k}">
+                <span class="t-body-s dim">${t}</span>
+                <span class="tally-bar">
+                  <i style="width:0%"></i>
+                  ${k==="for"?`<span class="threshold-mark" style="left:76%"
+                    title="76% special threshold"></span>`:""}
+                </span>
+                <span class="n t-mono-s">${v}%</span>
+              </div>`).join("")}
+          </div>
+          <p class="t-mono-s dim" style="margin-top:var(--s-2xs)">
+            Window open · aggregate withheld until close. The mark on the For bar is the 76%
+            threshold.
+          </p>
+        </div>
+
+        <div class="fixes">
+          <span class="fix"><b>Fixed</b> Members can now cast a vote. The system could display
+            results without anyone being able to produce one.</span>
+          <span class="fix"><b>Rule</b> The resolution renders verbatim as it will be minuted. A
+            summary of a resolution is not the resolution, and the minute records the latter.</span>
+          <span class="fix"><b>Rule</b> No choice is preselected and all three carry equal visual
+            weight. A default on a governance ballot is a nudge.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+${footer()}` } };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-19 · THE LEDGER LOCK
+
+   AS-06 fires its piston and the flow stops. This is what happens next.
+
+   The source filled its piston at 1.5% every 20ms — complete in about
+   1.3 seconds. The commit duration is not styling: three seconds is the
+   deliberation the control exists to impose, and 1.3s is inside the
+   range where people press through it.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const LOCK = {
+  asset: "Kyoto House", assetId: "KYO-01",
+  commitment: 5000000_0000n, tranche: 1000, bond: 100000_0000n,
+  ref: "GC-KYO01-8F3A",
+  invariants: [
+    "The bond of ₹1,00,000 is a binding commitment, not full ownership, and it is not refundable " +
+    "once the ledger is locked.",
+    "My position is governed by the LLP Agreement of Coastal Collection I LLP, and my profit share " +
+    "is set by that agreement rather than by my contribution ratio.",
+    "My accreditation is current, and I understand membership begins at settlement rather than here.",
+  ],
+};
+
+function lockStage(n){
+  const st = document.querySelectorAll(".lock-stage");
+  st.forEach((x,i)=>{ x.hidden = i !== n - 1; });
+  const active = st[n-1];
+  if (active){
+    const h = active.querySelector("h3");
+    /* Focus moves to the new stage heading. The source changed stage with
+       no focus management at all, so a keyboard landed nowhere. */
+    if (h){ h.setAttribute("tabindex","-1"); h.focus({ preventScroll:true }); }
+  }
+}
+
+A["AS-19"] = { vantage:"capital", render: () => `
+<section data-sec="AS-19.a" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-19</span>
+      <span class="t-micro label">Ledger Lock · execution sequence</span></div>
+
+    <div class="terminal">
+      <div class="term-head">
+        <span class="bed" style="${plate(158)}" aria-hidden="true"></span>
+        <span class="sc" aria-hidden="true"></span>
+        <div class="tt">
+          <span class="t-mono-s" style="color:var(--forest-light)">${esc(LOCK.assetId)}</span>
+          <h2>${esc(LOCK.asset)}</h2>
+        </div>
+      </div>
+
+      <div class="lock-stage" data-ls="1">
+        <h3>01 · Allocation ledger</h3>
+        <div class="kv"><span class="label t-micro">Total commitment</span>
+          <span class="v money">${inr(LOCK.commitment)}</span></div>
+        <div class="kv"><span class="label t-micro">Equity tranche</span>
+          <span class="v">${(LOCK.tranche/100).toFixed(2)}%</span></div>
+        <div class="kv"><span class="label t-micro">Ledger lock bond</span>
+          <span class="v money">${inr(LOCK.bond)}</span></div>
+        <p class="t-body-s dim" style="margin:var(--s-m) 0">
+          The bond reserves the allocation and triggers document generation. Settlement of the
+          balance follows offline, within 15 working days.
+        </p>
+        <button class="btn primary" data-lock="2">Proceed to terms</button>
+      </div>
+
+      <div class="lock-stage" data-ls="2" hidden>
+        <h3>02 · Invariants</h3>
+        ${LOCK.invariants.map((t,i)=>`
+          <label class="inv-item">
+            <input type="checkbox" data-inv>
+            <span>${esc(t)}</span>
+          </label>`).join("")}
+        <p class="t-body-s dim" style="margin:var(--s-s) 0">
+          Three separate acknowledgements of three separate facts. Bundling them into one control
+          would make the bundle the thing acknowledged.
+        </p>
+        <button class="btn primary" data-lock="3" id="lockTerms" disabled>Accept and continue</button>
+      </div>
+
+      <div class="lock-stage" data-ls="3" hidden>
+        <h3>03 · Execution</h3>
+        <div style="text-align:center;padding:var(--s-l) 0">
+          <span class="t-micro label" style="display:block;margin-bottom:var(--s-2xs)">
+            Authorising</span>
+          <span class="t-display-m money">${inr(LOCK.bond)}</span>
+        </div>
+        <button class="piston" data-fires="lock" data-done="Ledger locked">
+          <span class="fill" aria-hidden="true"></span>
+          <span class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="cap">Hold to lock the ledger</span>
+        </button>
+        <p class="t-body-s dim" style="margin-top:var(--s-2xs)">
+          Three seconds, linear. Release to cancel.
+        </p>
+      </div>
+
+      <div class="lock-stage" data-ls="4" hidden>
+        <h3>04 · Recorded</h3>
+        <div class="lock-rec on-paper">
+          <span class="t-micro" style="color:var(--steel)">Allocation locked</span>
+          <div class="ref" style="margin-top:var(--s-2xs)">${esc(LOCK.ref)}</div>
+          <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-2xs)">
+            ${inr(LOCK.bond)} recorded against ${esc(LOCK.assetId)}.
+          </p>
+        </div>
+        <div class="kv" style="margin-top:var(--s-m)"><span class="label t-micro">State</span>
+          <span class="v">Committed</span></div>
+        <div class="kv"><span class="label t-micro">Documents</span>
+          <span class="v">Dispatched to the docket</span></div>
+        <p class="t-body-s dim" style="margin-top:var(--s-s)">
+          You are <strong>Committed</strong>, not yet a Member. The Member Law fires on settlement.
+        </p>
+        <button class="btn" data-go="AS-13" style="margin-top:var(--s-s)">Open the docket →</button>
+      </div>
+    </div>
+
+    <div class="fixes" style="max-width:720px;margin-left:auto;margin-right:auto">
+      <span class="fix"><b>Fixed</b> The piston is 3000ms linear. The source filled at 1.5% every
+        20ms — about 1.3 seconds, inside the range where someone presses straight through it.</span>
+      <span class="fix"><b>Fixed</b> Confirmation is the 120ms data flash. The source used a
+        full-white flash with a 40px white glow, which is a photosensitivity trigger and had no
+        reduced-motion path.</span>
+      <span class="fix"><b>Fixed</b> Acknowledgements are real checkboxes with real labels. The
+        source used divs with onclick, unreachable and unannounced from a keyboard — on the screen
+        that records what someone agreed to.</span>
+      <span class="fix"><b>Fixed</b> Focus moves to the heading of each new stage. The source
+        changed stage with no focus management, so a keyboard landed nowhere.</span>
+    </div>
+  </div>
+</section>` };
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-28 · THE RISK REGISTER
+
+   O-09 existed as an organism with nowhere to appear, and Risk is a
+   declared root object of the registry.
+
+   Severity is COMPUTED from likelihood × impact. A typed severity is a
+   fourth independent field that must agree with two others, and nothing
+   on the screen would show it when it stopped agreeing.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const RISKS = [
+  { c:"Liquidity",     t:"No public market for the position", l:4, i:3,
+    o:"The Founder", m:"Internal transfer register; Board consent process documented",
+    rev:"2026-06-30", next:"2026-09-30" },
+  { c:"Operator",      t:"Operating partner underperforms against SLA", l:2, i:4,
+    o:"PMC", m:"Quarterly SLA review; termination right at 2 consecutive breaches",
+    rev:"2026-07-15", next:"2026-10-15" },
+  { c:"Climate",       t:"Monsoon intensity above design tolerance at Coorg", l:3, i:4,
+    o:"Civil Lead", m:"Drainage designed to 1-in-100; sinking fund covers remediation",
+    rev:"2026-02-11", next:"2026-05-11" },
+  { c:"Regulatory",    t:"Coastal Regulation Zone amendment affects land use", l:2, i:4,
+    o:"Statutory Approvals", m:"Monitoring bill progress; no coastal asset held at present",
+    rev:"2026-07-02", next:"2027-01-02" },
+  { c:"Interest Rate", t:"Floating facility repricing above debt service cover", l:3, i:3,
+    o:"PMC", m:"DSCR covenant monitored monthly; 12% of revenue at stage 5",
+    rev:"2026-07-20", next:"2026-10-20" },
+  { c:"Market",        t:"Valuation falls below acquisition on exit", l:2, i:3,
+    o:"The Founder", m:"20-year hold thesis; no forced-sale trigger in the facility",
+    rev:"2026-06-30", next:"2026-12-30" },
+  { c:"Legal",         t:"Title defect discovered post-acquisition", l:1, i:5,
+    o:"Statutory Approvals", m:"Title insurance in force; due diligence pack in the docket",
+    rev:"2026-05-18", next:"2027-05-18" },
+];
+
+/* Computed, never typed. */
+const severity = (l, i) => l * i;
+const band = (n) => n >= 15 ? { k:4, t:"Critical" } : n >= 9 ? { k:3, t:"High" }
+                  : n >= 4 ? { k:2, t:"Moderate" } : { k:1, t:"Low" };
+
+/* A register nobody has reviewed renders its staleness. An unreviewed
+   risk register is more dangerous than none, because it looks like
+   oversight. */
+const overdue = (next) => Date.parse(next) < Date.parse(TODAY);
+
+A["AS-28"] = { vantage:"capital", render: () => {
+  const sorted = [...RISKS].sort((a,b) => severity(b.l,b.i) - severity(a.l,a.i));
+  const stale = sorted.filter(r => overdue(r.next));
+  return `
+<div class="reg on-paper">
+  <div class="wrap">
+    <span class="t-micro" style="color:var(--steel)">AS-28 · Coastal Collection I LLP</span>
+    <h1 class="t-display-l" style="margin:var(--s-2xs) 0 var(--s-s)">Risk register</h1>
+    <p class="t-body-l" style="color:var(--steel);max-width:65ch">
+      ${RISKS.length} identified risks. Severity is likelihood × impact, computed — it is not a
+      field anyone types.
+    </p>
+
+    ${stale.length ? `<div style="border-left:3px solid var(--critical-deep);padding-left:var(--s-s);
+      margin-top:var(--s-m);max-width:70ch">
+      <p class="t-body"><strong style="color:var(--critical-deep)">${stale.length} overdue for
+      review.</strong> ${stale.map(r=>esc(r.c)).join(", ")} passed their review date. An unreviewed
+      register is more dangerous than none, because it looks like oversight.</p>
+    </div>` : ""}
+
+    <div class="scroll-x" style="margin-top:var(--s-xl)">
+      <table>
+        <thead><tr>
+          <th>Category</th><th>Risk</th>
+          <th class="num">L</th><th class="num">I</th><th>Severity</th>
+          <th>Owner</th><th>Mitigation</th><th>Review</th>
+        </tr></thead>
+        <tbody>${sorted.map(r=>{
+          const sv = severity(r.l,r.i), b = band(sv), late = overdue(r.next);
+          return `<tr>
+            <td class="t-mono-s">${esc(r.c)}</td>
+            <td><span class="doc-nm">${esc(r.t)}</span></td>
+            <td class="num">${r.l}</td>
+            <td class="num">${r.i}</td>
+            <td><span class="sev-cell s${b.k}"><b>${sv}</b><span>${b.t}</span></span></td>
+            <td class="t-body-s">${esc(r.o)}</td>
+            <td class="t-body-s" style="color:var(--steel)">${esc(r.m)}</td>
+            <td class="t-mono-s" style="white-space:nowrap">${esc(r.rev)}<br>
+              <span style="color:${late?"var(--critical-deep)":"var(--steel)"}">→ ${esc(r.next)}</span>
+              ${late?'<br><span class="stale-mark">Overdue</span>':""}</td>
+          </tr>`;}).join("")}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:var(--s-xl)">
+      <span class="t-micro" style="color:var(--steel)">Severity = likelihood × impact</span>
+      <div class="matrix-key">
+        <div class="h">L ↓ / I →</div>${[1,2,3,4].map(i=>`<div class="h">${i}</div>`).join("")}
+        ${[1,2,3,4].map(l=>`<div class="h">${l}</div>${[1,2,3,4].map(i=>{
+          const b=band(l*i);return `<div class="sev-cell s${b.k}" style="justify-content:center">
+            <b>${l*i}</b></div>`;}).join("")}`).join("")}
+      </div>
+      <p class="t-body-s" style="color:var(--steel);margin-top:var(--s-2xs);max-width:60ch">
+        Bands: 1–3 Low · 4–8 Moderate · 9–14 High · 15+ Critical. Rendered as a figure and a word,
+        because a 4×4 matrix reduced to colour alone is unreadable to a large minority.
+      </p>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> O-09 Risk Register Row existed as an organism with no screen to
+        sit on, and Risk is a declared root object.</span>
+      <span class="fix"><b>Rule</b> Severity is computed. A hand-set severity drifts from its own
+        inputs the moment either one changes, and nothing on screen would reveal it.</span>
+      <span class="fix"><b>Rule</b> Rows past their review date render their staleness rather than
+        looking current.</span>
+    </div>
+  </div>
+</div>` } };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-16 · SIGNAL LOST
+
+   The one screen whose whole job is to be brief.
+
+   No stack trace and no exception name: a visitor is not debugging, and
+   anyone probing the site should not be handed a map. No timer either —
+   WCAG 2.2.1, and someone reading the routes out should not have the page
+   pulled away mid-sentence.
+   ═══════════════════════════════════════════════════════════════════ */
+
+A["AS-16"] = { vantage:"gateway", render: () => {
+  /* Escaped. Reflecting a requested path into the page unescaped is an
+     injection surface, which is what the source did. */
+  const asked = "/investors/secret-page";
+  return `
+<section data-sec="AS-16.a" style="border-bottom:none">
+  <div class="wrap lost">
+    <span class="t-micro label">Signal lost</span>
+    <h1>Not<br>here.</h1>
+    <p class="t-body-l dim" style="margin-top:var(--s-l);max-width:52ch">
+      That page does not exist, or it moved, or it was never public. Any of the three, and the
+      system cannot tell you which without telling everyone.
+    </p>
+    <div class="path">${esc(asked)}</div>
+
+    <div class="outs">
+      <button class="btn primary" data-go="AS-01">The collection</button>
+      <button class="btn" data-go="AS-17">Answers</button>
+      <button class="btn" data-go="AS-15">System status</button>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> Nothing redirects on its own. The source faded the page after
+        30 seconds, raised an <code>alert()</code>, then navigated — WCAG 2.2.1, and it pulled the
+        page away from anyone reading the routes out.</span>
+      <span class="fix"><b>Fixed</b> Static. No parallax on the content block, no infinite glitch
+        animation, no noise overlay at 0.4 opacity over everything including the routes out.</span>
+      <span class="fix"><b>Fixed</b> The path is escaped and nothing internal is named. The source
+        printed <code>NULL_POINTER_EXCEPTION</code>, which tells someone probing the site what the
+        stack is.</span>
+    </div>
+  </div>
+</section>
+${footer()}` } };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-17 · THE KNOWLEDGE BASE
+
+   Where the FOURTH independent copy of the waterfall lived — drifted,
+   three stages missing including debt service. Every answer here cites
+   the document that governs it rather than restating it.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const QA = [
+  { cat:"Structure", q:"What exactly do I own?",
+    a:"A capital contribution to a Limited Liability Partnership that holds the land title. You are " +
+      "a partner in that LLP, not a shareholder — an LLP has no shares and no share classes. Your " +
+      "profit share is set by the LLP Agreement and does not have to follow your contribution ratio.",
+    cite:["LLP Agreement cl. 4", "AS-13 Docket · Register of Partners"] },
+  { cat:"Structure", q:"Does Getaway Collective own part of my vehicle?",
+    a:"No. The platform governs the vehicles and holds no equity in them. That is §27 as amended, " +
+      "and it is the reason governance and ownership are separable here at all.",
+    cite:["L1-01 §27"] },
+  { cat:"Money", q:"How is my distribution calculated?",
+    a:"Gross revenue passes through six stages in order: the operating partner, the brand licence, " +
+      "the admin reserve at 2.5% of revenue, the sinking fund at 2.5%, debt service, and then " +
+      "partners. There is no preferred return, no catch-up and no carry. Stage six does not run at " +
+      "all if paying it would take the reserve below its floor.",
+    cite:["AS-04 · The waterfall", "L1-16 Financial Constitution"] },
+  { cat:"Money", q:"Why was my distribution blocked in a profitable quarter?",
+    a:"Because stage five was unmet, or because paying stage six would have breached the reserve " +
+      "floor. Both are the mechanism working as designed. The floor is the greater of six months' " +
+      "non-operational fixed obligations or the Board minimum, and it is not NAV-linked.",
+    cite:["AS-05 · Position", "L1-16 F-04"] },
+  { cat:"Exit", q:"How do I get out?",
+    a:"After the lock-in, by transfer. There are three routes: an internal transfer to an existing " +
+      "partner, a listing on the internal register for an external buyer subject to consent, or a " +
+      "buyback where the vehicle has liquidity to do it. None of the three is guaranteed and none " +
+      "has a committed timetable — an internal market is operated, not promised.",
+    cite:["LLP Agreement cl. 9", "AS-14 · Risk disclosure"] },
+  { cat:"Exit", q:"Can I transfer to family?",
+    a:"Yes. Transfers between immediate family are exempt from the lock-in, and still require the " +
+      "register to be updated and the LLP Agreement's consent provisions to be followed. The " +
+      "historical record of ownership is not overwritten; a transfer creates new entries.",
+    cite:["LLP Agreement cl. 9.4", "F-12 Transfer Is Additive"] },
+  { cat:"Governance", q:"How much is my vote worth?",
+    a:"Your contribution as a proportion of total contribution. Voting is contribution-weighted, " +
+      "never per-capita — a partner holding 7% casts 7%. Ordinary resolutions need more than 50% " +
+      "of those present; special resolutions need at least 76% of the total; five entrenched " +
+      "principles need unanimity. A tie is not approved.",
+    cite:["L1-01 §24a", "AS-27 · The Ballot"] },
+  { cat:"Governance", q:"Can anyone see how I voted?",
+    a:"No. The ballot is sealed at every vantage, including admin. Results are published as " +
+      "aggregates by weight; individual ballots are never rendered anywhere in the system.",
+    cite:["I-05 Governance Voting Is Secret"] },
+];
+
+A["AS-17"] = { vantage:"gateway", render: () => `
+<section data-sec="AS-17.a">
+  <div class="wrap">
+    <span class="t-micro label">AS-17 · Answers</span>
+    <h1 class="t-display-l" style="margin-top:var(--s-2xs)">Questions people<br>actually ask.</h1>
+    <p class="t-body dim measure" style="margin-top:var(--s-s)">
+      Every answer cites what governs it. An uncited answer on a regulated platform is a claim with
+      nothing behind it.
+    </p>
+
+    <div class="kb-search">
+      <label for="kbq">Search the answers</label>
+      <input type="search" id="kbq" autocomplete="off" spellcheck="false">
+    </div>
+    <p class="t-mono-s dim" style="margin-top:var(--s-2xs)" id="kbCount" role="status" aria-live="polite">
+      ${QA.length} answers
+    </p>
+
+    <div id="kbList" style="margin-top:var(--s-s)">
+      ${[...new Set(QA.map(x=>x.cat))].map(cat=>`
+        <div data-kbcat="${esc(cat)}">
+          <span class="kb-cat">${esc(cat)}</span>
+          ${QA.filter(x=>x.cat===cat).map((x,i)=>{
+            const id = `kb-${esc(cat).toLowerCase()}-${i}`;
+            return `<div class="qa" data-kbq>
+              <button aria-expanded="false" aria-controls="${id}">
+                <span>${esc(x.q)}</span><span class="ic" aria-hidden="true">+</span>
+              </button>
+              <div class="ans" id="${id}" hidden>
+                <p class="t-body-l">${esc(x.a)}</p>
+                ${x.cite.map(c=>`<button class="cite">${esc(c)}</button>`).join("")}
+              </div>
+            </div>`;}).join("")}
+        </div>`).join("")}
+    </div>
+    <div class="kb-none" id="kbNone" hidden>
+      <p class="t-body">Nothing matches that.</p>
+      <p class="t-body-s dim" style="margin-top:var(--s-2xs)">
+        Ask investor relations and the answer will be added here with its citation.
+      </p>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The waterfall answer cites AS-04 rather than restating it. The
+        source held a fourth independent copy with three stages missing including debt service, and
+        <code>Platform Fee 15%</code> where the Admin Reserve belongs.</span>
+      <span class="fix"><b>Fixed</b> Accordions are real buttons with <code>aria-expanded</code> and
+        no height cap. The source used divs with onclick and <code>max-height: 600px</code>, which
+        silently clipped the exit answer — the longest one it had.</span>
+      <span class="fix"><b>Fixed</b> A real label, and no uppercase transform on the input. Filtering
+        announces its count in a live region, because a list that silently empties reads as a broken
+        page.</span>
+      <span class="fix"><b>Fixed</b> <code>ASK CONCIERGE</code> → investor relations,
+        <code>Steward Console</code> → the member console. §25 forbids both.</span>
+    </div>
+  </div>
+</section>
+${footer()}` };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-15 · SYSTEM STATUS
+
+   The headline is a word, not a dashboard: someone arriving has a yes/no
+   question.
+
+   NO physical access control appears here at any point. Announcing which
+   site's access control is offline, and where, tells anyone reading which
+   door is currently unsecured.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const COMPONENTS_STATUS = [
+  { n:"Member console",       s:"up",   at:"2026-07-31 09:14" },
+  { n:"Authentication",       s:"up",   at:"2026-07-31 09:14" },
+  { n:"Document vault",       s:"up",   at:"2026-07-31 09:13" },
+  { n:"Distribution ledger",  s:"deg",  at:"2026-07-31 09:12",
+    note:"Reconciliation running behind; figures are correct but may lag by up to 20 minutes." },
+  { n:"Valuation feed",       s:"unk",  at:"2026-07-30 22:40",
+    note:"No signal for 10 hours. Reported as unknown rather than healthy." },
+  { n:"Statutory filing API", s:"up",   at:"2026-07-31 09:10" },
+];
+const INCIDENTS = [
+  { on:"2026-07-31 06:20", t:"Distribution ledger reconciliation lag", st:"open",
+    d:"Investigating a queue backlog. No figure is wrong; some are late. Next update by 12:00." },
+  { on:"2026-07-28 14:02", t:"Scheduled maintenance — document vault", st:"resolved",
+    d:"Migration completed. 22 minutes of read-only access, as announced." },
+  { on:"2026-07-19 08:45", t:"Member console slow for signed-in members", st:"resolved",
+    d:"Query plan regression after a schema change. Rolled back in 34 minutes." },
+];
+
+A["AS-15"] = { vantage:"gateway", render: () => {
+  const down = COMPONENTS_STATUS.some(c=>c.s==="down");
+  const deg  = COMPONENTS_STATUS.some(c=>c.s==="deg"||c.s==="unk");
+  const head = down ? { k:"down", t:"Something is down." }
+             : deg  ? { k:"deg",  t:"Degraded." }
+                    : { k:"ok",   t:"Everything is working." };
+  const S = { up:["up","Operational"], deg:["deg","Degraded"],
+              down:["down","Down"], unk:["unk","Unknown"] };
+  return `
+<section data-sec="AS-15.a" class="status-hero">
+  <div class="wrap">
+    <span class="t-micro label">System status · as at ${TODAY} 09:14 IST</span>
+    <h1 class="${head.k}" style="margin-top:var(--s-2xs)">${esc(head.t)}</h1>
+    <p class="t-body-l dim measure" style="margin-top:var(--s-s)">
+      ${down ? "One or more components are unavailable. Detail below."
+        : deg ? "Everything is reachable. One component is behind and one has not reported."
+        : "All components reporting and current."}
+    </p>
+  </div>
+</section>
+
+<section data-sec="AS-15.b">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-15.b</span>
+      <span class="t-micro label">Components</span></div>
+    ${COMPONENTS_STATUS.map(c=>`
+      <div class="comp">
+        <span>
+          <span class="t-body">${esc(c.n)}</span>
+          ${c.note?`<br><span class="t-body-s dim" style="max-width:60ch;display:inline-block">${esc(c.note)}</span>`:""}
+        </span>
+        <span style="display:flex;gap:var(--s-s);align-items:baseline">
+          <span class="last">${esc(c.at)}</span>
+          <span class="s ${S[c.s][0]}">${S[c.s][1]}</span>
+        </span>
+      </div>`).join("")}
+    <p class="t-body-s dim" style="margin-top:var(--s-m);max-width:66ch">
+      A component that has not reported renders <strong>Unknown</strong>, never Operational.
+      Silence is not health, and the valuation feed has been silent for ten hours.
+    </p>
+  </div>
+</section>
+
+<section data-sec="AS-15.c" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-15.c</span>
+      <span class="t-micro label">Incidents</span></div>
+    ${INCIDENTS.map(i=>`
+      <div class="inc ${i.st==="resolved"?"resolved":""}">
+        <span class="when">${esc(i.on)} · ${i.st==="open"?"Open":"Resolved"}</span>
+        <p class="t-body" style="margin:2px 0 4px">${esc(i.t)}</p>
+        <p class="t-body-s dim" style="max-width:70ch">${esc(i.d)}</p>
+      </div>`).join("")}
+
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> No physical access control appears here. The source listed
+        <code>MagLock (Main Gate)</code> and <code>Goa Access Control — OFFLINE</code>, which tells
+        anyone reading which door is currently unsecured.</span>
+      <span class="fix"><b>Fixed</b> Failure states are static, in critical, with a text label. The
+        source ran an infinite glitch animation on the word OFFLINE — making the one word that has
+        to be read the hardest to read, forever, with no reduced-motion path.</span>
+      <span class="fix"><b>Fixed</b> confirm at 6.55:1 replaces <code>#00FF41</code>. Terminal mode
+        is admin-only and read-only by §29; a public status page is neither.</span>
+      <span class="fix"><b>Fixed</b> The page scrolls. The source used
+        <code>overflow: hidden</code> with a fixed 90vh chassis, which put the incident list out of
+        reach on a short viewport — the content a status page exists to deliver.</span>
+    </div>
+  </div>
+</section>
+${footer()}` } };
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-07 · THE PORTFOLIO NARRATIVE
+
+   Three operating brands. The structure of the source was sound; the
+   voice was not. `mechanisms of extraction`, `manipulate space, silence
+   and time`, `designing consciousness` — cold and slightly menacing, and
+   describing what is done TO someone rather than what they join.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const BRANDS = [
+  { n:"Drift", pos:"Frequency 01 · the short escape", say:"“The zip of freedom.”", hue:186,
+    a:"The friction of a city asks for an equally quick way out. Drift is the entry tier: light " +
+      "structures, ninety minutes from the centre, and nothing to plan. You leave at five and the " +
+      "door opens onto a canopy by half past six.",
+    b:"It is built for impulse rather than intention. The architecture is lightweight, the " +
+      "arrival is quick, and the whole thing is designed to be decided on a Thursday.",
+    attrs:[["Register","Misty daydream","Lo-fi, playful, unhurried in a light way."],
+           ["Material","Reclaimed cedar","Ages to silver. Aqua strip lighting at the thresholds."],
+           ["What it does","Cortisol flush","One-touch fire pit, fast self-led resets."]] },
+  { n:"SlowSpace", pos:"Frequency 02 · the long exhale", say:"“The breath between words.”", hue:158,
+    a:"Stillness is not the absence of motion; it is the presence of something worth being still " +
+      "for. SlowSpace is the mid-tier sanctuary, built for two to five nights and for people who " +
+      "need a few days before they stop checking.",
+    b:"Delay is the design here. The light warms as the evening goes, the acoustics dampen to " +
+      "STC-50, and nothing in the building is in a hurry with you.",
+    attrs:[["Register","Documentary stillness","Warm, unhurried, observant."],
+           ["Material","Oxide plaster","Clay tile, heavy linen, warm whites, earth browns."],
+           ["What it does","Parasympathetic shift","Guided breath tones, ambient fade, micro-journaling."]] },
+  { n:"Eskape", pos:"Frequency 03 · the full stop", say:"“The whispered invitation.”", hue:24,
+    a:"The pinnacle tier. Eskape does not only take you out of the world, it puts you at the centre " +
+      "of something arranged. Every interaction is scripted in advance and then made to feel like " +
+      "it was not.",
+    b:"The building is hidden. The silence is real and measured. The environment does the talking " +
+      "— through scent, shadow and the hours that vanish without being noticed.",
+    attrs:[["Register","Mythic","Precise, poetic, generous. Nature couture."],
+           ["Material","Charred basalt","Deep shadow, jewel tones, ember lanterns."],
+           ["What it does","NC-25 quiet","Near-total sensory quiet, host-led rituals."]] },
+];
+
+A["AS-07"] = { vantage:"gateway", render: () => `
+${hero({ eyebrow:"AS-07 · The portfolio", claim:"Three ways<br>to leave.",
+  sup:"The operating partner runs three brands on these assets. They are not tiers of luxury; they are different lengths of absence.",
+  go:[{t:"See the collection",to:"AS-01"},{t:"How capital works",to:"AS-04"}], hue:158 })}
+
+${BRANDS.map(b=>`
+<section class="brand" data-sec="AS-07.b">
+  <div class="wrap">
+    <div class="brand-h">
+      <div>
+        <span class="t-micro label">${esc(b.pos)}</span>
+        <h2>${esc(b.n)}</h2>
+      </div>
+      <p class="say">${esc(b.say)}</p>
+    </div>
+    <div class="brand-media"><span style="${plate(b.hue)}"></span></div>
+    <div class="brand-cols">
+      <p class="t-body-l">${esc(b.a)}</p>
+      <p class="t-body-l dim">${esc(b.b)}</p>
+    </div>
+    <div class="attrs">
+      ${b.attrs.map(([k,v,d])=>`<div>
+        <span class="k">${esc(k)}</span>
+        <span><span class="v">${esc(v)}</span><span class="d">${esc(d)}</span></span>
+      </div>`).join("")}
+    </div>
+  </div>
+</section>`).join("")}
+
+<section data-sec="AS-07.d" style="border-bottom:none">
+  <div class="wrap">
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The voice. The source read <code>mechanisms of extraction</code>,
+        <code>manipulate space, silence and time</code> and <code>designing consciousness</code> —
+        cold and faintly menacing, and describing what is done TO someone rather than what they
+        join.</span>
+      <span class="fix"><b>Rule</b> No figure enters the attribute grid. A grid of figures is a
+        comparison table, and this is a description.</span>
+      <span class="fix"><b>Fixed</b> Scrollbars are visible. The source hid them globally, and the
+        scrollbar is the only indicator of how much page is left.</span>
+      <span class="fix"><b>Fixed</b> Label tone is steelDim at 7.04:1. The source used
+        <code>#444444</code> at 2.09:1 for every eyebrow it had.</span>
+    </div>
+  </div>
+</section>
+${footer()}` };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-18 · RECRUITMENT
+
+   The screen where the brand voice is most easily lost, because swagger
+   reads as confidence right up until you are the person reading it.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const AXIOMS = [
+  { n:"01", h:"The work is genuinely hard, and we will say so before you join.",
+    p:"Delivering something that feels effortless takes a great deal of coordination that does " +
+      "not. You will own outcomes end to end, and you will be given the authority that has to " +
+      "come with that." },
+  { n:"02", h:"Small team, real ownership, no layer between you and the decision.",
+    p:"There are few enough of us that you will talk to whoever needs to hear it. That is the " +
+      "advantage and it is also the demand: nobody is going to translate your work upward for you." },
+  { n:"03", h:"We would rather teach you the domain than the standard.",
+    p:"Real estate, hospitality operations and Indian regulation are all learnable. Care about " +
+      "precision, and the rest follows." },
+];
+
+const ROLES_OPEN = [
+  { c:"OPS-01", t:"Occupancy Design Lead", sen:"Senior · equity + cash", open:true,
+    own:"Design the occupancy sequence for Coorg Ridge — arrival, the sensory signature, and the " +
+        "operational flow that makes it repeatable." },
+  { c:"ENG-04", t:"Full-Stack Engineer", sen:"Mid–senior · remote", open:true,
+    own:"Build and hold the capital console. Real-time valuation feeds, the distribution ledger, " +
+        "and the generated-not-written toolchain behind them." },
+  { c:"DES-02", t:"Product Designer", sen:"Mid–senior · hybrid", open:true,
+    own:"Own the design system as it moves from specification into a running product. 28 " +
+        "assemblies exist on paper; most of them do not exist yet in code." },
+  { c:"LGL-02", t:"Compliance Officer", sen:"Senior · retainer", open:false,
+    own:"LLP filings, land records, and regulatory adherence across jurisdictions." },
+];
+
+A["AS-18"] = { vantage:"gateway", render: () => `
+${hero({ eyebrow:"AS-18 · Working here", claim:"Open roles.",
+  sup:"Four described honestly enough that the right people recognise themselves, and the wrong ones save a fortnight.",
+  hue:198 })}
+
+<section data-sec="AS-18.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-18.a</span>
+      <span class="t-micro label">How we work</span></div>
+    ${AXIOMS.map(a=>`<div class="axiom">
+      <span class="n">${a.n}</span>
+      <h3>${esc(a.h)}</h3>
+      <p class="t-body-l dim">${esc(a.p)}</p>
+    </div>`).join("")}
+  </div>
+</section>
+
+<section data-sec="AS-18.b">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-18.b</span>
+      <span class="t-micro label">Open roles</span></div>
+    ${ROLES_OPEN.map(r=>`
+      <div class="role">
+        <span class="cd">${esc(r.c)}</span>
+        <span><h4>${esc(r.t)}</h4><span class="own">${esc(r.own)}</span></span>
+        <span class="sen">${esc(r.sen)}</span>
+        <span>${r.open
+          ? `<button class="btn" data-apply="${esc(r.c)}">Apply</button>`
+          : `<span class="filled">Filled</span>`}</span>
+      </div>`).join("")}
+  </div>
+</section>
+
+<section data-sec="AS-18.c" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-18.c</span>
+      <span class="t-micro label">Applying</span></div>
+    <div class="apply">
+      <p class="t-body">Send whatever shows the work best — a CV is completely fine.</p>
+      <p class="t-body-s dim" style="margin-top:var(--s-2xs)">
+        If you have something you built and can talk about, send that too. If you do not, that is
+        not a filter we apply.
+      </p>
+      <div class="f" style="margin-top:var(--s-m)">
+        <label for="cv">Your CV or portfolio</label>
+        <input type="file" id="cv" accept=".pdf,.doc,.docx,.md,.txt">
+      </div>
+      <div class="f" style="margin-top:var(--s-s)">
+        <label for="applyRole">Role</label>
+        <input type="text" id="applyRole" value="OPS-01">
+      </div>
+      <button class="btn primary" style="margin-top:var(--s-m)">Send</button>
+      <p class="t-body-s dim" style="margin-top:var(--s-s)">
+        You will hear back within ten working days, including if the answer is no.
+      </p>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> The voice. The source read <code>our backend is war</code>,
+        <code>We are a crew, not a family</code> and <code>Performance is the only currency</code> —
+        cold and faintly hostile, and it filters for people who enjoy being told they might not make
+        it.</span>
+      <span class="fix"><b>Fixed</b> A real <code>&lt;input type="file"&gt;</code>, and a CV is
+        accepted. The source used a div-based drop zone that could not be reached or operated from a
+        keyboard, and refused the standard artefact — which filters hardest against people without
+        time to make a bespoke one.</span>
+      <span class="fix"><b>Fixed</b> The filled role stays at full contrast. The source held it at
+        <code>opacity: 0.3</code> with pointer-events off — near 2:1, so someone deciding whether to
+        watch for the next opening could not read what it was.</span>
+      <span class="fix"><b>Fixed</b> Seniority stated plainly instead of <code>L1 / L2 / L3
+        CLEARANCE</code>. Invented security theatre on a hiring page reads as confusing or
+        untrue.</span>
+      <span class="fix"><b>Fixed</b> <code>guest loop</code> → occupancy sequence. §25.</span>
+    </div>
+  </div>
+</section>
+${footer()}` };
+
+/* ═══════════════════════════════════════════════════════════════════
+   AS-08 · THE STORY PLAYBACK
+
+   Gateway only, and NO FIGURE appears in the player at any point. A
+   number on a card that advances in four seconds cannot be read, checked
+   or returned to.
+
+   The source auto-advanced every 4000ms with pause available only by
+   holding a touch — WCAG 2.2.2, and a keyboard had no pause, no advance
+   and no exit.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const STORY = [
+  { t:"Algorithmic burnout", s:"The premise",
+    x:"The old world optimised for output. This one optimises for what is left of you afterwards.", hue:210 },
+  { t:"Ninety minutes out", s:"Drift",
+    x:"Far enough that the phone stops mattering. Close enough that you go on a Thursday.", hue:186 },
+  { t:"The long exhale", s:"SlowSpace",
+    x:"Two to five nights. Long enough that the second day feels different from the first.", hue:158 },
+  { t:"Arranged, not staged", s:"Eskape",
+    x:"Every hour is planned and none of it announces itself.", hue:24 },
+  { t:"Held, not rented", s:"The protocol",
+    x:"You own a share of the land underneath all of it.", hue:172 },
+];
+
+A["AS-08"] = { vantage:"gateway", render: () => `
+${hero({ eyebrow:"AS-08 · Story", claim:"Five frames.",
+  sup:"A sequence about the places. It advances when you advance it.", hue:210 })}
+
+<section data-sec="AS-08.a" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-08.a</span>
+      <span class="t-micro label">Grid · ${STORY.length} frames</span></div>
+    <div class="tiles">
+      ${STORY.map((v,i)=>`
+        <button class="tile" data-story="${i}" aria-label="Open frame ${i+1}: ${esc(v.t)}">
+          <span class="bed" style="${plate(v.hue)}" aria-hidden="true"></span>
+          <span class="sc" aria-hidden="true"></span>
+          <span class="cap">
+            <span class="t-micro label" style="display:block;margin-bottom:5px">
+              ${String(i+1).padStart(2,"0")} · ${esc(v.s)}</span>
+            <h3>${esc(v.t)}</h3>
+          </span>
+        </button>`).join("")}
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Fixed</b> A visible pause control, Escape to exit, and arrow keys to
+        advance. The source auto-advanced every 4s with pause available only by holding a touch —
+        WCAG 2.2.2, and a keyboard had no pause, no advance and no exit at all.</span>
+      <span class="fix"><b>Fixed</b> Auto-advance is off entirely under
+        <code>prefers-reduced-motion</code>, and the position is stated as text throughout.</span>
+      <span class="fix"><b>Rule</b> No figure appears in the player. A number on a card that
+        advances in four seconds cannot be read, checked, or returned to.</span>
+      <span class="fix"><b>Note</b> This assembly may not earn its place. AS-09 Gallery Frame covers
+        most of the same ground with far fewer constraints, and two cinematic formats at one vantage
+        may be one too many. It is built so the comparison can be made rather than argued.</span>
+    </div>
+  </div>
+</section>
+
+<div id="player" role="dialog" aria-modal="true" aria-label="Story player">
+  <div class="pl-bars" id="plBars">
+    ${STORY.map((_,i)=>`<i><b data-plbar="${i}"></b></i>`).join("")}
+  </div>
+  <div class="pl-top">
+    <span class="t-mono-s dim" id="plPos" role="status" aria-live="polite"></span>
+    <span class="pl-ctl">
+      <button class="btn" id="plPrev" aria-label="Previous frame">&larr;</button>
+      <button class="btn" id="plPause" aria-pressed="false">Pause</button>
+      <button class="btn" id="plNext" aria-label="Next frame">&rarr;</button>
+      <button class="btn" id="plExit">Close</button>
+    </span>
+  </div>
+  <div class="pl-stage">
+    ${STORY.map((v,i)=>`
+      <div class="pl-card" data-plcard="${i}">
+        <span class="bed" style="${plate(v.hue)}" aria-hidden="true"></span>
+        <span class="sc" aria-hidden="true"></span>
+        <div class="cap">
+          <span class="t-micro label" style="display:block;margin-bottom:var(--s-2xs)">
+            ${String(i+1).padStart(2,"0")} · ${esc(v.s)}</span>
+          <h2>${esc(v.t)}</h2>
+          <p class="t-body-l dim">${esc(v.x)}</p>
+        </div>
+      </div>`).join("")}
+  </div>
+</div>
+${footer()}` };
+
 /* ═══════════════════════════════════════════════════════════════════
    NAVIGATION
    ═══════════════════════════════════════════════════════════════════ */
@@ -2883,11 +4379,14 @@ function wire(){
   });
 
   /* THE PISTON. Linear, 3000ms, never eased — an eased fill would
-     misreport how much time is left to let go. */
-  const piston = document.getElementById("piston");
-  if (piston){
+     misreport how much time is left to let go.
+
+     Wired by CLASS, not by id: AS-06, AS-19 and AS-26 each have one, and
+     each declares what happens when it fires via data-fires. */
+  stage.querySelectorAll(".piston").forEach((piston) => {
     let timer = null, done = false;
-    const cap = document.getElementById("pcap");
+    const cap = piston.querySelector(".cap");
+    const fires = piston.dataset.fires || "commit";
     const start = (e) => {
       if (done) return;
       if (e.type === "keydown" && e.key !== " " && e.key !== "Enter") return;
@@ -2905,22 +4404,16 @@ function wire(){
     };
     const fire = () => {
       done = true; timer = null;
-      cap.textContent = "Committed";
+      cap.textContent = piston.dataset.done || "Recorded";
       piston.classList.add("settled");
       piston.setAttribute("aria-disabled", "true");
-      document.getElementById("settled").classList.add("on");
-      document.getElementById("st4").dataset.state = "done";
-      const st = document.getElementById("anchorState");
-      st.textContent = "Committed · awaiting settlement";
-      st.style.color = "var(--copper)";
-      signal("Commitment recorded — settlement pending", "ok");
-      document.getElementById("settled").scrollIntoView({behavior:"smooth", block:"center"});
+      PISTON_FIRES[fires] && PISTON_FIRES[fires]();
     };
     piston.addEventListener("pointerdown", start);
     piston.addEventListener("keydown", start);
     ["pointerup","pointerleave","pointercancel","keyup","blur"].forEach(ev =>
       piston.addEventListener(ev, stop));
-  }
+  });
 
 
   /* AS-09 — gallery. Arrow keys, Home/End, and a rail button per frame. */
@@ -2985,6 +4478,191 @@ function wire(){
         const n = dtabs[(i + d + dtabs.length) % dtabs.length];
         pick(n); n.focus();
       });
+    });
+  }
+
+
+  /* AS-14 — the gate opens on reaching the end by ANY route. */
+  const ackBox = document.getElementById("ackBox");
+  if (ackBox){
+    const goBtn = document.getElementById("ackGo"), why = document.getElementById("ackWhy");
+    const end = document.getElementById("riskEnd");
+    let reached = false;
+    const openGate = () => {
+      if (reached) return;
+      reached = true;
+      ackBox.disabled = false;
+      why.textContent = "You have reached the end. Acknowledge to continue.";
+      why.style.color = "var(--steel)";
+    };
+    /* Scroll is ONE route to the end, not the definition of having read it. */
+    new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && openGate()),
+      { threshold: 0 }).observe(end);
+    /* Tabbing to the end counts. So does the skip control. */
+    end.addEventListener("focus", openGate);
+    stage.querySelector("[data-skipend]").addEventListener("click", () => {
+      end.scrollIntoView({ behavior:"smooth", block:"center" });
+      openGate(); ackBox.focus();
+    });
+    ackBox.addEventListener("change", () => {
+      goBtn.disabled = !ackBox.checked;
+      why.textContent = ackBox.checked
+        ? `Acknowledgement of v${DISCLOSURE.version} will be recorded with your identity and the time.`
+        : "Acknowledge to continue.";
+    });
+    goBtn.addEventListener("click", () => {
+      signal(`Risk disclosure v${DISCLOSURE.version} acknowledged`, "ok");
+      go("AS-06");
+    });
+  }
+
+  /* AS-27 — cast is a two-step, and the confirmation never echoes the choice. */
+  const castBtn = document.getElementById("castBtn");
+  if (castBtn){
+    const radios = [...stage.querySelectorAll('input[name="ballot"]')];
+    radios.forEach((r) => r.addEventListener("change", () => { castBtn.disabled = false; }));
+    let armed = false;
+    castBtn.addEventListener("click", () => {
+      const chosen = radios.find((r) => r.checked);
+      if (!chosen) return;
+      /* Two-step, INLINE. A native confirm() is a blocking modal the
+         viewer did not open — the same pattern AS-16 corrects in the 404,
+         and it would be worse here because the dialog would name the
+         resolution in a string the browser may log. */
+      if (!armed){
+        armed = true;
+        castBtn.textContent = "Confirm — this cannot be changed";
+        castBtn.style.borderColor = "var(--hazard)";
+        document.getElementById("castHelp").textContent =
+          `This carries ${(RESOLUTION.myWeight/100).toFixed(2)}% of total contribution against ` +
+          `${RESOLUTION.ref} and cannot be changed once the window closes. Press again to cast.`;
+        return;
+      }
+      radios.forEach((r) => { r.disabled = true; });
+      castBtn.disabled = true;
+      castBtn.textContent = "Vote recorded";
+      castBtn.style.borderColor = "";
+      document.getElementById("castHelp").textContent =
+        "Recorded. What you cast is not shown here or anywhere else.";
+      document.getElementById("ballotDone").hidden = false;
+      /* Says a vote was recorded. Never which. */
+      signal("Vote recorded", "ok");
+    });
+  }
+
+  /* AS-19 — stage sequence, invariant gating. */
+  stage.querySelectorAll("[data-lock]").forEach((b) => {
+    b.addEventListener("click", () => lockStage(+b.dataset.lock));
+  });
+  const invs = [...stage.querySelectorAll("[data-inv]")];
+  if (invs.length){
+    const lt = document.getElementById("lockTerms");
+    invs.forEach((i) => i.addEventListener("change", () => {
+      lt.disabled = !invs.every((x) => x.checked);
+    }));
+  }
+
+
+  /* AS-17 — accordions with real state, and a filter that announces. */
+  const kbq = document.getElementById("kbq");
+  if (kbq){
+    stage.querySelectorAll("[data-kbq] > button").forEach((b) => {
+      b.addEventListener("click", () => {
+        const open = b.getAttribute("aria-expanded") === "true";
+        b.setAttribute("aria-expanded", String(!open));
+        document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+        b.querySelector(".ic").textContent = open ? "+" : "\u2013";
+      });
+    });
+    const items = [...stage.querySelectorAll("[data-kbq]")];
+    const cats = [...stage.querySelectorAll("[data-kbcat]")];
+    const count = document.getElementById("kbCount"), none = document.getElementById("kbNone");
+    kbq.addEventListener("input", () => {
+      const q = kbq.value.trim().toLowerCase();
+      let n = 0;
+      items.forEach((it) => {
+        const hit = !q || it.textContent.toLowerCase().includes(q);
+        it.hidden = !hit; if (hit) n++;
+      });
+      cats.forEach((c) => {
+        c.hidden = ![...c.querySelectorAll("[data-kbq]")].some((x) => !x.hidden);
+      });
+      none.hidden = n > 0;
+      /* Announced. A list that silently empties reads as a broken page. */
+      count.textContent = q ? `${n} of ${items.length} answers match “${kbq.value.trim()}”`
+                            : `${items.length} answers`;
+    });
+  }
+
+
+  /* AS-18 — the apply control fills the role field rather than opening a
+     panel that traps focus. */
+  stage.querySelectorAll("[data-apply]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const f = document.getElementById("applyRole");
+      f.value = b.dataset.apply;
+      document.querySelector(".apply").scrollIntoView({ behavior:"smooth", block:"center" });
+      document.getElementById("cv").focus();
+    });
+  });
+
+  /* AS-08 — the player. Advances on intent; auto-advance is a courtesy
+     with a real pause, and it is off entirely under reduced motion. */
+  const player = document.getElementById("player");
+  if (player){
+    const cards = [...player.querySelectorAll("[data-plcard]")];
+    const bars  = [...player.querySelectorAll("[data-plbar]")];
+    const pos   = document.getElementById("plPos");
+    const pauseBtn = document.getElementById("plPause");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let i = 0, timer = null, paused = reduce, opener = null;
+
+    const draw = () => {
+      cards.forEach((c,n) => c.classList.toggle("on", n === i));
+      bars.forEach((b,n) => { b.style.width = n < i ? "100%" : n === i ? "100%" : "0%";
+                              b.style.transition = "none"; });
+      pos.textContent = `Frame ${i+1} of ${cards.length} · ${STORY[i].t}` +
+        (paused ? " · paused" : "");
+    };
+    const tick = () => {
+      clearTimeout(timer);
+      if (paused) return;
+      timer = setTimeout(() => { if (i < cards.length - 1){ i++; draw(); tick(); } else { close(); } }, 5200);
+    };
+    const goTo = (n) => { i = Math.max(0, Math.min(cards.length - 1, n)); draw(); tick(); };
+    const open = (n, from) => {
+      opener = from || null;
+      player.classList.add("on");
+      document.body.style.overflow = "hidden";
+      i = n; paused = reduce;
+      pauseBtn.textContent = paused ? "Play" : "Pause";
+      pauseBtn.setAttribute("aria-pressed", String(paused));
+      draw(); tick();
+      document.getElementById("plExit").focus();
+    };
+    const close = () => {
+      clearTimeout(timer);
+      player.classList.remove("on");
+      document.body.style.overflow = "";
+      if (opener) opener.focus();
+    };
+
+    stage.querySelectorAll("[data-story]").forEach((t) =>
+      t.addEventListener("click", () => open(+t.dataset.story, t)));
+    document.getElementById("plNext").addEventListener("click", () => goTo(i + 1));
+    document.getElementById("plPrev").addEventListener("click", () => goTo(i - 1));
+    document.getElementById("plExit").addEventListener("click", close);
+    pauseBtn.addEventListener("click", () => {
+      paused = !paused;
+      pauseBtn.textContent = paused ? "Play" : "Pause";
+      pauseBtn.setAttribute("aria-pressed", String(paused));
+      draw(); tick();
+    });
+    /* A keyboard has every control the pointer has. */
+    player.addEventListener("keydown", (e) => {
+      if (e.key === "Escape"){ e.preventDefault(); close(); }
+      if (e.key === "ArrowRight"){ e.preventDefault(); goTo(i + 1); }
+      if (e.key === "ArrowLeft"){ e.preventDefault(); goTo(i - 1); }
     });
   }
 

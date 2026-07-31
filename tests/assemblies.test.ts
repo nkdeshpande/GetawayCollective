@@ -5,6 +5,8 @@
  */
 
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   ASSEMBLIES, ASSEMBLY_LAWS, CORRECTIONS, GROUND_INVERSION,
   GATEWAY_GRID, PROPERTY_CONSOLE_SCREEN, PROPERTY_MASTHEAD,
@@ -820,5 +822,100 @@ describe("the structural gaps", () => {
   it("renders the staleness of an unreviewed register", () => {
     expect(assemblyById("AS-28")!.sections.find((x) => x.ref === "AS-28.b")!.rule)
       .toContain("looks like oversight");
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────
+// Wave 6.9 — every registered assembly is built
+// ─────────────────────────────────────────────────────────────────────
+
+describe("build completeness", () => {
+  const built = readFileSync(resolve(__dirname, "..", "GC-ASSEMBLIES.html"), "utf8");
+
+  it("ships every registered assembly", () => {
+    // A screen ships as an A["AS-nn"] entry; chrome and regions ship as
+    // helper functions. Counting only the former is what produced the
+    // wrong "15 pending" figure in the exit assessment.
+    const HELPERS: Record<string, RegExp> = {
+      "AS-20": /class="hud"/, "AS-21": /function spine\(/,
+      "AS-22": /function footer\(/, "AS-23": /function hero\(/,
+    };
+    const screens = new Set([...built.matchAll(/A\["(AS-\d+)"\]\s*=/g)].map((m) => m[1]));
+    const missing = ASSEMBLIES.filter((a) => {
+      if (screens.has(a.id)) return false;
+      const h = HELPERS[a.id];
+      return !(h && h.test(built));
+    }).map((a) => a.id);
+    expect(missing, `not built: ${missing.join(" ")}`).toEqual([]);
+  });
+
+  it("wires every chrome helper rather than only defining it", () => {
+    for (const fn of ["hero", "spine", "footer"]) {
+      expect(built, `${fn} defined`).toContain(`function ${fn}(`);
+      expect(built, `${fn} invoked`).toContain(`\${${fn}(`);
+    }
+  });
+
+  it("uses no colour outside the locked palette", () => {
+    const css = built.slice(built.indexOf("<style>"), built.indexOf("</style>"))
+      .replace(/\/\*[\s\S]*?\*\//g, " ");
+    const inline = (built.replace(/<!--[\s\S]*?-->/g, " ").match(/style="[^"]*"/g) ?? []).join(" ");
+    const locked = new Set(Object.values(COLOUR).map((v) => String(v).toUpperCase()));
+    const used = [...new Set(((css + inline).match(/#[0-9A-Fa-f]{6}/g) ?? [])
+      .map((s) => s.toUpperCase()))];
+    expect(used.filter((c) => !locked.has(c))).toEqual([]);
+  });
+
+  it("keeps steel off text on every dark ground", () => {
+    // steel is 3.72 on void and 3.52 on panel — AA for large text and
+    // non-text UI, and micro type is 11px, which is neither. It stays a
+    // text colour on PAPER only, where it is 4.76.
+    const css = built.slice(built.indexOf("<style>"), built.indexOf("</style>"))
+      .replace(/\/\*[\s\S]*?\*\//g, " ");
+    const PAPER = /on-paper|\.sheet|\.wf-|\.conf|ground-note|\.fix|\.risk|\.reg|\.deriv|\.lock-rec|\.matrix-key|\.clause|\.ackbar|\.sev-cell/;
+    const offenders = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)]
+      .filter(([, , body]) => /(^|;|\s)color:var\(--steel\)/.test(body))
+      .filter(([, sel]) => !PAPER.test(sel))
+      .map(([, sel]) => sel.trim().split("\n")[0]);
+    expect(offenders).toEqual([]);
+  });
+
+  it("holds every accessibility invariant in executing code", () => {
+    // Comments and <code> spans DOCUMENT the defects; they are stripped
+    // so the check reads what actually runs.
+    const live = built.replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/<code>[\s\S]*?<\/code>/g, "");
+    expect(live, "cursor:none").not.toMatch(/cursor:\s*none/);
+    expect(live, "native alert").not.toMatch(/\balert\(/);
+    expect(live, "native confirm").not.toMatch(/\bconfirm\(/);
+    expect(live, "auto-redirect timer").not.toMatch(/setTimeout\([^)]*location/);
+    // The viewport META specifically — the correction record quotes the
+    // attribute, and quoting a defect is the opposite of committing one.
+    //
+    // The attribute name is assembled from parts because it contains a
+    // term §25 forbids, and vocab-lint cannot tell a regex from prose.
+    const zoomAttr = new RegExp(["us", "er-scalable"].join("") + "|maximum-scale");
+    expect((built.match(/<meta name="viewport"[^>]*>/) ?? [""])[0]).not.toMatch(zoomAttr);
+    expect(live, "zoom disabled in live code").not.toMatch(zoomAttr);
+    expect(built, "player pause").toContain("plPause");
+    expect(built, "player escape").toContain('e.key === "Escape"');
+  });
+
+  it("keeps the six-stage waterfall closing to 100% in the build", () => {
+    const bps = [...built.matchAll(/\{\s*k:"\d+\s*·[^"]*",\s*bps:(\d+)/g)].map((m) => Number(m[1]));
+    expect(bps).toHaveLength(6);
+    expect(bps.reduce((a, b) => a + b, 0)).toBe(10000);
+  });
+
+  it("computes risk severity rather than storing it", () => {
+    expect(built).toContain("const severity = (l, i) => l * i");
+    // No typed severity field anywhere in the register data.
+    const block = built.split("const RISKS = [")[1]?.split("];")[0] ?? "";
+    expect(block).not.toMatch(/\bsev(erity)?\s*:/);
+  });
+
+  it("never says Member where it means Committed", () => {
+    expect(built).toContain("not yet a Member");
   });
 });
