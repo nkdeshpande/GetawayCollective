@@ -17,6 +17,8 @@ import {
   RISKS_SLOWSPACE, DISCLOSURE, GOVERNANCE,
 } from "@/app/_assemblies/slowspace";
 import { STATUTORY_MIRROR, REGISTERED_CANDIDATES } from "@/constants/vehicle-domain";
+import { FUNCTIONS, EXECUTIVES, WORKFLOWS, AI_ESCALATION_MATTERS } from "@/constants/operating-model";
+import { INTERNAL_ONLY_RIGHTS } from "@/lib/access-admin";
 import { FORMATION } from "@/content/admin";
 import { ROLE_RIGHTS } from "@/lib/authority";
 
@@ -377,56 +379,101 @@ export const OFFICE_PAGES: Record<string, Entry> = {
 
   "/admin/authority": {
     title: "Authority",
-    eyebrow: "Office · the matrix",
-    lead: "Eight offices, each holding named rights. No role holds every right, and a check proves it.",
+    eyebrow: "Office · the operating model",
+    lead: "Humans make fiduciary decisions. AI manages information. Partner firms execute. " +
+          "A title, an employer, or an engagement never creates authority — only a named, " +
+          "time-bound, reasoned grant does.",
     disclosure: d(
       "Nothing — the matrix is internal.",
       "Nothing at KYC.",
       "Partners see OUTCOMES of authority (resolutions, filings), never the matrix.",
-      "Grants and revocations become a live audit trail in operation.",
+      "Grants, expiries and separation alerts become live views on the register.",
     ),
     sections: [
-      { kind: "table", label: "Offices and rights",
+      { kind: "table", label: "Constitutional functions",
+        cols: [{ h: "Function" }, { h: "Purpose" }, { h: "Owns" }, { h: "Decides?" }],
+        rows: FUNCTIONS.map((f) => [
+          f.name, f.purpose, { v: f.owns.join(" · "), dim: true },
+          { v: f.neverDecides ? "NEVER — escalates only" : "within its rights", mono: true },
+        ]),
+        note: "The AI Operating Layer (GC-01 / GC-02) drafts, classifies, monitors, routes and " +
+              "assembles. It creates escalations, never approvals — the checks in " +
+              "constants/operating-model.ts refuse a deciding AI at load." },
+      { kind: "kv", label: "Executive leadership",
+        rows: EXECUTIVES.flatMap((e) => [
+          { k: e.title, v: e.accountableFor + " — may decide: " + e.mayDecide.join("; ") },
+          { k: "…must not decide alone", v: e.mustNotDecideAlone.join("; ") },
+        ]),
+        note: "An executive who lists nothing they cannot decide alone is a super-admin, and the " +
+              "model refuses to load one." },
+      { kind: "table", label: "Offices and their rights (lib/authority.ts)",
         cols: [{ h: "Office" }, { h: "Rights held", num: true }, { h: "Rights" }],
         rows: Object.entries(ROLE_RIGHTS).map(([role, rights]) => [
           roleName(role), { v: String(rights.length), mono: true },
           { v: rights.join(" · "), dim: true, mono: true },
         ]),
-        note: "separationViolations() in lib/authority.ts proves no office holds a dangerous triad. " +
-              "A super-admin is exactly what that check exists to detect." },
+        note: "separationViolations() proves no office holds a dangerous triad; requestGrant() " +
+              "refuses the grant that would assemble one on a person." },
+      { kind: "kv", label: "Internal-only rights — never granted to a partner identity",
+        rows: [
+          { k: String(INTERNAL_ONLY_RIGHTS.length) + " rights", v: INTERNAL_ONLY_RIGHTS.join(" · "), mono: true },
+        ],
+        note: "Everything that moves money, admits partners or changes the constitution stays " +
+              "inside the constitutional functions. A partner firm is capacity, never authority." },
       { kind: "links", items: [
-        { t: "Grants", to: "/admin/authority/grants" },
+        { t: "Grants", to: "/admin/authority/grants", primary: true },
         { t: "Revocations", to: "/admin/authority/revocations" },
       ] },
     ],
   },
   "/admin/authority/grants": {
     title: "Grants",
-    eyebrow: "Office · authority",
-    lead: "Every grant of a right to a person, with who granted it and why.",
+    eyebrow: "Office · authority lifecycle (WF-3)",
+    lead: "Request → verify standing → right + scope + expiry → conflict and separation check → " +
+          "grantor approval → 30-day review → renew, reduce, or revoke.",
     disclosure: d(
       "Nothing — internal.", "Nothing at KYC.", "Nothing at commitment.",
-      "The grant ledger is append-only from the first real grant.",
+      "The grant ledger is append-only from the first real grant; these views go live with it.",
     ),
     sections: [
+      { kind: "kv", label: "What a grant must survive (lib/access-admin.ts)", rows: [
+        { k: "1 · Named", v: "A verified person — a firm record is refused with the reason" },
+        { k: "2 · Standing", v: "An active engagement (partner) or constitutional appointment (internal)" },
+        { k: "3 · Scoped", v: "Enterprise or a named LLPIN. A scope of every vehicle is not a scope" },
+        { k: "4 · Time-bound", v: "An expiry, always. A grant without one is a super-admin on layaway" },
+        { k: "5 · Reasoned", v: "E-02 — the reason files with the grant" },
+        { k: "6 · Separated", v: "Refused if it completes a GP-06 triad on the identity" },
+        { k: "7 · Internal-only", v: "Capital and governance rights never reach a partner identity" },
+      ], note: "Refusals return the WHOLE list, not the first — tested, 18 cases." },
+      { kind: "cards", label: "The register views, ready for persistence", items: [
+        { t: "Expiring", meta: "expiring()", body: "Every live grant inside the 30-day review window." },
+        { t: "Separation alerts", meta: "separationAlerts()", body: "Any identity holding a full triad — the second net under the first refusal." },
+        { t: "Unassigned rights", meta: "unassignedRights()", body: "Rights nobody holds: work that cannot currently be performed by anyone." },
+      ] },
       { kind: "empty", what: "No grants recorded",
-        because: "No identity exists to grant to. The matrix defines what CAN be held; a grant " +
-                 "attaches it to a person, and there are no persons yet.",
-        when: "Each grant records grantor, grantee, right, scope and reason — E-02 requires the reason." },
+        because: "No identity exists to grant to. The lifecycle is executable and tested; the " +
+                 "register persists with the database.",
+        when: "Each grant records grantee, right, scope, grantor, reason, effective and expiry." },
     ],
   },
   "/admin/authority/revocations": {
     title: "Revocations",
-    eyebrow: "Office · authority",
-    lead: "Rights taken back. As consequential as grants, and recorded the same way.",
+    eyebrow: "Office · authority lifecycle",
+    lead: "Rights taken back — with a reason, never by deletion, never twice.",
     disclosure: d(
       "Nothing — internal.", "Nothing at KYC.", "Nothing at commitment.",
       "Append-only from the first revocation.",
     ),
     sections: [
+      { kind: "prose", paras: [
+        "revokeGrant() keeps the original grant intact and adds the end: who revoked, when, and " +
+        "why. A revocation with a trivial reason is refused exactly as a grant with one is — " +
+        "the record has to answer the question someone asks a year later.",
+      ] },
       { kind: "empty", what: "No revocations",
         because: "Nothing has been granted, so nothing can be revoked.",
-        when: "A revocation records who, what, when and why — and never deletes the original grant." },
+        when: "Emergency revocation for the Digital Platform Partner operational access is part " +
+              "of the same lifecycle — one mechanism, no special cases." },
     ],
   },
 
@@ -547,10 +594,20 @@ export const OFFICE_PAGES: Record<string, Entry> = {
         { t: "Committees", meta: "Offices", body: "Constituted quorums holding named rights. The Board acts by resolution, never by password." },
         { t: "Policies", meta: "Standing", body: "The documents in force, versioned, including every constitutional amendment." },
       ] },
+      { kind: "table", label: "The four workflows (constants/operating-model.ts)",
+        cols: [{ h: "Id" }, { h: "Workflow" }, { h: "Sequence" }],
+        rows: WORKFLOWS.map((w) => [
+          { v: w.id, mono: true }, w.name, { v: w.sequence.join(" → "), dim: true },
+        ]),
+        note: "Every workflow carries named control points; the docket state machine refuses " +
+              "shortcuts, self-review, and evidence-free review (lib/access-admin.ts)." },
+      { kind: "kv", label: "AI escalates — never approves — when a matter involves",
+        rows: AI_ESCALATION_MATTERS.map((m, i) => ({ k: String(i + 1), v: m })) },
       { kind: "links", items: [
         { t: "Resolutions", to: "/admin/governance/resolutions", primary: true },
         { t: "Committees", to: "/admin/governance/committees" },
         { t: "Policies", to: "/admin/governance/policies" },
+        { t: "Authority", to: "/admin/authority" },
       ] },
     ],
   },

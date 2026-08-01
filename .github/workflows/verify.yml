@@ -1,0 +1,40 @@
+# G-12 · CI — the constitutional gate, on every push
+#
+# The pre-commit hook runs `npm run verify` locally, and --no-verify
+# walks straight past it. This workflow is the gate that cannot be
+# skipped: the same eighteen checks and the full suite, on every push
+# and pull request, plus the production build the hook does not run.
+#
+# Branch protection (Settings → Branches → main → require status
+# checks → "verify") turns a red run into a blocked merge. That last
+# step is a dashboard action only the repository owner can take.
+
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: The eighteen checks and the suite
+        run: npm run verify
+
+      - name: Production build from a clean checkout
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://getawaycollective.co

@@ -1,8 +1,18 @@
 /** POST /api/dossier — the intelligence-pack request on /communique/request. */
 import { NextResponse } from "next/server";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { DossierLead, sendLead } from "@/lib/leads";
 
 export async function POST(req: Request) {
+  /* G-10. Before the body is even read: a limited caller costs nothing. */
+  const rl = rateLimit(clientKey(req));
+  if (!rl.ok) {
+    return NextResponse.json(
+      { ok: false, error: "rate-limited" },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } },
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const parsed = DossierLead.safeParse(body);
   if (!parsed.success) {
