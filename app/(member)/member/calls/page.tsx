@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 import { canReach } from "@/lib/access";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,10 +23,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Pmember_calls() {
-  return (
-    <Surface
-      path="/member/calls"
-      assembly={"AS-26"}
-    />
-  );
+  return <Composed path="/member/calls" />;
 }

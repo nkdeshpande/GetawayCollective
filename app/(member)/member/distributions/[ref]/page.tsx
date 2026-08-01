@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 import { canReach } from "@/lib/access";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,11 +24,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Pmember_distributions_ref(props: { params: Promise<{ ref: string }> }) {
   const params = await props.params;
-  return (
-    <Surface
-      path="/member/distributions/[ref]"
-      assembly={"AS-05"}
-      params={params}
-    />
-  );
+  return <Composed path="/member/distributions/[ref]" param={params.ref} />;
 }

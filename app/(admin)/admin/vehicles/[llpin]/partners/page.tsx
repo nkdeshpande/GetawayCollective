@@ -12,7 +12,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 import { canReach } from "@/lib/access";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,11 +25,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Padmin_vehicles_llpin_partners(props: { params: Promise<{ llpin: string }> }) {
   const params = await props.params;
-  return (
-    <Surface
-      path="/admin/vehicles/[llpin]/partners"
-      assembly={"AS-13"}
-      params={params}
-    />
-  );
+  return <Composed path="/admin/vehicles/[llpin]/partners" param={params.llpin} />;
 }

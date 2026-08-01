@@ -174,6 +174,33 @@ const PORTED = {
   "AS-18": { component: "Roles", from: "@/app/_assemblies/gatewaypages" },
 };
 
+/**
+ * COMPOSED ROUTES — derived from the composition registry, not listed.
+ *
+ * content/compositions/ holds a Record keyed by route path per file;
+ * the keys are read here so a new composition becomes a built page by
+ * existing, with no second list to update. An enumerated list here is
+ * exactly the kind that fails silently — see SCAN_DIRS, COMPOSED and
+ * TEXT_PAIRS before it.
+ *
+ * BY_PATH and PORTED win over a composition: a hand-built page is
+ * always more specific than a composed one.
+ */
+const COMPOSED = (() => {
+  const dir = path.join(ROOT, "content", "compositions");
+  const out = new Set();
+  for (const f of fs.readdirSync(dir)) {
+    if (!f.endsWith(".ts") || f === "index.ts" || f === "shared.ts") continue;
+    const text = fs.readFileSync(path.join(dir, f), "utf8");
+    for (const m of text.matchAll(/^\s*"(\/[^"]*)":/gm)) out.add(m[1]);
+    /* The sixteen passport stages are keyed from their stage table
+       (Object.fromEntries over ROWS), not as literals — read the same
+       table the compositions are built from. */
+    for (const m of text.matchAll(/^\s*\{ slug: "([a-z-]+)"/gm)) out.add(`/passport/${m[1]}`);
+  }
+  return out;
+})();
+
 /* Routes whose component is chosen by PATH, not by assembly. The worked
    flow declares assembly: null on purpose — see constants/routes.ts. */
 const BY_PATH = {
@@ -266,7 +293,12 @@ function conventionSource(r, conv) {
 
 function pageSource(r) {
   const access = accessOf(r);
-  const port = BY_PATH[r.path] || (r.assembly ? PORTED[r.assembly] : null);
+  let port = BY_PATH[r.path] || (r.assembly ? PORTED[r.assembly] : null);
+  /* A composition builds any route nothing more specific claims. */
+  if (!port && COMPOSED.has(r.path)) {
+    port = { component: "Composed", from: "@/app/_assemblies/compose",
+             prop: r.path, param: r.params[0] };
+  }
   const indexable = access === "public";
   const hasParams = r.params.length > 0;
   const title = `${r.name} · Getaway Collective`;
@@ -324,6 +356,10 @@ function pageSource(r) {
       ? `  const property = propertyBySlug(params.${r.params[0]});\n` +
         `  if (!property) notFound();\n` +
         `  return <${port.component} p={property} />;\n`
+      : port && port.prop && port.param
+        /* A composed dynamic route needs both: the path names the
+           composition, the param feeds it. */
+        ? `  return <${port.component} path=${JSON.stringify(port.prop)} param={params.${port.param}} />;\n`
       : port && port.prop
         /* One component serving several routes takes the path as a prop.
            Emitted as a literal, so the generated page states which

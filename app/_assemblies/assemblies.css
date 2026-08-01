@@ -1269,4 +1269,22 @@ th.num{text-align:right}
   padding:var(--gc-sp-s) var(--gc-sp-m)}
 .alloc-bar-row .in .btn{margin-left:auto;align-self:center}
 
+/* == THE DISCLOSURE STRIP -- progressive disclosure, stated ========
+   Four stages of the relationship, on every composed page: public,
+   post-KYC, post-commitment, operational. Layout glue only -- the
+   cells are the existing panel vocabulary. */
+.disc-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--gc-hairline-inv);border:1px solid var(--gc-hairline-inv)}
+.on-paper .disc-strip{background:var(--gc-hairline);border-color:var(--gc-hairline)}
+.disc-cell{background:var(--gc-void-panel);padding:var(--gc-sp-s) var(--gc-sp-m)}
+.on-paper .disc-cell{background:var(--gc-paper-panel)}
+.disc-cell p{margin-top:var(--gc-sp-2xs);color:var(--gc-steel-dim)}
+.on-paper .disc-cell p{color:var(--gc-steel)}
+
+/* Stage tags reuse the .conf chip; the dot names the stage. */
+.conf.disc-public::before{background:var(--gc-steel)}
+.conf.disc-kyc::before{background:var(--gc-electric)}
+.conf.disc-committed::before{background:var(--gc-copper)}
+.conf.disc-operational::before{background:var(--gc-confirm)}
+
 [hidden]{display:none !important}

@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 
 export const metadata: Metadata = {
   title: "Not Permitted · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function P403() {
-  return (
-    <Surface
-      path="/403"
-      assembly={"AS-16"}
-    />
-  );
+  return <Composed path="/403" />;
 }

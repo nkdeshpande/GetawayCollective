@@ -12,7 +12,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 import { canReach } from "@/lib/access";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,11 +25,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Pcapital_properties_id_programme(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  return (
-    <Surface
-      path="/capital/properties/[id]/programme"
-      assembly={"AS-11"}
-      params={params}
-    />
-  );
+  return <Composed path="/capital/properties/[id]/programme" param={params.id} />;
 }

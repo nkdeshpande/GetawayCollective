@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 
 export const metadata: Metadata = {
   title: "Gallery · Getaway Collective",
@@ -20,11 +20,5 @@ export const metadata: Metadata = {
 
 export default async function Pcollection_property_gallery(props: { params: Promise<{ property: string }> }) {
   const params = await props.params;
-  return (
-    <Surface
-      path="/collection/[property]/gallery"
-      assembly={"AS-10"}
-      params={params}
-    />
-  );
+  return <Composed path="/collection/[property]/gallery" param={params.property} />;
 }

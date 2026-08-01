@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 import { canReach } from "@/lib/access";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,11 +24,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Pmember_entitlement_year(props: { params: Promise<{ year: string }> }) {
   const params = await props.params;
-  return (
-    <Surface
-      path="/member/entitlement/[year]"
-      assembly={"AS-25"}
-      params={params}
-    />
-  );
+  return <Composed path="/member/entitlement/[year]" param={params.year} />;
 }

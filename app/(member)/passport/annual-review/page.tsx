@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 import { canReach } from "@/lib/access";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,10 +23,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Ppassport_annual_review() {
-  return (
-    <Surface
-      path="/passport/annual-review"
-      assembly={"AS-06"}
-    />
-  );
+  return <Composed path="/passport/annual-review" />;
 }

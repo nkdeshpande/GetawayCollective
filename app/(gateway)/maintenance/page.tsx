@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 
 export const metadata: Metadata = {
   title: "Maintenance · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pmaintenance() {
-  return (
-    <Surface
-      path="/maintenance"
-      assembly={"AS-15"}
-    />
-  );
+  return <Composed path="/maintenance" />;
 }

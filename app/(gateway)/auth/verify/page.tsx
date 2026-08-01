@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { Composed } from "@/app/_assemblies/compose";
 
 export const metadata: Metadata = {
   title: "Verify · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pauth_verify() {
-  return (
-    <Surface
-      path="/auth/verify"
-      assembly={null}
-    />
-  );
+  return <Composed path="/auth/verify" />;
 }
