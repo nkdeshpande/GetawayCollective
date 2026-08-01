@@ -1322,4 +1322,129 @@ th.num{text-align:right}
   margin-top:var(--gc-sp-m);flex-wrap:wrap}
 .n-links{display:inline-flex;gap:var(--gc-sp-2xs);flex-wrap:wrap}
 
+
+/* == AS-37 THE SHELL -- top rail + collapsible left rail ===========
+   Adapted from gc_enterprise_knowledge_workspace.html. Its geometry is
+   kept; its assumptions are not. Notably it scrolled an inner pane,
+   which breaks find-on-page and back-restore on a nine-thousand-word
+   legal document -- here the rail is sticky and the DOCUMENT scrolls. */
+
+.shell{display:grid;grid-template-columns:var(--rail,240px) minmax(0,1fr);
+  grid-template-rows:56px 1fr;min-height:100vh}
+.shell.is-collapsed{--rail:60px}
+
+/* Skip link. Visible only when focused, and it lands on the main region. */
+.skip{position:absolute;left:-9999px;top:0;z-index:900;background:var(--gc-paper);
+  color:var(--gc-ink);padding:var(--gc-sp-2xs) var(--gc-sp-s);font:400 11px/1 var(--gc-font-mono);
+  letter-spacing:.14em;text-transform:uppercase}
+.skip:focus{left:var(--gc-sp-s);top:var(--gc-sp-s)}
+
+/* -- Top rail ---------------------------------------------------- */
+.rail-top{grid-column:1/3;grid-row:1;position:sticky;top:0;z-index:620;
+  display:flex;align-items:center;gap:var(--gc-sp-s);padding:0 var(--gc-sp-m);
+  background:var(--gc-void-panel);border-bottom:1px solid var(--gc-hairline-inv)}
+.on-paper .rail-top{background:var(--gc-paper-panel);border-bottom-color:var(--gc-hairline)}
+
+.rail-toggle{background:none;border:1px solid transparent;color:var(--gc-steel-dim);
+  padding:6px;display:inline-flex;cursor:pointer;flex:none}
+.rail-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6}
+.rail-toggle:hover{color:var(--gc-ink-inverse)}
+.on-paper .rail-toggle{color:var(--gc-steel)}
+.on-paper .rail-toggle:hover{color:var(--gc-ink)}
+
+.shell .brand{font:300 20px/1 var(--gc-font-display);letter-spacing:-.02em;
+  text-transform:uppercase;color:var(--gc-ink-inverse);text-decoration:none;flex:none}
+.on-paper .shell .brand{color:var(--gc-ink)}
+.shell .brand .dot{color:var(--gc-steel-dim)}
+
+.crumbs{display:flex;align-items:baseline;gap:var(--gc-sp-2xs);min-width:0;
+  font:400 10px/1.3 var(--gc-font-mono);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gc-steel-dim)}
+.on-paper .crumbs{color:var(--gc-steel)}
+.crumbs .now{color:var(--gc-ink-inverse);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.on-paper .crumbs .now{color:var(--gc-ink)}
+.crumbs .sep{opacity:.5}
+.rail-spacer{flex:1 1 auto}
+.vantage{color:var(--gc-steel-dim);white-space:nowrap}
+.on-paper .vantage{color:var(--gc-steel)}
+@media (max-width:700px){ .crumbs .v,.crumbs .sep,.vantage{display:none} }
+
+/* -- Left rail --------------------------------------------------- */
+.rail-left{grid-column:1;grid-row:2;position:sticky;top:56px;align-self:start;
+  height:calc(100vh - 56px);display:flex;flex-direction:column;
+  justify-content:space-between;overflow:hidden;
+  background:var(--gc-void-panel);border-right:1px solid var(--gc-hairline-inv)}
+.on-paper .rail-left{background:var(--gc-paper-panel);border-right-color:var(--gc-hairline)}
+.rail-scroll{overflow-y:auto;padding:var(--gc-sp-s) 0;flex:1 1 auto}
+.rail-group{display:flex;flex-direction:column;padding-bottom:var(--gc-sp-s)}
+/* steel-dim on void, steel on paper. This is 11px TEXT, and steel is
+   3.72:1 on void — the same trap .label fell into and records above.
+   Caught by measuring the rendered rail, not by reading the rule. */
+.rail-head{display:block;color:var(--gc-steel-dim);padding:var(--gc-sp-2xs) var(--gc-sp-m) var(--gc-sp-3xs)}
+.on-paper .rail-head{color:var(--gc-steel)}
+.is-collapsed .rail-head{visibility:hidden;height:14px;padding:0}
+
+.rail-item{display:flex;align-items:center;gap:var(--gc-sp-s);
+  padding:10px var(--gc-sp-m);border-left:2px solid transparent;
+  color:var(--gc-steel-dim);text-decoration:none;
+  font:400 11px/1.3 var(--gc-font-mono);letter-spacing:.05em;text-transform:uppercase;
+  transition:color var(--gc-dur-instant),background var(--gc-dur-instant)}
+.on-paper .rail-item{color:var(--gc-steel)}
+.rail-item svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:1.4;stroke-linecap:square;stroke-linejoin:miter}
+.rail-item .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rail-item:hover{color:var(--gc-ink-inverse);background:rgba(242,242,242,.05)}
+.on-paper .rail-item:hover{color:var(--gc-ink);background:rgba(10,10,10,.04)}
+
+/* Active is PAPER, never copper: copper is money and nothing else.
+   Carried by a filled left edge AND weight AND aria-current, so it does
+   not depend on colour alone. */
+.rail-item[aria-current="page"]{color:var(--gc-ink-inverse);border-left-color:var(--gc-ink-inverse);
+  background:rgba(242,242,242,.08);font-weight:700}
+.on-paper .rail-item[aria-current="page"]{color:var(--gc-ink);border-left-color:var(--gc-ink);
+  background:rgba(10,10,10,.06)}
+
+.is-collapsed .rail-item{justify-content:center;padding:12px 0;gap:0}
+.is-collapsed .rail-item .lbl{display:none}
+
+.rail-foot{border-top:1px solid var(--gc-hairline-inv);padding:var(--gc-sp-2xs) 0;flex:none}
+.on-paper .rail-foot{border-top-color:var(--gc-hairline)}
+
+.rail-who{display:flex;align-items:center;gap:var(--gc-sp-s);padding:var(--gc-sp-s) var(--gc-sp-m)}
+.is-collapsed .rail-who{justify-content:center;padding:var(--gc-sp-s) 0}
+/* A square. The Zero Radius Doctrine has no avatar exception. */
+.rail-who .sq{width:30px;height:30px;flex:none;display:flex;align-items:center;
+  justify-content:center;border:1px solid var(--gc-hairline-inv);color:var(--gc-steel-dim);
+  font:400 11px/1 var(--gc-font-mono)}
+.on-paper .rail-who .sq{border-color:var(--gc-hairline);color:var(--gc-steel)}
+.rail-who .who-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rail-who .nm{font:400 13px/1.2 var(--gc-font-body);color:var(--gc-ink-inverse);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.on-paper .rail-who .nm{color:var(--gc-ink)}
+.rail-who .rl{color:var(--gc-steel-dim)}
+.on-paper .rail-who .rl{color:var(--gc-steel)}
+.is-collapsed .rail-who .who-meta{display:none}
+
+.rail-main{grid-column:2;grid-row:2;min-width:0}
+.rail-scrim{display:none}
+
+/* -- Small screens: the rail goes off-canvas ---------------------- */
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail-top{grid-column:1}
+  .rail-main{grid-column:1;grid-row:2}
+  .rail-left{position:fixed;top:56px;left:0;width:260px;z-index:610;
+    transform:translateX(-100%);transition:transform var(--gc-dur-fast) var(--gc-ease-cinema)}
+  .shell.is-open .rail-left{transform:translateX(0)}
+  .shell.is-collapsed .rail-left{--rail:260px}
+  .is-collapsed .rail-item{justify-content:flex-start;padding:10px var(--gc-sp-m);gap:var(--gc-sp-s)}
+  .is-collapsed .rail-item .lbl{display:block}
+  .is-collapsed .rail-head{visibility:visible;height:auto;padding:var(--gc-sp-2xs) var(--gc-sp-m) var(--gc-sp-3xs)}
+  .is-collapsed .rail-who{justify-content:flex-start;padding:var(--gc-sp-s) var(--gc-sp-m)}
+  .is-collapsed .rail-who .who-meta{display:flex}
+  .rail-scrim{display:block;position:fixed;inset:56px 0 0 0;z-index:605;
+    background:rgba(10,10,10,.6)}
+}
+@media (prefers-reduced-motion:reduce){ .rail-left{transition:none} }
+
 [hidden]{display:none !important}

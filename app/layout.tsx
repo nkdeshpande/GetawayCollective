@@ -12,6 +12,7 @@
 import type { Metadata } from "next";
 import { fontVars } from "./_system/fonts";
 import { CookieConsent, Specimens } from "./_assemblies/dialogs";
+import { Shell } from "./_assemblies/shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -38,7 +39,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
        mandatory reading surface; disabling zoom on either is WCAG 1.4.4. */
     <html lang="en-IN" className={fontVars}>
       <body>
-        {children}
+        {/* AS-37. The rail filters itself by reachability on every
+            render, so the shell shows an anonymous visitor exactly the
+            surfaces an anonymous visitor can open — and nothing that
+            would confirm the rest exist. */}
+        <Shell>{children}</Shell>
         {/* P-03: asserts at the foot, never blocks, declines by default.
             Specimens renders a dialog only when ?specimen= names one —
             zero footprint otherwise. */}

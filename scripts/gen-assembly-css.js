@@ -91,8 +91,33 @@ for (const [from, to] of Object.entries(MAP).sort((a, b) => b[0].length - a[0].l
    assembly root, so the application shell keeps its own base styles. */
 css = css.replace(/^body\{/gm, ".gc-assembly{").replace(/^html\{/gm, ".gc-assembly{");
 
+/*
+ * WHAT THIS CHECK IS ACTUALLY FOR.
+ *
+ * A `var(--x)` that resolves to nothing renders as an empty value —
+ * silently, with no error anywhere. That is the defect worth catching,
+ * and the first version of this check caught it by flagging every
+ * custom property outside the `--gc-` namespace.
+ *
+ * Too broad. A stylesheet may legitimately declare its own LOCAL
+ * variable for layout — `.shell { --rail: 240px }` consumed two rules
+ * later is not a missing token, it is how a collapsible grid column is
+ * written. Flagging it forced a choice between bypassing the check and
+ * putting a layout value in the token namespace, where it would be a
+ * lie.
+ *
+ * So the check now asks the precise question: is this property
+ * CONSUMED but never DECLARED anywhere in the sheet? A local variable
+ * declares itself and passes; a mistyped or retired token does not and
+ * still fails.
+ */
+const declared = new Set(
+  [...css.matchAll(/(^|[;{]\s*)(--[a-z0-9-]+)\s*:/g)].map((m) => m[2]),
+);
 const leftover = [...new Set(
-  [...css.matchAll(/var\((--[a-z0-9-]+)/g)].map((m) => m[1]).filter((v) => !v.startsWith("--gc-")),
+  [...css.matchAll(/var\((--[a-z0-9-]+)/g)]
+    .map((m) => m[1])
+    .filter((v) => !v.startsWith("--gc-") && !declared.has(v)),
 )];
 
 const banner =

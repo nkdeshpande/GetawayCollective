@@ -1,0 +1,240 @@
+/**
+ * AS-37 · THE SHELL — top rail and collapsible left rail
+ *
+ * Wave 9 · Chrome
+ *
+ * Adapted from gc_enterprise_knowledge_workspace.html. That file had the
+ * shape right and already respected two house rules by name — the active
+ * state is PAPER not copper, and the avatar is a square — so what
+ * follows keeps its geometry and replaces its contents.
+ *
+ * ── FOUR THINGS THE REFERENCE COULD NOT KNOW ─────────────────────────
+ *
+ * 1. THE RAIL NEVER SHOWS WHAT THE VIEWER CANNOT REACH.
+ *    The reference hard-codes two items. This filters PRIMARY_NAV
+ *    through canReach() on every render, so an anonymous visitor sees
+ *    the public rail and nothing else. That is not tidiness:
+ *    IA_LAWS.notFoundNeverConfirms bars a denial from confirming a
+ *    surface exists, and a rail listing "Administration" to a stranger
+ *    confirms it just as loudly as a 403 page would. A section whose
+ *    every item is unreachable does not render its heading either — an
+ *    empty "Governance" group would leak the same fact more quietly.
+ *
+ * 2. THE BREADCRUMB READS THE ROUTE TABLE, NOT THE URL.
+ *    Splitting a pathname gives you "how-capital-works"; the route
+ *    table gives you "How Capital Works", which is what the page is
+ *    called. It also gives the vantage, which is the more useful fact:
+ *    a person should be able to see which aperture they are looking
+ *    through without inferring it from the address.
+ *
+ * 3. IT DOES NOT TRAP THE SCROLL.
+ *    The reference sets `html, body { overflow: hidden }` and scrolls an
+ *    inner pane. That breaks browser find-on-page position, breaks
+ *    restore-on-back, and breaks the legal corpus — /legal/terms is
+ *    nine thousand words and belongs in the document scroll, not in a
+ *    div. The rail is sticky at viewport height instead; the document
+ *    scrolls as a document.
+ *
+ * 4. IT SURVIVES BOTH GROUNDS.
+ *    The reference is void-only. Ground inversion means a page can hand
+ *    the shell a paper section at any point, so every rail value is a
+ *    token with an .on-paper counterpart.
+ *
+ * ── WHY THE COLLAPSE IS NOT ANIMATED WIDTH ───────────────────────────
+ * Transitioning a grid column re-lays-out the document on every frame
+ * and drags the whole page with it. The rail switches width in one
+ * step and the LABELS fade — motion where it costs nothing, none where
+ * it would cost a reflow per frame.
+ */
+
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { PRIMARY_NAV, NAV_FOOT, type NavIcon } from "@/constants/navigation";
+import { ROUTES } from "@/constants/routes";
+import { canReach } from "@/lib/access";
+
+/* ── Icons ───────────────────────────────────────────────────────────
+   Square and line geometry only. The Zero Radius Doctrine permits a
+   circle for a status LED and the Trinity Lens; a navigation glyph is
+   neither, so nothing here is round. */
+
+const ICON: Record<NavIcon, React.ReactNode> = {
+  home:          <><rect x="4" y="10" width="16" height="10" /><path d="M2 11 12 3l10 8" /></>,
+  collection:    <><rect x="3" y="4" width="18" height="16" /><path d="M3 10h18M9 10v10" /></>,
+  doctrine:      <><rect x="4" y="3" width="16" height="18" /><path d="M8 8h8M8 12h8M8 16h5" /></>,
+  journal:       <><path d="M5 3h14v18l-7-4-7 4z" /><path d="M9 8h6" /></>,
+  answers:       <><rect x="3" y="4" width="18" height="14" /><path d="M8 21h8M12 18v3M8 9h8M8 13h4" /></>,
+  space:         <><path d="M3 20h18" /><path d="M6 20V9l6-5 6 5v11" /><path d="M10 20v-6h4v6" /></>,
+  gallery:       <><rect x="3" y="5" width="18" height="14" /><path d="M3 15l5-4 4 3 3-2 6 4" /></>,
+  portfolio:     <><rect x="3" y="7" width="18" height="13" /><path d="M8 7V4h8v3" /><path d="M3 12h18" /></>,
+  time:          <><rect x="3" y="5" width="18" height="16" /><path d="M3 10h18M8 3v4M16 3v4" /></>,
+  entitlement:   <><rect x="3" y="5" width="18" height="16" /><path d="M3 10h18" /><rect x="7" y="13" width="4" height="4" /></>,
+  capital:       <><path d="M3 20h18" /><rect x="4" y="12" width="4" height="8" /><rect x="10" y="8" width="4" height="12" /><rect x="16" y="4" width="4" height="16" /></>,
+  offering:      <><rect x="3" y="4" width="18" height="16" /><path d="M7 9h10M7 13h10M7 17h6" /></>,
+  ledger:        <><rect x="3" y="4" width="18" height="16" /><path d="M9 4v16M3 9h6M3 14h6" /></>,
+  member:        <><rect x="4" y="4" width="16" height="16" /><path d="M8 15h8M9 9h6" /></>,
+  position:      <><path d="M3 20h18" /><path d="M5 20V6h6v14M13 20v-9h6v9" /></>,
+  documents:     <><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /><path d="M9 12h6M9 16h6" /></>,
+  resolutions:   <><rect x="3" y="4" width="18" height="16" /><path d="M7 12l3 3 7-7" /></>,
+  notifications: <><path d="M5 18V10a7 7 0 0 1 14 0v8z" /><path d="M3 18h18M10 21h4" /></>,
+  admin:         <><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></>,
+  vehicles:      <><rect x="3" y="8" width="18" height="12" /><path d="M7 8V4h10v4M3 14h18" /></>,
+  governance:    <><path d="M3 20h18M12 3v17" /><path d="M5 9h14M7 9l-3 6h6zM17 9l-3 6h6z" /></>,
+  compliance:    <><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /><path d="M9 12l2 2 4-4" /></>,
+  authority:     <><rect x="5" y="10" width="14" height="10" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></>,
+  media:         <><rect x="3" y="5" width="18" height="14" /><path d="M10 9l5 3-5 3z" /></>,
+};
+
+function Glyph({ icon }: { icon: NavIcon }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      {ICON[icon]}
+    </svg>
+  );
+}
+
+/* ── Route lookup ────────────────────────────────────────────────── */
+
+const routeByPath = (p: string) => ROUTES.find((r) => r.path === p);
+
+/**
+ * Resolve a live pathname to its declared route, matching a dynamic
+ * segment where the literal is absent — /collection/kyoto-house has no
+ * literal entry, /collection/[property] does.
+ */
+function resolve(pathname: string) {
+  const exact = routeByPath(pathname);
+  if (exact) return exact;
+  const parts = pathname.split("/").filter(Boolean);
+  return ROUTES.find((r) => {
+    const rp = r.path.split("/").filter(Boolean);
+    if (rp.length !== parts.length) return false;
+    return rp.every((seg, i) => (seg.startsWith("[") ? true : seg === parts[i]));
+  });
+}
+
+const STORE = "gc-rail-collapsed";
+
+export function Shell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname() || "/";
+  const [collapsed, setCollapsed] = useState(false);
+  const [open, setOpen] = useState(false);   // small screens: off-canvas
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    try { setCollapsed(localStorage.getItem(STORE) === "1"); } catch { /* storage denied */ }
+    setReady(true);
+  }, []);
+
+  /* Navigating closes the off-canvas rail. Leaving it open over the page
+     someone just asked for is the commonest mobile-nav defect. */
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  const toggle = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try { localStorage.setItem(STORE, next ? "1" : "0"); } catch { /* nothing to persist into */ }
+  };
+
+  const here = resolve(pathname);
+
+  /* Filtered on every render, never cached: reachability is a property
+     of the viewer, and a cached rail would outlive a revocation. */
+  const sections = PRIMARY_NAV
+    .map((s) => ({ ...s, items: s.items.filter((i) => canReach(i.path).ok) }))
+    .filter((s) => s.items.length > 0);
+  const foot = NAV_FOOT.filter((i) => canReach(i.path).ok);
+
+  const isCurrent = (p: string) =>
+    p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(p + "/");
+
+  const item = (i: { path: string; label: string; icon: NavIcon }) => (
+    <Link
+      key={i.path}
+      href={i.path}
+      className="rail-item"
+      aria-current={isCurrent(i.path) ? "page" : undefined}
+      /* The label is the accessible name whether or not it is visible,
+         so a collapsed rail is not a row of unnamed glyphs. */
+      title={collapsed ? i.label : undefined}
+      aria-label={collapsed ? i.label : undefined}
+    >
+      <Glyph icon={i.icon} />
+      <span className="lbl">{i.label}</span>
+    </Link>
+  );
+
+  return (
+    <div className={"shell" + (collapsed ? " is-collapsed" : "") + (open ? " is-open" : "")}>
+      <a className="skip" href="#main">Skip to content</a>
+
+      <header className="rail-top">
+        <button
+          className="rail-toggle"
+          type="button"
+          onClick={() => (window.innerWidth <= 900 ? setOpen((o) => !o) : toggle())}
+          /* `ready` gates this: before the effect runs, the server and
+             the client must agree, and `window` does not exist on the
+             server to ask. */
+          aria-expanded={ready ? open || !collapsed : undefined}
+          aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </button>
+
+        <Link href="/" className="brand" aria-label="Getaway Collective, home">
+          GC<span className="dot">.</span>
+        </Link>
+
+        {/* Names the page and the aperture it is seen through. Both come
+            from the route table; neither is parsed out of the URL. */}
+        <nav className="crumbs" aria-label="Breadcrumb">
+          <span className="v">{here ? here.group : "—"}</span>
+          <span className="sep" aria-hidden="true">/</span>
+          <span className="now">{here ? here.name : "Not a declared surface"}</span>
+        </nav>
+
+        <span className="rail-spacer" />
+
+        <span className="vantage t-mono-s" title="The aperture this surface is seen through">
+          {here ? here.group : "—"} vantage
+        </span>
+      </header>
+
+      {/* Backdrop only exists on small screens, and only when open. */}
+      {open ? <div className="rail-scrim" onClick={() => setOpen(false)} aria-hidden="true" /> : null}
+
+      <nav className="rail-left" aria-label="Main">
+        <div className="rail-scroll">
+          {sections.map((s) => (
+            <div className="rail-group" key={s.id}>
+              {s.title ? <span className="rail-head t-micro">{s.title}</span> : null}
+              {s.items.map(item)}
+            </div>
+          ))}
+        </div>
+
+        <div className="rail-foot">
+          {foot.map(item)}
+          {/* Identity is not built, and the block says so rather than
+              inventing a name. A shell that shows a signed-in person
+              when nobody is signed in is the first lie a product tells. */}
+          <div className="rail-who">
+            <span className="sq" aria-hidden="true">—</span>
+            <span className="who-meta">
+              <span className="nm">Not signed in</span>
+              <span className="rl t-mono-s">Public vantage</span>
+            </span>
+          </div>
+        </div>
+      </nav>
+
+      <main className="rail-main" id="main">
+        {ready ? children : children}
+      </main>
+    </div>
+  );
+}
