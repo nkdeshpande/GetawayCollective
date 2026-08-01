@@ -1351,63 +1351,89 @@ th.num{text-align:right}
 .n-links{display:inline-flex;gap:var(--s-2xs);flex-wrap:wrap}
 
 
-/* == AS-37 THE SHELL -- top rail + collapsible left rail ===========
-   Adapted from gc_enterprise_knowledge_workspace.html. Its geometry is
-   kept; its assumptions are not. Notably it scrolled an inner pane,
-   which breaks find-on-page and back-restore on a nine-thousand-word
-   legal document -- here the rail is sticky and the DOCUMENT scrolls. */
+/* == AS-37 THE SHELL -- transparent header + collapsible spine =====
+   Adapted from gc_enterprise_knowledge_workspace.html.
+
+   TWO CHANGES FROM THE FIRST CUT, BOTH DIRECTED:
+   the collapse toggle moved from the header onto the spine it controls,
+   and the header went transparent over the hero. The rail is therefore
+   never fully hidden -- it collapses to a 60px icon spine at every
+   width rather than sliding off-canvas -- which is what lets the
+   hamburger go entirely. A control that hides the only way to bring
+   itself back is not a control. */
 
 .shell{display:grid;grid-template-columns:var(--rail,240px) minmax(0,1fr);
   grid-template-rows:56px 1fr;min-height:100vh}
 .shell.is-collapsed{--rail:60px}
 
-/* Skip link. Visible only when focused, and it lands on the main region. */
 .skip{position:absolute;left:-9999px;top:0;z-index:900;background:var(--paper);
   color:var(--ink);padding:var(--s-2xs) var(--s-s);font:400 11px/1 var(--f-mono);
   letter-spacing:.14em;text-transform:uppercase}
 .skip:focus{left:var(--s-s);top:var(--s-s)}
 
-/* -- Top rail ---------------------------------------------------- */
+/* -- Top rail: transparent over the hero, opaque past it ---------- */
+/* No background transition. Transitioning a background in a
+   custom-property-themed system is how elements froze on the previous
+   ground three times in this repo; the swap is a hard cut, and the
+   SCRIM carries the softness instead. */
 .rail-top{grid-column:1/3;grid-row:1;position:sticky;top:0;z-index:620;
   display:flex;align-items:center;gap:var(--s-s);padding:0 var(--s-m);
-  background:var(--void-panel);border-bottom:1px solid var(--hair)}
-.on-paper .rail-top{background:var(--paper-panel);border-bottom-color:var(--hair-lt)}
+  background:transparent;border-bottom:1px solid transparent}
+/* The scrim is structural, not decoration: type over an unscrimmed
+   image is legible only against the part of the image it happens to
+   land on. It sits behind the content and never intercepts a click. */
+.rail-top::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(10,10,10,.82) 0%,rgba(10,10,10,.45) 55%,transparent 100%)}
+.rail-top>*{position:relative;z-index:1}
+.rail-top[data-solid="1"]{background:var(--void-panel);border-bottom-color:var(--hair)}
+.rail-top[data-solid="1"]::before{display:none}
+.on-paper .rail-top[data-solid="1"]{background:var(--paper-panel);border-bottom-color:var(--hair-lt)}
 
-.rail-toggle{background:none;border:1px solid transparent;color:var(--steel-dim);
-  padding:6px;display:inline-flex;cursor:pointer;flex:none}
-.rail-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6}
-.rail-toggle:hover{color:var(--ink-inv)}
-.on-paper .rail-toggle{color:var(--steel)}
-.on-paper .rail-toggle:hover{color:var(--ink)}
-
+/* Over a scrimmed hero the header is always light-on-dark, whatever
+   ground the page below uses. Only the solid state follows the ground. */
 .shell .brand{font:300 20px/1 var(--f-display);letter-spacing:-.02em;
   text-transform:uppercase;color:var(--ink-inv);text-decoration:none;flex:none}
-.on-paper .shell .brand{color:var(--ink)}
 .shell .brand .dot{color:var(--steel-dim)}
+.rail-top[data-solid="1"].on-paper .brand,
+.on-paper .rail-top[data-solid="1"] .brand{color:var(--ink)}
 
 .crumbs{display:flex;align-items:baseline;gap:var(--s-2xs);min-width:0;
   font:400 10px/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;
   color:var(--steel-dim)}
-.on-paper .crumbs{color:var(--steel)}
 .crumbs .now{color:var(--ink-inv);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.on-paper .crumbs .now{color:var(--ink)}
 .crumbs .sep{opacity:.5}
 .rail-spacer{flex:1 1 auto}
 .vantage{color:var(--steel-dim);white-space:nowrap}
-.on-paper .vantage{color:var(--steel)}
+.on-paper .rail-top[data-solid="1"] .crumbs{color:var(--steel)}
+.on-paper .rail-top[data-solid="1"] .crumbs .now{color:var(--ink)}
+.on-paper .rail-top[data-solid="1"] .vantage{color:var(--steel)}
 @media (max-width:700px){ .crumbs .v,.crumbs .sep,.vantage{display:none} }
 
-/* -- Left rail --------------------------------------------------- */
+/* -- Left rail: a spine, never hidden ----------------------------- */
 .rail-left{grid-column:1;grid-row:2;position:sticky;top:56px;align-self:start;
   height:calc(100vh - 56px);display:flex;flex-direction:column;
-  justify-content:space-between;overflow:hidden;
+  justify-content:space-between;overflow:hidden;z-index:630;
   background:var(--void-panel);border-right:1px solid var(--hair)}
 .on-paper .rail-left{background:var(--paper-panel);border-right-color:var(--hair-lt)}
+
+/* The collapse control, on the spine it moves. */
+.rail-collapse{display:flex;align-items:center;gap:var(--s-s);width:100%;
+  padding:12px var(--s-m);background:none;border:none;border-bottom:1px solid var(--hair);
+  color:var(--steel-dim);cursor:pointer;text-align:left;
+  font:400 11px/1.3 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;
+  transition:color var(--d-instant),background var(--d-instant)}
+.on-paper .rail-collapse{color:var(--steel);border-bottom-color:var(--hair-lt)}
+.rail-collapse svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:1.4;stroke-linecap:square}
+.rail-collapse:hover{color:var(--ink-inv);background:rgba(242,242,242,.05)}
+.on-paper .rail-collapse:hover{color:var(--ink);background:rgba(10,10,10,.04)}
+.is-collapsed .rail-collapse{justify-content:center;padding:14px 0;gap:0}
+.is-collapsed .rail-collapse .lbl{display:none}
+
 .rail-scroll{overflow-y:auto;padding:var(--s-s) 0;flex:1 1 auto}
 .rail-group{display:flex;flex-direction:column;padding-bottom:var(--s-s)}
-/* steel-dim on void, steel on paper. This is 11px TEXT, and steel is
-   3.72:1 on void — the same trap .label fell into and records above.
-   Caught by measuring the rendered rail, not by reading the rule. */
+/* steel-dim on void, steel on paper. 11px is TEXT, and steel is 3.72:1
+   on void -- the same trap .label records above. */
 .rail-head{display:block;color:var(--steel-dim);padding:var(--s-2xs) var(--s-m) var(--s-3xs)}
 .on-paper .rail-head{color:var(--steel)}
 .is-collapsed .rail-head{visibility:hidden;height:14px;padding:0}
@@ -1424,9 +1450,7 @@ th.num{text-align:right}
 .rail-item:hover{color:var(--ink-inv);background:rgba(242,242,242,.05)}
 .on-paper .rail-item:hover{color:var(--ink);background:rgba(10,10,10,.04)}
 
-/* Active is PAPER, never copper: copper is money and nothing else.
-   Carried by a filled left edge AND weight AND aria-current, so it does
-   not depend on colour alone. */
+/* Active is PAPER, never copper: copper is money and nothing else. */
 .rail-item[aria-current="page"]{color:var(--ink-inv);border-left-color:var(--ink-inv);
   background:rgba(242,242,242,.08);font-weight:700}
 .on-paper .rail-item[aria-current="page"]{color:var(--ink);border-left-color:var(--ink);
@@ -1453,27 +1477,43 @@ th.num{text-align:right}
 .on-paper .rail-who .rl{color:var(--steel)}
 .is-collapsed .rail-who .who-meta{display:none}
 
-.rail-main{grid-column:2;grid-row:2;min-width:0}
-.rail-scrim{display:none}
+/* The pane starts UNDER the header so the hero can run beneath it. */
+.rail-main{grid-column:2;grid-row:1/3;min-width:0}
 
-/* -- Small screens: the rail goes off-canvas ---------------------- */
+/* -- Small screens: the spine narrows, it never disappears -------- */
 @media (max-width:900px){
-  .shell{grid-template-columns:minmax(0,1fr)}
-  .rail-top{grid-column:1}
-  .rail-main{grid-column:1;grid-row:2}
-  .rail-left{position:fixed;top:56px;left:0;width:260px;z-index:610;
-    transform:translateX(-100%);transition:transform var(--d-fast) var(--e-cinema)}
-  .shell.is-open .rail-left{transform:translateX(0)}
-  .shell.is-collapsed .rail-left{--rail:260px}
-  .is-collapsed .rail-item{justify-content:flex-start;padding:10px var(--s-m);gap:var(--s-s)}
-  .is-collapsed .rail-item .lbl{display:block}
-  .is-collapsed .rail-head{visibility:visible;height:auto;padding:var(--s-2xs) var(--s-m) var(--s-3xs)}
-  .is-collapsed .rail-who{justify-content:flex-start;padding:var(--s-s) var(--s-m)}
-  .is-collapsed .rail-who .who-meta{display:flex}
-  .rail-scrim{display:block;position:fixed;inset:56px 0 0 0;z-index:605;
-    background:rgba(10,10,10,.6)}
+  .shell{--rail:60px}
+  .shell.is-collapsed{--rail:60px}
+  .rail-item,.rail-collapse{justify-content:center;padding:12px 0;gap:0}
+  .rail-item .lbl,.rail-collapse .lbl{display:none}
+  .rail-head{visibility:hidden;height:14px;padding:0}
+  .rail-who{justify-content:center;padding:var(--s-s) 0}
+  .rail-who .who-meta{display:none}
 }
-@media (prefers-reduced-motion:reduce){ .rail-left{transition:none} }
+
+/* -- THE HERO ------------------------------------------------------
+   Every page opens with one. No photography exists, so the bed is a
+   generated plate derived from the forest token and the surface's own
+   hue -- honest about being generated, and it carries the same scrim
+   discipline a photograph would need. FB-1 still holds: no FIGURE is
+   set over the bed, only a title, an eyebrow and a line of prose. */
+.p-hero{position:relative;min-height:clamp(240px,38vh,380px);display:flex;
+  align-items:flex-end;overflow:hidden;margin-bottom:var(--s-xl)}
+.p-hero .bed{position:absolute;inset:0}
+.p-hero .sc{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,10,10,.94) 0%,rgba(10,10,10,.55) 45%,rgba(10,10,10,.35) 100%)}
+.p-hero .in{position:relative;width:100%;padding:var(--s-2xl) 0 var(--s-l)}
+.p-hero .eyebrow{color:var(--mist);display:block;margin-bottom:var(--s-2xs)}
+.p-hero h1{max-width:20ch;color:var(--paper)}
+.p-hero .sup{margin-top:var(--s-s);max-width:60ch;color:var(--mist)}
+
+/* ONE RULE ENFORCES "EVERY PAGE HAS A HERO".
+   The shell renders .p-hero-shell for every surface. A page that brings
+   its own -- .p-hero-own from the composer, or the .hero atom on the
+   hand-built gateway screens -- hides it. Nothing per-page to remember,
+   and a new page written tomorrow inherits a hero without asking. */
+.rail-main:has(.p-hero-own) .p-hero-shell,
+.rail-main:has(.hero) .p-hero-shell{display:none}
 
 [hidden]{display:none !important}
 </style>

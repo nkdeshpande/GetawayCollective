@@ -37,14 +37,18 @@ function GatewayCard({ p }: { p: Property }) {
   const [open, setOpen] = useState(false);
   const [first, second] = p.ufr0060.split(" ");
 
-  return (
-    <button
-      className="ap-gateway"
-      data-open={open ? "1" : "0"}
-      aria-expanded={open}
-      onClick={() => setOpen((v) => !v)}
-      aria-label={`${p.ufr0060}, ${p.ufr0063}. Show indicative figures.`}
-    >
+  /*
+   * A card with a built destination NAVIGATES; one without DISCLOSES.
+   *
+   * The figures are deferred either way — they reveal on hover and
+   * focus, so the still image never carries a number without its
+   * provenance (FB-1). What differs is what a click means, and it now
+   * means the honest thing: where there is a page worth arriving at,
+   * the card takes you; where the destination is thinner than the card,
+   * clicking opens the figures in place rather than disappointing you.
+   */
+  const inner = (
+    <>
       <span className="plate" style={plate(p.hue)} aria-hidden="true" />
       <span className="scrim" aria-hidden="true" />
       <span className="body">
@@ -65,6 +69,30 @@ function GatewayCard({ p }: { p: Property }) {
           <span className="t-mono-s">{p.availability}</span>
         </span>
       </span>
+    </>
+  );
+
+  const shared = {
+    className: "ap-gateway",
+    "data-open": open ? "1" : "0",
+  } as const;
+
+  return p.to ? (
+    <Link
+      {...shared}
+      href={p.to}
+      aria-label={`${p.ufr0060}, ${p.ufr0063}. Open the offering.`}
+    >
+      {inner}
+    </Link>
+  ) : (
+    <button
+      {...shared}
+      aria-expanded={open}
+      onClick={() => setOpen((v) => !v)}
+      aria-label={`${p.ufr0060}, ${p.ufr0063}. Show indicative figures.`}
+    >
+      {inner}
     </button>
   );
 }

@@ -55,6 +55,8 @@ import { usePathname } from "next/navigation";
 import { PRIMARY_NAV, NAV_FOOT, type NavIcon } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
 import { canReach } from "@/lib/access";
+import { plate } from "./data";
+import { hueOf } from "./compose";
 
 /* ── Icons ───────────────────────────────────────────────────────────
    Square and line geometry only. The Zero Radius Doctrine permits a
@@ -121,17 +123,56 @@ const STORE = "gc-rail-collapsed";
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || "/";
   const [collapsed, setCollapsed] = useState(false);
-  const [open, setOpen] = useState(false);   // small screens: off-canvas
   const [ready, setReady] = useState(false);
+  /* The header is transparent over a hero and opaque once the hero has
+     scrolled past. A sentinel is used rather than a scroll listener:
+     one observer callback per crossing instead of one per frame. */
+  const [solid, setSolid] = useState(false);
 
   useEffect(() => {
     try { setCollapsed(localStorage.getItem(STORE) === "1"); } catch { /* storage denied */ }
     setReady(true);
   }, []);
 
-  /* Navigating closes the off-canvas rail. Leaving it open over the page
-     someone just asked for is the commonest mobile-nav defect. */
-  useEffect(() => { setOpen(false); }, [pathname]);
+  /*
+   * A PASSIVE SCROLL LISTENER, NOT AN INTERSECTION OBSERVER.
+   *
+   * An IntersectionObserver on a top sentinel was the first choice —
+   * one callback per crossing rather than one per scroll. Two things
+   * decided against it. Its rootMargin was subtly wrong: the sentinel
+   * sits at y=0 and a -56px top margin puts it permanently OUTSIDE the
+   * observed box, so the header would have been solid from the first
+   * paint and never transparent at all. And it needed a sentinel
+   * element in the DOM to observe, which this does not.
+   *
+   * NEITHER MECHANISM COULD BE VERIFIED IN THE TEST BROWSER: scroll
+   * events, rAF and IntersectionObserver callbacks all fail to fire in
+   * that evaluation context, though scrollY changes correctly. That is
+   * a property of the harness, not of either approach — recorded here
+   * so the next person does not re-derive it, and so it is plain that
+   * this specific behaviour was reasoned about rather than watched.
+   *
+   * This reads scrollY, which does not force layout, coalesces through
+   * one rAF, and sets state only when the boolean actually flips — so
+   * the render count is the number of crossings either way.
+   */
+  useEffect(() => {
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      setSolid((was) => {
+        const now = window.scrollY > 8;
+        return now === was ? was : now;
+      });
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(read); };
+    read();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
 
   const toggle = () => {
     const next = !collapsed;
@@ -168,23 +209,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className={"shell" + (collapsed ? " is-collapsed" : "") + (open ? " is-open" : "")}>
+    <div className={"shell" + (collapsed ? " is-collapsed" : "")}>
       <a className="skip" href="#main">Skip to content</a>
 
-      <header className="rail-top">
-        <button
-          className="rail-toggle"
-          type="button"
-          onClick={() => (window.innerWidth <= 900 ? setOpen((o) => !o) : toggle())}
-          /* `ready` gates this: before the effect runs, the server and
-             the client must agree, and `window` does not exist on the
-             server to ask. */
-          aria-expanded={ready ? open || !collapsed : undefined}
-          aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
-        </button>
-
+      <header className="rail-top" data-solid={solid ? "1" : "0"}>
         <Link href="/" className="brand" aria-label="Getaway Collective, home">
           GC<span className="dot">.</span>
         </Link>
@@ -204,11 +232,34 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </span>
       </header>
 
-      {/* Backdrop only exists on small screens, and only when open. */}
-      {open ? <div className="rail-scrim" onClick={() => setOpen(false)} aria-hidden="true" /> : null}
-
       <nav className="rail-left" aria-label="Main">
-        <div className="rail-scroll">
+        {/* THE TOGGLE LIVES ON THE SPINE IT CONTROLS.
+            It was in the header, which put it over the hero where it had
+            to fight a photograph for contrast, and separated the control
+            from the thing it moves. The rail is never fully hidden now —
+            it collapses to a 60px icon spine at every width — so the
+            toggle is always reachable and no hamburger is owed. */}
+        <button
+          className="rail-collapse"
+          type="button"
+          onClick={toggle}
+          aria-expanded={ready ? !collapsed : undefined}
+          aria-controls="rail-nav"
+          aria-label={collapsed ? "Expand the navigation spine" : "Collapse the navigation spine"}
+          title={collapsed ? "Expand" : "Collapse"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" />
+            <line x1="9" y1="4" x2="9" y2="20" />
+            {/* The chevron points where the rail will GO, not where it is. */}
+            {collapsed
+              ? <path d="M13 9l3 3-3 3" />
+              : <path d="M17 9l-3 3 3 3" />}
+          </svg>
+          <span className="lbl">Collapse</span>
+        </button>
+
+        <div className="rail-scroll" id="rail-nav">
           {sections.map((s) => (
             <div className="rail-group" key={s.id}>
               {s.title ? <span className="rail-head t-micro">{s.title}</span> : null}
@@ -233,7 +284,28 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </nav>
 
       <main className="rail-main" id="main">
-        {ready ? children : children}
+        {/*
+          EVERY PAGE HAS A HERO, STRUCTURALLY.
+          Twenty-five components would otherwise each need one added,
+          and the twenty-sixth would be written without. So the shell
+          supplies one from the route table for every surface, and a
+          page that has its own suppresses this by rendering .p-hero-own
+          or the .hero atom — one CSS rule, no per-page flag to forget.
+          A route with no declared name gets no invented one; it gets
+          the honest statement that it is not a declared surface.
+        */}
+        <header className="p-hero p-hero-shell">
+          <span className="bed" style={plate(hueOf(pathname))} aria-hidden="true" />
+          <span className="sc" aria-hidden="true" />
+          <div className="wrap in">
+            <span className="t-micro eyebrow">
+              {here ? `${here.group} vantage` : "Undeclared surface"}
+            </span>
+            <h1 className="t-display-l">{here ? here.name : "Not a declared surface"}</h1>
+          </div>
+        </header>
+
+        {children}
       </main>
     </div>
   );

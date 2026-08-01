@@ -114,6 +114,12 @@ export interface Property {
   units: number;
   held: number;
   hue: number;
+  /**
+   * Where the card goes. Present only where a destination is genuinely
+   * built — a card that navigates to a thinner page than the one it
+   * left is worse than a card that discloses in place.
+   */
+  to?: string;
 }
 
 export const PROPERTIES: readonly Property[] = [
@@ -128,16 +134,40 @@ export const PROPERTIES: readonly Property[] = [
     telemetry: { state: "live", at: "2026-07-31 09:12" },
     units: 12, held: 1, hue: 158,
   },
+  /*
+   * THE ONE REAL ONE.
+   *
+   * Replaces an invented "Swiss Vault" that claimed an independent
+   * Swiss appraisal and a 2024 stabilisation date, neither of which
+   * existed. Every value below belongs to the vehicle modelled end to
+   * end in slowspace.ts.
+   *
+   * WHY THE FIGURES ARE TYPED HERE RATHER THAN IMPORTED.
+   * slowspace.ts imports inr/rate/allocate FROM THIS FILE, so importing
+   * it back would be a cycle — the class of defect that resolves to
+   * `undefined` at module-eval and takes an afternoon to find. Instead
+   * slowspace.ts, which already depends on this file, CHECKS these
+   * values against its own canon at load and throws if they drift.
+   * Derive where you can; where a cycle prevents it, check rather than
+   * duplicate silently.
+   */
   {
-    ufr0060: "Swiss Vault", assetId: "CHE-02", ufr0063: "Valais, Switzerland",
-    ufr0102: 186500000_0000n,
-    ufr0103: "Independent appraisal · Wüest Partner",
-    ufr0101: "2026-05-31", ufr0061: "Alpine Collection SPV II",
-    ufr0065: "96 m²", ufr0066: "Stabilised", ufr0067: "2024-09-02",
-    ufr0068: "Passive house · certified",
-    yield: { v: 12.1, conf: "modelled" }, availability: "Allocated",
-    telemetry: { state: "stale", at: "2026-07-24 04:40" },
-    units: 12, held: 0, hue: 198,
+    ufr0060: "SlowSpace Coastal", assetId: "PDB-01", ufr0063: "Padubidri, Karnataka",
+    /* Project cost, NOT a valuation. Nothing is built, so no appraiser
+       has seen it, and the source says exactly that. */
+    ufr0102: 95000000_0000n,
+    ufr0103: "Project cost — no appraisal exists at pre-construction",
+    ufr0101: "2026-06-19", ufr0061: "SlowSpace Coastal LLP",
+    ufr0065: "1.42 acres · dual frontage", ufr0066: "Pre-construction", ufr0067: null,
+    ufr0068: "CRZ compliant · Blue Flag adjacent · modular assembly",
+    yield: { v: 18, conf: "modelled" }, availability: "45% remaining",
+    /* No feed: there is nothing built to instrument. Saying "stale"
+       would imply one existed and stopped. */
+    telemetry: { state: "stale", at: "no feed — pre-construction" },
+    units: 20, held: 11, hue: 198,
+    /* The only property with a fully built destination, so the card
+       navigates instead of merely disclosing. */
+    to: "/flow",
   },
   {
     ufr0060: "Oslo Base", assetId: "NOR-03", ufr0063: "Vestland, Norway",

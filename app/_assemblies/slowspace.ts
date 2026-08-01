@@ -38,7 +38,9 @@
  *    documents. They do not cross into ours.
  */
 
-import { inr, rate, allocate, decimalRatio, type Confidence } from "./data";
+import {
+  inr, rate, allocate, decimalRatio, PROPERTIES, type Confidence,
+} from "./data";
 
 /* ── The entity ───────────────────────────────────────────────────── */
 export const LLP = {
@@ -560,3 +562,39 @@ export const PROGRAMME = [
 ];
 
 export { inr };
+
+
+/* ── The public record must not drift from the canon ──────────────── */
+/*
+ * data.ts carries a Property row for this vehicle so the Collection can
+ * render it, and it cannot import this file — slowspace depends on
+ * data, and the reverse would be a cycle. So the row is typed there and
+ * verified HERE, where the canon lives. A figure that drifts fails the
+ * build rather than showing an investor two different numbers for the
+ * same asset on two different pages.
+ */
+{
+  const row = PROPERTIES.find((p) => p.assetId === SITE.assetId);
+  if (!row) {
+    throw new Error(`No public Property row for ${SITE.assetId}. The Collection would omit it.`);
+  }
+  const disagreements: string[] = [];
+  if (row.ufr0060 !== SITE.name) disagreements.push(`name: ${row.ufr0060} vs ${SITE.name}`);
+  if (row.ufr0063 !== SITE.jurisdiction) disagreements.push(`jurisdiction: ${row.ufr0063}`);
+  if (row.ufr0061 !== LLP.name) disagreements.push(`vehicle: ${row.ufr0061} vs ${LLP.name}`);
+  if (row.ufr0065 !== SITE.landArea) disagreements.push(`land: ${row.ufr0065}`);
+  if (row.ufr0068 !== SITE.commitments) disagreements.push(`commitments: ${row.ufr0068}`);
+  if (row.hue !== SITE.hue) disagreements.push(`hue: ${row.hue} vs ${SITE.hue}`);
+  if (row.ufr0102 !== PROJECT) disagreements.push(`project cost: ${inr(row.ufr0102)} vs ${inr(PROJECT)}`);
+  if (row.units !== UNITS_IN_VEHICLE) disagreements.push(`units: ${row.units} vs ${UNITS_IN_VEHICLE}`);
+  if (row.held !== SUBSCRIBED_UNITS) disagreements.push(`held: ${row.held} vs ${SUBSCRIBED_UNITS}`);
+  if (Math.round(row.yield.v * 100) !== MY_YIELD_BPS) {
+    disagreements.push(`yield: ${row.yield.v}% vs ${MY_YIELD_BPS / 100}%`);
+  }
+  if (disagreements.length) {
+    throw new Error(
+      `The public Property row for ${SITE.assetId} disagrees with the canon:\n  ` +
+      disagreements.join("\n  "),
+    );
+  }
+}

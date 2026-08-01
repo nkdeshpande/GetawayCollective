@@ -55,6 +55,23 @@ export const STAGE_LABEL: Record<Stage, string> = {
 
 const STAGE_ORDER: readonly Stage[] = ["public", "kyc", "committed", "operational"];
 
+/**
+ * A stable hue per surface, derived from its path.
+ *
+ * Not random — a bed that changed between visits would make the same
+ * page feel like a different one. Not chosen per page either: 133
+ * hand-picked hues is 133 opportunities for two neighbours to clash.
+ * The hash is deterministic, and the range is deliberately narrow
+ * (150°–260°: forest through to the coastal blues the collection
+ * already uses) so no surface arrives in a colour the palette would
+ * never sanction.
+ */
+export function hueOf(path: string): number {
+  let h = 0;
+  for (let i = 0; i < path.length; i++) h = (h * 31 + path.charCodeAt(i)) >>> 0;
+  return 150 + (h % 111);
+}
+
 /* ── Section kinds ───────────────────────────────────────────────── */
 
 export interface Figure {
@@ -380,19 +397,38 @@ export function Composed({ path, param }: { path: string; param?: string }) {
   }
   const page = typeof entry === "function" ? entry(param ?? "") : entry;
 
+  /*
+   * EVERY SURFACE OPENS WITH A HERO.
+   *
+   * No photography exists — content/gateway.ts states plainly that not
+   * one property has been photographed — so the bed is a generated
+   * plate rather than a stock image standing in for one. Its hue is
+   * DERIVED from the path, so a surface keeps the same bed on every
+   * visit and two different surfaces do not collide, without anyone
+   * choosing a colour per page.
+   *
+   * FB-1 still holds over the bed: an eyebrow, a title and a line of
+   * prose, and no FIGURE. A number over an image is read against
+   * whatever pixels happen to sit behind it, and those differ per
+   * viewport and per crop.
+   */
+  const hue = hueOf(path);
+
   return (
     <>
-      <section data-sec="COMPOSED" style={{ borderBottom: "none" }}>
-        <div className="wrap">
-          <div className="sec-head">
-            {page.eyebrow ? <span className="sec-ref">{page.eyebrow}</span> : null}
-          </div>
+      <header className="p-hero p-hero-own">
+        <span className="bed" style={plate(hue)} aria-hidden="true" />
+        <span className="sc" aria-hidden="true" />
+        <div className="wrap in">
+          {page.eyebrow ? <span className="t-micro eyebrow">{page.eyebrow}</span> : null}
           <h1 className="t-display-l">{page.title}</h1>
-          {page.lead ? (
-            <p className="t-body-l dim measure" style={{ marginTop: "var(--gc-sp-s)" }}>{page.lead}</p>
-          ) : null}
+          {page.lead ? <p className="t-body-l sup">{page.lead}</p> : null}
+        </div>
+      </header>
 
-          <div style={{ marginTop: "var(--gc-sp-l)" }}>
+      <section data-sec="COMPOSED" style={{ borderBottom: "none", paddingTop: 0 }}>
+        <div className="wrap">
+          <div style={{ marginTop: 0 }}>
             <DisclosureStrip d={page.disclosure} />
           </div>
 
