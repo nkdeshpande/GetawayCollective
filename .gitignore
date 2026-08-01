@@ -19,3 +19,7 @@ Thumbs.db
 .vscode/
 .idea/
 ~$*.xlsx
+
+# Package-manager store and tool debris — never tracked
+.pnpm-store/
+*.inspect.ndjson
