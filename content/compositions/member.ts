@@ -258,25 +258,6 @@ export const MEMBER_PAGES: Record<string, Entry> = {
     ],
   })),
 
-  "/member/notifications": {
-    title: "Notifications",
-    eyebrow: "Member",
-    lead: "Everything the platform has told you, in order, kept. Nothing generates a notification yet.",
-    disclosure: d(
-      "Nothing — notices attach to a person.",
-      "Application events (received, decided) begin at KYC.",
-      "Settlement, resolutions, document versions and distribution events join at commitment.",
-      "Operational notices — calendar, draws, telemetry alerts — join at go-live.",
-    ),
-    sections: [
-      { kind: "empty", what: "No notifications",
-        because: "No event source is wired: settlement, resolutions and distributions all await " +
-                 "persistence. The surface exists first so events have somewhere to land.",
-        when: "The first real notification is likely to be an accreditation receipt." },
-      { kind: "links", items: [{ t: "Notification settings", to: "/member/settings/notifications" }] },
-    ],
-  },
-
   "/member/reports": {
     title: "Reports",
     eyebrow: `Member · ${LLP.name}`,

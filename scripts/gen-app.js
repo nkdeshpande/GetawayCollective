@@ -229,6 +229,7 @@ const BY_PATH = {
   "/member/resolutions": { component: "Boardroom", from: "@/app/_assemblies/memberpages" },
   "/member/calibration": { component: "Calibration", from: "@/app/_assemblies/memberpages" },
   "/member/signal": { component: "SignalLog", from: "@/app/_assemblies/memberpages" },
+  "/member/notifications": { component: "NotificationsFeed", from: "@/app/_assemblies/notices" },
   "/member/codex": { component: "Codex", from: "@/app/_assemblies/memberpages" },
   "/member/pass": { component: "Pass", from: "@/app/_assemblies/memberpages" },
 

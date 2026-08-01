@@ -30,6 +30,7 @@ import {
   type Stage, type Gate,
 } from "@/content/admin";
 import { Footer } from "./atoms";
+import { ConfirmDestructiveDialog, FormationConfirmDialog } from "./dialogs";
 
 const gateText = (g: Gate): string => {
   switch (g.kind) {
@@ -94,6 +95,7 @@ function StageBlock({ s, active, done, onOpen }: {
 
 export function VehicleFormation() {
   const [at, setAt] = useState(0);
+  const [confirming, setConfirming] = useState(false);
 
   return (
     <>
@@ -138,6 +140,9 @@ export function VehicleFormation() {
                 naming the specific property.
               </p>
               <div className="row" style={{ marginTop: "var(--gc-sp-s)", gap: "var(--gc-sp-2xs)" }}>
+                <button className="btn primary" onClick={() => setConfirming(true)}>
+                  Submit formation…
+                </button>
                 <button className="btn" onClick={() => setAt(0)}>Walk it again</button>
                 <Link className="btn" href="/admin/vehicles">Existing vehicles</Link>
               </div>
@@ -145,6 +150,13 @@ export function VehicleFormation() {
           ) : null}
         </div>
       </section>
+
+      {/* P-08: forming an LLP is done under Board authority. The dialog
+          demands the resolution reference — the real gate, as an input. */}
+      {confirming ? (
+        <FormationConfirmDialog vehicleName="the vehicle under formation"
+                                onClose={() => setConfirming(false)} />
+      ) : null}
       <Footer />
     </>
   );
@@ -241,6 +253,7 @@ export function ContentAdmin() {
 /* ── Media ────────────────────────────────────────────────────────── */
 
 export function MediaAdmin() {
+  const [withdrawing, setWithdrawing] = useState(false);
   return (
     <>
       <section data-sec="AS-34.c">
@@ -330,8 +343,33 @@ export function MediaAdmin() {
               Requires the <code>media.manage</code> right. Nothing here writes yet.
             </p>
           </div>
+
+          {/* P-09, on the one destructive act this register will have.
+              The dialog demands the exact name and a reason — E-02. */}
+          <div className="panel on-panel" style={{ marginTop: "var(--gc-sp-m)", maxWidth: "620px" }}>
+            <span className="t-micro label">Withdraw a plate · specimen</span>
+            <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)", maxWidth: "58ch" }}>
+              Withdrawing removes a plate from every gallery that references it; the registration
+              record survives. The control is earned, not clicked — the dialog requires the exact
+              reference and a recorded reason.
+            </p>
+            <button className="btn" type="button" onClick={() => setWithdrawing(true)}
+                    style={{ marginTop: "var(--gc-sp-s)" }}>
+              Withdraw F-05…
+            </button>
+          </div>
         </div>
       </section>
+
+      {withdrawing ? (
+        <ConfirmDestructiveDialog
+          verb="Withdraw"
+          objectName="F-05"
+          consequence="F-05 (Oslo Base, drawing) leaves every gallery. The registration record survives. Nothing writes in this build."
+          onConfirm={() => undefined}
+          onClose={() => setWithdrawing(false)}
+        />
+      ) : null}
       <Footer />
     </>
   );

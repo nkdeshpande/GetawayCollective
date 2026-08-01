@@ -37,6 +37,7 @@ import {
 } from "./slowspace";
 import { inr } from "./data";
 import { ConfidenceTag } from "./atoms";
+import { VoteConfirmDialog } from "./dialogs";
 
 const pct = (bps: number) => (bps / 100).toFixed(2).replace(/\.00$/, "") + "%";
 
@@ -201,7 +202,15 @@ function Documents() {
   );
 }
 
-function Resolutions() {
+function Resolutions({ p }: { p: Holding }) {
+  /* P-06, on a SPECIMEN ballot. The register is honestly empty, and the
+     voting interaction still has to be reviewable before the first real
+     resolution — so one ballot is rendered, marked Specimen everywhere,
+     casting nothing. The dialog it opens is the real one. */
+  const [choice, setChoice] = useState<"for" | "against" | "abstain" | null>(null);
+  const [cast, setCast] = useState(false);
+  const pctW = (p.bps / 100).toFixed(0) + "%";
+
   return (
     <>
       <div className="panel on-paper">
@@ -212,6 +221,7 @@ function Resolutions() {
           ))}
         </div>
       </div>
+
       <div style={{ marginTop: "var(--gc-sp-m)" }}>
         <Absent
           what="No resolution has been put"
@@ -223,6 +233,39 @@ function Resolutions() {
           when="A ballot appears here when one is convened, with its threshold and its close."
         />
       </div>
+
+      <div className="panel on-panel" style={{ marginTop: "var(--gc-sp-m)", maxWidth: "620px" }}>
+        <span className="t-micro label">
+          Specimen ballot · casts nothing
+        </span>
+        <p className="t-body" style={{ marginTop: "var(--gc-sp-2xs)", maxWidth: "56ch" }}>
+          R-2028-01 · Appoint the statutory auditor. Ordinary resolution — carries on more than
+          50% of contribution present, and a tie is not approval.
+        </p>
+        <div className="row" style={{ gap: "var(--gc-sp-2xs)", marginTop: "var(--gc-sp-s)" }}>
+          {(["for", "against", "abstain"] as const).map((c) => (
+            <button key={c} className="btn" type="button" disabled={cast}
+                    onClick={() => setChoice(c)}>
+              {cast && choice === c ? `Cast ${c} · specimen` : c[0].toUpperCase() + c.slice(1)}
+            </button>
+          ))}
+        </div>
+        <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+          Choosing opens the confirmation: your {pctW} is stated, the hold is three seconds, and
+          the ballot is sealed at close (ADR-0008).
+        </p>
+      </div>
+
+      {choice && !cast ? (
+        <VoteConfirmDialog
+          resolution={"R-2028-01 · Specimen · " + LLP.name}
+          choice={choice}
+          weightPct={pctW}
+          threshold="Ordinary · more than 50% of contribution present"
+          onCast={() => setCast(true)}
+          onClose={() => setChoice(cast ? choice : null)}
+        />
+      ) : null}
     </>
   );
 }

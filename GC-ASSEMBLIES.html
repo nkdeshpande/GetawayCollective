@@ -1315,6 +1315,41 @@ th.num{text-align:right}
 .conf.disc-committed::before{background:var(--copper)}
 .conf.disc-operational::before{background:var(--confirm)}
 
+/* == AS-35 NOTICES + AS-36 DIALOG FURNITURE ======================== */
+/* The consent banner (P-03). Asserts, never blocks; decline is the
+   primary action. Fixed to the foot, paper ground. */
+.consent{position:fixed;inset:auto 0 0 0;z-index:70;border-top:2px solid var(--ink);
+  background:var(--paper);color:var(--ink)}
+.consent .in{max-width:1400px;margin:0 auto;padding:var(--s-s) var(--s-m);
+  display:flex;gap:var(--s-l);align-items:center;justify-content:space-between;flex-wrap:wrap}
+.consent .acts{display:flex;gap:var(--s-s);flex-wrap:wrap}
+.consent a{color:inherit}
+
+/* Notice cards. Urgency is a left band plus a text label - never
+   colour alone. critical uses the rarest colour, twice in the
+   catalogue, enforced at load. */
+.notice{border:1px solid var(--hair);background:var(--void-panel);
+  padding:var(--s-m);border-left-width:3px}
+.notice.u-low{border-left-color:var(--steel)}
+.notice.u-normal{border-left-color:var(--steel-dim)}
+.notice.u-high{border-left-color:var(--hazard)}
+.notice.u-critical{border-left-color:var(--critical)}
+.n-head{display:flex;justify-content:space-between;gap:var(--s-s);align-items:baseline;
+  flex-wrap:wrap;margin-bottom:var(--s-2xs)}
+.n-tags{display:inline-flex;gap:var(--s-2xs);flex-wrap:wrap}
+.conf.n-live::before{background:var(--confirm)}
+.conf.n-spec::before{background:var(--electric)}
+.conf.n-u-low::before{background:var(--steel)}
+.conf.n-u-normal::before{background:var(--steel-dim)}
+.conf.n-u-high::before{background:var(--hazard)}
+.conf.n-u-critical::before{background:var(--critical)}
+.n-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--s-s);
+  border:1px solid var(--hair);padding:var(--s-s);margin-top:var(--s-s)}
+.n-facts .k{display:block;margin-bottom:2px}
+.n-foot{display:flex;justify-content:space-between;align-items:center;gap:var(--s-s);
+  margin-top:var(--s-m);flex-wrap:wrap}
+.n-links{display:inline-flex;gap:var(--s-2xs);flex-wrap:wrap}
+
 [hidden]{display:none !important}
 </style>
 </head>

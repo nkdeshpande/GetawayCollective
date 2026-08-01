@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Composed } from "@/app/_assemblies/compose";
+import { NotificationsFeed } from "@/app/_assemblies/notices";
 import { canReach } from "@/lib/access";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,5 +23,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Pmember_notifications() {
-  return <Composed path="/member/notifications" />;
+  return <NotificationsFeed />;
 }

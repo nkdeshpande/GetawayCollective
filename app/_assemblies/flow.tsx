@@ -23,6 +23,7 @@ import { documentByPath } from "@/content/legal";
 import { ConfidenceTag, Pct, Footer } from "./atoms";
 import { VehicleConsole, Programme } from "./console";
 import { AllocationMatrix, AllocationBar, useShare, withShare } from "./allocation";
+import { useUnsavedGuard } from "./dialogs";
 
 /*
  * Two decimals, dropped when they are both zero.
@@ -380,6 +381,11 @@ export function Accreditation() {
     if (open) setReadTerms(true);
   };
   const terms = documentByPath("/legal/terms");
+
+  /* P-04. The fields autosave on blur, so what the guard protects is
+     the field being typed and nothing wider — reload and tab-close
+     warn; in-app navigation keeps its drafts. Off once submitted. */
+  useUnsavedGuard(step < STEPS.length && Object.values(vals).some((v) => v?.trim()));
 
   const set = (k: string, v: string) => setVals((p) => ({ ...p, [k]: v }));
   const blur = (k: string) => {

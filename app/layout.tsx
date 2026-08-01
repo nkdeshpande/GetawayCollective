@@ -11,6 +11,7 @@
 
 import type { Metadata } from "next";
 import { fontVars } from "./_system/fonts";
+import { CookieConsent, Specimens } from "./_assemblies/dialogs";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -36,7 +37,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     /* No `user-scalable=no`. AS-06 collects a PAN number and AS-14 is a
        mandatory reading surface; disabling zoom on either is WCAG 1.4.4. */
     <html lang="en-IN" className={fontVars}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* P-03: asserts at the foot, never blocks, declines by default.
+            Specimens renders a dialog only when ?specimen= names one —
+            zero footprint otherwise. */}
+        <CookieConsent />
+        <Specimens />
+      </body>
     </html>
   );
 }
