@@ -326,7 +326,7 @@ export const ROLES: readonly Role[] = [
 ];
 
 export const APPLYING = {
-  where: "roles@getawaycollective.in",
+  where: "roles@getawaycollective.co",
   send: [
     "Something you built, with the part you are least happy about pointed out.",
     "A page of writing. Any subject. We read for whether you can hold an argument, not for prose.",

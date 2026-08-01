@@ -959,7 +959,7 @@ const COMPLAINTS: StandingDocument = {
     {
       ref: "A", title: "How to complain",
       clauses: [
-        { n: "A.1", p: ["Write to complaints@getawaycollective.in, or through the platform. State " +
+        { n: "A.1", p: ["Write to complaints@getawaycollective.co, or through the platform. State " +
                         "what happened, when, and what you would like done.",
                         "A complaint is acknowledged within two working days with a reference and " +
                         "the name of the person handling it."] },
@@ -1044,7 +1044,7 @@ const ACCESSIBILITY: StandingDocument = {
     {
       ref: "C", title: "Telling us",
       clauses: [
-        { n: "C.1", p: ["If something here blocks you, write to access@getawaycollective.in. A " +
+        { n: "C.1", p: ["If something here blocks you, write to access@getawaycollective.co. A " +
                         "barrier reported is answered within five working days with either a fix or " +
                         "a date."] },
       ],

@@ -10,7 +10,7 @@
 
 import type { MetadataRoute } from "next";
 
-const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://getawaycollective.in").replace(/\/+$/, "");
+const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://getawaycollective.co").replace(/\/+$/, "");
 
 export default function robots(): MetadataRoute.Robots {
   return {

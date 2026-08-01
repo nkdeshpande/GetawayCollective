@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   }
 
   const { name, email, city } = parsed.data;
-  const to = process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.in";
+  const to = process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co";
   const result = await sendLead({
     to,
     subject: "Dossier request",

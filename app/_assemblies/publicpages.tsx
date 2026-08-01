@@ -413,7 +413,7 @@ function SignalForm() {
           {phase === "failed" ? (
             <p className="t-body-s" role="status" style={{ marginTop: "var(--gc-sp-s)", color: "var(--gc-hazard)" }}>
               This has not reached us. Write to{" "}
-              <a href="mailto:signal@getawaycollective.in">signal@getawaycollective.in</a> directly
+              <a href="mailto:signal@getawaycollective.co">signal@getawaycollective.co</a> directly
               and it reaches the same place.
             </p>
           ) : null}
@@ -490,7 +490,7 @@ function DossierForm() {
           {phase === "failed" ? (
             <p className="t-body-s" role="status" style={{ marginTop: "var(--gc-sp-s)", color: "var(--gc-hazard)" }}>
               This has not reached us. Write to{" "}
-              <a href="mailto:communique@getawaycollective.in">communique@getawaycollective.in</a>{" "}
+              <a href="mailto:communique@getawaycollective.co">communique@getawaycollective.co</a>{" "}
               directly and it reaches the same place.
             </p>
           ) : null}

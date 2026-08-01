@@ -18,7 +18,7 @@ import { PROPERTIES, toSlug } from "@/app/_assemblies/data";
 import { JOURNAL } from "@/content/journal";
 import { ROLES } from "@/content/gateway";
 
-const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://getawaycollective.in").replace(/\/+$/, "");
+const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://getawaycollective.co").replace(/\/+$/, "");
 
 const SPACE_SUFFIXES = ["", "/space", "/capital", "/time", "/location", "/gallery"];
 

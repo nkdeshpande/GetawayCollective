@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
   }
 
-  const to = process.env.SIGNAL_LEAD_EMAIL ?? "signal@getawaycollective.in";
+  const to = process.env.SIGNAL_LEAD_EMAIL ?? "signal@getawaycollective.co";
   const result = await sendLead({
     to,
     subject: "New Signal subscriber",
