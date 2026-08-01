@@ -114,10 +114,23 @@ css = css.replace(/^body\{/gm, ".gc-assembly{").replace(/^html\{/gm, ".gc-assemb
 const declared = new Set(
   [...css.matchAll(/(^|[;{]\s*)(--[a-z0-9-]+)\s*:/g)].map((m) => m[2]),
 );
+
+/*
+ * REFINED A SECOND TIME, for the same reason as the first.
+ *
+ * `--page-hue` is set by JavaScript on the element at runtime, so it is
+ * consumed here and declared nowhere in this sheet — and it is written
+ * `var(--page-hue,198)`. A var WITH A FALLBACK cannot resolve to
+ * nothing, which is the only thing this check exists to prevent. So the
+ * rule is now stated exactly: flag a property that is neither declared
+ * in the sheet nor given a fallback. Anything else is a false positive,
+ * and a check that cries wolf gets bypassed.
+ */
+const consumed = [...css.matchAll(/var\(\s*(--[a-z0-9-]+)\s*(,)?/g)];
 const leftover = [...new Set(
-  [...css.matchAll(/var\((--[a-z0-9-]+)/g)]
-    .map((m) => m[1])
-    .filter((v) => !v.startsWith("--gc-") && !declared.has(v)),
+  consumed
+    .filter(([, name, comma]) => !name.startsWith("--gc-") && !declared.has(name) && !comma)
+    .map(([, name]) => name),
 )];
 
 const banner =

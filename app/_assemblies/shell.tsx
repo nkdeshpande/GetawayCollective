@@ -232,33 +232,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </span>
       </header>
 
-      <nav className="rail-left" aria-label="Main">
-        {/* THE TOGGLE LIVES ON THE SPINE IT CONTROLS.
-            It was in the header, which put it over the hero where it had
-            to fight a photograph for contrast, and separated the control
-            from the thing it moves. The rail is never fully hidden now —
-            it collapses to a 60px icon spine at every width — so the
-            toggle is always reachable and no hamburger is owed. */}
-        <button
-          className="rail-collapse"
-          type="button"
-          onClick={toggle}
-          aria-expanded={ready ? !collapsed : undefined}
-          aria-controls="rail-nav"
-          aria-label={collapsed ? "Expand the navigation spine" : "Collapse the navigation spine"}
-          title={collapsed ? "Expand" : "Collapse"}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="16" />
-            <line x1="9" y1="4" x2="9" y2="20" />
-            {/* The chevron points where the rail will GO, not where it is. */}
-            {collapsed
-              ? <path d="M13 9l3 3-3 3" />
-              : <path d="M17 9l-3 3 3 3" />}
-          </svg>
-          <span className="lbl">Collapse</span>
-        </button>
-
+      <nav className="rail-left" data-solid={solid ? "1" : "0"} aria-label="Main">
         <div className="rail-scroll" id="rail-nav">
           {sections.map((s) => (
             <div className="rail-group" key={s.id}>
@@ -269,6 +243,25 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="rail-foot">
+          {/* A CHEVRON, NOT A BUTTON WITH A BOX.
+              It sits above the foot links because that is the quiet end
+              of the rail — a control that changes the furniture belongs
+              beside the other furniture, not at the head where it reads
+              as the first destination. It points where the rail will GO,
+              never where it is. */}
+          <button
+            className="rail-collapse"
+            type="button"
+            onClick={toggle}
+            aria-expanded={ready ? !collapsed : undefined}
+            aria-controls="rail-nav"
+            aria-label={collapsed ? "Expand the navigation" : "Collapse the navigation"}
+            title={collapsed ? "Expand" : "Collapse"}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              {collapsed ? <path d="M9 6l6 6-6 6" /> : <path d="M15 6l-6 6 6 6" />}
+            </svg>
+          </button>
           {foot.map(item)}
           {/* Identity is not built, and the block says so rather than
               inventing a name. A shell that shows a signed-in person
@@ -283,7 +276,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      <main className="rail-main" id="main">
+      {/* The hue travels as a custom property so CSS can bed a page
+          that supplies its own opening section — no component needs
+          to know it, and no page needs editing to receive one. */}
+      <main
+        className="rail-main"
+        id="main"
+        style={{ "--page-hue": hueOf(pathname) } as React.CSSProperties}
+      >
         {/*
           EVERY PAGE HAS A HERO, STRUCTURALLY.
           Twenty-five components would otherwise each need one added,

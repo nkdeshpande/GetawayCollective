@@ -1382,25 +1382,35 @@ th.num{text-align:right}
 @media (max-width:700px){ .crumbs .v,.crumbs .sep,.vantage{display:none} }
 
 /* -- Left rail: a spine, never hidden ----------------------------- */
+/* THE RAIL IS CHROME, NOT A SLAB.
+   It was an opaque 240px panel butted against the page, which made it
+   read as bolted on -- the hero stopped dead at its edge. It now floats
+   over the hero exactly as the header does, transparent while the hero
+   is in view and opaque the moment content scrolls beneath it, driven
+   by the SAME `solid` signal so the two never disagree. Below the hero
+   the page ground is --void and the rail panel is --void-panel, so the
+   transparent state is very nearly the panel anyway; what changes is
+   that the image now runs behind it. */
 .rail-left{grid-column:1;grid-row:2;position:sticky;top:56px;align-self:start;
   height:calc(100vh - 56px);display:flex;flex-direction:column;
   justify-content:space-between;overflow:hidden;z-index:630;
-  background:var(--gc-void-panel);border-right:1px solid var(--gc-hairline-inv)}
-.on-paper .rail-left{background:var(--gc-paper-panel);border-right-color:var(--gc-hairline)}
+  background:transparent;border-right:1px solid transparent}
+.rail-left[data-solid="1"]{background:var(--gc-void-panel);border-right-color:var(--gc-hairline-inv)}
+.on-paper .rail-left[data-solid="1"]{background:var(--gc-paper-panel);border-right-color:var(--gc-hairline)}
 
-/* The collapse control, on the spine it moves. */
-.rail-collapse{display:flex;align-items:center;gap:var(--gc-sp-s);width:100%;
-  padding:12px var(--gc-sp-m);background:none;border:none;border-bottom:1px solid var(--gc-hairline-inv);
-  color:var(--gc-steel-dim);cursor:pointer;text-align:left;
-  font:400 11px/1.3 var(--gc-font-mono);letter-spacing:.05em;text-transform:uppercase;
-  transition:color var(--gc-dur-instant),background var(--gc-dur-instant)}
-.on-paper .rail-collapse{color:var(--gc-steel);border-bottom-color:var(--gc-hairline)}
-.rail-collapse svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;
-  stroke-width:1.4;stroke-linecap:square}
-.rail-collapse:hover{color:var(--gc-ink-inverse);background:rgba(242,242,242,.05)}
-.on-paper .rail-collapse:hover{color:var(--gc-ink);background:rgba(10,10,10,.04)}
-.is-collapsed .rail-collapse{justify-content:center;padding:14px 0;gap:0}
-.is-collapsed .rail-collapse .lbl{display:none}
+/* The collapse control: a small chevron at the quiet end of the rail,
+   above the foot links. No box, no label -- it changes the furniture,
+   it is not a destination. */
+.rail-collapse{display:flex;align-items:center;justify-content:flex-end;width:100%;
+  padding:6px var(--gc-sp-m);background:none;border:none;
+  color:var(--gc-steel-dim);cursor:pointer;
+  transition:color var(--gc-dur-instant)}
+.on-paper .rail-collapse{color:var(--gc-steel)}
+.rail-collapse svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:1.6;stroke-linecap:square;stroke-linejoin:miter}
+.rail-collapse:hover{color:var(--gc-ink-inverse)}
+.on-paper .rail-collapse:hover{color:var(--gc-ink)}
+.is-collapsed .rail-collapse{justify-content:center;padding:8px 0}
 
 .rail-scroll{overflow-y:auto;padding:var(--gc-sp-s) 0;flex:1 1 auto}
 .rail-group{display:flex;flex-direction:column;padding-bottom:var(--gc-sp-s)}
@@ -1449,12 +1459,34 @@ th.num{text-align:right}
 .on-paper .rail-who .rl{color:var(--gc-steel)}
 .is-collapsed .rail-who .who-meta{display:none}
 
-/* The pane starts UNDER the header so the hero can run beneath it. */
-.rail-main{grid-column:2;grid-row:1/3;min-width:0}
+/* THE PANE IS FULL BLEED; ITS PADDING CLEARS THE RAIL.
+   Previously the pane began at the rail's right edge, so .wrap centred
+   in what was left and the hero bed stopped at a hard vertical seam.
+   Now the pane spans both columns -- the bed runs edge to edge behind
+   the rail -- and padding-left keeps every line of text clear of it.
+   The hero cancels that padding for its BED only, which is why it
+   carries a negative margin and the same padding back. */
+/* THE CONTENT IS ANCHORED TO THE RAIL, NOT CENTRED AWAY FROM IT.
+   .wrap centres its 1400px inside whatever space is left, which on a
+   wide screen opened a gutter beside the rail that belonged to nothing
+   -- the complaint that started this. The pane now carries the rail
+   width plus ONE gutter, and the wrap inside is left-anchored, so the
+   distance from the spine to the first character is the same at every
+   width and all remaining slack falls on the right where the eye does
+   not read it as a hole. */
+.rail-main{grid-column:1/3;grid-row:1/3;min-width:0;
+  padding-left:calc(var(--rail,240px) + var(--gc-sp-l))}
+.rail-main .wrap,.rail-main .narrow{margin-left:0;margin-right:auto;padding-left:0}
+.p-hero{margin-left:calc((var(--rail,240px) + var(--gc-sp-l)) * -1);
+  padding-left:calc(var(--rail,240px) + var(--gc-sp-l))}
 
 /* -- Small screens: the spine narrows, it never disappears -------- */
 @media (max-width:900px){
   .shell{--rail:60px}
+  .rail-main{padding-left:calc(60px + var(--gc-sp-m))}
+  .p-hero{margin-left:calc((60px + var(--gc-sp-m)) * -1);padding-left:calc(60px + var(--gc-sp-m))}
+  .rail-main:has(>section[data-sec] h1) >section[data-sec]:first-of-type{
+    margin-left:calc((60px + var(--gc-sp-m)) * -1);padding-left:calc(60px + var(--gc-sp-m))}
   .shell.is-collapsed{--rail:60px}
   .rail-item,.rail-collapse{justify-content:center;padding:12px 0;gap:0}
   .rail-item .lbl,.rail-collapse .lbl{display:none}
@@ -1474,17 +1506,51 @@ th.num{text-align:right}
 .p-hero .bed{position:absolute;inset:0}
 .p-hero .sc{position:absolute;inset:0;
   background:linear-gradient(to top,rgba(10,10,10,.94) 0%,rgba(10,10,10,.55) 45%,rgba(10,10,10,.35) 100%)}
-.p-hero .in{position:relative;width:100%;padding:var(--gc-sp-2xl) 0 var(--gc-sp-l)}
+.p-hero .in{position:relative;width:100%;padding:var(--gc-sp-2xl) var(--gc-sp-m) var(--gc-sp-l) 0}
 .p-hero .eyebrow{color:var(--gc-mist);display:block;margin-bottom:var(--gc-sp-2xs)}
 .p-hero h1{max-width:20ch;color:var(--gc-paper)}
 .p-hero .sup{margin-top:var(--gc-sp-s);max-width:60ch;color:var(--gc-mist)}
 
-/* ONE RULE ENFORCES "EVERY PAGE HAS A HERO".
-   The shell renders .p-hero-shell for every surface. A page that brings
-   its own -- .p-hero-own from the composer, or the .hero atom on the
-   hand-built gateway screens -- hides it. Nothing per-page to remember,
-   and a new page written tomorrow inherits a hero without asking. */
+/* "EVERY PAGE HAS A HERO" -- AND NEVER TWO TITLES.
+   The shell renders .p-hero-shell for every surface. Three kinds of
+   page already open with their own title, and each suppresses it:
+     .p-hero-own  the composer's hero
+     .hero        the atom, on the hand-built gateway screens
+     a leading <section> carrying an <h1>
+   The third case is what shipped broken: the shell titled the page and
+   the page titled itself, so "The Collection" appeared twice, one above
+   the other. Caught by looking at the rendered page, not by counting
+   components. */
 .rail-main:has(.p-hero-own) .p-hero-shell,
-.rail-main:has(.hero) .p-hero-shell{display:none}
+.rail-main:has(.hero) .p-hero-shell,
+.rail-main:has(>section[data-sec] h1) .p-hero-shell{display:none}
+
+/* A page that supplies its own opening section still owes a hero image.
+   Rather than edit twenty components, the FIRST such section is bedded
+   here, using the hue the shell publishes on .rail-main. Full bleed
+   behind the rail like every other hero; the wrap inside keeps the text
+   clear of it. */
+.rail-main:has(>section[data-sec] h1) >section[data-sec]:first-of-type{
+  position:relative;margin-left:calc(var(--rail,240px) * -1);
+  padding-left:var(--rail,240px);padding-top:var(--gc-sp-3xl);
+  border-bottom:none}
+.rail-main:has(>section[data-sec] h1) >section[data-sec]:first-of-type::before{
+  content:"";position:absolute;inset:0;z-index:0;
+  background:linear-gradient(145deg,
+    hsl(var(--page-hue,198) 34% 26%) 0%,
+    hsl(var(--page-hue,198) 30% 13%) 55%,
+    var(--gc-void) 100%)}
+/* A HEAVIER SCRIM THAN THE COMPOSED HERO NEEDS, on purpose.
+   That hero sets its own type in --mist and --paper; a hand-built
+   opening section uses .sec-ref and .dim, which are steel-dim. Measured
+   against the LIGHTEST end of the plate the lighter scrim gave 4.49:1
+   -- under AA by one hundredth, which is still under. The scrim carries
+   the fix rather than the copy, so no page has to change its words to
+   sit on an image. */
+.rail-main:has(>section[data-sec] h1) >section[data-sec]:first-of-type::after{
+  content:"";position:absolute;inset:0;z-index:0;
+  background:linear-gradient(to top,rgba(10,10,10,.96) 0%,rgba(10,10,10,.78) 45%,rgba(10,10,10,.62) 100%)}
+.rail-main:has(>section[data-sec] h1) >section[data-sec]:first-of-type>*{
+  position:relative;z-index:1}
 
 [hidden]{display:none !important}
