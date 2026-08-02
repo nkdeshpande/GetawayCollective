@@ -40,7 +40,9 @@
  * catches the phrasing appearing anywhere else in the tree.
  */
 
-export type Confidence = "observed" | "verified" | "modelled" | "estimated" | "forecast" | "pending";
+/* Re-exported rather than redeclared. This was the third copy of the six
+   confidence classes; constants/taxonomies.ts is now the only one. */
+export type { Confidence } from "@/lib/provenance";
 
 /** One numbered clause. `list` items are rendered as a set, not as prose. */
 export interface Clause {

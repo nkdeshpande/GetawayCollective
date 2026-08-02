@@ -236,7 +236,7 @@ export const NOTICES: readonly NoticeSpec[] = [
           { k: "Your share", v: inr(p.distribution / 4n), money: true },
           { k: "Period", v: "quarter ending 2028-06-30" },
         ],
-        conf: "forecast",
+        conf: "FORECAST",
         links: [{ t: "The breakdown", to: "/member/distributions" }],
       };
     },
@@ -251,7 +251,7 @@ export const NOTICES: readonly NoticeSpec[] = [
         body: ["The declared distribution has been paid to the account ending 4471. The statement " +
                "is attached to the period record."],
         facts: [{ k: "Paid", v: inr(p.distribution / 4n), money: true }],
-        conf: "forecast",
+        conf: "FORECAST",
         links: [{ t: "Statement", to: "/member/distributions" }],
       };
     },
@@ -342,7 +342,7 @@ export const NOTICES: readonly NoticeSpec[] = [
         { k: "Covenant", v: "1.50× minimum" },
         { k: "Trailing", v: "1.62× and declining" },
       ],
-      conf: "modelled",
+      conf: "INFERRED",
       links: [{ t: "Capital risk", to: "/capital/risk" }],
     }),
   },
@@ -361,7 +361,7 @@ export const NOTICES: readonly NoticeSpec[] = [
         { k: "Valuation", v: inr(124000000_0000n), money: true },
         { k: "Source", v: "Independent appraisal · Nomura Real Estate" },
       ],
-      conf: "verified",
+      conf: "CORROBORATED",
       links: [{ t: "The property record", to: "/collection/kyoto-house" }],
     }),
   },

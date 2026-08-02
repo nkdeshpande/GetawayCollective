@@ -25,6 +25,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { LLP, GOVERNANCE } from "./slowspace";
 import { MEDIA_KINDS } from "@/content/admin";
 
@@ -101,7 +102,7 @@ export function CookieConsent() {
             Essential storage only: your consent choice and, on the commitment path, form drafts
             saved on this device. No analytics or marketing storage exists in this build — this
             banner records your choice for when any is proposed, and nothing loads without it.
-            {" "}<a href="/legal/cookies">The cookie policy</a> states the full position.
+            {" "}<Link href="/legal/cookies">The cookie policy</Link> states the full position.
           </p>
         </div>
         <div className="acts">

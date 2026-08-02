@@ -139,7 +139,7 @@ function Readout({ p }: { p: Position }) {
       <div className="kv">
         <span className="label t-micro">
           Indicative annual distribution
-          <span className="alloc-conf"><ConfidenceTag c="modelled" /></span>
+          <span className="alloc-conf"><ConfidenceTag c="INFERRED" /></span>
         </span>
         <span className="v money">{inr(p.distribution)}</span>
       </div>

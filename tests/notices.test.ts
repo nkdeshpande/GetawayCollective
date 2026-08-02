@@ -95,7 +95,7 @@ describe("the wordings hold their law", () => {
 
   it("forward-looking amounts carry a confidence class", () => {
     // N-09 and N-10 render pre-operation amounts; both must be marked.
-    expect(noticeById("N-09")!.render(SPECIMEN_CONTEXT).conf).toBe("forecast");
-    expect(noticeById("N-10")!.render(SPECIMEN_CONTEXT).conf).toBe("forecast");
+    expect(noticeById("N-09")!.render(SPECIMEN_CONTEXT).conf).toBe("FORECAST");
+    expect(noticeById("N-10")!.render(SPECIMEN_CONTEXT).conf).toBe("FORECAST");
   });
 });

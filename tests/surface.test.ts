@@ -186,8 +186,12 @@ describe("Addendum A", () => {
     }
   });
 
-  it("gives observed and verified the same colour, distinguished by label", () => {
-    expect(CONFIDENCE_COLOUR.observed).toBe(CONFIDENCE_COLOUR.verified);
+  it("gives the two filing-fit classes the same colour, distinguished by label", () => {
+    // VERIFIED and CORROBORATED are exactly the pair FILING_FIT admits, so
+    // the shared hue marks the F-13 gate rather than merely grouping two
+    // strong classes.
+    expect(CONFIDENCE_COLOUR.VERIFIED).toBe(CONFIDENCE_COLOUR.CORROBORATED);
+    expect(CONFIDENCE_COLOUR.REPORTED).not.toBe(CONFIDENCE_COLOUR.VERIFIED);
   });
 
   it("gives every one of the ten registry risk categories a distinct colour", () => {

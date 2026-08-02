@@ -65,9 +65,9 @@ export const SITE = {
   /* Two waters: Arabian Sea west, Shambhavi Estuary east. */
   frontage: "Arabian Sea (west) · Shambhavi Estuary (east)",
   access: [
-    { n: "Mangaluru International (IXE)", d: "45–55 min", km: "38 km", conf: "observed" as Confidence },
-    { n: "NH-66", d: "3 min", km: "1.5 km", conf: "observed" as Confidence },
-    { n: "Udupi town", d: "28 min", km: "22 km", conf: "observed" as Confidence },
+    { n: "Mangaluru International (IXE)", d: "45–55 min", km: "38 km", conf: "VERIFIED" as Confidence },
+    { n: "NH-66", d: "3 min", km: "1.5 km", conf: "VERIFIED" as Confidence },
+    { n: "Udupi town", d: "28 min", km: "22 km", conf: "VERIFIED" as Confidence },
   ],
   hue: 198,
 } as const;
@@ -388,11 +388,11 @@ export function position(bpsIn: number): Position {
 export const MY_POSITION = position(ALLOCATION.defaultBps);
 
 export const RETURNS = {
-  cashYield: { v: MY_YIELD_BPS / 100, conf: "modelled" as Confidence },
-  dscr: { v: DSCR, conf: "modelled" as Confidence },
-  payback: { v: 5.5, conf: "modelled" as Confidence },
-  irr: { v: 30, conf: "forecast" as Confidence },
-  exitValuation: { v: 123000000_0000n, conf: "forecast" as Confidence },
+  cashYield: { v: MY_YIELD_BPS / 100, conf: "INFERRED" as Confidence },
+  dscr: { v: DSCR, conf: "INFERRED" as Confidence },
+  payback: { v: 5.5, conf: "INFERRED" as Confidence },
+  irr: { v: 30, conf: "FORECAST" as Confidence },
+  exitValuation: { v: 123000000_0000n, conf: "FORECAST" as Confidence },
 };
 
 /* ── Governance, from the LLP Agreement ───────────────────────────── */

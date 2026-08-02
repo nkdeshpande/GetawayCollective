@@ -105,14 +105,14 @@ export function Offering() {
             <div className="panel on-panel" style={{ flex: "1 1 300px" }}>
               <span className="t-micro label">Rate of distribution</span>
               <div className="t-display-m" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                <Pct v={p.yieldBps / 100} conf="modelled" />
+                <Pct v={p.yieldBps / 100} conf="INFERRED" />
               </div>
               <p className="t-body" style={{ marginTop: "var(--gc-sp-2xs)" }}>
                 <span className="money">{inr(p.distribution)}</span> a year at {pct(p.bps)}, once
                 stabilised
               </p>
               <div style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                <ConfidenceTag c="modelled" />
+                <ConfidenceTag c="INFERRED" />
               </div>
             </div>
 
@@ -996,7 +996,7 @@ export function Settled() {
                 {inr(p.commitment)}
               </div>
               <span className="t-mono-s dim">{pct(p.bps)} of {LLP.name}</span>
-              <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="verified" /></div>
+              <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="CORROBORATED" /></div>
             </div>
             <div className="panel on-panel" style={{ flex: "1 1 260px" }}>
               <span className="t-micro label">First distribution</span>
@@ -1004,7 +1004,7 @@ export function Settled() {
                 {inr(p.distribution / 4n)}
               </div>
               <span className="t-mono-s dim">quarterly, from stabilisation</span>
-              <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="forecast" /></div>
+              <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="FORECAST" /></div>
             </div>
             <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
               <span className="t-micro label">Voting weight</span>

@@ -57,23 +57,26 @@ describe("metric grammar (§29)", () => {
   it("marks a provisional figure visibly, not only by colour", () => {
     // Colour is never the sole carrier of meaning. A forecast has to survive
     // being printed in black and white.
-    const f = currency(money("1000.0000"), { confidence: "forecast" });
+    const f = currency(money("1000.0000"), { confidence: "FORECAST" });
     expect(f.isProvisional).toBe(true);
     expect(f.display).toContain(PROVISIONAL_MARK.trim());
+    /* "forecast" here is the MetricKind, not the confidence class. The two
+       share a spelling and are different axes — the migration to the v5
+       confidence vocabulary deliberately left the metric kind alone. */
     expect(f.kind).toBe("forecast");
     expect(f.tone).toBe("electric");
   });
 
-  it("treats modelled and estimated as provisional too", () => {
-    expect(isProvisional("modelled")).toBe(true);
-    expect(isProvisional("estimated")).toBe(true);
-    expect(isProvisional("pending")).toBe(true);
-    expect(isProvisional("observed")).toBe(false);
-    expect(isProvisional("verified")).toBe(false);
+  it("treats inferred and reported as provisional too", () => {
+    expect(isProvisional("INFERRED")).toBe(true);
+    expect(isProvisional("REPORTED")).toBe(true);
+    expect(isProvisional("UNKNOWN")).toBe(true);
+    expect(isProvisional("VERIFIED")).toBe(false);
+    expect(isProvisional("CORROBORATED")).toBe(false);
   });
 
-  it("does not mark an observed figure", () => {
-    const o = currency(money("1000.0000"), { confidence: "observed" });
+  it("does not mark a verified figure", () => {
+    const o = currency(money("1000.0000"), { confidence: "VERIFIED" });
     expect(o.isProvisional).toBe(false);
     expect(o.display).not.toContain("~");
     expect(o.kind).toBe("currency");
@@ -83,7 +86,7 @@ describe("metric grammar (§29)", () => {
     // A negative delta on a forecast is a forecast, not a loss.
     expect(loss(money("-50000.0000")).kind).toBe("loss");
     expect(loss(money("-50000.0000")).tone).toBe("critical");
-    expect(currency(money("-50000.0000"), { confidence: "forecast" }).kind).toBe("forecast");
+    expect(currency(money("-50000.0000"), { confidence: "FORECAST" }).kind).toBe("forecast");
   });
 
   it("keeps risk visually unique", () => {

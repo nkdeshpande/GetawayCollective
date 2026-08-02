@@ -79,14 +79,14 @@ code{font-family:var(--fm);font-size:.88em;background:rgba(242,242,242,.07);padd
 <div class="eb">GC.SYSTEM · Wave 7 · Information Architecture</div>
 <h1>Every URL<br>in the system.</h1>
 <p class="lede">
-<strong>107 routes</strong> across six canonical realms. Access is
+<strong>109 routes</strong> across six canonical realms. Access is
 <strong>derived from the assembly's vantage</strong> rather than declared — the
 aperture tier already decided what each vantage may see, and a route restating it would be a second
 source of truth. 18 routes override that derivation, and every
 one states why.
 </p>
 <div class="tally">
-<div><b style="color:#1FAA59">25</b><span>public</span></div><div><b style="color:#7FA4EE">2</b><span>identified</span></div><div><b style="color:#C79F6B">7</b><span>accredited</span></div><div><b style="color:#E8672E">13</b><span>member</span></div><div><b style="color:#FF3B30">60</b><span>office</span></div>
+<div><b style="color:#1FAA59">27</b><span>public</span></div><div><b style="color:#7FA4EE">2</b><span>identified</span></div><div><b style="color:#C79F6B">7</b><span>accredited</span></div><div><b style="color:#E8672E">13</b><span>member</span></div><div><b style="color:#FF3B30">60</b><span>office</span></div>
 <div><b>18</b><span>Overrides</span></div>
 <div><b>12</b><span>Rights used</span></div>
 </div>
@@ -1246,7 +1246,7 @@ one states why.
 </div>
 </div>
 </section><section class="grp">
-<div class="grp-h"><span class="n">4 routes</span>
+<div class="grp-h"><span class="n">6 routes</span>
 <h2>System</h2><p>Sign in, verification, health and non-disclosing denial.</p></div>
 <div class="rt">
 <span class="pth">/sign-in</span>
@@ -1290,6 +1290,28 @@ one states why.
 <span class="nt">Says the viewer may not see it. Never says whether it EXISTS — that difference is the shape of the system, handed to anyone probing it.</span>
 <div class="cts">
 <b>Ending <code>/403</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-16.a The Miss</span><span class="cp">What was asked for, that it is not here, and three routes out.</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/404</span>
+<span><span class="nm">Not Found</span><br><span class="asm">AS-16 · Signal Lost</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">No stack trace, no exception name, no auto-redirect. The middleware rewrites an unknown route and a missing right here, so this page must never confirm whether the surface exists.</span>
+<div class="cts">
+<b>Ending <code>/404</code> &middot; contents</b>
+<div class="ct"><span class="ch">AS-16.a The Miss</span><span class="cp">What was asked for, that it is not here, and three routes out.</span></div>
+</div>
+</div><div class="rt">
+<span class="pth">/500</span>
+<span><span class="nm">System Error</span><br><span class="asm">AS-16 · Signal Lost</span></span>
+<span class="ac" style="color:#1FAA59">public</span>
+<span class="rg"></span>
+
+<span class="nt">Renders the failure without rendering the error. An exception name or a stack tells anyone probing the site what the stack is.</span>
+<div class="cts">
+<b>Ending <code>/500</code> &middot; contents</b>
 <div class="ct"><span class="ch">AS-16.a The Miss</span><span class="cp">What was asked for, that it is not here, and three routes out.</span></div>
 </div>
 </div>

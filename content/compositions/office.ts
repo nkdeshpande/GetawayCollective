@@ -109,7 +109,7 @@ export const OFFICE_PAGES: Record<string, Entry> = {
         { label: "Equity layer", value: inr(EQUITY), money: true,
           sub: `${SUBSCRIBED_UNITS} of ${UNITS_IN_VEHICLE} units subscribed` },
         { label: "Facility", value: inr(STACK.debt), money: true, sub: "drawn during construction only" },
-        { label: "Debt cover", value: DSCR.toFixed(2) + "×", sub: "derived, never asserted", conf: "modelled" },
+        { label: "Debt cover", value: DSCR.toFixed(2) + "×", sub: "derived, never asserted", conf: "INFERRED" },
       ] },
       { kind: "links", items: [
         { t: "Offerings", to: "/capital/offerings", primary: true },
@@ -826,7 +826,7 @@ export const OFFICE_PAGES: Record<string, Entry> = {
           sub: `${SUBSCRIBED_UNITS}/${UNITS_IN_VEHICLE} units subscribed` },
         { label: "Facility", value: inr(STACK.debt), money: true, sub: "construction only" },
         { label: "Gross revenue (model)", value: inr(GROSS_REVENUE), money: true,
-          sub: "at stabilisation", conf: "modelled" },
+          sub: "at stabilisation", conf: "INFERRED" },
       ] },
       { kind: "links", items: [
         { t: "Filings", to: `/admin/vehicles/${llpin}/filings`, primary: true },
