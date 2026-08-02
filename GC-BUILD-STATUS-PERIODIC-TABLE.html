@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GC.SYSTEM · Build Status — Waves 1–10</title>
+<style>
+:root{
+  --void:#0A0A0A; --panel:#121212; --panel-2:#171717; --paper:#F2F2F2;
+  --ink-inv:#F2F2F2; --steel:#6B6B6B; --dim:#9A9A9A;
+  --confirm:#1FAA59; --hazard:#E8672E; --critical:#FF3B30; --electric:#2061DE;
+  --copper:#C79F6B; --forest-light:#228A68;
+  --hair:rgba(242,242,242,.10);
+  --f-d:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
+  --f-b:'Inter','Segoe UI Variable',-apple-system,system-ui,sans-serif;
+  --f-m:'Space Mono',ui-monospace,Consolas,'SFMono-Regular',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+body{background:var(--void);color:var(--ink-inv);
+  font:400 15px/1.55 var(--f-b);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1500px;margin:0 auto;padding:0 24px 120px}
+
+header{padding:72px 0 40px;border-bottom:1px solid var(--hair)}
+.eyebrow{font:400 11px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+h1{font:600 clamp(38px,6vw,62px)/0.98 var(--f-d);letter-spacing:-.035em;
+  margin:14px 0 0;text-wrap:balance}
+.verdict{margin-top:24px;max-width:76ch;font-size:17px;line-height:1.6;color:#D8D8D8}
+.verdict strong{color:var(--ink-inv)}
+.verdict + .verdict{margin-top:14px}
+
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:40px}
+.score div{background:var(--panel);padding:20px 18px}
+.score b{display:block;font:600 30px/1 var(--f-m);font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em}
+.score span{display:block;font:400 10px/1.4 var(--f-m);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);margin-top:7px}
+.score .ok b{color:var(--confirm)} .score .warn b{color:var(--hazard)}
+.score .bad b{color:var(--critical)} .score .unk b{color:var(--dim)}
+.score .fut b{color:#7FA4EE}
+
+.legend{display:flex;gap:26px;flex-wrap:wrap;margin:44px 0 8px;
+  padding-bottom:20px;border-bottom:1px solid var(--hair)}
+.lg{display:flex;gap:9px;align-items:flex-start;max-width:270px}
+.chip{width:15px;height:15px;flex:none;margin-top:3px;border:2px solid}
+.chip.lk{border-color:var(--confirm);background:rgba(31,170,89,.18)}
+.chip.pt{border-color:var(--hazard);background:rgba(232,103,46,.18)}
+.chip.ab{border-color:var(--critical);background:rgba(255,59,48,.18)}
+.chip.uv{border-color:var(--electric);background:rgba(32,97,222,.22);border-style:dashed}
+.chip.rt{border-color:var(--steel);background:rgba(107,107,107,.18);border-style:dotted}
+.lg b{display:block;font:400 11px/1.3 var(--f-m);letter-spacing:.12em;text-transform:uppercase}
+.lg span{display:block;font-size:12.5px;color:var(--dim);line-height:1.45;margin-top:3px}
+.lg.lk b{color:var(--confirm)} .lg.pt b{color:var(--hazard)}
+.lg.ab b{color:var(--critical)} .lg.uv b{color:#7FA4EE} .lg.rt b{color:var(--steel)}
+
+.grp{margin-top:48px}
+.grp-h{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.grp-h .n{font:400 11px/1 var(--f-m);letter-spacing:.16em;color:var(--copper)}
+.grp-h h2{font:600 20px/1.2 var(--f-d);letter-spacing:-.02em}
+.grp-h .t{margin-left:auto;font:400 11px/1 var(--f-m);color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair)}
+
+.el{background:var(--panel);padding:14px 14px 13px;min-height:158px;
+  display:flex;flex-direction:column;position:relative;
+  border-top:3px solid transparent;transition:background 120ms linear}
+.el:hover{background:var(--panel-2)}
+.el .z{font:400 10px/1 var(--f-m);color:var(--dim);letter-spacing:.06em}
+.el .sym{font:600 30px/1 var(--f-d);letter-spacing:-.03em;margin:9px 0 6px}
+.el .nm{font-size:12.5px;line-height:1.35;color:var(--ink-inv)}
+.el .mt{margin-top:auto;padding-top:10px;font:400 10.5px/1.45 var(--f-m);
+  color:var(--dim);font-variant-numeric:tabular-nums}
+.el .st{margin-top:7px;font:400 9.5px/1 var(--f-m);letter-spacing:.14em;
+  text-transform:uppercase}
+/* State is carried by border, background tint AND the status word.
+   Colour is never the only carrier. */
+.el.lk{border-top-color:var(--confirm)}   .el.lk .st{color:var(--confirm)}
+.el.pt{border-top-color:var(--hazard)}    .el.pt .st{color:var(--hazard)}
+.el.ab{border-top-color:var(--critical);background:#161011} .el.ab .st{color:var(--critical)}
+.el.ab:hover{background:#1B1314}
+.el.uv{border-top-style:dashed;border-top-color:var(--electric);background:#101218}
+.el.uv .st{color:#7FA4EE} .el.uv:hover{background:#141722}
+.el.rt{border-top-style:dotted;border-top-color:var(--steel);background:#101010}
+.el.rt .st{color:var(--steel)} .el.rt .sym{color:var(--steel)}
+
+.sec{margin-top:88px;padding-top:40px;border-top:1px solid var(--hair)}
+.sec > .eyebrow{margin-bottom:12px}
+.sec h2{font:600 30px/1.15 var(--f-d);letter-spacing:-.028em;margin-bottom:14px}
+.sec p.lede{max-width:78ch;color:#D2D2D2;margin-bottom:8px}
+
+table{width:100%;border-collapse:collapse;margin-top:22px;font-size:13px}
+th{text-align:left;font:400 10px/1.3 var(--f-m);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);padding:0 14px 9px 0;border-bottom:1px solid var(--hair)}
+td{padding:10px 14px 10px 0;border-bottom:1px solid rgba(242,242,242,.05);vertical-align:top}
+td.m{font-family:var(--f-m);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--dim)}
+td.num{font-family:var(--f-m);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+.tag{font:400 9.5px/1 var(--f-m);letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 7px;border:1px solid;white-space:nowrap;display:inline-block}
+.tag.ok{color:var(--confirm);border-color:rgba(31,170,89,.45)}
+.tag.warn{color:var(--hazard);border-color:rgba(232,103,46,.45)}
+.tag.bad{color:var(--critical);border-color:rgba(255,59,48,.45)}
+.tag.fut{color:#7FA4EE;border-color:rgba(32,97,222,.5);border-style:dashed}
+.tag.off{color:var(--steel);border-color:rgba(107,107,107,.4);border-style:dotted}
+
+.findings{margin-top:88px;padding-top:40px;border-top:1px solid var(--hair)}
+.finding{border-left:3px solid var(--critical);padding:0 0 26px 22px;margin-bottom:26px}
+.finding.warn{border-left-color:var(--hazard)}
+.finding.note{border-left-color:var(--electric)}
+.finding.done{border-left-color:var(--confirm)}
+.finding .rk{font:400 10px/1 var(--f-m);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--critical)}
+.finding.warn .rk{color:var(--hazard)} .finding.note .rk{color:#7FA4EE}
+.finding.done .rk{color:var(--confirm)}
+.finding h3{font:600 19px/1.3 var(--f-d);letter-spacing:-.02em;margin:8px 0 9px}
+.finding p{max-width:78ch;color:#D2D2D2;margin-bottom:8px}
+.finding .ev{font:400 12px/1.6 var(--f-m);color:var(--dim);
+  background:rgba(242,242,242,.04);padding:11px 14px;margin-top:11px;
+  overflow-x:auto;white-space:pre}
+.finding p:last-child{margin-bottom:0}
+
+footer{margin-top:88px;padding-top:28px;border-top:1px solid var(--hair);
+  color:var(--dim);font:400 12px/1.7 var(--f-m)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">GC.SYSTEM · Build Status · Waves 1–10 · 02 Aug 2026</div>
+  <h1>Seven waves locked.<br>Three to go, and one wire missing.</h1>
+  <p class="verdict">
+    <strong>Waves 1 through 7 are complete and gated.</strong> Sixty-three modules were declared across
+    the ten-wave plan; forty are locked behind a check that fails the build when they drift, seven are
+    partial, three are absent, one was retired by the pivot, and twelve are not yet due.
+  </p>
+  <p class="verdict">
+    The platform builds, serves and refuses correctly. <strong>109 routes exist, 107 pages are generated
+    from the route table, and 19 constitutional gates plus 735 tests pass on every run.</strong>
+    Authentication landed this session and the office authority model with it.
+  </p>
+  <p class="verdict">
+    What stands between this and a live product is not code. <strong>No database is provisioned</strong>,
+    so the magic link, the grant table and the sixteen-stage passport have nowhere to persist. Everything
+    downstream of that — Wave 8's approvals and notifications, Wave 9's cognition, Wave 10's sovereign
+    tier — is waiting on the same connection string.
+  </p>
+
+  <div class="score">
+    <div class="ok"><b>40</b><span>Modules locked</span></div>
+    <div class="warn"><b>7</b><span>Partial</span></div>
+    <div class="bad"><b>3</b><span>Absent</span></div>
+    <div class="fut"><b>12</b><span>Not yet due</span></div>
+    <div class="ok"><b>19/19</b><span>Gates passing</span></div>
+    <div class="ok"><b>735</b><span>Tests green</span></div>
+    <div class="ok"><b>109</b><span>Routes declared</span></div>
+    <div class="unk"><b>0</b><span>Integrations live</span></div>
+  </div>
+</header>
+
+<div class="legend">
+  <div class="lg lk"><span class="chip lk"></span><b>Locked</b>
+    <span>Built, and a gate fails the build if it drifts. Not "written" — enforced.</span></div>
+  <div class="lg pt"><span class="chip pt"></span><b>Partial</b>
+    <span>The shape exists and is correct. Something it depends on is missing, usually persistence.</span></div>
+  <div class="lg ab"><span class="chip ab"></span><b>Absent</b>
+    <span>Declared in the wave plan, due now, not built.</span></div>
+  <div class="lg uv"><span class="chip uv"></span><b>Not yet due</b>
+    <span>A later wave. Absence here is the plan working, not a gap.</span></div>
+  <div class="lg rt"><span class="chip rt"></span><b>Retired</b>
+    <span>The module's job stopped existing. Deliberate, and recorded rather than deleted.</span></div>
+</div>
+
+<!-- ══ WAVE 1 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 1</span><h2>Foundation Lock</h2>
+    <span class="t">4 / 4 locked</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">01</span><span class="sym">Ct</span>
+      <span class="nm">Constitution</span><span class="mt">constitution/ · L1-01 cited by 6 linters</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">02</span><span class="sym">Tx</span>
+      <span class="nm">Object Taxonomy</span><span class="mt">27 ratified objects · closed list</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">03</span><span class="sym">Tk</span>
+      <span class="nm">Token Core</span><span class="mt">44 tokens · WCAG AA audited</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">04</span><span class="sym">Iv</span>
+      <span class="nm">Invariant Register</span><span class="mt">21 invariants · named enforcement</span>
+      <span class="st">Locked</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 2 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 2</span><h2>Semantic Lock</h2>
+    <span class="t">5 / 5 locked</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">05</span><span class="sym">Vo</span>
+      <span class="nm">Vocabulary</span><span class="mt">16 forbidden terms · vocab-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">06</span><span class="sym">Bo</span>
+      <span class="nm">Business Objects</span><span class="mt">27 objects · 4 domains</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">07</span><span class="sym">Cl</span>
+      <span class="nm">Colour Ontology</span><span class="mt">Series derive from metric grammar</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">08</span><span class="sym">Fr</span>
+      <span class="nm">Field Registry</span><span class="mt">127 UFR fields · E-06 · ufr-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">09</span><span class="sym">Pl</span>
+      <span class="nm">Enterprise Policy</span><span class="mt">operating-model.ts · 4 workflows</span>
+      <span class="st">Locked</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 3 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 3</span><h2>Structural Lock</h2>
+    <span class="t">5 locked · 1 partial</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">10</span><span class="sym">Rl</span>
+      <span class="nm">Relationships</span><span class="mt">29 edges · E-05 · rel-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">11</span><span class="sym">Sm</span>
+      <span class="nm">State Machines</span><span class="mt">6 machines · reachability proven</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">12</span><span class="sym">Ty</span>
+      <span class="nm">Type Matrix</span><span class="mt">generated/schemas.ts · Zod · 41 tests</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">13</span><span class="sym">Pr</span>
+      <span class="nm">Provenance</span><span class="mt">6 confidence classes · fitForFiling()</span>
+      <span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">14</span><span class="sym">Db</span>
+      <span class="nm">Database</span><span class="mt">2 migrations written · NEVER APPLIED</span>
+      <span class="st">Partial</span></div>
+    <div class="el lk"><span class="z">15</span><span class="sym">Ad</span>
+      <span class="nm">Decisions</span><span class="mt">docs/adr · architecture record</span>
+      <span class="st">Locked</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 4 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 4</span><h2>Surface Lock</h2>
+    <span class="t">6 / 6 locked</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">16</span><span class="sym">Dc</span>
+      <span class="nm">Design Constitution</span><span class="mt">§29 supremacy · token-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">17</span><span class="sym">En</span>
+      <span class="nm">Enumerations</span><span class="mt">26 enum sets · tone + a11y each</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">18</span><span class="sym">Lc</span>
+      <span class="nm">Lifecycle Guards</span><span class="mt">Illegal moves refused · sm-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">19</span><span class="sym">At</span>
+      <span class="nm">Atoms</span><span class="mt">components.ts · zero-radius doctrine</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">20</span><span class="sym">Vl</span>
+      <span class="nm">Validation</span><span class="mt">Warm / Confident / Assertive voice</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">21</span><span class="sym">Ax</span>
+      <span class="nm">Accessibility</span><span class="mt">Computed contrast audit in token-lint</span>
+      <span class="st">Locked</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 5 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 5</span><h2>Behaviour Lock</h2>
+    <span class="t">7 locked · 1 partial</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">22</span><span class="sym">Cm</span>
+      <span class="nm">Commands</span><span class="mt">35 capabilities · authority envelope</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">23</span><span class="sym">Cp</span>
+      <span class="nm">Capabilities</span><span class="mt">E-01 · every command emits · cap-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">24</span><span class="sym">Jy</span>
+      <span class="nm">Processes</span><span class="mt">Renamed from Journeys by §25</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">25</span><span class="sym">Ml</span>
+      <span class="nm">Molecules</span><span class="mt">Tables, forms, states</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">26</span><span class="sym">De</span>
+      <span class="nm">Events</span><span class="mt">55 event types · append-only</span>
+      <span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">27</span><span class="sym">Ap</span>
+      <span class="nm">API</span><span class="mt">3 endpoints only: signal, dossier, auth</span>
+      <span class="st">Partial</span></div>
+    <div class="el lk"><span class="z">28</span><span class="sym">Rt</span>
+      <span class="nm">Runtime</span><span class="mt">Next 15.5 · App Router · edge guard</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">29</span><span class="sym">Pm</span>
+      <span class="nm">Permissions</span><span class="mt">33 rights · 8 roles · 14 principals</span>
+      <span class="st">Locked</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 6 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 6</span><h2>Composite Lock</h2>
+    <span class="t">7 / 7 locked</span></div>
+  <div class="grid">
+    <div class="el lk"><span class="z">30</span><span class="sym">Fo</span>
+      <span class="nm">Financial Objects</span><span class="mt">Waterfall · ledger · reserve · exact decimal</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">31</span><span class="sym">Gm</span>
+      <span class="nm">Graph</span><span class="mt">Every non-root reaches a declared root</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">32</span><span class="sym">Sc</span>
+      <span class="nm">Services</span><span class="mt">handlers.ts · capabilities wired</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">33</span><span class="sym">Og</span>
+      <span class="nm">Organisms</span><span class="mt">10 organisms · organism-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">34</span><span class="sym">Sg</span>
+      <span class="nm">Signals</span><span class="mt">telemetry.ts · never about a person</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">35</span><span class="sym">Es</span>
+      <span class="nm">Event Spine</span><span class="mt">E-01 / E-02 · silence impossible</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">36</span><span class="sym">Ts</span>
+      <span class="nm">Tests</span><span class="mt">735 tests · 26 files · all green</span>
+      <span class="st">Locked</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 7 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 7</span><h2>Investor Workspaces</h2>
+    <span class="t">5 locked · 1 partial</span></div>
+  <div class="grid">
+    <div class="el pt"><span class="z">37</span><span class="sym">Pp</span>
+      <span class="nm">Passport</span><span class="mt">16 stages routed · nothing persists</span>
+      <span class="st">Partial</span></div>
+    <div class="el lk"><span class="z">38</span><span class="sym">As</span>
+      <span class="nm">Assemblies</span><span class="mt">35 assemblies · assembly-lint</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">39</span><span class="sym">Cx</span>
+      <span class="nm">Context</span><span class="mt">7 apertures · less, never different</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">40</span><span class="sym">Rd</span>
+      <span class="nm">Read Models</span><span class="mt">projections.ts · folded, never authoritative</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">41</span><span class="sym">Ed</span>
+      <span class="nm">Edge</span><span class="mt">Middleware 120 kB · fails closed</span>
+      <span class="st">Locked</span></div>
+    <div class="el lk"><span class="z">42</span><span class="sym">Er</span>
+      <span class="nm">Errors</span><span class="mt">403 · 404 · 500 · no stack ever rendered</span>
+      <span class="st">Locked</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 8 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 8 · CURRENT</span><h2>Enterprise Workspaces</h2>
+    <span class="t">1 locked · 3 partial · 2 absent · 1 retired</span></div>
+  <div class="grid">
+    <div class="el ab"><span class="z">43</span><span class="sym">Aw</span>
+      <span class="nm">Approvals</span><span class="mt">No approval engine · LG gates need it</span>
+      <span class="st">Absent</span></div>
+    <div class="el ab"><span class="z">44</span><span class="sym">Au</span>
+      <span class="nm">Automation</span><span class="mt">No rule engine, no scheduler</span>
+      <span class="st">Absent</span></div>
+    <div class="el rt"><span class="z">45</span><span class="sym">Gj</span>
+      <span class="nm">Guest Journey</span><span class="mt">Both nouns forbidden by §25</span>
+      <span class="st">Retired</span></div>
+    <div class="el lk"><span class="z">46</span><span class="sym">Sh</span>
+      <span class="nm">Shell</span><span class="mt">AS-37 · rail filters by canReach()</span>
+      <span class="st">Locked</span></div>
+    <div class="el pt"><span class="z">47</span><span class="sym">Nt</span>
+      <span class="nm">Notifications</span><span class="mt">23 notices catalogued · no delivery</span>
+      <span class="st">Partial</span></div>
+    <div class="el pt"><span class="z">48</span><span class="sym">Ob</span>
+      <span class="nm">Observability</span><span class="mt">Signals emit · no external sink</span>
+      <span class="st">Partial</span></div>
+    <div class="el pt"><span class="z">49</span><span class="sym">Rk</span>
+      <span class="nm">Risk</span><span class="mt">AS-14 surface · no docket, no register</span>
+      <span class="st">Partial</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 9 ══════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 9</span><h2>Cognition</h2>
+    <span class="t">1 partial · 1 absent · 5 not yet due</span></div>
+  <div class="grid">
+    <div class="el uv"><span class="z">50</span><span class="sym">Kn</span>
+      <span class="nm">Knowledge</span><span class="mt">BO-12 schema undefined</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">51</span><span class="sym">Gq</span>
+      <span class="nm">Graph Queries</span><span class="mt">Graph exists · no query layer</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">52</span><span class="sym">Oc</span>
+      <span class="nm">Operating Cycle</span><span class="mt">VW-01…VW-12 declared, not executable</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">53</span><span class="sym">Cv</span>
+      <span class="nm">AI Canvas</span><span class="mt">Surface designed in the IA only</span>
+      <span class="st">Not due</span></div>
+    <div class="el pt"><span class="z">54</span><span class="sym">Co</span>
+      <span class="nm">Copilots</span><span class="mt">ATLAS + IRIS bounded · engine not wired</span>
+      <span class="st">Partial</span></div>
+    <div class="el ab"><span class="z">55</span><span class="sym">Ix</span>
+      <span class="nm">Index</span><span class="mt">/search routed · returns nothing</span>
+      <span class="st">Absent</span></div>
+    <div class="el uv"><span class="z">56</span><span class="sym">Qa</span>
+      <span class="nm">Assurance</span><span class="mt">Model assurance rules undefined</span>
+      <span class="st">Not due</span></div>
+  </div>
+</div>
+
+<!-- ══ WAVE 10 ═════════════════════════════════════════════════════ -->
+<div class="grp">
+  <div class="grp-h"><span class="n">WAVE 10</span><h2>Sovereign Governance · terminal wave</h2>
+    <span class="t">7 not yet due</span></div>
+  <div class="grid">
+    <div class="el uv"><span class="z">57</span><span class="sym">Ev</span>
+      <span class="nm">Evolution</span><span class="mt">Amendment procedure undrafted</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">58</span><span class="sym">So</span>
+      <span class="nm">Sovereign</span><span class="mt">No super-admin by design (IA_LAWS)</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">59</span><span class="sym">Cg</span>
+      <span class="nm">Cognition Governance</span><span class="mt">Depends on Wave 9</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">60</span><span class="sym">Rp</span>
+      <span class="nm">Replay</span><span class="mt">Event log exists · no replay harness</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">61</span><span class="sym">Rn</span>
+      <span class="nm">Retention</span><span class="mt">Residency rules undefined</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">62</span><span class="sym">Rs</span>
+      <span class="nm">Release</span><span class="mt">CI green · no release automation</span>
+      <span class="st">Not due</span></div>
+    <div class="el uv"><span class="z">63</span><span class="sym">Sw</span>
+      <span class="nm">Stewardship</span><span class="mt">Charter and succession undrafted</span>
+      <span class="st">Not due</span></div>
+  </div>
+</div>
+
+<!-- ══ INFORMATION ARCHITECTURE ════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Information Architecture</div>
+  <h2>109 routes, generated from one table</h2>
+  <p class="lede">
+    Nothing in <code>app/</code> is hand-written. Every page, every route-group layout, the 404 and the
+    500 are emitted by <code>gen-app.js</code> from <code>constants/routes.ts</code>, and
+    <code>app:check</code> fails the build when the tree and the table disagree. A URL exists because
+    the route table says so — a hand-added page would be a surface with no declared access class,
+    reachable and invisible to every check written to govern reachable things.
+  </p>
+  <p class="lede">
+    The v5 migration completed this cycle: the old 135-route v3 tree is gone, 110 permanent IA ids are
+    unique, and <code>constants/redirects.ts</code> now serves 110 301s through <code>next.config.ts</code>
+    — a table that had been written but wired to nothing.
+  </p>
+
+  <div class="scroll"><table>
+    <thead><tr><th>Realm</th><th>Prefix</th><th class="num">Routes</th><th>Aperture grammar</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td>Public · Desire</td><td class="m">GC-</td><td class="num">27</td>
+        <td class="m">/collection/[vehicle]</td><td><span class="tag ok">Serving</span></td></tr>
+      <tr><td>Investor · Conviction</td><td class="m">INV-</td><td class="num">9</td>
+        <td class="m">/invest/[vehicle]</td><td><span class="tag warn">Gated · no persistence</span></td></tr>
+      <tr><td>Member · Stewardship</td><td class="m">MEM-</td><td class="num">13</td>
+        <td class="m">/portfolio/[vehicle]</td><td><span class="tag warn">Gated · no member record</span></td></tr>
+      <tr><td>Office · Management</td><td class="m">OFF- SPA- CAP- TIM- PRJ- PAR- GOV- DOC- ACT- NET-</td><td class="num">57</td>
+        <td class="m">/office/collection/[vehicle]</td><td><span class="tag warn">Gated · needs a grant</span></td></tr>
+      <tr><td>System states</td><td class="m">SYS- GC-9xx</td><td class="num">3</td>
+        <td class="m">/sign-in · /verify · /status</td><td><span class="tag ok">Serving</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="scroll"><table>
+    <thead><tr><th>Access class</th><th class="num">Routes</th><th>Reachable today</th><th>What unlocks it</th></tr></thead>
+    <tbody>
+      <tr><td class="m">public</td><td class="num">27</td><td><span class="tag ok">Yes — 200</span></td><td>Nothing. Live now.</td></tr>
+      <tr><td class="m">identified</td><td class="num">2</td><td><span class="tag bad">No — 403</span></td><td>AUTH_SECRET + a provider</td></tr>
+      <tr><td class="m">accredited</td><td class="num">7</td><td><span class="tag bad">No — 403</span></td><td>PR-01 outcome record</td></tr>
+      <tr><td class="m">member</td><td class="num">13</td><td><span class="tag bad">No — 403</span></td><td>Settlement. The Member Law fires there, not at sign-in.</td></tr>
+      <tr><td class="m">office</td><td class="num">60</td><td><span class="tag bad">No — 403</span></td><td>A named grant in <code>auth_office_grant</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ══ CONTENT ═════════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Content</div>
+  <h2>Written where it can be linted</h2>
+  <p class="lede">
+    Copy lives in <code>content/</code> as data, not inside components, so <code>vocab-lint</code> and
+    <code>voice-lint</code> can read it. Sixteen forbidden terms and the brand-voice prohibitions are
+    parsed from the registries rather than restated in the linter — this build has already been stopped
+    twice by prose that reached for a word the constitution retired.
+  </p>
+  <div class="scroll"><table>
+    <thead><tr><th>Surface</th><th>Source</th><th class="num">Items</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td>Public pages · gateway</td><td class="m">content/public.ts · gateway.ts</td><td class="num">—</td><td><span class="tag ok">Written</span></td></tr>
+      <tr><td>Compositions · 6 realms</td><td class="m">content/compositions/*</td><td class="num">6</td><td><span class="tag ok">Written</span></td></tr>
+      <tr><td>Legal corpus</td><td class="m">content/legal.ts</td><td class="num">8</td><td><span class="tag ok">Written</span></td></tr>
+      <tr><td>Journal</td><td class="m">content/journal.ts</td><td class="num">—</td><td><span class="tag ok">Written</span></td></tr>
+      <tr><td>Notice catalogue</td><td class="m">content/notifications.ts</td><td class="num">23</td><td><span class="tag warn">Catalogued · undelivered</span></td></tr>
+      <tr><td>Event communications</td><td class="m">content/event-communications.ts</td><td class="num">—</td><td><span class="tag warn">Written · unsent</span></td></tr>
+      <tr><td>Worked offering · SlowSpace</td><td class="m">app/_assemblies/slowspace.ts</td><td class="num">1</td><td><span class="tag ok">Cross-checked at load</span></td></tr>
+      <tr><td>Property records</td><td class="m">app/_assemblies/data.ts</td><td class="num">1</td><td><span class="tag warn">One fixture, not a collection</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ══ TECHNOLOGY ══════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Technology · capabilities · integrations</div>
+  <h2>Everything is wired. Nothing is connected.</h2>
+  <p class="lede">
+    That sentence is the whole status. Each integration below has code written against it, a documented
+    environment key, and a degradation path when the key is absent — the lead forms return 503 and say so
+    rather than claiming a message was sent; the Google button is not drawn rather than drawn and broken.
+    <strong>Not one of them has a credential.</strong>
+  </p>
+
+  <div class="scroll"><table>
+    <thead><tr><th>Capability</th><th>Implementation</th><th>State</th><th>Blocked on</th></tr></thead>
+    <tbody>
+      <tr><td>Framework</td><td class="m">next 15.5 · react 18.3 · TS 5.3</td><td><span class="tag ok">Live</span></td><td>—</td></tr>
+      <tr><td>Access guard</td><td class="m">middleware.ts · canReach()</td><td><span class="tag ok">Live</span></td><td>—</td></tr>
+      <tr><td>Authentication</td><td class="m">next-auth v5 · Google + magic link</td><td><span class="tag warn">Wired</span></td><td class="m">AUTH_SECRET · GOOGLE_CLIENT_*</td></tr>
+      <tr><td>Authority · grants</td><td class="m">auth_office_grant · GP-06 enforced</td><td><span class="tag warn">Wired</span></td><td class="m">DATABASE_URL</td></tr>
+      <tr><td>Database</td><td class="m">drizzle-orm · postgres.js · 2 migrations</td><td><span class="tag bad">Not provisioned</span></td><td class="m">A Postgres instance</td></tr>
+      <tr><td>Transactional email</td><td class="m">resend · lib/leads.ts</td><td><span class="tag warn">Wired</span></td><td class="m">RESEND_API_KEY</td></tr>
+      <tr><td>Contracts · validation</td><td class="m">zod · generated/schemas.ts</td><td><span class="tag ok">Live</span></td><td>—</td></tr>
+      <tr><td>Rate limiting</td><td class="m">In-memory fixed window</td><td><span class="tag bad">Will not hold</span></td><td>Per-instance on serverless. Needs KV/Redis.</td></tr>
+      <tr><td>Hosting · headers</td><td class="m">vercel.json · bom1 · HSTS preload</td><td><span class="tag ok">Configured</span></td><td>—</td></tr>
+      <tr><td>CI gate</td><td class="m">.github/workflows/verify.yml</td><td><span class="tag warn">Configured</span></td><td>Branch protection unconfirmed</td></tr>
+      <tr><td>Pre-commit gate</td><td class="m">.githooks/pre-commit</td><td><span class="tag warn">Present</span></td><td class="m">git config core.hooksPath</td></tr>
+      <tr><td>Payments</td><td class="m">—</td><td><span class="tag bad">Absent</span></td><td>No payment code exists. Commit room cannot transact.</td></tr>
+      <tr><td>Search index</td><td class="m">—</td><td><span class="tag bad">Absent</span></td><td>Route exists, index does not</td></tr>
+      <tr><td>AI · ATLAS / IRIS</td><td class="m">digital-profiles.ts · requestableRoles []</td><td><span class="tag warn">Bounded</span></td><td>Engine not wired. Boundary already correct.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="scroll"><table>
+    <thead><tr><th>Gate</th><th class="num">Count</th><th>What it prevents</th></tr></thead>
+    <tbody>
+      <tr><td>Constitutional linters</td><td class="num">13</td><td>Vocabulary, voice, registry, aperture, route, token and eligibility drift</td></tr>
+      <tr><td>Generators with <code>--check</code></td><td class="num">6</td><td>A generated artifact diverging from its source</td></tr>
+      <tr><td>Test files</td><td class="num">26</td><td>735 assertions across domain, access, lifecycle and contracts</td></tr>
+      <tr><td>Total gates in <code>npm run verify</code></td><td class="num">19</td><td>All passing as of this document</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ══ PENDING ═════════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Waves 8 · 9 · 10</div>
+  <h2>What is actually pending</h2>
+  <p class="lede">
+    Wave 8 is due now and is the only one with absent modules. Waves 9 and 10 are not late — they are
+    downstream of decisions that have not been made, and starting either before Wave 8 closes would build
+    cognition over an operating model that cannot yet approve anything.
+  </p>
+
+  <div class="scroll"><table>
+    <thead><tr><th>Wave</th><th>Module</th><th>What is missing</th><th>Depends on</th></tr></thead>
+    <tbody>
+      <tr><td class="m">W8</td><td>Aw · Approvals</td><td>No approval engine. The v5 LG-01…LG-10 gate register defines ten gates that each need PREPARE → APPROVE → EXECUTE separation; none is executable.</td><td class="m">Command Rights sheet · DB</td></tr>
+      <tr><td class="m">W8</td><td>Au · Automation</td><td>No rule engine, no scheduler, no reminder queue. Twelve of the sixteen shared capabilities in the v5 Technology Capability Map are automation-shaped.</td><td class="m">Aw · DB</td></tr>
+      <tr><td class="m">W8</td><td>Nt · Notifications</td><td>23 notices are catalogued with copy. Nothing delivers them, records delivery, or tracks acknowledgement.</td><td class="m">RESEND_API_KEY · DB</td></tr>
+      <tr><td class="m">W8</td><td>Ob · Observability</td><td>Signals are emitted in-process and discarded. No sink, no dashboard, no exception queue.</td><td class="m">A sink</td></tr>
+      <tr><td class="m">W8</td><td>Rk · Risk</td><td>AS-14 renders risk. There is no risk register, docket, severity model or closure evidence.</td><td class="m">DB · Aw</td></tr>
+      <tr><td class="m">W9</td><td>Co · Copilots</td><td>ATLAS and IRIS hold the correct constitutional posture and no capability. The 11 AI contracts (AI-001…AI-105) have no governed output object.</td><td class="m">W8 close</td></tr>
+      <tr><td class="m">W9</td><td>Ix · Index</td><td><code>/search</code> is routed and access-scoped. Nothing indexes, so it returns nothing.</td><td class="m">DB</td></tr>
+      <tr><td class="m">W9</td><td>Kn Gq Oc Cv Qa</td><td>Knowledge schema, query layer, operating cycle, canvas and model assurance — all undefined.</td><td class="m">W8 close</td></tr>
+      <tr><td class="m">W10</td><td>All seven</td><td>Amendment procedure, stewardship charter, succession, replay harness, retention and residency, release automation.</td><td class="m">W9 exit</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="lede" style="margin-top:26px">
+    Beyond the wave plan, the v5 Operating Canon adds seven semantic areas that are declared and not
+    implemented: 25 canonical objects (14 genuinely new), 40 command-level rights, 10 SoD controls,
+    56 aperture projections, 12 evidence types, a 15-state vehicle lifecycle against the current 6, and
+    8 cross-cutting taxonomies. The holistic build layer adds 10 lifecycle gates, 30 delivery tasks and
+    52 distinct platform capabilities on top of that.
+  </p>
+</section>
+
+<!-- ══ FINDINGS ════════════════════════════════════════════════════ -->
+<div class="findings">
+  <div class="eyebrow">Findings</div>
+  <h2 style="font:600 30px/1.15 var(--f-d);letter-spacing:-.028em;margin:14px 0 30px">
+    What would stop a launch</h2>
+
+  <div class="finding">
+    <div class="rk">Blocker · 01</div>
+    <h3>No database is provisioned</h3>
+    <p>
+      Two migrations are written and neither has been applied. This single absence blocks the email magic
+      link (a verification token must be written down before it can be checked), the grant table, the
+      sixteen-stage passport, notifications, search and every Wave 8 module.
+    </p>
+    <p>
+      Google sign-in is the exception and works without it — an OAuth handshake with a JWT session needs
+      no adapter.
+    </p>
+    <div class="ev">migrations/0000_productive_scorpion.sql   institutional schema — never applied
+migrations/0001_naive_puck.sql           5 auth tables    — never applied
+DATABASE_URL                             unset</div>
+  </div>
+
+  <div class="finding">
+    <div class="rk">Blocker · 02</div>
+    <h3>Nothing is committed</h3>
+    <p>
+      171 tracked changes plus the new auth layer exist only in the working tree, on <code>main</code>,
+      level with <code>origin/main</code>. The last commit is the v4 workbook. A stray checkout loses the
+      entire v5 migration and this session's work.
+    </p>
+  </div>
+
+  <div class="finding warn">
+    <div class="rk">Risk · 03</div>
+    <h3>Rate limiting will not survive serverless</h3>
+    <p>
+      <code>lib/rate-limit.ts</code> is an in-memory map, and its own comment concedes the problem: on
+      serverless, instance memory is per-instance. The two public lead endpoints are the only unauthenticated
+      write paths in the system and they are effectively unthrottled across instances.
+    </p>
+  </div>
+
+  <div class="finding warn">
+    <div class="rk">Risk · 04</div>
+    <h3>Accredited and member are not derivable</h3>
+    <p>
+      Both return false and will keep returning false. Accreditation is the recorded outcome of PR-01;
+      the Member Law fires on settlement, not on sign-in. Twenty of the 109 routes are unreachable by
+      anyone until those institutional records exist — which is correct behaviour, not a bug, but it
+      means "sign in and see your portfolio" is not yet a journey the platform can complete.
+    </p>
+  </div>
+
+  <div class="finding warn">
+    <div class="rk">Risk · 05</div>
+    <h3>One critical and four high advisories</h3>
+    <p>
+      <code>npm audit</code> reports a critical in <code>vitest</code> and a high in <code>vite</code> —
+      both development-only. The <code>next</code> high, inherited through <code>postcss</code> and
+      <code>sharp</code>, reaches production and should be resolved before a public deploy.
+    </p>
+  </div>
+
+  <div class="finding done">
+    <div class="rk">Closed this cycle</div>
+    <h3>Six defects found and fixed</h3>
+    <p>
+      The v5 route migration completed and <code>app/</code> now matches the canon. Beyond that:
+      <code>/404</code> and <code>/500</code> had been dropped from the route table, so the generator
+      removed both files as orphans and production fell back to Next's stock pages — the one place a
+      stack trace could still reach a visitor. <code>sitemap.ts</code> was advertising retired v3 chapter
+      URLs and <code>/roles/*</code> to crawlers. <code>robots.ts</code> disallowed five dead v3 paths
+      while the live private namespaces went unlisted. Three workspace previews were indexable and in the
+      sitemap. And the grant paths shipped earlier this session bypassed the GP-06 separation check that
+      LAW 2 requires — now enforced on the resulting right set, by every path that writes.
+    </p>
+  </div>
+</div>
+
+<footer>
+  GC.SYSTEM · Build status across Waves 1–10 · generated 02 Aug 2026<br>
+  Evidence: 19/19 gates · 735 tests · 109 routes · 107 generated pages · production build exit 0<br>
+  Sources: constants/routes.ts · WAVE-INTAKE.md · GC-IA-V5-OPERATING-CANON-HOLISTIC-BUILD.xlsx<br>
+  Status words carry state alongside colour. No element relies on hue alone.
+</footer>
+
+</div>
+</body>
+</html>

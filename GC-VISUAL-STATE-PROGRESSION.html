@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GC — Investment Vehicle State Progression</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@200;300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./dist/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--gc-void);
+      color: var(--gc-ink-inverse);
+      font-family: var(--gc-font-body);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    button, a { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: var(--gc-stroke-active) solid var(--gc-electric); outline-offset: 3px; }
+    .gc-shell { min-height: 100svh; overflow: hidden; }
+    .gc-hud {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      min-height: 64px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: var(--gc-sp-m);
+      padding: 0 clamp(var(--gc-sp-s), 4vw, var(--gc-sp-xl));
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      background: rgba(10, 10, 10, .94);
+      backdrop-filter: blur(16px);
+      font-family: var(--gc-font-mono);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .gc-wordmark { font-weight: 700; text-decoration: none; }
+    .gc-hud-center { color: var(--gc-steel-dim); }
+    .gc-hud-right { justify-self: end; display: flex; align-items: center; gap: var(--gc-sp-xs); color: var(--gc-steel-dim); }
+    .gc-pulse { width: 7px; height: 7px; background: var(--gc-confirm); display: inline-block; }
+
+    .gc-hero {
+      min-height: 72svh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      padding: clamp(var(--gc-sp-2xl), 9vw, var(--gc-sp-4xl)) clamp(var(--gc-sp-s), 6vw, var(--gc-sp-3xl)) var(--gc-sp-xl);
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      position: relative;
+    }
+    .gc-hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 25%;
+      width: 1px;
+      background: var(--gc-hairline-inv);
+      box-shadow: 25vw 0 0 var(--gc-hairline-inv), 50vw 0 0 var(--gc-hairline-inv);
+      pointer-events: none;
+    }
+    .gc-hero-copy { position: relative; z-index: 1; align-self: center; }
+    .eyebrow {
+      color: var(--gc-copper);
+      font: 400 10px/1.4 var(--gc-font-mono);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .gc-hero h1 {
+      max-width: 1050px;
+      margin: var(--gc-sp-m) 0 0;
+      font: 200 clamp(50px, 9vw, 132px)/.86 var(--gc-font-display);
+      letter-spacing: -.035em;
+      text-transform: uppercase;
+    }
+    .gc-hero h1 span { color: var(--gc-steel); }
+    .gc-hero-lead {
+      max-width: 720px;
+      margin: var(--gc-sp-l) 0 0;
+      color: var(--gc-steel-dim);
+      font-size: clamp(16px, 1.8vw, 21px);
+      font-weight: 300;
+    }
+    .gc-hero-meta {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--gc-stroke-idle);
+      margin-top: var(--gc-sp-2xl);
+      background: var(--gc-hairline-inv);
+    }
+    .gc-hero-meta div { min-height: 100px; padding: var(--gc-sp-m); background: var(--gc-void); }
+    .gc-hero-meta dt { color: var(--gc-steel-dim); font: 400 9px/1.4 var(--gc-font-mono); letter-spacing: .12em; text-transform: uppercase; }
+    .gc-hero-meta dd { margin: var(--gc-sp-xs) 0 0; font: 400 13px/1.4 var(--gc-font-mono); text-transform: uppercase; }
+    .gc-hero-meta .current dd { color: var(--gc-electric); }
+
+    .gc-main { padding-bottom: var(--gc-sp-4xl); }
+    .gc-section { padding: clamp(var(--gc-sp-2xl), 8vw, var(--gc-sp-4xl)) clamp(var(--gc-sp-s), 6vw, var(--gc-sp-3xl)); }
+    .gc-section + .gc-section { border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 420px);
+      gap: var(--gc-sp-xl);
+      align-items: end;
+      margin-bottom: var(--gc-sp-xl);
+    }
+    .gc-section-head h2 {
+      max-width: 820px;
+      margin: var(--gc-sp-s) 0 0;
+      font: 300 clamp(34px, 5vw, 72px)/.96 var(--gc-font-display);
+      letter-spacing: -.025em;
+      text-transform: uppercase;
+    }
+    .gc-section-head p { margin: 0; color: var(--gc-steel-dim); }
+
+    .gc-sequencer { border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-phase-axis {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(104px, 1fr));
+      overflow-x: auto;
+      scrollbar-color: var(--gc-steel) var(--gc-void);
+    }
+    .gc-phase-button {
+      min-width: 104px;
+      min-height: 108px;
+      display: grid;
+      align-content: space-between;
+      gap: var(--gc-sp-m);
+      padding: var(--gc-sp-s);
+      border: 0;
+      border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      transition: background var(--gc-dur-fast) var(--gc-ease-cinema), color var(--gc-dur-fast) var(--gc-ease-cinema);
+    }
+    .gc-phase-button:first-child { border-left: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-phase-button:hover { background: var(--gc-void-panel); }
+    .gc-phase-button .n { color: var(--gc-steel); font: 400 10px/1 var(--gc-font-mono); }
+    .gc-phase-button .label { font: 400 12px/1.25 var(--gc-font-mono); text-transform: uppercase; }
+    .gc-phase-button .status { color: var(--gc-steel); font: 400 8px/1 var(--gc-font-mono); letter-spacing: .08em; text-transform: uppercase; }
+    .gc-phase-button.is-complete .n,
+    .gc-phase-button.is-complete .status { color: var(--gc-confirm); }
+    .gc-phase-button.is-current { box-shadow: inset 0 -3px 0 var(--gc-electric); }
+    .gc-phase-button.is-current .n,
+    .gc-phase-button.is-current .status { color: var(--gc-electric); }
+    .gc-phase-button.is-selected { background: var(--gc-paper); color: var(--gc-ink); }
+    .gc-phase-button.is-selected .n,
+    .gc-phase-button.is-selected .status { color: var(--gc-electric); }
+
+    .gc-progress-line { height: 2px; background: var(--gc-hairline-inv); position: relative; }
+    .gc-progress-value { height: 100%; width: 65%; background: var(--gc-confirm); }
+    .gc-progress-current { position: absolute; top: -4px; left: 65%; width: 10px; height: 10px; background: var(--gc-electric); transform: translateX(-50%); }
+
+    .gc-lanes-wrap { margin-top: var(--gc-sp-xl); overflow-x: auto; border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-lanes { min-width: 1320px; }
+    .gc-lane {
+      --lane-accent: var(--gc-steel-dim);
+      display: grid;
+      grid-template-columns: 184px repeat(10, minmax(104px, 1fr));
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+    }
+    .gc-lane[data-lane="property"] { --lane-accent: var(--gc-forest-light); }
+    .gc-lane[data-lane="identity"] { --lane-accent: var(--gc-ink-inverse); }
+    .gc-lane[data-lane="capital"] { --lane-accent: var(--gc-copper); }
+    .gc-lane[data-lane="vehicle"] { --lane-accent: var(--gc-electric); }
+    .gc-lane-head {
+      min-height: 112px;
+      display: grid;
+      align-content: center;
+      gap: var(--gc-sp-2xs);
+      padding: var(--gc-sp-s);
+      border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      border-left: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+    }
+    .gc-lane-head .id { color: var(--lane-accent); font: 400 9px/1 var(--gc-font-mono); letter-spacing: .12em; }
+    .gc-lane-head strong { font: 400 20px/1 var(--gc-font-display); text-transform: uppercase; }
+    .gc-lane-head span:last-child { color: var(--gc-steel-dim); font: 400 9px/1.4 var(--gc-font-mono); text-transform: uppercase; }
+    .gc-lane-cell {
+      min-height: 112px;
+      display: grid;
+      align-content: center;
+      gap: var(--gc-sp-2xs);
+      padding: var(--gc-sp-xs);
+      border: 0;
+      border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+      position: relative;
+      transition: background var(--gc-dur-fast) var(--gc-ease-cinema);
+    }
+    .gc-lane-cell:hover { background: var(--gc-void-panel); }
+    .gc-lane-cell::before { content: ""; width: 5px; height: 5px; background: var(--gc-steel); }
+    .gc-lane-cell.is-complete::before { background: var(--gc-confirm); }
+    .gc-lane-cell.is-current::before { width: 8px; height: 8px; background: var(--gc-electric); }
+    .gc-lane-cell.is-selected { background: var(--gc-void-panel); box-shadow: inset 0 0 0 var(--gc-stroke-active) var(--lane-accent); }
+    .gc-lane-cell strong { font: 400 10px/1.35 var(--gc-font-mono); text-transform: uppercase; }
+    .gc-lane-cell span { color: var(--gc-steel-dim); font: 400 9px/1.4 var(--gc-font-body); }
+
+    .gc-focus {
+      display: grid;
+      grid-template-columns: minmax(240px, .85fr) minmax(0, 2.15fr);
+      margin-top: var(--gc-sp-xl);
+      border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+    }
+    .gc-focus-title { padding: var(--gc-sp-l); border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-focus-title .number { color: var(--gc-copper); font: 400 12px/1 var(--gc-font-mono); }
+    .gc-focus-title h3 { margin: var(--gc-sp-m) 0 var(--gc-sp-s); font: 300 clamp(32px, 4vw, 56px)/.92 var(--gc-font-display); text-transform: uppercase; }
+    .gc-focus-title p { margin: 0; color: var(--gc-steel-dim); }
+    .gc-focus-body { min-width: 0; }
+    .gc-object-detail-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .gc-object-detail {
+      min-height: 200px;
+      padding: var(--gc-sp-m);
+      border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+    }
+    .gc-object-detail:last-child { border-right: 0; }
+    .gc-object-detail .object { color: var(--gc-steel-dim); font: 400 9px/1 var(--gc-font-mono); letter-spacing: .12em; text-transform: uppercase; }
+    .gc-object-detail h4 { margin: var(--gc-sp-m) 0 var(--gc-sp-s); font: 400 18px/1.1 var(--gc-font-display); text-transform: uppercase; }
+    .gc-object-detail p { margin: 0; color: var(--gc-steel-dim); font-size: 12px; }
+    .gc-object-detail dl { margin: var(--gc-sp-m) 0 0; padding-top: var(--gc-sp-s); border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-object-detail dt { color: var(--gc-steel); font: 400 8px/1 var(--gc-font-mono); letter-spacing: .1em; text-transform: uppercase; }
+    .gc-object-detail dd { margin: var(--gc-sp-2xs) 0 0; font: 400 10px/1.4 var(--gc-font-mono); text-transform: uppercase; }
+    .gc-gate-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .gc-gate-grid article { min-height: 152px; padding: var(--gc-sp-m); border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-gate-grid article:last-child { border-right: 0; }
+    .gc-gate-grid span { color: var(--gc-copper); font: 400 9px/1 var(--gc-font-mono); letter-spacing: .12em; text-transform: uppercase; }
+    .gc-gate-grid p { margin: var(--gc-sp-s) 0 0; font-size: 13px; }
+
+    .gc-register { border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-register-row {
+      display: grid;
+      grid-template-columns: 72px minmax(190px, 1fr) minmax(260px, 1.8fr) minmax(170px, 1fr) minmax(160px, .9fr);
+      gap: var(--gc-sp-m);
+      align-items: start;
+      padding: var(--gc-sp-m) 0;
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+    }
+    .gc-register-row.header { padding: var(--gc-sp-xs) 0; color: var(--gc-steel); font: 400 9px/1 var(--gc-font-mono); letter-spacing: .1em; text-transform: uppercase; }
+    .gc-register-row .num { color: var(--gc-copper); font: 400 11px/1.4 var(--gc-font-mono); }
+    .gc-register-row h3 { margin: 0; font: 400 20px/1.1 var(--gc-font-display); text-transform: uppercase; }
+    .gc-register-row p { margin: 0; color: var(--gc-steel-dim); font-size: 13px; }
+    .gc-register-row .gate,
+    .gc-register-row .owner { font: 400 10px/1.45 var(--gc-font-mono); text-transform: uppercase; }
+    .gc-register-row .gate { color: var(--gc-confirm); }
+    .gc-register-row.is-current { box-shadow: inset 3px 0 0 var(--gc-electric); padding-left: var(--gc-sp-s); }
+
+    .gc-rules { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gc-stroke-idle); background: var(--gc-hairline-inv); }
+    .gc-rule { min-height: 190px; padding: var(--gc-sp-m); background: var(--gc-void-panel); }
+    .gc-rule .n { color: var(--gc-copper); font: 400 10px/1 var(--gc-font-mono); }
+    .gc-rule h3 { margin: var(--gc-sp-l) 0 var(--gc-sp-s); font: 400 17px/1.1 var(--gc-font-display); text-transform: uppercase; }
+    .gc-rule p { margin: 0; color: var(--gc-steel-dim); font-size: 12px; }
+    .gc-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--gc-sp-l);
+      padding: var(--gc-sp-l) clamp(var(--gc-sp-s), 6vw, var(--gc-sp-3xl));
+      border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      color: var(--gc-steel-dim);
+      font: 400 9px/1.5 var(--gc-font-mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1020px) {
+      .gc-section-head { grid-template-columns: 1fr; }
+      .gc-focus { grid-template-columns: 1fr; }
+      .gc-focus-title { border-right: 0; border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+      .gc-object-detail-grid { grid-template-columns: repeat(2, 1fr); }
+      .gc-object-detail:nth-child(2) { border-right: 0; }
+      .gc-register-row { grid-template-columns: 56px minmax(150px, .8fr) minmax(240px, 1.6fr) minmax(150px, 1fr); }
+      .gc-register-row > :last-child { display: none; }
+      .gc-rules { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .gc-hud { grid-template-columns: 1fr auto; }
+      .gc-hud-center { display: none; }
+      .gc-hero { min-height: auto; padding-top: var(--gc-sp-3xl); }
+      .gc-hero::before { display: none; }
+      .gc-hero h1 { font-size: clamp(44px, 15vw, 72px); }
+      .gc-hero-meta { grid-template-columns: repeat(2, 1fr); }
+      .gc-phase-axis { grid-template-columns: repeat(10, 116px); }
+      .gc-object-detail-grid,
+      .gc-gate-grid { grid-template-columns: 1fr; }
+      .gc-object-detail,
+      .gc-object-detail:nth-child(2),
+      .gc-gate-grid article { border-right: 0; border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+      .gc-register-row { grid-template-columns: 44px 1fr; gap: var(--gc-sp-xs); }
+      .gc-register-row.header { display: none; }
+      .gc-register-row p,
+      .gc-register-row .gate { grid-column: 2; }
+      .gc-register-row .owner { display: none; }
+      .gc-rules { grid-template-columns: 1fr; }
+      .gc-footer { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+
+    /* GANTT VIEW — one shared grid owns every vertical boundary. */
+    .gc-hero {
+      min-height: 54svh;
+      display: block;
+      padding-top: clamp(var(--gc-sp-3xl), 10vw, var(--gc-sp-4xl));
+    }
+    .gc-hero::before { display: none; }
+    .gc-hero h1 {
+      max-width: 1120px;
+      font-size: clamp(48px, 7.2vw, 104px);
+      line-height: .9;
+    }
+    .gc-hero-lead { max-width: 650px; font-size: clamp(15px, 1.5vw, 19px); }
+    .gc-hero-meta {
+      max-width: 1120px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: var(--gc-sp-xl);
+    }
+    .gc-hero-meta div { min-height: 78px; padding: var(--gc-sp-s); }
+    .gc-section { padding-top: clamp(var(--gc-sp-xl), 6vw, var(--gc-sp-3xl)); }
+    .gc-section-head { margin-bottom: var(--gc-sp-l); }
+    .gc-section-head h2 { max-width: 780px; font-size: clamp(30px, 4vw, 58px); }
+
+    .gc-gantt-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gc-sp-m);
+      padding: var(--gc-sp-xs) 0;
+      border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      color: var(--gc-steel-dim);
+      font: 400 9px/1.4 var(--gc-font-mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .gc-gantt-legend { display: flex; flex-wrap: wrap; gap: var(--gc-sp-m); }
+    .gc-gantt-legend span { display: inline-flex; align-items: center; gap: var(--gc-sp-2xs); }
+    .gc-gantt-legend i { width: 7px; height: 7px; display: block; background: var(--gc-steel); }
+    .gc-gantt-legend .complete i { background: var(--gc-confirm); }
+    .gc-gantt-legend .current i { background: var(--gc-electric); }
+
+    .gc-gantt-scroll {
+      overflow-x: auto;
+      border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      scrollbar-color: var(--gc-steel) var(--gc-void);
+    }
+    .gc-gantt-grid {
+      min-width: 1380px;
+      display: grid;
+      grid-template-columns: 176px repeat(10, minmax(118px, 1fr));
+      background: var(--gc-void);
+    }
+    .gc-gantt-corner,
+    .gc-gantt-phase,
+    .gc-gantt-lane-label,
+    .gc-gantt-cell,
+    .gc-gantt-foot-label,
+    .gc-gantt-foot {
+      min-width: 0;
+      border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      overflow: hidden;
+    }
+    .gc-gantt-corner,
+    .gc-gantt-lane-label,
+    .gc-gantt-foot-label { border-left: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+    .gc-gantt-corner {
+      min-height: 92px;
+      display: grid;
+      align-content: end;
+      padding: var(--gc-sp-xs);
+      color: var(--gc-steel-dim);
+      font: 400 9px/1.4 var(--gc-font-mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .gc-gantt-phase {
+      min-height: 92px;
+      display: grid;
+      align-content: space-between;
+      gap: var(--gc-sp-s);
+      padding: var(--gc-sp-xs);
+      border-top: 0;
+      border-left: 0;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+    .gc-gantt-phase:hover { background: var(--gc-void-panel); }
+    .gc-gantt-phase .top { display: flex; justify-content: space-between; gap: var(--gc-sp-2xs); }
+    .gc-gantt-phase .number,
+    .gc-gantt-phase .phase-state { color: var(--gc-steel); font: 400 8px/1 var(--gc-font-mono); letter-spacing: .08em; text-transform: uppercase; }
+    .gc-gantt-phase strong { font: 400 11px/1.3 var(--gc-font-mono); text-transform: uppercase; overflow-wrap: anywhere; }
+    .gc-gantt-phase.is-complete .number,
+    .gc-gantt-phase.is-complete .phase-state { color: var(--gc-confirm); }
+    .gc-gantt-phase.is-current { box-shadow: inset 0 3px 0 var(--gc-electric); }
+    .gc-gantt-phase.is-current .number,
+    .gc-gantt-phase.is-current .phase-state { color: var(--gc-electric); }
+    .gc-gantt-phase.is-selected { background: var(--gc-paper); color: var(--gc-ink); }
+    .gc-gantt-phase.is-selected .number,
+    .gc-gantt-phase.is-selected .phase-state { color: var(--gc-electric); }
+
+    .gc-gantt-lane-label {
+      --lane-accent: var(--gc-steel-dim);
+      min-height: 102px;
+      display: grid;
+      align-content: center;
+      gap: var(--gc-sp-2xs);
+      padding: var(--gc-sp-s);
+    }
+    .gc-gantt-lane-label[data-lane="property"] { --lane-accent: var(--gc-forest-light); }
+    .gc-gantt-lane-label[data-lane="identity"] { --lane-accent: var(--gc-ink-inverse); }
+    .gc-gantt-lane-label[data-lane="capital"] { --lane-accent: var(--gc-copper); }
+    .gc-gantt-lane-label[data-lane="vehicle"] { --lane-accent: var(--gc-electric); }
+    .gc-gantt-lane-label .id { color: var(--lane-accent); font: 400 8px/1 var(--gc-font-mono); letter-spacing: .1em; }
+    .gc-gantt-lane-label strong { font: 400 17px/1 var(--gc-font-display); text-transform: uppercase; }
+    .gc-gantt-lane-label small { color: var(--gc-steel-dim); font: 400 8px/1.35 var(--gc-font-mono); text-transform: uppercase; }
+    .gc-gantt-cell {
+      min-height: 102px;
+      display: grid;
+      align-content: center;
+      gap: var(--gc-sp-xs);
+      padding: var(--gc-sp-xs);
+      background: transparent;
+      position: relative;
+    }
+    .gc-gantt-cell::before { content: ""; width: 6px; height: 6px; display: block; background: var(--gc-steel); }
+    .gc-gantt-cell.is-complete::before { background: var(--gc-confirm); }
+    .gc-gantt-cell.is-current::before { width: 8px; height: 8px; background: var(--gc-electric); }
+    .gc-gantt-cell.is-selected { background: color-mix(in srgb, var(--gc-copper) 8%, transparent); }
+    .gc-gantt-cell strong {
+      display: block;
+      max-width: 100%;
+      font: 400 9px/1.35 var(--gc-font-mono);
+      text-transform: uppercase;
+      overflow-wrap: break-word;
+      word-break: normal;
+    }
+    .gc-gantt-cell.is-upcoming strong { color: var(--gc-steel-dim); }
+    .gc-gantt-foot-label,
+    .gc-gantt-foot {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      padding: var(--gc-sp-2xs) var(--gc-sp-xs);
+      color: var(--gc-steel-dim);
+      font: 400 8px/1.3 var(--gc-font-mono);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .gc-gantt-foot { justify-content: space-between; gap: var(--gc-sp-2xs); }
+    .gc-gantt-foot b { color: var(--gc-steel-dim); font-weight: 400; }
+    .gc-gantt-foot.is-complete b { color: var(--gc-confirm); }
+    .gc-gantt-foot.is-current b { color: var(--gc-electric); }
+    .gc-gantt-foot.is-selected { background: color-mix(in srgb, var(--gc-copper) 8%, transparent); }
+
+    .gc-selection {
+      display: grid;
+      grid-template-columns: 180px minmax(260px, 1.6fr) minmax(220px, 1fr) minmax(150px, .7fr);
+      margin-top: var(--gc-sp-l);
+      border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+      border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+    }
+    .gc-selection > * {
+      min-width: 0;
+      padding: var(--gc-sp-s);
+      border-right: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+    }
+    .gc-selection > *:last-child { border-right: 0; }
+    .gc-selection span { display: block; color: var(--gc-steel); font: 400 8px/1 var(--gc-font-mono); letter-spacing: .1em; text-transform: uppercase; }
+    .gc-selection strong { display: block; margin-top: var(--gc-sp-xs); font: 400 19px/1 var(--gc-font-display); text-transform: uppercase; }
+    .gc-selection p { margin: var(--gc-sp-xs) 0 0; color: var(--gc-steel-dim); font-size: 12px; }
+    .gc-selection .gate p { color: var(--gc-ink-inverse); }
+
+    @media (max-width: 760px) {
+      .gc-hero-meta { grid-template-columns: repeat(2, 1fr); }
+      .gc-gantt-toolbar { align-items: flex-start; flex-direction: column; }
+      .gc-selection { grid-template-columns: 1fr; }
+      .gc-selection > * { border-right: 0; border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+      .gc-selection > *:last-child { border-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="gc-shell">
+    <header class="gc-hud">
+      <a class="gc-wordmark" href="#top">GETAWAY COLLECTIVE</a>
+      <span class="gc-hud-center">ATLAS / INVESTMENT VEHICLE CONTROL</span>
+      <span class="gc-hud-right"><i class="gc-pulse" aria-hidden="true"></i> 4 OBJECTS / 10 GATES</span>
+    </header>
+
+    <section class="gc-hero" id="top">
+      <div class="gc-hero-copy">
+        <span class="eyebrow">GC.SYSTEM / VISUAL STATE PROGRESSION</span>
+        <h1>ONE VEHICLE.<br><span>FOUR OBJECTS.</span><br>TEN GATES.</h1>
+        <p class="gc-hero-lead">A single operating view for how Property, Identity, Capital and the LLP Investment Vehicle advance together—without implying that one object can move while a required dependency remains unresolved.</p>
+      </div>
+      <dl class="gc-hero-meta">
+        <div><dt>Reference vehicle</dt><dd>SlowSpace Coastal LLP</dd></div>
+        <div class="current"><dt>Current reference gate</dt><dd>07 / Delivery</dd></div>
+        <div><dt>Next transition</dt><dd>08 / Live + Time</dd></div>
+        <div><dt>Operating mode</dt><dd>Evidence gated</dd></div>
+      </dl>
+    </section>
+
+    <main class="gc-main">
+      <section class="gc-section" id="progression">
+        <header class="gc-section-head">
+          <div>
+            <span class="eyebrow">01 / SYNCHRONISED PROGRESSION</span>
+            <h2>READ THE WHOLE VEHICLE, NOT FOUR DISCONNECTED RECORDS.</h2>
+          </div>
+          <p>Select a phase header to isolate one vertical gate. Every object state remains inside its own fixed cell; the compact line below shows only the selected outcome, exit gate and owner.</p>
+        </header>
+
+        <div class="gc-gantt-toolbar">
+          <span>SHARED TIME AXIS / SELECT A PHASE HEADER</span>
+          <div class="gc-gantt-legend" aria-label="State legend">
+            <span class="complete"><i aria-hidden="true"></i> Complete</span>
+            <span class="current"><i aria-hidden="true"></i> Current</span>
+            <span><i aria-hidden="true"></i> Upcoming</span>
+          </div>
+        </div>
+
+        <div class="gc-gantt-scroll" aria-label="Property, Identity, Capital and LLP Vehicle across ten lifecycle gates">
+          <div class="gc-gantt-grid" id="gantt-grid" role="grid" aria-label="Investment Vehicle Gantt"></div>
+        </div>
+
+        <section class="gc-selection" id="phase-detail" aria-live="polite"></section>
+      </section>
+    </main>
+
+    <footer class="gc-footer">
+      <span>GC.SYSTEM / ATLAS / STATE PROGRESSION</span>
+      <span>PROPERTY · IDENTITY · CAPITAL · INVESTMENT VEHICLE</span>
+    </footer>
+  </div>
+
+  <script>
+    const currentIndex = 6;
+    const laneDefinitions = [
+      { key: "property", id: "01", label: "Property", source: "Property lifecycle" },
+      { key: "identity", id: "02", label: "Identity", source: "Investor → Member" },
+      { key: "capital", id: "03", label: "Capital", source: "Offer → distribution" },
+      { key: "vehicle", id: "04", label: "LLP Vehicle", source: "Vehicle lifecycle" }
+    ];
+
+    const phases = [
+      {
+        no: "01", name: "Setup", status: "complete", owner: "Legal / Control Office",
+        outcome: "Constitute the LLP, anchor the Property opportunity and create the authority and banking basis.",
+        gate: "Vehicle identity, formation evidence and initial authority are current.",
+        entry: "Approved Investment Thesis and sponsor mandate.",
+        writes: "LLPIN, constitution, registered office, bank evidence, authority grant and Property shell record.",
+        exit: "The LLP is formed, its evidence is verified and no formation blocker remains.",
+        objects: {
+          property: { state: "Prospecting", note: "Opportunity linked to its Investment Thesis.", record: "Property + thesis relationship" },
+          identity: { state: "Investor", note: "A single pre-commitment identity can be initiated.", record: "Investor identity record" },
+          capital: { state: "Modelled", note: "Sources, uses, minimum viability and bank path defined.", record: "Capital plan" },
+          vehicle: { state: "Forming", note: "LLP constitution and formation evidence in progress.", record: "Investment Vehicle" }
+        }
+      },
+      {
+        no: "02", name: "Offer", status: "complete", owner: "IR / Compliance",
+        outcome: "Open a controlled Offering only after diligence, terms, risks, capacity and access rules are disclosed.",
+        gate: "The Offering is authorised, versioned and open on fixed disclosed terms.",
+        entry: "Formation evidence current; offer capacity and acquisition basis approved.",
+        writes: "Offer terms, minimum commitment, risk disclosures, evidence index, opening authority and notice version.",
+        exit: "Qualified access is live and every disclosed term resolves to governed evidence.",
+        objects: {
+          property: { state: "Pending", note: "Terms agreed; diligence and conditions are running.", record: "Due Diligence register" },
+          identity: { state: "Investor", note: "The identity remains outside the LLP.", record: "Investor profile" },
+          capital: { state: "Offer open", note: "Minimum, capacity and economic terms are disclosed.", record: "Investment Offering" },
+          vehicle: { state: "Raising", note: "The constituted LLP may accept eligible commitments.", record: "Vehicle + Offering edge" }
+        }
+      },
+      {
+        no: "03", name: "Investor", status: "complete", owner: "Investor Relations / Compliance",
+        outcome: "Let the Investor complete identity, KYC, AML, suitability and source-of-funds evidence through a self-directed flow.",
+        gate: "Accreditation is valid at the commitment decision point and the submission is complete.",
+        entry: "Offering open and the Investor has accepted the disclosure basis.",
+        writes: "Identity proof, entity evidence, KYC, AML, suitability, source-of-funds and commitment submission.",
+        exit: "The Investor is eligible, the minimum is met and acceptance can be lawfully decided.",
+        objects: {
+          property: { state: "Pending", note: "Diligence remains visible to the eligible Investor.", record: "Property evidence projection" },
+          identity: { state: "Investor · Accredited", note: "Accreditation is transaction-specific and time-bound.", record: "Identity + accreditation evidence" },
+          capital: { state: "Commitment offered", note: "Capital is promised but not yet accepted or settled.", record: "Commitment" },
+          vehicle: { state: "Raising", note: "Capacity reduces only through governed commitment controls.", record: "Offer capacity ledger" }
+        }
+      },
+      {
+        no: "04", name: "Settlement", status: "complete", owner: "Finance / Compliance",
+        outcome: "Execute the subscription, accept payment, reconcile funds and settle the binding commitment.",
+        gate: "Executed documents and cleared funds agree to one commitment record.",
+        entry: "Valid accreditation, authorised acceptance and payment instructions issued.",
+        writes: "Executed subscription, payment receipt, reconciliation, commitment acceptance and settlement event.",
+        exit: "Funds are cleared; the settled amount, payer and subscription agree without exception.",
+        objects: {
+          property: { state: "Pending", note: "Capital is available; title has not yet transferred.", record: "Acquisition conditions" },
+          identity: { state: "Member · Settlement triggered", note: "First settlement irreversibly changes the existing identity state.", record: "Member state event" },
+          capital: { state: "Commitment settled", note: "Cleared funds are reconciled to the accepted commitment.", record: "Payment + commitment ledger" },
+          vehicle: { state: "Raising", note: "Funds are held pending deployment and Offering close.", record: "Vehicle cash record" }
+        }
+      },
+      {
+        no: "05", name: "Admission", status: "complete", owner: "Legal / Control Office",
+        outcome: "Record LLP admission, ownership interest, partner position and the entitlements that attach to it.",
+        gate: "Partner register, ownership position and governing documents agree.",
+        entry: "Commitment settled and admission authority recorded.",
+        writes: "Admission instrument, partner register, interest issuance, ownership position and entitlement basis.",
+        exit: "The Member can exercise ownership, information and governance rights in the correct scope.",
+        objects: {
+          property: { state: "Pending", note: "The acquisition basis remains governed before title transfer.", record: "Property diligence record" },
+          identity: { state: "Member · Admitted", note: "The same identity now carries an LLP partner relationship.", record: "Partner register" },
+          capital: { state: "Interest recorded", note: "Settled capital resolves to an ownership position.", record: "Investment + ownership position" },
+          vehicle: { state: "Raising", note: "Admission is complete; deployment has not yet occurred.", record: "LLP membership record" }
+        }
+      },
+      {
+        no: "06", name: "Governance", status: "complete", owner: "Board / Governance Office",
+        outcome: "Activate the Board, committees, delegated authority, voting, conflicts, notices and reporting cadence.",
+        gate: "Decision rights, quorum rules, conflicts and evidence custody are operable.",
+        entry: "Admitted Members and final ownership basis are current.",
+        writes: "Committee appointments, authority grants, policy acceptance, conflict disclosures and meeting calendar.",
+        exit: "Every material decision has an accountable forum, threshold, owner and evidence path.",
+        objects: {
+          property: { state: "Pending", note: "Acquisition and project decisions have named authority.", record: "Property authority map" },
+          identity: { state: "Member · Rights active", note: "Voting and information rights attach to ownership.", record: "Member rights projection" },
+          capital: { state: "Protected", note: "Deployment and reserve decisions have defined authority.", record: "Capital authority matrix" },
+          vehicle: { state: "Raising", note: "Governance is active before capital deployment.", record: "Committees + resolutions" }
+        }
+      },
+      {
+        no: "07", name: "Delivery", status: "current", owner: "Acquisition / Project Office",
+        outcome: "Complete acquisition, deploy capital and control design and construction against an approved baseline.",
+        gate: "Title, baseline, budget, workstreams, certifications and material decisions are current.",
+        entry: "Acquisition authority, conditions precedent and deployment decision approved.",
+        writes: "Acquisition record, title evidence, deployment event, project baseline, budget, milestones, risks and changes.",
+        exit: "The Property is complete, protected, handed over and ready for stabilisation review.",
+        objects: {
+          property: { state: "Acquired → Development", note: "Title transfer is immutable; delivery follows an approved budget.", record: "Acquisition + Property lifecycle" },
+          identity: { state: "Member", note: "Progress, decisions and material variances are visible by right.", record: "Member disclosure projection" },
+          capital: { state: "Invested", note: "Capital is deployed into the Property and tracked to budget.", record: "Investment + project ledger" },
+          vehicle: { state: "Deployed", note: "Capital has entered the asset and cannot revert to committed.", record: "Vehicle lifecycle event" }
+        }
+      },
+      {
+        no: "08", name: "Live + Time", status: "upcoming", owner: "Operations / Time Office",
+        outcome: "Declare operational stabilisation, complete handover and publish the governed annual Time pool and entitlements.",
+        gate: "Operations are live, protection is current and the allocation handoff is published.",
+        entry: "Delivery complete; operating appointments, inventory and protection evidence accepted.",
+        writes: "Stabilisation event, handover, operating appointment, annual policy, entitlement pool and allocation handoff.",
+        exit: "The Property is stabilised and Time can be administered by the connected operating platform.",
+        objects: {
+          property: { state: "Stabilised", note: "The Property is operating and reserve obligations now apply.", record: "Property stabilisation event" },
+          identity: { state: "Member · Entitled", note: "Time entitlement is calculated from the governed ownership basis.", record: "Member entitlement" },
+          capital: { state: "Operating", note: "Revenue and operating obligations begin to accrue.", record: "Operating ledger" },
+          vehicle: { state: "Stabilised", note: "Reserve funding becomes mandatory; call purposes narrow.", record: "Vehicle stabilisation event" }
+        }
+      },
+      {
+        no: "09", name: "Cash flow", status: "upcoming", owner: "Finance / Board",
+        outcome: "Reconcile income, expenses, reserves, debt obligations and distributions through the governed waterfall.",
+        gate: "The period is closed, reserve tests pass and the distribution resolution is recorded.",
+        entry: "Operating transactions imported with source and counterparty evidence.",
+        writes: "Receipts, expenses, reconciliation, reserve test, waterfall calculation, approval and payment notices.",
+        exit: "Cash is accounted, obligations are met and approved distributions are traceable to every Member.",
+        objects: {
+          property: { state: "Stabilised", note: "Asset performance and reserve needs inform the close.", record: "Property performance record" },
+          identity: { state: "Member · Payee", note: "Distribution rights resolve from ownership, not accreditation.", record: "Member distribution notice" },
+          capital: { state: "Waterfall resolved", note: "Cash is allocated in the constitutional order.", record: "Distribution + reserve evidence" },
+          vehicle: { state: "Stabilised", note: "The LLP remains the accountable cash and reporting perimeter.", record: "Vehicle period close" }
+        }
+      },
+      {
+        no: "10", name: "Board + Comms", status: "upcoming", owner: "Board / Communications Office",
+        outcome: "Run the recurring Board cycle and issue governed decisions, reports, statements and notices.",
+        gate: "Meeting evidence, resolutions, actions and communications are complete and retained.",
+        entry: "Current performance, risks, exceptions and decision matters assembled into the Board pack.",
+        writes: "Agenda, Board pack, attendance, equity-weighted tally, resolution, action log, report and notice archive.",
+        exit: "Decisions are executed, accountable actions are tracked and the next reporting cycle is scheduled.",
+        objects: {
+          property: { state: "Stabilised", note: "Performance, risk and material asset matters reach the Board.", record: "Property Board report" },
+          identity: { state: "Member · Informed", note: "Rights-scoped reports, statements and notices are delivered.", record: "Communication receipt" },
+          capital: { state: "Reported", note: "Statements, valuation and cash outcomes share one evidence basis.", record: "Capital reporting pack" },
+          vehicle: { state: "Stabilised · Governed", note: "The cycle repeats while the vehicle remains active.", record: "Board + communications archive" }
+        }
+      }
+    ];
+
+    const gantt = document.getElementById("gantt-grid");
+    const detail = document.getElementById("phase-detail");
+
+    function temporalClass(index) {
+      if (index < currentIndex) return "is-complete";
+      if (index === currentIndex) return "is-current";
+      return "is-upcoming";
+    }
+
+    function phaseStatus(index) {
+      if (index < currentIndex) return "Complete";
+      if (index === currentIndex) return "Current";
+      return "Upcoming";
+    }
+
+    function renderStatic() {
+      gantt.innerHTML = `
+        <div class="gc-gantt-corner" role="columnheader">Object / canonical state</div>
+        ${phases.map((phase, index) => `
+          <button class="gc-gantt-phase ${temporalClass(index)}" type="button" aria-pressed="false" data-index="${index}">
+            <span class="top"><span class="number">${phase.no}</span><span class="phase-state">${phaseStatus(index)}</span></span>
+            <strong>${phase.name}</strong>
+          </button>`).join("")}
+        ${laneDefinitions.map(lane => `
+          <div class="gc-gantt-lane-label" data-lane="${lane.key}" role="rowheader">
+            <span class="id">OBJECT ${lane.id}</span>
+            <strong>${lane.label}</strong>
+            <small>${lane.source}</small>
+          </div>
+          ${phases.map((phase, index) => {
+            const object = phase.objects[lane.key];
+            return `<div class="gc-gantt-cell ${temporalClass(index)}" data-column="${index}" role="gridcell" aria-label="${phase.no} ${phase.name}, ${lane.label}: ${object.state}. ${object.note}">
+              <strong>${object.state}</strong>
+            </div>`;
+          }).join("")}`).join("")}
+        <div class="gc-gantt-foot-label">Phase position</div>
+        ${phases.map((phase, index) => `
+          <div class="gc-gantt-foot ${temporalClass(index)}" data-column="${index}">
+            <span>${phase.no}</span><b>${phaseStatus(index)}</b>
+          </div>`).join("")}`;
+    }
+
+    function renderSelection(index) {
+      const phase = phases[index];
+      document.querySelectorAll("[data-index]").forEach(control => {
+        const selected = Number(control.dataset.index) === index;
+        control.classList.toggle("is-selected", selected);
+        control.setAttribute("aria-pressed", String(selected));
+      });
+      document.querySelectorAll("[data-column]").forEach(cell => {
+        cell.classList.toggle("is-selected", Number(cell.dataset.column) === index);
+      });
+
+      detail.innerHTML = `
+        <header><span>Selected gate</span><strong>${phase.no} / ${phase.name}</strong></header>
+        <div><span>Accountable outcome</span><p>${phase.outcome}</p></div>
+        <div class="gate"><span>Exit gate</span><p>${phase.gate}</p></div>
+        <div><span>Owner</span><p>${phase.owner}</p></div>`;
+    }
+
+    renderStatic();
+    renderSelection(currentIndex);
+
+    document.addEventListener("click", event => {
+      const control = event.target.closest(".gc-gantt-phase[data-index]");
+      if (!control) return;
+      renderSelection(Number(control.dataset.index));
+    });
+  </script>
+</body>
+</html>

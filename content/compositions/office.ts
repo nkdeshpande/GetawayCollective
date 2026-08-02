@@ -98,7 +98,7 @@ export const OFFICE_PAGES: Record<string, Entry> = {
     eyebrow: "Office · the financial position",
     lead: "Everything the vehicle receives, owes, earns, preserves and distributes — the Capital domain, at office vantage.",
     disclosure: d(
-      "The doctrine and the waterfall shape are public at /how-capital-works.",
+      "The doctrine and the waterfall shape are public at /collection/slowspace-coastal/investment.",
       "Offering terms in full detail after accreditation.",
       "Partners see their own slice of these figures in the console.",
       "Live ledgers, reserves and covenant headroom, per period, at operation.",

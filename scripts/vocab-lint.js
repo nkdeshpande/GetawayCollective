@@ -49,6 +49,9 @@ const NOT_PROSE = {
   docs: "Developer documentation.",
   generated: "Written from the registries; fix a violation at its generator.",
   migrations: "Database schema.",
+  assets: "Binary design references and raster imagery; published prose remains in application and content source.",
+  public: "Static binary assets referenced by the application; member-facing prose remains in application and content source.",
+  outputs: "Generated workbook and review artifacts. They are architecture inputs, not prose rendered by the application.",
 };
 const SCAN_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".json"]);
 const SKIP_DIRS = new Set(["node_modules", ".next", "dist", "build", ".git", "scripts", ".turbo"]);

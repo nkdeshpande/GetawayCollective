@@ -10,6 +10,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { parseRoutesSource } = require("./lib/route-source-parser");
 const ROOT = path.resolve(__dirname, "..");
 const read = (...p) =>
   fs.readFileSync(path.join(ROOT, ...p), "utf8").replace(/\r\n/g, "\n");
@@ -51,86 +52,37 @@ const unescapeTs = (s) =>
 
 const join = (c) =>
   unescapeTs([...c.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]).join(""));
-const resolveConst = (n) => {
-  const m = src.match(new RegExp(`export const ${n}\\s*=\\s*((?:"(?:[^"\\\\]|\\\\.)*"\\s*\\+?\\s*\\n?\\s*)+);`));
-  return m ? join(m[1]) : "";
-};
-
 const SECTIONS = [
-  ["PUBLIC_ROUTES", "Public", "The gateway. Anyone, indexable."],
-  ["LEGAL_ROUTES", "Legal", "Standing statements. All public — a document behind a sign-in is one nobody can rely on before they sign in."],
-  ["AUTH_ROUTES", "Identity & Passport", "Sixteen accreditation stages, each its own URL so a partial application is returnable by link."],
-  ["MEMBER_ROUTES", "Member Workspace", "Requires a settled position. The Member Law has fired."],
-  ["CAPITAL_ROUTES", "Capital Workspace", "Operational. Carries data about people other than the viewer."],
-  ["ADMIN_ROUTES", "Administration", "Every route names the RIGHT it requires, never the role that holds it."],
-  ["SYSTEM_ROUTES", "System States", "Places that are really states."],
-  ["FLOW_ROUTES", "The Worked Flow", "One offering walked end to end on illustrative data. Public throughout, declaring no assembly: these are demonstration components, not the registered assemblies rendering real records, and that distinction is what makes them public."],
-  ["COLLECTIVE_ROUTES", "The Public Surface", "PUB.01 through PUB.11 from the wireframes. Every one public and indexable — these are the pages that exist to be found. /gallery, /portfolio, /story, /voices and /journal already serve PUB.03, PUB.04 and PUB.08 and are retained above."],
-  ["JOURNAL_ROUTES", "The Journal", "What the platform says about itself, one binding decision at a time. Separate from Voices because a partner talking about returns is regulated speech and an explanation of a mechanism is not."],
+  ["public", "Public", "The gateway and public vehicle story. Anyone, indexable."],
+  ["legal", "Legal", "One governed document renderer, selected by document slug."],
+  ["investor", "Investor", "Qualification, private diligence and commitment for the permitted relationship state."],
+  ["member", "Member", "A settled holder's portfolio and vehicle-scoped records."],
+  ["office", "Office", "Investment-vehicle operating control. Every write is gated by a named right."],
+  ["system", "System", "Sign in, verification, health and non-disclosing denial."],
 ];
 
-function parseSection(name) {
-  const block = src.match(new RegExp(`export const ${name}: readonly Route\\[\\] = \\[([\\s\\S]*?)\\n\\];`));
-  if (!block) return [];
-  const out = [];
-  // The trailing "\n" matters. The block capture stops at "\n];", so the
-  // newline the route pattern needs after ")," belongs to the terminator
-  // rather than the content — and the LAST route of every section was
-  // silently dropped. Seven sections, seven missing routes, no error.
-  for (const m of (block[1] + "\n").matchAll(
-    /R\(\s*(`[^`]*`|"[^"]*")\s*,\s*(`[^`]*`|"[^"]*")\s*,\s*"(\w+)"\s*,\s*(null|"[^"]*")([\s\S]*?)\n?\s*\),?\n/g,
-  )) {
-    const tail = m[5];
-    const unq = (s) => s.replace(/^[`"]|[`"]$/g, "");
-    const o = tail.match(/accessOverride:\s*\{\s*access:\s*"(\w+)"[\s\S]*?because:\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+|[A-Z][A-Z0-9_]*)/);
-    const nt = tail.match(/notes:\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+)/);
-    out.push({
-      path: unq(m[1]), name: unq(m[2]), group: m[3],
-      assembly: m[4] === "null" ? null : unq(m[4]),
-      rights: [...((tail.match(/rights:\s*\[([^\]]*)\]/) || [, ""])[1]).matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-      override: o ? {
-        access: o[1],
-        because: /^[A-Z][A-Z0-9_]*$/.test(o[2].trim()) ? resolveConst(o[2].trim()) : join(o[2]),
-      } : null,
-      notes: nt ? join(nt[1]) : "",
-    });
-  }
-  return out;
-}
-
-const STAGES = [...((src.match(/export const PASSPORT_STAGES = \[([\s\S]*?)\] as const;/) || [, ""])[1])
-  .matchAll(/"([^"]+)"/g)].map((m) => m[1]);
-
-const groups = SECTIONS.map(([k, title, blurb]) => ({ k, title, blurb, routes: parseSection(k) }));
+const officePrefixes = new Set(["OFF", "SPA", "CAP", "TIM", "PRJ", "PAR", "GOV", "DOC", "ACT", "NET", "SYS"]);
+const sectionOf = (route) => {
+  const prefix = route.ia.split("-")[0];
+  if (/^GC-9/.test(route.ia)) return "system";
+  if (route.ia === "GC-510") return "legal";
+  if (prefix === "INV") return "investor";
+  if (prefix === "MEM") return "member";
+  if (officePrefixes.has(prefix)) return "office";
+  return "public";
+};
+const parsedRoutes = parseRoutesSource(src).map((route) => ({
+  ...route,
+  override: route.override ? { access: route.override, because: route.overrideBecause } : null,
+}));
+const groups = SECTIONS.map(([k, title, blurb]) => ({
+  k, title, blurb, routes: parsedRoutes.filter((route) => sectionOf(route) === k),
+}));
 const all = groups.flatMap((g) => g.routes);
 
-if (all.length === 0 || STAGES.length === 0) {
-  console.error("[ia-map] Parsed zero routes or zero passport stages. Refusing to write.");
+if (all.length === 0 || all.length !== parsedRoutes.length) {
+  console.error("[ia-map] Parsed zero routes or failed to classify every route. Refusing to write.");
   process.exit(2);
-}
-
-/**
- * Reconciliation. The section-by-section parse must account for every
- * route a whole-file parse finds.
- *
- * This is here because it caught a real drop: the section capture stops
- * at "\n];", which swallowed the newline the route pattern needs, and the
- * LAST route of all seven sections vanished from the map. Seven routes,
- * no error, a document that looked complete. A partial map is worse than
- * no map, because it gets trusted.
- */
-{
-  const WHOLE = /R\(\s*(`[^`]*`|"[^"]*")\s*,\s*(`[^`]*`|"[^"]*")\s*,\s*"(\w+)"\s*,\s*(null|"[^"]*")([\s\S]*?)\n?\s*\),?\n/g;
-  const whole = [...src.matchAll(WHOLE)].map((m) => m[1].replace(/^[`"]|[`"]$/g, ""));
-  const mine = new Set(all.map((r) => r.path));
-  const dropped = whole.filter((p) => !mine.has(p));
-  if (dropped.length) {
-    console.error(
-      `[ia-map] ${dropped.length} route(s) present in the file but missing from the map: ` +
-        `${dropped.join(", ")}. Refusing to write a partial architecture.`,
-    );
-    process.exit(2);
-  }
 }
 
 const accessOf = (r) => {
@@ -211,19 +163,13 @@ if (memberSurfaces.size === 0) {
 const pageContents = new Map();
 {
   const block = src.match(/export const PAGE_CONTENTS[^=]*=\s*\{([\s\S]*?)\n\};/);
-  if (!block) {
-    console.error("[ia-map] Could not parse PAGE_CONTENTS. Refusing to write a partial architecture.");
-    process.exit(2);
-  }
-  for (const m of block[1].matchAll(/"([^"]+)":\s*\[([\s\S]*?)\n  \],/g)) {
-    const items = [...m[2].matchAll(
-      /\{\s*part:\s*"((?:[^"\\]|\\.)*)",\s*holds:\s*"((?:[^"\\]|\\.)*)"\s*\}/g,
-    )].map((x) => ({ part: unescapeTs(x[1]), holds: unescapeTs(x[2]) }));
-    if (items.length) pageContents.set(m[1], items);
-  }
-  if (pageContents.size === 0) {
-    console.error("[ia-map] PAGE_CONTENTS parsed as empty. Refusing to write.");
-    process.exit(2);
+  if (block) {
+    for (const m of block[1].matchAll(/"([^"]+)":\s*\[([\s\S]*?)\n  \],/g)) {
+      const items = [...m[2].matchAll(
+        /\{\s*part:\s*"((?:[^"\\]|\\.)*)",\s*holds:\s*"((?:[^"\\]|\\.)*)"\s*\}/g,
+      )].map((x) => ({ part: unescapeTs(x[1]), holds: unescapeTs(x[2]) }));
+      if (items.length) pageContents.set(m[1], items);
+    }
   }
 }
 
@@ -478,8 +424,8 @@ code{font-family:var(--fm);font-size:.88em;background:rgba(242,242,242,.07);padd
 <div class="eb">GC.SYSTEM · Wave 7 · Information Architecture</div>
 <h1>Every URL<br>in the system.</h1>
 <p class="lede">
-<strong>${all.length} routes</strong> across seven sections, plus ${STAGES.length} generated passport
-stages. Access is <strong>derived from the assembly's vantage</strong> rather than declared — the
+<strong>${all.length} routes</strong> across six canonical realms. Access is
+<strong>derived from the assembly's vantage</strong> rather than declared — the
 aperture tier already decided what each vantage may see, and a route restating it would be a second
 source of truth. ${all.filter((r) => r.override).length} routes override that derivation, and every
 one states why.
@@ -508,10 +454,6 @@ ${(() => { const c = contentsOf(r); if (!c.length) return ""; return `<div class
 ${c.map((x) => `<div class="ct"><span class="ch">${esc(x.h)}</span><span class="cp">${esc(x.t)}</span></div>`).join("")}
 </div>`; })()}
 </div>`; }).join("")}
-${g.k === "AUTH_ROUTES" ? `<div class="stages">
-${STAGES.map((s, i) => `<div><span class="i">${String(i + 1).padStart(2, "0")}</span>
-<span class="t">${esc(s.replace(/-/g, " "))}</span></div>`).join("")}
-</div>` : ""}
 </section>`).join("")}
 
 <section class="laws">
@@ -549,7 +491,7 @@ the condition separationViolations() exists to detect.
     console.error(
       `[ia-map] ${without.length} route(s) describe no contents: ` +
         `${without.map((r) => r.path).join(", ")}.\n` +
-        `  Give each an assembly, or an entry in PAGE_CONTENTS in constants/routes.ts.\n` +
+        `  Give each an assembly or a governed contents description.\n` +
         `  A URL with no stated contents is a page nobody has described, and a map that ` +
         `lists it silently reads as a map of a smaller system.`,
     );
@@ -559,6 +501,6 @@ the condition separationViolations() exists to detect.
 
 fs.writeFileSync(path.join(ROOT, "INFORMATION-ARCHITECTURE.html"), html);
 console.log("[ia-map] wrote INFORMATION-ARCHITECTURE.html");
-console.log(`  ${all.length} routes · ${STAGES.length} passport stages · ` +
+console.log(`  ${all.length} routes · ` +
   `${all.filter((r) => r.override).length} overrides`);
 console.log("  " + Object.entries(tally).map(([k, v]) => `${k} ${v}`).join(" · "));

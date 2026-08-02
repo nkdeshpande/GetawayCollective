@@ -174,7 +174,7 @@ const J02: Entry = {
       "vehicle carrying debt, five things have to be true." },
   ],
   onward: [
-    { path: "/how-capital-works", title: "How capital works",
+    { path: "/collection/slowspace-coastal/investment", title: "How capital works",
       why: "The same six stages with worked figures." },
     { path: "/legal/risk-disclosure", title: "Risk Factors",
       why: "Part D on what leverage does to stage six." },

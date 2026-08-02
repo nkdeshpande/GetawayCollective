@@ -1,237 +1,188 @@
-/**
- * The information architecture
- *
- * Wave 7 · Workspaces
- */
+/** Canonical IA v5 route registry. */
 
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-  ROUTES, PUBLIC_ROUTES, LEGAL_ROUTES, AUTH_ROUTES, MEMBER_ROUTES,
-  CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, FLOW_ROUTES, JOURNAL_ROUTES,
-  COLLECTIVE_ROUTES, PASSPORT_STAGES,
-  ACCESS_RANK, ACCESS_FOR_VANTAGE, GROUP_VANTAGE, IA_LAWS,
-  accessOf, isIndexable, routeByPath, routesFor, allParams,
+  ACCESS_FOR_VANTAGE,
+  ACCESS_RANK,
+  GROUP_VANTAGE,
+  IA_LAWS,
+  INVESTOR_ROUTES,
+  LEGAL_ROUTES,
+  MEMBER_ROUTES,
+  OFFICE_ROUTES,
+  PUBLIC_ROUTES,
+  ROUTES,
+  SYSTEM_ROUTES,
+  accessOf,
+  allParams,
+  isIndexable,
+  routeByIA,
+  routeByPath,
+  routesFor,
 } from "../constants/routes";
-import { ASSEMBLIES, scopeOf } from "../constants/assemblies";
 import { APERTURES } from "../constants/apertures";
+import { ASSEMBLIES, scopeOf } from "../constants/assemblies";
+import { REDIRECTS } from "../constants/redirects";
 
-const assemblyById = (id: string) => ASSEMBLIES.find((a) => a.id === id);
-const vantageOf = (r: (typeof ROUTES)[number]) =>
-  r.assembly ? assemblyById(r.assembly)?.vantage ?? GROUP_VANTAGE[r.group] : GROUP_VANTAGE[r.group];
+const assemblyById = (id: string) => ASSEMBLIES.find((assembly) => assembly.id === id);
+const vantageOf = (route: (typeof ROUTES)[number]) =>
+  route.assembly ? assemblyById(route.assembly)?.vantage ?? GROUP_VANTAGE[route.group] : GROUP_VANTAGE[route.group];
 
-describe("the route table", () => {
+describe("canonical IA v5", () => {
+  /* 109 = 104 canonical URLs + three design-review aliases + the two
+     framework conventions (/404, /500) restored to the table. */
+  it("wires 104 canonical URLs plus three design-review aliases and two conventions", () => {
+    expect(ROUTES).toHaveLength(109);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(109);
+    const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
+    expect(records).toHaveLength(110);
+    expect(new Set(records).size).toBe(records.length);
+  });
+
+  it("co-locates the Partners module and Register without duplicating the URL", () => {
+    const partners = routeByPath("/office/collection/[vehicle]/partners")!;
+    expect(partners.ia).toBe("OFF-160");
+    expect(partners.coLocatedIa).toEqual(["PAR-100"]);
+    expect(routeByIA("PAR-100")).toBe(partners);
+  });
+
   it("covers every route group", () => {
-    for (const g of ["gateway", "space", "capital", "time", "member", "admin"] as const) {
-      expect(routesFor(g).length, `${g} has no route`).toBeGreaterThan(0);
+    for (const group of ["gateway", "space", "capital", "time", "member", "admin"] as const) {
+      expect(routesFor(group).length, group).toBeGreaterThan(0);
     }
   });
 
-  it("holds one entry per path", () => {
-    const paths = ROUTES.map((r) => r.path);
-    expect(new Set(paths).size).toBe(paths.length);
-  });
-
-  it("uses lowercase paths with no trailing slash", () => {
-    for (const r of ROUTES) {
-      expect(r.path, r.path).toBe(r.path.toLowerCase());
-      expect(r.path.startsWith("/"), r.path).toBe(true);
-      if (r.path.length > 1) expect(r.path.endsWith("/"), r.path).toBe(false);
+  it("uses lowercase paths and declares every dynamic segment", () => {
+    for (const route of ROUTES) {
+      expect(route.path).toBe(route.path.toLowerCase());
+      expect(route.path.startsWith("/")).toBe(true);
+      if (route.path.length > 1) expect(route.path.endsWith("/")).toBe(false);
+      const inPath = [...route.path.matchAll(/\[(\w+)\]/g)].map((match) => match[1]).sort();
+      expect([...(route.params ?? [])].sort(), route.path).toEqual(inPath);
     }
   });
 
-  it("declares every dynamic segment it uses", () => {
-    for (const r of ROUTES) {
-      const inPath = [...r.path.matchAll(/\[(\w+)\]/g)].map((m) => m[1]);
-      expect([...(r.params ?? [])].sort(), r.path).toEqual(inPath.sort());
+  it("renders only registered screen assemblies", () => {
+    for (const route of ROUTES) {
+      if (route.assembly) expect(assemblyById(route.assembly), route.path).toBeDefined();
     }
-  });
-
-  it("renders only assemblies that exist", () => {
-    for (const r of ROUTES) {
-      if (r.assembly) expect(assemblyById(r.assembly), `${r.path} → ${r.assembly}`).toBeDefined();
-    }
-  });
-
-  it("makes every assembly reachable", () => {
-    // An assembly nobody can navigate to is a screen that was built and
-    // lost. Chrome and regions compose into other screens rather than
-    // routing, and which those are is DERIVED from scope — this was a
-    // hardcoded list of three ids, so every region added afterwards
-    // failed for the wrong reason and got appended to silence it.
-    const rendered = new Set(ROUTES.map((r) => r.assembly).filter(Boolean));
-    const orphan = ASSEMBLIES
-      .filter((a) => !rendered.has(a.id) && scopeOf(a) === "screen")
-      .map((a) => a.id);
-    expect(orphan, `unreachable: ${orphan.join(" ")}`).toEqual([]);
+    const rendered = new Set(ROUTES.map((route) => route.assembly).filter(Boolean));
+    const missing = ASSEMBLIES.filter((assembly) => scopeOf(assembly) === "screen" && !rendered.has(assembly.id));
+    expect(missing.map((assembly) => assembly.id)).toEqual([]);
   });
 });
 
-describe("access", () => {
-  it("derives from the vantage rather than being declared", () => {
-    // The aperture tier already decided what each vantage may see. A route
-    // restating it would be a second source of truth.
-    for (const r of ROUTES) {
-      if (r.accessOverride) continue;
-      expect(accessOf(r, vantageOf(r)), r.path).toBe(ACCESS_FOR_VANTAGE[vantageOf(r)]);
-    }
-  });
-
-  it("gives every override a reason", () => {
-    const overrides = ROUTES.filter((r) => r.accessOverride);
-    expect(overrides.length).toBeGreaterThan(0);
-    for (const r of overrides) {
-      expect(r.accessOverride!.because.length, r.path).toBeGreaterThan(40);
-    }
-  });
-
-  it("never widens past the apertures the assembly renders", () => {
-    // An override may relax the route. It may not relax the disclosure
-    // model underneath it.
-    const apVantage = new Map(APERTURES.map((a) => [a.id, a.vantage]));
-    for (const r of ROUTES) {
-      if (!r.accessOverride || !r.assembly) continue;
-      const a = assemblyById(r.assembly)!;
-      const rendered = a.sections.flatMap((s) => s.contains).filter((x) => /^AP-\d+$/.test(x));
-      for (const ap of rendered) {
-        const needs = ACCESS_FOR_VANTAGE[apVantage.get(ap)!];
-        expect(
-          ACCESS_RANK[r.accessOverride.access],
-          `${r.path} widened to ${r.accessOverride.access} but renders ${ap}`,
-        ).toBeGreaterThanOrEqual(ACCESS_RANK[needs]);
+describe("access and authority", () => {
+  it("derives access from vantage unless a reasoned override narrows arrival", () => {
+    for (const route of ROUTES) {
+      if (route.accessOverride) {
+        expect(route.accessOverride.because.length, route.path).toBeGreaterThan(40);
+      } else {
+        expect(accessOf(route, vantageOf(route)), route.path).toBe(ACCESS_FOR_VANTAGE[vantageOf(route)]);
       }
     }
   });
 
-  it("indexes nothing that requires authentication", () => {
-    // An indexed URL behind auth leaks its existence and usually its title.
-    for (const r of ROUTES) {
-      const access = accessOf(r, vantageOf(r));
-      if (isIndexable(r, access)) expect(access, r.path).toBe("public");
+  it("never indexes a protected route", () => {
+    for (const route of ROUTES) {
+      const access = accessOf(route, vantageOf(route));
+      if (isIndexable(route, access)) expect(access, route.path).toBe("public");
     }
   });
 
-  it("keeps every legal document public", () => {
-    // A legal document behind a sign-in is one nobody can rely on before
-    // they sign in, which is exactly when they need it.
-    for (const r of LEGAL_ROUTES) {
-      expect(accessOf(r, vantageOf(r)), r.path).toBe("public");
+  it("never widens beyond an aperture rendered by its assembly", () => {
+    const apertureVantage = new Map(APERTURES.map((aperture) => [aperture.id, aperture.vantage]));
+    for (const route of ROUTES) {
+      if (!route.accessOverride || !route.assembly) continue;
+      const assembly = assemblyById(route.assembly)!;
+      const rendered = assembly.sections.flatMap((section) => section.contains).filter((ref) => /^AP-\d+$/.test(ref));
+      for (const ref of rendered) {
+        const required = ACCESS_FOR_VANTAGE[apertureVantage.get(ref)!];
+        expect(ACCESS_RANK[route.accessOverride.access], route.path).toBeGreaterThanOrEqual(ACCESS_RANK[required]);
+      }
     }
   });
 
-  it("puts the risk disclosure in front of the commitment path", () => {
-    expect(routeByPath("/legal/risk-disclosure")?.assembly).toBe("AS-14");
-    expect(routeByPath("/commit/[offering]/risk")?.assembly).toBe("AS-14");
-    // Public to READ. The acknowledgement still requires identity.
-    expect(accessOf(routeByPath("/legal/risk-disclosure")!, "capital")).toBe("public");
+  it("gates every Office surface on at least one declared right", () => {
+    for (const route of OFFICE_ROUTES) {
+      expect((route.rights ?? []).length, route.path).toBeGreaterThan(0);
+    }
+  });
+
+  it("does not inherit a wider access class from a reused assembly", () => {
+    expect(accessOf(routeByIA("MEM-120")!, vantageOf(routeByIA("MEM-120")!))).toBe("member");
+    expect(accessOf(routeByIA("GOV-130")!, vantageOf(routeByIA("GOV-130")!))).toBe("office");
   });
 });
 
-describe("authority", () => {
-  it("names rights, never roles", () => {
-    // Rights are granted and revoked. A route bound to a role would
-    // survive the revocation.
-    const all = ROUTES.flatMap((r) => r.rights ?? []);
-    expect(all.length).toBeGreaterThan(20);
-    for (const right of all) expect(right, right).toMatch(/^[a-z_]+\.[a-z_]+$/);
+describe("realm workflows", () => {
+  it("uses one resumable qualification route and an accredited commitment record", () => {
+    const qualification = routeByPath("/invest/qualify")!;
+    expect(qualification.ia).toBe("INV-090");
+    expect(qualification.accessOverride?.access).toBe("identified");
+    expect(routeByPath("/invest/[vehicle]/commit")?.accessOverride?.access).toBe("accredited");
+    expect(INVESTOR_ROUTES).toHaveLength(9);
   });
 
-  it("has no super-admin, and no route grants every right", () => {
-    // The eight roles are offices and committees, not tiers. A super-admin
-    // holds every right, which is what separationViolations() detects.
-    expect(IA_LAWS.noSuperAdmin).toContain("separationViolations");
-    const most = Math.max(...ROUTES.map((r) => (r.rights ?? []).length));
-    expect(most, "no route should gate on a large bundle of rights").toBeLessThanOrEqual(2);
+  it("puts risk before commitment in the vehicle diligence sequence", () => {
+    expect(routeByPath("/invest/[vehicle]/risks")?.assembly).toBe("AS-14");
+    expect(routeByPath("/invest/[vehicle]/commit")?.assembly).toBe("AS-19");
   });
 
-  it("requires a right for every admin route that renders something", () => {
-    for (const r of ADMIN_ROUTES) {
-      expect((r.rights ?? []).length, `${r.path} names no right`).toBeGreaterThan(0);
-    }
+  it("serves all legal instruments through one dynamic governed renderer", () => {
+    expect(LEGAL_ROUTES).toHaveLength(1);
+    expect(LEGAL_ROUTES[0].path).toBe("/legal/[document]");
+    expect(accessOf(LEGAL_ROUTES[0], vantageOf(LEGAL_ROUTES[0]))).toBe("public");
   });
 
-  it("routes constitutional failure through a resolution, not a login", () => {
-    const cf = routeByPath("/admin/failure")!;
-    expect(cf.rights).toContain("constitutional_failure.declare");
-    expect(cf.notes).toContain("resolution reference, not a role");
-  });
-});
+  /* Six, not four. /404 and /500 are framework CONVENTIONS rather than
+     pages — Next.js compiles them to not-found.tsx and error.tsx — but
+     they are addressable states the architecture has to describe, and the
+     Migration sheet marks both Keep.
 
-describe("the passport", () => {
-  it("runs sixteen stages, each its own URL", () => {
-    expect(PASSPORT_STAGES).toHaveLength(16);
-    for (const st of PASSPORT_STAGES) {
-      expect(routeByPath(`/passport/${st}`), st).toBeDefined();
-    }
-  });
-
-  it("is reachable before membership exists", () => {
-    // The passport is how someone BECOMES a member. Requiring membership
-    // would close the only door into the system.
-    for (const st of PASSPORT_STAGES) {
-      const r = routeByPath(`/passport/${st}`)!;
-      expect(r.accessOverride?.access, st).toBe("identified");
-      expect(r.accessOverride?.because, st).toContain("Member Law fires on");
-    }
+     Dropping them from this table did not merely lose two rows: gen-app
+     removed both files as orphans, and production fell back to Next's
+     stock pages, which is the one place a stack trace can still reach a
+     visitor. The count is pinned here so that cannot recur silently. */
+  it("keeps exactly the six canonical system states public", () => {
+    expect(SYSTEM_ROUTES.map((route) => route.path))
+      .toEqual(["/sign-in", "/verify", "/status", "/403", "/404", "/500"]);
+    for (const route of SYSTEM_ROUTES) expect(accessOf(route, vantageOf(route))).toBe("public");
+    expect(routeByPath("/verify")?.params ?? []).toEqual([]);
+    expect(routeByPath("/verify")?.notes).toContain("single-use");
   });
 
-  it("keeps the commitment path reachable by an accredited investor", () => {
-    for (const p of ["/commit/[offering]", "/commit/[offering]/risk", "/commit/[offering]/execute"]) {
-      expect(routeByPath(p)?.accessOverride?.access, p).toBe("accredited");
+  it("keeps design-review aliases explicit and non-sensitive", () => {
+    for (const path of ["/investor-workspace-preview", "/member-workspace-preview", "/office-workspace-preview"]) {
+      const route = routeByPath(path)!;
+      expect(route.notes, path).toContain("Design-review surface only");
+      expect(accessOf(route, vantageOf(route))).toBe("public");
     }
   });
 });
 
-describe("system routes", () => {
-  it("never confirms whether a forbidden thing exists", () => {
-    // The difference between "no" and "not for you" is the shape of the
-    // system, handed to anyone probing it.
-    expect(routeByPath("/403")?.notes).toContain("Never says whether it EXISTS");
-    expect(IA_LAWS.notFoundNeverConfirms).toContain("shape of the system");
+describe("registry helpers", () => {
+  it("keeps the retired capital address mapped to the canonical investment surface", () => {
+    expect(REDIRECTS.find((entry) => entry.source === "/how-capital-works"))
+      .toEqual({
+        source: "/how-capital-works",
+        destination: "/collection/slowspace-coastal/investment",
+        permanent: true,
+      });
   });
 
-  it("keeps the verification token out of the path", () => {
-    const v = routeByPath("/auth/verify")!;
-    expect(v.params ?? []).toEqual([]);
-    expect(v.notes).toContain("QUERY parameter");
-    expect(v.notes).toContain("single-use");
+  it("collects the canonical dynamic segments", () => {
+    expect(allParams()).toEqual(["document", "event", "partner", "story", "vehicle", "year"]);
   });
 
-  it("scopes search to the viewer rather than opening the index", () => {
-    expect(routeByPath("/search")?.accessOverride?.access).toBe("identified");
+  it("splits into declared sections without overlap", () => {
+    const sections = [PUBLIC_ROUTES, LEGAL_ROUTES, INVESTOR_ROUTES, MEMBER_ROUTES, OFFICE_ROUTES, SYSTEM_ROUTES];
+    expect(sections.reduce((count, section) => count + section.length, 0)).toBe(ROUTES.length);
+    expect(sections.flatMap((section) => section.map((route) => route.path)).sort())
+      .toEqual(ROUTES.map((route) => route.path).sort());
   });
-});
 
-describe("IA laws", () => {
-  it("states six", () => {
+  it("retains the six governing IA laws", () => {
     expect(Object.keys(IA_LAWS)).toHaveLength(6);
-  });
-
-  it("collects every dynamic segment used", () => {
-    const p = allParams();
-    expect(p).toContain("property");
-    expect(p).toContain("llpin");
-    expect(p).toContain("ref");
-    expect(new Set(p).size).toBe(p.length);
-  });
-
-  it("splits into the declared sections without overlap", () => {
-    const SECTIONS = [
-      PUBLIC_ROUTES, LEGAL_ROUTES, AUTH_ROUTES, MEMBER_ROUTES,
-      CAPITAL_ROUTES, ADMIN_ROUTES, SYSTEM_ROUTES, FLOW_ROUTES, JOURNAL_ROUTES,
-      COLLECTIVE_ROUTES,
-    ];
-    const total = SECTIONS.reduce((n, s) => n + s.length, 0);
-    expect(ROUTES).toHaveLength(total);
-
-    /*
-     * A count alone says the arithmetic works, not that the same routes
-     * are on both sides. Adding FLOW_ROUTES to ROUTES while forgetting
-     * this list is what the count caught; forgetting to SPREAD a section
-     * into ROUTES while adding it here would balance just as neatly and
-     * hide a whole section from the guard. Compare the paths.
-     */
-    const declared = SECTIONS.flatMap((s) => s.map((r) => r.path)).sort();
-    const actual = ROUTES.map((r) => r.path).sort();
-    expect(actual).toEqual(declared);
   });
 });

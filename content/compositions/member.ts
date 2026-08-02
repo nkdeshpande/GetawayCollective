@@ -124,7 +124,7 @@ export const MEMBER_PAGES: Record<string, Entry> = {
     lead: "What stage six has paid you. Nothing has run yet, and the page says so.",
     disclosure: d(
       "Nothing — distributions are never public.",
-      "The waterfall mechanics are public at /how-capital-works; your figures are not.",
+      "The waterfall mechanics are public at /collection/slowspace-coastal/investment; your figures are not.",
       "Declared and paid amounts per period, against the modelled expectation.",
       "This is the page operation fills: quarterly, from stabilisation, unless blocked by the reserve floor.",
     ),

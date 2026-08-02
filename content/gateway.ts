@@ -177,7 +177,7 @@ export const ANSWERS: readonly Answer[] = [
     a: "Revenue is applied in six stages, in order, and partners are stage six. Distribution " +
        "follows stabilisation, and stage six does not run at all if paying it would take the " +
        "administrative reserve below its floor.",
-    cite: { label: "How capital works", href: "/how-capital-works" },
+    cite: { label: "How capital works", href: "/collection/slowspace-coastal/investment" },
   },
   {
     group: "Money",

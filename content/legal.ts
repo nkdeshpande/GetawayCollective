@@ -505,7 +505,7 @@ const RISK_FACTORS: StandingDocument = {
   alongside: [
     { path: "/legal/terms", title: "Terms and Conditions",
       why: "The rights and obligations these risks act upon, and the standing disclosure at Part L." },
-    { path: "/how-capital-works", title: "How capital works",
+    { path: "/collection/slowspace-coastal/investment", title: "How capital works",
       why: "The distribution waterfall in full, with worked figures." },
   ],
   parts: [

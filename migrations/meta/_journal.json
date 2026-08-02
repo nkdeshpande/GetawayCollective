@@ -8,6 +8,13 @@
       "when": 1785463147872,
       "tag": "0000_productive_scorpion",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785681731541,
+      "tag": "0001_naive_puck",
+      "breakpoints": true
     }
   ]
 }

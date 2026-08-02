@@ -131,7 +131,7 @@ export function GatewayGrid() {
             they are private. They are withheld because each one needs its provenance beside it,
             and a photograph has nowhere to put it. All of it is one navigation away.
           </p>
-          <Link className="btn primary" href="/how-capital-works">
+          <Link className="btn primary" href="/collection/slowspace-coastal/investment">
             How capital works →
           </Link>
         </div>
@@ -508,7 +508,7 @@ export function Home() {
         sup="An institutional platform for experiential real estate. You hold a share of a legal entity that owns the ground it stands on."
         go={[
           { t: "See the collection", to: "/collection" },
-          { t: "How capital works", to: "/how-capital-works" },
+          { t: "How capital works", to: "/collection/slowspace-coastal/investment" },
         ]}
         hue={158}
       />

@@ -82,6 +82,20 @@ export const ACCESS_FOR_VANTAGE: Record<Vantage, Access> = {
 };
 
 export interface Route {
+  /**
+   * THE PERMANENT IDENTIFIER — v4.0.
+   *
+   * IA IDs are never recycled, even when a page is retired, and they
+   * advance in tens so a later insertion can take a five without
+   * renumbering anything. THE ID IS PERMANENT; THE URL IS NOT THE ID —
+   * requirements, analytics, permissions, tests and documentation bind
+   * to this, so a route can move without breaking a single reference.
+   *
+   * That is not a nicety here. This table replaced a 135-route IA whose
+   * URLs almost all changed; every one of those moves was safe to make
+   * precisely because nothing downstream had been keyed to a URL.
+   */
+  ia: string;
   /** The URL. Lowercase, no trailing slash, params as [name]. */
   path: string;
   /** What it is called in navigation and in the title. */
@@ -98,6 +112,8 @@ export interface Route {
   rights?: readonly string[];
   /** Dynamic segments, named. */
   params?: readonly string[];
+  /** Additional IA records deliberately rendered at this same canonical URL. */
+  coLocatedIa?: readonly string[];
   /**
    * Whether search engines may index it.
    *
@@ -110,569 +126,458 @@ export interface Route {
 }
 
 const R = (
-  path: string, name: string, group: RouteGroup, assembly: string | null,
+  ia: string, path: string, name: string, group: RouteGroup, assembly: string | null,
   extra: Partial<Route> = {},
-): Route => ({ path, name, group, assembly, ...extra });
+): Route => ({ ia, path, name, group, assembly, ...extra });
+
+/* The four apertures. One canonical Investment Vehicle, four ways in —
+   never four versions of it. Stated once so no route invents a fifth. */
+export const APERTURE = {
+  public: "/collection/[vehicle]",
+  investor: "/invest/[vehicle]",
+  member: "/portfolio/[vehicle]",
+  office: "/office/collection/[vehicle]",
+} as const;
+
+/* Reasons an override exists. Written once because the same reason
+   governs a whole realm, and a reason copied per route is a reason
+   nobody reads by the fourth copy. */
+export const INVESTOR_REASON =
+  "An Investor must be able to reach the diligence path before they hold a position, or nobody " +
+  "would ever become a Member. The capital vantage governs what is SHOWN; this override governs " +
+  "who may arrive.";
+export const PUBLIC_DOCTRINE_REASON =
+  "Doctrine a prospective investor most needs before deciding anything. The assembly's vantage " +
+  "still decides what appears; the override only decides who may reach it.";
+
+
 
 // ─────────────────────────────────────────────────────────────────────
-// PUBLIC · the gateway
+// WORLD I · DESIRE — the public realm  (GC-*)
+//
+// Public navigation stays restrained: Collection, Journal, How It Works,
+// About, and one Enquire. Capital, Governance, LLP, Portfolio, Reports,
+// Documents and dashboards are NOT exposed here — those concepts belong
+// deeper in the relationship (v4.0 §6).
+//
+// The Collection is not an inventory grid. It is the desire engine, and
+// every property is presented as a world: place, life, idea, asset —
+// then ownership, economics and risk, in that order (§7, §8).
 // ─────────────────────────────────────────────────────────────────────
 
 export const PUBLIC_ROUTES: readonly Route[] = [
-  R("/", "Home", "gateway", "AS-32",
-    { notes: "Hero region, then routes into the collection. No figure above the fold." }),
-  R("/collection", "The Collection", "gateway", "AS-01"),
-  R("/collection/[property]", "Property", "space", "AS-03", { params: ["property"] }),
-  R("/collection/[property]/space", "Space", "space", "AS-03", { params: ["property"] }),
-  R("/collection/[property]/capital", "Capital", "space", "AS-03", { params: ["property"],
-    notes: "The Capital LENS at the space vantage. Renders AP-03 and routes to the console; it " +
-           "does not render console disclosure because a tab is labelled Capital." }),
-  R("/collection/[property]/time", "Time", "space", "AS-03", { params: ["property"] }),
-  R("/collection/[property]/location", "Location", "space", "AS-12", { params: ["property"] }),
-  R("/collection/[property]/gallery", "Gallery", "space", "AS-10", { params: ["property"] }),
-  R("/gallery", "Gallery", "gateway", "AS-09"),
-  R("/story", "Story", "gateway", "AS-08"),
-  R("/portfolio", "The Portfolio", "gateway", "AS-07"),
-  R("/how-capital-works", "How Capital Works", "capital", "AS-04",
-    { accessOverride: { access: "public", because:
-        "The waterfall explainer is the single most important thing a prospective investor can " +
-        "read before committing, and putting it behind a sign-in would mean the disclosure only " +
-        "reaches people who have already decided." } }),
-  R("/voices", "Voices", "gateway", "AS-24",
-    { notes: "Testimonials. No figure, no return, no performance reference — regulated speech." }),
-  R("/answers", "Answers", "gateway", "AS-17"),
-  R("/status", "System Status", "gateway", "AS-15"),
-  R("/roles", "Open Roles", "gateway", "AS-18"),
-  R("/roles/[code]", "Role", "gateway", "AS-18", { params: ["code"] }),
-];
+  R("GC-000", "/", "Getaway Collective", "gateway", "AS-32",
+    { notes: "What is GC? Hero, then the Collection. No figure above the fold (FB-1)." }),
+  /* The three design-review previews are PUBLIC but NOT INDEXABLE, and
+     the distinction is the whole point of `indexable` existing.
 
-// ─────────────────────────────────────────────────────────────────────
-// LEGAL · the standing statements
-//
-// Every one is public and indexable. A legal document behind a sign-in
-// is a legal document nobody can rely on before they sign in, which is
-// exactly when they need it.
-// ─────────────────────────────────────────────────────────────────────
+     They must remain reachable: their job is to be opened by a reviewer
+     on a phone, without a login, during a call. But they render a drawing of
+     the Office — a control console with health scores, exception counts
+     and the module map — and an indexed "Office Workspace Preview" is
+     administrative machinery published to anyone who searches the brand.
+     UX-08 bars exactly that, and the placeholder data does not make the
+     shape of the operation less legible.
+
+     Setting it here rather than in robots.ts is deliberate: this one flag
+     drives the page's own robots meta AND its absence from sitemap.ts,
+     because both read isIndexable(). A rule kept in one place cannot be
+     half-applied. */
+  R("GC-005", "/investor-workspace-preview", "Investor Workspace Preview", "gateway", "AS-32",
+    { indexable: false,
+      notes: "Design-review surface only. Uses labelled placeholder material and does not disclose a vehicle, offering, eligibility decision or private record." }),
+  R("GC-006", "/member-workspace-preview", "Member Workspace Preview", "gateway", "AS-32",
+    { indexable: false,
+      notes: "Design-review surface only. Placeholder relationship material; never member-restricted records." }),
+  R("GC-007", "/office-workspace-preview", "Office Workspace Preview", "gateway", "AS-32",
+    { indexable: false,
+      notes: "Design-review surface only. Placeholder operational material; never internal or restricted records." }),
+
+  R("GC-100", "/collection", "The Collection", "gateway", "AS-01",
+    { notes: "Places worth returning to. Photography and editorial lead; financial information " +
+             "is available but never leads." }),
+  // ── The vehicle, publicly: eight chapters (§8) ────────────────────
+  R("GC-110", "/collection/[vehicle]", "Opportunity", "space", "AS-03", { params: ["vehicle"],
+    notes: "Chapter 00. Why this investment, why this place. The public aperture onto the vehicle." }),
+  R("GC-112", "/collection/[vehicle]/place", "The Place", "space", "AS-12", { params: ["vehicle"],
+    notes: "Chapter 01. Land, water, light, approach — the place before the proposition." }),
+  R("GC-114", "/collection/[vehicle]/life", "The Life", "space", "AS-10", { params: ["vehicle"],
+    notes: "Chapter 02. What it is to return here. Imagery, each plate labelled for what it is." }),
+  R("GC-116", "/collection/[vehicle]/idea", "The Idea", "space", "AS-03", { params: ["vehicle"],
+    notes: "Chapter 03. The investment thesis, in plain words, before any figure." }),
+  R("GC-120", "/collection/[vehicle]/asset", "The Asset", "space", "AS-03", { params: ["vehicle"],
+    notes: "Chapter 04. What is owned: land, build, fittings — the Space quadrant, publicly." }),
+  R("GC-130", "/collection/[vehicle]/ownership", "Ownership", "space", "AS-03", { params: ["vehicle"],
+    notes: "Chapter 05. How participation works: the LLP, the unit, the ladder, the ceiling." }),
+  R("GC-140", "/collection/[vehicle]/investment", "The Investment", "capital", "AS-04",
+    { params: ["vehicle"],
+      accessOverride: { access: "public", because: PUBLIC_DOCTRINE_REASON },
+      notes: "Chapter 06. The six-stage waterfall and what actually arrives. Every figure carries " +
+             "its confidence class." }),
+  R("GC-145", "/collection/[vehicle]/risk", "Risk", "capital", "AS-14", { params: ["vehicle"],
+    accessOverride: { access: "public", because: PUBLIC_DOCTRINE_REASON },
+    notes: "Chapter 07. How this loses money, stated before anyone is asked for anything." }),
+  R("GC-150", "/collection/[vehicle]/progress", "Progress", "space", "AS-11", { params: ["vehicle"],
+    accessOverride: { access: "public", because: PUBLIC_DOCTRINE_REASON },
+    notes: "What exists TODAY. Evidence, not a render of the finished thing." }),
+  R("GC-160", "/collection/[vehicle]/enquire", "Enquire", "gateway", "AS-32", { params: ["vehicle"],
+    notes: "Chapter 08 — Consider. Vehicle-scoped, and it states what an enquiry creates before " +
+           "it asks for anything." }),
+
+  // ── Journal ───────────────────────────────────────────────────────
+  R("GC-200", "/journal", "The Journal", "gateway", "AS-30",
+    { notes: "What GC is thinking about. Distinct from testimonials: an explanation of a " +
+             "mechanism is not regulated speech; a claim about returns is." }),
+  R("GC-210", "/journal/[story]", "Story", "gateway", "AS-30", { params: ["story"] }),
+  // ── Doctrine ──────────────────────────────────────────────────────
+  R("GC-300", "/how-it-works", "How It Works", "gateway", "AS-32",
+    { notes: "The model: three entities, governance without ownership, the waterfall, the " +
+             "Member Law." }),
+  // ── About ─────────────────────────────────────────────────────────
+  R("GC-400", "/about", "About", "gateway", "AS-32",
+    { notes: "Who is behind GC, and which of the three entities is speaking." }),
+  // ── The legal corpus ──────────────────────────────────────────────
+  R("GC-500", "/legal", "Legal", "gateway", "AS-29",
+    { notes: "Seven standing documents, versioned, with effective dates. Nothing on this " +
+             "platform paraphrases them." }),
+];
 
 export const LEGAL_ROUTES: readonly Route[] = [
-  R("/legal", "Legal", "gateway", "AS-29", { notes: "Index of the standing documents." }),
-  R("/legal/terms", "Terms and Conditions", "gateway", "AS-29"),
-  R("/legal/privacy", "Privacy Notice", "gateway", "AS-29"),
-  R("/legal/cookies", "Cookie Notice", "gateway", "AS-29"),
-  R("/legal/risk-disclosure", "Risk Disclosure", "capital", "AS-14",
-    { accessOverride: { access: "public", because:
-        "It gates commitment, and it is also the document a prospective investor most needs to " +
-        "read before deciding whether to start. Public to read; the ACKNOWLEDGEMENT still " +
-        "requires identity and is recorded against a version." } }),
-  R("/legal/disclosures", "Standing Disclosures", "gateway", "AS-29",
-    { notes: "Capital at risk, past performance, no guarantee. Body size, reading tone." }),
-  R("/legal/complaints", "Complaints Procedure", "gateway", "AS-29"),
-  R("/legal/accessibility", "Accessibility Statement", "gateway", "AS-29",
-    { notes: "States what has been tested and what has not. Currently: contrast computed, no " +
-             "assistive-technology testing performed." }),
+  R("GC-510", "/legal/[document]", "Legal Document", "gateway", "AS-29",
+    { params: ["document"],
+      notes: "One canonical renderer selects the governed standing instrument and its effective version." }),
 ];
 
 // ─────────────────────────────────────────────────────────────────────
-// AUTH & THE PASSPORT
+// WORLD II · CONVICTION — the investor realm  (INV-*)
 //
-// Sixteen stages, resumable. Each is its own URL so a partial
-// application can be returned to by link rather than by replay.
+// Public → Known Prospect → Qualified Investor → Diligence → Commitment.
+// Everything here sits behind qualification, and the commitment is a
+// private transaction record rather than a checkout (§19).
 // ─────────────────────────────────────────────────────────────────────
 
-export const PASSPORT_STAGES = [
-  "discover", "eligibility", "profile", "identity", "address", "tax-residency",
-  "screening", "accreditation", "suitability", "source-of-funds", "documents",
-  "risk-profile", "review", "decision", "issued", "annual-review",
-] as const;
-
-/**
- * Why every passport stage admits someone who is not yet a member.
- *
- * The passport is how a person BECOMES a member. Requiring membership to
- * reach it would close the only door into the system.
- */
-export const PASSPORT_ACCESS_REASON =
-  "Accreditation is reached before membership exists, by definition — the Member Law fires on " +
-  "settlement, and settlement cannot happen until accreditation has. Requiring member access " +
-  "here would close the only door into the system.";
-
-export const AUTH_ROUTES: readonly Route[] = [
-  R("/auth/sign-in", "Identify", "gateway", "AS-32",
-    { notes: "No password is ever handled by the design system. Delegated." }),
-  R("/auth/verify", "Verify", "gateway", null,
-    { notes:
-        "The token arrives as a QUERY parameter, not a path segment, and it is not declared as " +
-        "a param for that reason. It is in the URL at all only because an email link has no " +
-        "other carrier — so it is single-use, short-lived, and stripped from the address bar on " +
-        "arrival. A URL is written to server logs, browser history and referrer headers." }),
-  R("/auth/sign-out", "Sign Out", "gateway", null),
-  R("/passport", "Your Passport", "member", null,
-    { accessOverride: { access: "identified", because:
-        "The passport is how someone BECOMES a member. Requiring membership to reach it would " +
-        "close the only door into the system." } }),
-  /* The reason is identical for all sixteen, so it is one string rather
-     than sixteen assembled ones — a computed reason is also a reason no
-     static check can read. */
-  ...PASSPORT_STAGES.map((st, i) =>
-    R(`/passport/${st}`, `Passport · ${st.replace(/-/g, " ")}`, "member", "AS-06", {
-      accessOverride: { access: "identified", because: PASSPORT_ACCESS_REASON },
-      notes: i === 0
-        ? "Stage 1 of 16. Resumable — each field autosaves on blur to a draft record, which is " +
-          "what makes PR-01 genuinely resumable rather than a second mechanism."
-        : undefined,
-    })),
+export const INVESTOR_ROUTES: readonly Route[] = [
+  R("INV-090", "/invest/qualify", "Qualification", "capital", "AS-06",
+    { accessOverride: { access: "identified", because: INVESTOR_REASON },
+      notes: "PR-01. Sixteen stages, resumable at every one; a decision within 15 working days. " +
+             "An application in flight completes before any suspension applies (§24b)." }),
+  R("INV-100", "/invest/[vehicle]", "Private Overview", "capital", "AS-35", { params: ["vehicle"],
+    accessOverride: { access: "accredited", because: INVESTOR_REASON },
+    notes: "The dossier. Should I examine this?" }),
+  R("INV-110", "/invest/[vehicle]/asset", "Asset", "capital", "AS-35", { params: ["vehicle"],
+    accessOverride: { access: "accredited", because: INVESTOR_REASON },
+    notes: "What asset backs this?" }),
+  R("INV-120", "/invest/[vehicle]/financials", "Financials", "capital", "AS-04", { params: ["vehicle"],
+    accessOverride: { access: "accredited", because: INVESTOR_REASON },
+    notes: "The economics, with the derivation beside every figure." }),
+  R("INV-130", "/invest/[vehicle]/structure", "Structure", "capital", "AS-35", { params: ["vehicle"],
+    accessOverride: { access: "accredited", because: INVESTOR_REASON },
+    notes: "What am I legally joining?" }),
+  R("INV-140", "/invest/[vehicle]/risks", "Risk", "capital", "AS-14", { params: ["vehicle"],
+    accessOverride: { access: "accredited", because: INVESTOR_REASON },
+    notes: "How can I lose money? Acknowledgement is recorded with identity, version and time." }),
+  R("INV-150", "/invest/[vehicle]/dataroom", "Dataroom", "capital", "AS-35", { params: ["vehicle"],
+    accessOverride: { access: "accredited", because: INVESTOR_REASON },
+    notes: "The evidence itself. Every document states its custody and its version." }),
+  R("INV-160", "/invest/[vehicle]/commit", "Commit", "capital", "AS-19", { params: ["vehicle"],
+    accessOverride: { access: "accredited", because: INVESTOR_REASON },
+    notes: "The private transaction record. The piston is the only control that moves capital, and " +
+           "nothing new appears after the review." }),
+  R("INV-170", "/invest/[vehicle]/speak", "Speak to Us", "gateway", "AS-32", { params: ["vehicle"],
+    accessOverride: { access: "identified", because: INVESTOR_REASON },
+    notes: "The human handoff. Context carries over — nobody is asked to repeat themselves (UX-07)." }),
 ];
 
 // ─────────────────────────────────────────────────────────────────────
-// MEMBER · the workspace
+// WORLD III · MEMBERSHIP — the member realm  (MEM-*)
+//
+// Navigation stops being sales-oriented. HOME, PORTFOLIO, COLLECTION,
+// ACTIVITY — documents, reporting, voting and statements appear
+// CONTEXTUALLY rather than becoming a maze of top-level destinations.
 // ─────────────────────────────────────────────────────────────────────
 
 export const MEMBER_ROUTES: readonly Route[] = [
-  R("/member", "Your Position", "member", "AS-05"),
-  R("/member/position", "Position", "member", "AS-05"),
-  R("/member/holdings", "Holdings", "member", "AS-10"),
-  R("/member/holdings/[property]", "Holding", "member", "AS-03", { params: ["property"] }),
-  R("/member/distributions", "Distributions", "member", "AS-05"),
-  R("/member/distributions/[ref]", "Distribution", "member", "AS-05", { params: ["ref"] }),
-  R("/member/calls", "Capital Calls", "member", "AS-26"),
-  R("/member/calls/[ref]", "Capital Call", "member", "AS-26", { params: ["ref"],
-    notes: "Default consequences render in full above the payment control." }),
-  R("/member/entitlement", "Entitlement", "time", "AS-25"),
-  R("/member/entitlement/[year]", "Entitlement Year", "time", "AS-25", { params: ["year"] }),
-  R("/member/resolutions", "Resolutions", "member", "AS-33"),
-  R("/member/resolutions/[ref]", "Ballot", "member", "AS-27", { params: ["ref"],
-    notes: "Sealed at every vantage. The confirmation never echoes the choice." }),
-  R("/member/documents", "Documents", "member", "AS-05"),
-  R("/member/documents/[id]", "Document", "member", "AS-05", { params: ["id"] }),
-  R("/member/reports", "Reports", "member", "AS-05"),
-  R("/member/notifications", "Notifications", "member", null,
-    { notes: "The alert centre. A system ticker (SIGNAL_APERTURE) never lands here; only things " +
-             "asked of the member do." }),
-  R("/member/profile", "Passport", "member", "AS-33"),
-  /* MEM.05 through MEM.08. Member access: the guard fails closed, so
-     these deny for anyone who has not settled a position. */
-  R("/member/calibration", "Unit Calibration", "member", "AS-33",
-    { notes: "MEM.05. Every control is real and none can be transmitted: the property is at " +
-             "pre-construction, so there is no management system to reach." }),
-  R("/member/signal", "The Signal", "member", "AS-33",
-    { notes: "MEM.06. A written, asynchronous record with the operating partner. No presence " +
-             "indicator and no typing state — both promise an immediacy the queue does not have." }),
-  R("/member/codex", "The Codex", "member", "AS-33",
-    { notes: "MEM.07. The manual for one property. The conduct-linked forced buyback the source " +
-             "specifies is marked as not drafted and not in force." }),
-  R("/member/pass", "Access Credentials", "member", "AS-33",
-    { notes: "MEM.08. Issuing spends your nights and puts the visitor's conduct on your record." }),
+  R("MEM-000", "/home", "Member Home", "member", "AS-33",
+    { notes: "Closer to a private-bank relationship than a property dashboard. Stewardship " +
+             "leads; discovery continues but never pushes (UX-10)." }),
+  R("MEM-100", "/portfolio", "My Portfolio", "member", "AS-05",
+    { notes: "What do I own? Every position, across every vehicle." }),
+  R("MEM-110", "/portfolio/[vehicle]", "Vehicle", "member", "AS-05", { params: ["vehicle"],
+    notes: "The member aperture onto the vehicle. Same record the Office reads, redacted — never " +
+           "restated (UX-02)." }),
+  R("MEM-120", "/portfolio/[vehicle]/space", "Space", "space", "AS-03",
+    { params: ["vehicle"],
+      accessOverride: { access: "member", because:
+        "The shared Space assembly is public at the property aperture. This route adds the settled holder's vehicle record and therefore requires membership." },
+      notes: "What does our LLP own?" }),
+  R("MEM-130", "/portfolio/[vehicle]/capital", "Capital", "member", "AS-26",
+    { params: ["vehicle"], notes: "What is its financial position?" }),
+  R("MEM-140", "/portfolio/[vehicle]/time", "Time", "time", "AS-25",
+    { params: ["vehicle"], notes: "What time rights do I have?" }),
+  R("MEM-150", "/portfolio/[vehicle]/project", "Project", "member", "AS-05",
+    { params: ["vehicle"], notes: "How is development progressing?" }),
+  R("MEM-160", "/portfolio/[vehicle]/partners", "Partners", "member", "AS-05",
+    { params: ["vehicle"], notes: "Who participates?" }),
+  R("MEM-170", "/portfolio/[vehicle]/governance", "Governance", "member", "AS-27",
+    { params: ["vehicle"], notes: "How is our LLP governed?" }),
+  R("MEM-180", "/portfolio/[vehicle]/documents", "Documents", "member", "AS-05",
+    { params: ["vehicle"], notes: "Show me the records." }),
+  R("MEM-190", "/portfolio/[vehicle]/activity", "Activity", "member", "AS-05",
+    { params: ["vehicle"], notes: "What has changed?" }),
 
-  R("/member/settings", "Settings", "member", null),
-  R("/member/settings/notifications", "Notification Settings", "member", null),
-  R("/member/settings/security", "Security", "member", null),
-  R("/member/settings/tax", "Tax Details", "member", null),
+  R("MEM-200", "/activity", "Activity", "member", "AS-05",
+    { notes: "One private ledger of the relationship, across every vehicle." }),
+  R("MEM-210", "/profile", "Profile", "member", "AS-33",
+    { notes: "The account, never the position. Nothing here can touch the register." }),
 ];
 
 // ─────────────────────────────────────────────────────────────────────
-// CAPITAL · the accountable workspace
-// ─────────────────────────────────────────────────────────────────────
-
-export const CAPITAL_ROUTES: readonly Route[] = [
-  R("/capital", "Capital Console", "capital", "AS-02", { rights: ["portfolio.manage"] }),
-  R("/capital/properties", "Properties", "capital", "AS-02", { rights: ["portfolio.manage"] }),
-  R("/capital/properties/[id]", "Property Console", "capital", "AS-02",
-    { params: ["id"], rights: ["portfolio.manage"] }),
-  R("/capital/properties/[id]/programme", "Programme", "capital", "AS-11",
-    { params: ["id"], rights: ["property.advance_lifecycle"] }),
-  R("/capital/properties/[id]/valuations", "Valuations", "capital", "AS-02",
-    { params: ["id"], rights: ["valuation.record"] }),
-  R("/capital/waterfall", "Waterfall", "capital", "AS-04", { rights: ["distribution.execute"] }),
-  R("/capital/distributions", "Distributions", "capital", "AS-02",
-    { rights: ["distribution.execute"] }),
-  R("/capital/distributions/[ref]", "Distribution", "capital", "AS-02",
-    { params: ["ref"], rights: ["distribution.execute"] }),
-  R("/capital/calls", "Capital Calls", "capital", "AS-26", { rights: ["capital.call"] }),
-  R("/capital/risk", "Risk Register", "capital", "AS-28", { rights: ["compliance.record"] }),
-  R("/capital/offerings", "Offerings", "capital", "AS-02", { rights: ["offering.open"] }),
-  // The commitment path. Reached by an Investor who is not yet a Member.
-  R("/commit/[offering]", "Commit", "capital", "AS-06", { params: ["offering"],
-    accessOverride: { access: "accredited", because:
-      "An Investor commits BEFORE membership exists — the Member Law fires on settlement, not " +
-      "here. Requiring member access would make it unreachable by anyone who could use it." } }),
-  R("/commit/[offering]/risk", "Risk Disclosure", "capital", "AS-14", { params: ["offering"],
-    accessOverride: { access: "accredited", because:
-      "The gate immediately before commitment, on the same path and for the same reason." } }),
-  R("/commit/[offering]/execute", "Execute", "capital", "AS-19", { params: ["offering"],
-    accessOverride: { access: "accredited", because:
-      "The execution sequence for a commitment made before membership exists." } }),
-];
-
-// ─────────────────────────────────────────────────────────────────────
-// ADMIN · the offices
+// THE GC OFFICE — one protected namespace  (OFF-* and the quadrants)
 //
-// Every route names the RIGHT it requires, not a role. Rights are granted
-// to offices and can be revoked; a route bound to a role would survive the
-// revocation.
+// Enter GC → choose the Investment Vehicle → understand its Space,
+// Capital, Time and Governance → manage its Project and Partners →
+// verify through Documents → understand change through Activity.
+//
+// There is deliberately NO /office/partners, /office/capital or
+// /office/assets as a primary destination. Those concepts only mean
+// something scoped to a vehicle, and a second object hierarchy would
+// compete with the one that matters. Cross-vehicle analysis lives in
+// Collection and Network.
 // ─────────────────────────────────────────────────────────────────────
 
-export const ADMIN_ROUTES: readonly Route[] = [
-  R("/admin", "Administration", "admin", null, { rights: ["organization.register"] }),
-  R("/admin/vehicles", "Vehicles", "admin", "AS-13", { rights: ["vehicle.form"] }),
-  R("/admin/vehicles/new", "Form a Vehicle", "admin", "AS-34",
-    { rights: ["vehicle.form"],
-      notes: "Eight stages. Two irreversible, two gated on Board approval. §24a: the LLP is the " +
-             "default and any other legal form needs a resolution naming the specific property." }),
+const V = "/office/collection/[vehicle]";
 
-  /* Publishing. content.publish sits with the Governance Office and
-     media.manage with the Executive Office — see lib/authority.ts. */
-  R("/admin/content", "Content", "admin", "AS-34",
-    { rights: ["content.publish"],
-      notes: "Every content class, its source, whether it binds and whether it is versioned." }),
-  R("/admin/media", "Media", "admin", "AS-34",
-    { rights: ["media.manage"],
-      notes: "Three kinds, required at registration with no default. A render registered as a " +
-             "photograph is a misrepresentation that needs no words." }),
-  R("/admin/vehicles/[llpin]", "Docket", "admin", "AS-13",
-    { params: ["llpin"], rights: ["vehicle.form"] }),
-  R("/admin/vehicles/[llpin]/formation", "Formation", "admin", "AS-13",
-    { params: ["llpin"], rights: ["vehicle.form"] }),
-  R("/admin/vehicles/[llpin]/partners", "Register of Partners", "admin", "AS-13",
-    { params: ["llpin"], rights: ["vehicle.form"] }),
-  R("/admin/vehicles/[llpin]/filings", "Statutory Calendar", "admin", "AS-13",
-    { params: ["llpin"], rights: ["compliance.record"] }),
-  R("/admin/vehicles/[llpin]/charges", "Charges", "admin", "AS-13",
-    { params: ["llpin"], rights: ["vehicle.form"] }),
-  R("/admin/vehicles/[llpin]/resolutions", "Resolutions", "admin", "AS-13",
-    { params: ["llpin"], rights: ["resolution.table"] }),
-  R("/admin/vehicles/[llpin]/audit", "Docket Audit", "admin", "AS-13",
-    { params: ["llpin"], rights: ["compliance.record"] }),
-  R("/admin/governance", "Governance", "admin", null, { rights: ["resolution.table"] }),
-  R("/admin/governance/committees", "Committees", "admin", null,
-    { rights: ["committee.constitute"] }),
-  R("/admin/governance/resolutions", "Resolutions", "admin", "AS-27",
-    { rights: ["resolution.table"] }),
-  R("/admin/governance/resolutions/[ref]", "Resolution", "admin", "AS-27",
-    { params: ["ref"], rights: ["resolution.resolve"],
-      notes: "Results only. Admin is NOT an exception to I-05 — it is the vantage most likely to " +
-             "assume it is." }),
-  R("/admin/governance/policies", "Policies", "admin", null, { rights: ["policy.approve"] }),
-  R("/admin/compliance", "Compliance", "admin", null, { rights: ["compliance.record"] }),
-  R("/admin/compliance/events", "Compliance Events", "admin", null,
-    { rights: ["compliance.record"] }),
-  R("/admin/compliance/accreditation", "Accreditation Queue", "admin", null,
-    { rights: ["accreditation.grant"] }),
-  R("/admin/compliance/conflicts", "Conflict Register", "admin", null,
-    { rights: ["conflict.disclose"] }),
-  R("/admin/ledger", "Ledger", "admin", null, { rights: ["capital.deploy"] }),
-  R("/admin/telemetry", "Telemetry", "admin", null, { rights: ["portfolio.manage"] }),
-  R("/admin/authority", "Authority", "admin", null, { rights: ["authority.grant"] }),
-  R("/admin/authority/grants", "Grants", "admin", null, { rights: ["authority.grant"] }),
-  R("/admin/authority/revocations", "Revocations", "admin", null, { rights: ["authority.revoke"] }),
-  R("/admin/reports", "Reports", "admin", null, { rights: ["report.publish"] }),
-  R("/admin/research", "Research", "admin", null, { rights: ["diligence.complete"] }),
-  R("/admin/failure", "Constitutional Failure", "admin", null,
-    { rights: ["constitutional_failure.declare"],
-      notes: "CF-01..CF-06. The gravest surface in the system and the least used. Declaring a " +
-             "failure requires a resolution reference, not a role — there is no login that can " +
-             "do this alone." }),
+/* Rights, not roles. A route bound to a role would survive the role's
+   revocation; a route bound to a right cannot. */
+export const OFFICE_ROUTES: readonly Route[] = [
+  R("OFF-090", "/office", "Lifecycle Board", "admin", "AS-13",
+    { rights: ["portfolio.manage"],
+      notes: "Every vehicle against the fifteen-state lifecycle. Where does each investment sit?" }),
+  R("OFF-100", "/office/collection", "Collection", "admin", "AS-13",
+    { rights: ["portfolio.manage"],
+      notes: "What is happening across GC? The master workspace." }),
+  R("OFF-110", V, "Vehicle Overview", "capital", "AS-02", { params: ["vehicle"],
+    rights: ["vehicle.form"],
+    notes: "The cockpit. Vehicle Health across Space, Capital, Time, Governance and Project." }),
+
+  R("OFF-120", `${V}/space`, "Space", "space", "AS-03", { params: ["vehicle"],
+    accessOverride: { access: "office", because:
+      "The space vantage governs what a PROSPECT sees. Inside the Office the same records carry " +
+      "title references, valuations and protection state, so the route is raised to office." },
+    rights: ["property.register"],
+    notes: "Quadrant I. Everything the LLP legally owns, controls, protects and transfers." }),
+  R("SPA-100", `${V}/space/property`, "Property", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.register"], notes: "What property is owned?" }),
+  R("SPA-110", `${V}/space/land`, "Land", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.register"], notes: "What land rights exist?" }),
+  R("SPA-120", `${V}/space/buildings`, "Buildings", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.register"], notes: "What has been built?" }),
+  R("SPA-130", `${V}/space/assets`, "Fixed Assets", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.register"], notes: "What material assets exist?" }),
+  R("SPA-140", `${V}/space/improvements`, "Improvements", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.register"], notes: "What capital improvements exist?" }),
+  R("SPA-150", `${V}/space/protection`, "Protection", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.register"], notes: "Is the asset protected?" }),
+
+  R("OFF-130", `${V}/capital`, "Capital", "capital", "AS-02", { params: ["vehicle"],
+    rights: ["capital.deploy"],
+    notes: "Quadrant II. Everything the LLP receives, owes, earns, preserves and distributes." }),
+  R("CAP-100", `${V}/capital/structure`, "Structure", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "How is it funded?" }),
+  R("CAP-110", `${V}/capital/accounts`, "Capital Accounts", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What has each Partner contributed?" }),
+  R("CAP-120", `${V}/capital/contributions`, "Contributions", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What capital entered?" }),
+  R("CAP-130", `${V}/capital/debt`, "Debt", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What does the LLP owe?" }),
+  R("CAP-140", `${V}/capital/income`, "Income", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What is it earning?" }),
+  R("CAP-150", `${V}/capital/expenses`, "Expenses", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "Where is money going?" }),
+  R("CAP-160", `${V}/capital/reserves`, "Reserves", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What is being preserved?" }),
+  R("CAP-170", `${V}/capital/distributions`, "Distributions", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What has been distributed?" }),
+  R("CAP-180", `${V}/capital/valuation`, "Valuation", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What is it worth?" }),
+  R("CAP-190", `${V}/capital/reports`, "Reports", "capital", "AS-02",
+    { params: ["vehicle"], rights: ["capital.deploy"], notes: "What is the financial truth?" }),
+
+  R("OFF-140", `${V}/time`, "Time", "time", "AS-25", { params: ["vehicle"],
+    accessOverride: { access: "office", because:
+      "The time vantage is a MEMBER's own entitlement. The Office sees the whole pool and every " +
+      "partner's share of it, which is a different disclosure and a higher one." },
+    rights: ["policy.approve"],
+    notes: "Quadrant III. Time is ownership: a static yearly allocation multiplied by the stake." }),
+  R("TIM-100", `${V}/time/policy`, "Time Policy", "admin", "AS-13", { params: ["vehicle"],
+    rights: ["policy.approve"], notes: "What governs time?" }),
+  R("TIM-110", `${V}/time/[year]`, "Allocation Year", "time", "AS-25",
+    { params: ["vehicle", "year"],
+      accessOverride: { access: "office", because:
+        "The vehicle's whole pool for a year, not one partner's slice of it." },
+      rights: ["policy.approve"], notes: "What is this year's pool?" }),
+  R("TIM-120", `${V}/time/[year]/allocations`, "Partner Allocations", "time", "AS-25",
+    { params: ["vehicle", "year"],
+      accessOverride: { access: "office", because:
+        "Every partner's allocation side by side. A member sees only their own." },
+      rights: ["policy.approve"], notes: "Who controls how much time?" }),
+
+  R("OFF-150", `${V}/project`, "Project", "admin", "AS-11", { params: ["vehicle"],
+    rights: ["property.advance_lifecycle"],
+    notes: "Development oversight. Rich, because GC oversees delivery." }),
+  R("PRJ-100", `${V}/project/timeline`, "Timeline", "admin", "AS-11",
+    { params: ["vehicle"], rights: ["property.advance_lifecycle"], notes: "Where are we?" }),
+  R("PRJ-110", `${V}/project/milestones`, "Milestones", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.advance_lifecycle"], notes: "What must happen?" }),
+  R("PRJ-120", `${V}/project/workstreams`, "Workstreams", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.advance_lifecycle"], notes: "What work is underway?" }),
+  R("PRJ-130", `${V}/project/budget`, "Budget", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.advance_lifecycle"], notes: "Are we on budget?" }),
+  R("PRJ-140", `${V}/project/commitments`, "Commitments", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.advance_lifecycle"], notes: "What have we committed?" }),
+  R("PRJ-150", `${V}/project/consultants`, "Consultants", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.advance_lifecycle"], notes: "Who is responsible?" }),
+  R("PRJ-160", `${V}/project/risks`, "Risks", "capital", "AS-28",
+    { params: ["vehicle"], rights: ["compliance.record"], notes: "What threatens delivery?" }),
+  R("PRJ-170", `${V}/project/decisions`, "Decisions", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["property.advance_lifecycle"], notes: "What decisions are blocked?" }),
+
+  R("OFF-160", `${V}/partners`, "Partners", "admin", "AS-13", { params: ["vehicle"],
+    coLocatedIa: ["PAR-100"], rights: ["ownership.transfer"],
+    notes: "The Partners module and its Register are co-located at one canonical URL. Who owns and participates?" }),
+  R("PAR-110", `${V}/partners/[partner]`, "Partner", "admin", "AS-13",
+    { params: ["vehicle", "partner"], rights: ["ownership.transfer"],
+      notes: "A Partner is a constitutional record, not a CRM row." }),
+  R("PAR-120", `${V}/partners/[partner]/ownership`, "Ownership", "admin", "AS-13",
+    { params: ["vehicle", "partner"], rights: ["ownership.transfer"], notes: "What do they own?" }),
+  R("PAR-130", `${V}/partners/[partner]/capital`, "Capital", "admin", "AS-13",
+    { params: ["vehicle", "partner"], rights: ["ownership.transfer"], notes: "What is their capital position?" }),
+  R("PAR-140", `${V}/partners/[partner]/time`, "Time", "admin", "AS-13",
+    { params: ["vehicle", "partner"], rights: ["ownership.transfer"], notes: "What is their allocation?" }),
+  R("PAR-150", `${V}/partners/[partner]/distributions`, "Distributions", "admin", "AS-13",
+    { params: ["vehicle", "partner"], rights: ["ownership.transfer"], notes: "What have they received?" }),
+  R("PAR-160", `${V}/partners/[partner]/governance`, "Governance", "admin", "AS-13",
+    { params: ["vehicle", "partner"], rights: ["ownership.transfer"], notes: "What can they vote or approve?" }),
+
+  R("OFF-170", `${V}/governance`, "Governance", "admin", "AS-13", { params: ["vehicle"],
+    rights: ["resolution.resolve"],
+    notes: "Quadrant IV. Not a fourth business function: the operating law of the other three." }),
+  R("GOV-100", `${V}/governance/entity`, "Entity", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["resolution.resolve"], notes: "What is the legal entity?" }),
+  R("GOV-110", `${V}/governance/constitution`, "Constitution", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["resolution.resolve"], notes: "What is its operating law?" }),
+  R("GOV-120", `${V}/governance/authority`, "Authority", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["authority.grant"], notes: "Who may do what?" }),
+  R("GOV-130", `${V}/governance/resolutions`, "Resolutions", "admin", "AS-27",
+    { params: ["vehicle"],
+      accessOverride: { access: "office", because:
+        "The Ballot assembly normally shows a Member's own vote. The Office route prepares and resolves the complete vehicle record, so it requires Office authority." },
+      rights: ["resolution.resolve"], notes: "What has been decided?" }),
+  R("GOV-140", `${V}/governance/agreements`, "Agreements", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["resolution.resolve"], notes: "What contracts bind it?" }),
+  R("GOV-150", `${V}/governance/compliance`, "Compliance", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["compliance.record"], notes: "Are obligations current?" }),
+  R("GOV-160", `${V}/governance/tax`, "Tax", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["compliance.record"], notes: "Is tax current?" }),
+  R("GOV-170", `${V}/governance/conflicts`, "Conflicts", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["resolution.resolve"], notes: "What conflicts exist?" }),
+  R("GOV-180", `${V}/governance/audit`, "Audit", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["resolution.resolve"], notes: "Can governance be proven?" }),
+
+  R("OFF-180", `${V}/documents`, "Documents", "admin", "AS-34", { params: ["vehicle"],
+    rights: ["content.publish"], notes: "What evidence exists, and in whose custody?" }),
+  R("DOC-100", `${V}/documents/[document]`, "Document", "admin", "AS-34",
+    { params: ["vehicle", "document"], rights: ["content.publish"],
+      notes: "The instrument, its versions and its custody." }),
+  R("OFF-190", `${V}/activity`, "Activity", "admin", "AS-13", { params: ["vehicle"],
+    rights: ["compliance.record"], notes: "What changed, by whom, on what authority?" }),
+  R("ACT-100", `${V}/activity/[event]`, "Event", "admin", "AS-13",
+    { params: ["vehicle", "event"], rights: ["compliance.record"],
+      notes: "Append-only. An event is never edited, only superseded." }),
+
+  R("NET-100", "/office/network", "Network", "admin", "AS-13",
+    { rights: ["portfolio.manage"], notes: "How is everything connected?" }),
+  R("NET-110", "/office/network/[vehicle]", "Vehicle Network", "admin", "AS-13",
+    { params: ["vehicle"], rights: ["portfolio.manage"],
+      notes: "What surrounds this investment?" }),
+
+  R("SYS-100", "/office/settings", "Settings", "admin", "AS-34",
+    { rights: ["organization.register"], notes: "Configure GC." }),
+  R("SYS-110", "/office/settings/access", "People & Access", "admin", "AS-34",
+    { rights: ["authority.grant"],
+      notes: "Grants, expiries, revocations, unassigned rights and separation alerts. A role " +
+             "makes a grant ELIGIBLE; it never confers access." }),
+  R("SYS-120", "/office/settings/integrations", "Integrations", "admin", "AS-34",
+    { rights: ["organization.register"], notes: "What systems connect?" }),
 ];
 
 // ─────────────────────────────────────────────────────────────────────
-// SYSTEM · states rather than places
+// SYSTEM STATES  (GC-9xx)
 // ─────────────────────────────────────────────────────────────────────
 
 export const SYSTEM_ROUTES: readonly Route[] = [
-  R("/404", "Not Found", "gateway", "AS-16",
-    { notes: "No stack trace, no exception name, no auto-redirect." }),
-  R("/403", "Not Permitted", "gateway", "AS-16",
-    { notes: "Says the viewer may not see it. Never says whether it EXISTS — that distinction " +
-             "leaks the shape of the system to anyone probing it." }),
-  R("/500", "System Error", "gateway", "AS-16"),
-  R("/maintenance", "Maintenance", "gateway", "AS-15"),
-  R("/search", "Search", "gateway", null,
-    { accessOverride: { access: "identified", because:
-        "Results are scoped to what the viewer may see, which requires knowing who they are. An " +
-        "anonymous search would either return nothing or leak the index." } }),
-];
+  R("GC-900", "/sign-in", "Sign In", "gateway", "AS-32"),
+  R("GC-910", "/verify", "Verify", "gateway", "AS-32",
+    { notes: "The code remains single-use and outside the path. The page is public; the pending identity and token govern the write." }),
+  R("GC-920", "/status", "System Status", "gateway", "AS-15"),
+  R("GC-930", "/403", "Not Permitted", "gateway", "AS-16",
+    { notes: "Says the viewer may not see it. Never says whether it EXISTS — that difference is " +
+             "the shape of the system, handed to anyone probing it." }),
 
-// ─────────────────────────────────────────────────────────────────────
+  /* /404 and /500 are FRAMEWORK CONVENTIONS, not pages. Next.js owns both
+     paths: in the App Router they compile to not-found.tsx and error.tsx
+     at the root, which is why gen-app.js routes them through CONVENTIONS
+     rather than emitting a page.tsx.
 
-// -----------------------------------------------------------------
-// THE WORKED FLOW - SlowSpace Coastal LLP, Padubidri
-//
-// One offering walked end to end, so the arc from gateway to settled
-// position can be seen rather than described. Public throughout: every
-// step is what a prospective investor is shown BEFORE they have an
-// identity, and the guard on the real member routes is unaffected.
-// -----------------------------------------------------------------
-
-/*
- * These render DEMONSTRATION components against illustrative data for a
- * fictional partner - not the registered assemblies against real records.
- * That distinction is what makes public acceptable, and it is why every
- * one declares `assembly: null`.
- *
- * route-lint caught the alternative. Claiming `assembly: "AS-05"` on the
- * settled step failed immediately: AS-05 renders AP-04 at the member
- * vantage, and an override may relax the route without relaxing the
- * disclosure model underneath it. The check was right and the first
- * version of this table was wrong.
- */
-export const FLOW_REASON =
-  "A worked demonstration of the whole arc, on illustrative data for a fictional partner rather " +
-  "than a real position. Public because the point is that a prospective investor can see every " +
-  "step - including the accreditation and disclosure they would meet later - before committing " +
-  "to any of it.";
-
-export const FLOW_ROUTES: readonly Route[] = [
-  R("/flow", "SlowSpace Coastal", "space", null,
-    { notes: "Step 1 of 5. The offering at the space vantage: capital stack, six-stage waterfall, " +
-             "governance and programme, each carrying its confidence class." }),
-  R("/flow/accreditation", "Accreditation", "member", null,
-    { accessOverride: { access: "public", because: FLOW_REASON },
-      notes: "Step 2. PR-01, resumable - each field saves on blur to a draft record." }),
-  R("/flow/risk", "Risk Disclosure", "capital", null,
-    { accessOverride: { access: "public", because: FLOW_REASON },
-      notes: "Step 3. Seven clauses in severity order, on paper. The gate opens on reaching the " +
-             "end by any route." }),
-  R("/flow/commit", "Commit", "capital", null,
-    { accessOverride: { access: "public", because: FLOW_REASON },
-      notes: "Step 4. The piston, 3000ms linear. States Committed, never Member." }),
-  R("/flow/settled", "Settled", "member", null,
-    { accessOverride: { access: "public", because: FLOW_REASON },
-      notes: "Step 5. The first screen where the Member Law has fired." }),
-];
-
-// -----------------------------------------------------------------
-// THE JOURNAL
-//
-// What the platform says about itself, one binding decision at a time.
-// Public, gateway vantage, and deliberately separate from /voices:
-// what partners say about returns is regulated speech, and an
-// explanation of a mechanism is not.
-// -----------------------------------------------------------------
-
-export const JOURNAL_ROUTES: readonly Route[] = [
-  R("/journal", "The Journal", "gateway", "AS-30",
-    { notes: "Index. Entries newest first; the order is checked at load." }),
-  R("/journal/[slug]", "Journal Entry", "gateway", "AS-30",
-    { params: ["slug"],
-      notes: "One entry. Figures are read from the registries, never typed into the prose." }),
-];
-
-/**
- * WHAT A PAGE HOLDS, WHERE NO ASSEMBLY SAYS IT.
- *
- * Most routes render a registered assembly, and that assembly's sections
- * already state what is on the screen. Twenty-nine did not: they declare
- * `assembly: null`, so the information-architecture map had nothing to
- * report and listed them as URLs with no contents.
- *
- * A URL with no stated contents is a page nobody has described. It builds
- * anyway, renders a shell, and reads on the map as though the system were
- * smaller than it is.
- *
- * Each entry below is the page's parts, in the order they appear. This is
- * a DECLARATION, not documentation of something already built: several of
- * these pages are still shells, and what is written here is what they owe.
- *
- * Keyed by route path. gen-ia-map.js reads it, and reports any route that
- * has neither an assembly nor an entry here.
- */
-export const PAGE_CONTENTS: Record<string, readonly { part: string; holds: string }[]> = {
-  "/auth/verify": [
-    { part: "Verifying", holds: "The state while a link is checked. No control, because there is nothing for the viewer to do." },
-    { part: "Expired", holds: "What a stale link means and how to request another. Links are single-use and time-bound." },
-    { part: "Wrong device", holds: "Stated plainly rather than treated as a failure — a link opened elsewhere is ordinary, not suspicious." },
-  ],
-  "/auth/sign-out": [
-    { part: "Confirmation", holds: "That the session ended, and on which device." },
-    { part: "Other sessions", holds: "Whether sessions remain elsewhere, and the control to end them." },
-  ],
-  "/passport": [
-    { part: "Progress", holds: "The sixteen stages with the state of each: complete, in progress, not started." },
-    { part: "Resume", holds: "A link to the furthest incomplete stage. The application is resumable by URL, so this is a shortcut and never the only way back." },
-    { part: "What is held", holds: "Which documents have been received, and which are outstanding." },
-    { part: "Decision", holds: "The standing decision and its date, once one exists." },
-  ],
-  "/member/notifications": [
-    { part: "Unread", holds: "Events since last read, newest first, each naming the vehicle it concerns." },
-    { part: "All", holds: "The full record. A notification is never deleted, only marked read." },
-    { part: "Delivery", holds: "Which channels carried each one, so a missed notice can be traced rather than disputed." },
-  ],
-  "/member/profile": [
-    { part: "Identity", holds: "Name, contact, and tax residency as recorded. Changes are proposed, not applied — an identity on a register is not edited in place." },
-    { part: "Verification", holds: "What has been verified, when, and against which document." },
-    { part: "Positions", holds: "Every vehicle this identity is a partner in, with the date settlement fired." },
-  ],
-  "/member/settings": [
-    { part: "Index", holds: "Notifications, security and tax, each with the one line that says what it governs." },
-  ],
-  "/member/settings/notifications": [
-    { part: "Channels", holds: "Email and in-platform, per event class." },
-    { part: "Cannot be silenced", holds: "Capital calls, resolutions and distributions. Stated as unsilenceable rather than shown as a control that refuses to move." },
-  ],
-  "/member/settings/security": [
-    { part: "Sessions", holds: "Where this identity is signed in, and the control to end each." },
-    { part: "Second factor", holds: "State and enrolment. Required before any office right is granted." },
-    { part: "Recent activity", holds: "Sign-ins with time and network address, retained thirteen months." },
-  ],
-  "/member/settings/tax": [
-    { part: "Residency", holds: "Declared jurisdiction, and the date it was last confirmed." },
-    { part: "Withholding", holds: "The rate applied to distributions and the basis for it." },
-    { part: "Documents", holds: "Certificates held, with expiry. An expired certificate changes the rate, and says so before it does." },
-  ],
-  "/admin": [
-    { part: "Standing", holds: "What is open, what is overdue and what is unassigned, across every vehicle." },
-    { part: "By vehicle", holds: "One row per vehicle with its lifecycle state and open items." },
-    { part: "Rights", holds: "Which rights the viewer holds, since every control here is gated on one." },
-  ],
-  "/admin/governance": [
-    { part: "Committees", holds: "Standing committees, their remit and their membership." },
-    { part: "Resolutions", holds: "Open ballots and their thresholds." },
-    { part: "Policies", holds: "Instruments in force, with version and date." },
-  ],
-  "/admin/governance/committees": [
-    { part: "Register", holds: "Each committee, its remit, its quorum and who sits on it." },
-    { part: "Conflicts", holds: "Declared interests per member, and the matters they may not vote on." },
-    { part: "Terms", holds: "When each appointment ends. A committee whose terms have lapsed is shown as lapsed, not as sitting." },
-  ],
-  "/admin/governance/policies": [
-    { part: "In force", holds: "Every policy with its version, effective date and the resolution that ratified it." },
-    { part: "Superseded", holds: "Prior versions, retained. A policy relied on in the past must remain retrievable." },
-    { part: "Review", holds: "Next review date, and what is overdue." },
-  ],
-  "/admin/compliance": [
-    { part: "Open events", holds: "Findings, notices and breaches, by severity." },
-    { part: "Accreditation", holds: "Applications by state, and what each is waiting on." },
-    { part: "Conflicts", holds: "The register, and matters currently constrained by it." },
-  ],
-  "/admin/compliance/events": [
-    { part: "Register", holds: "Every compliance event with its class, the capability that raised it and the reason recorded." },
-    { part: "Ageing", holds: "How long each has been open, against the period allowed for it." },
-    { part: "Closure", holds: "What closed an event, by whom, and the reason. E-02 — a closure with no reason is not a closure." },
-  ],
-  "/admin/compliance/accreditation": [
-    { part: "Queue", holds: "Applications awaiting a decision, oldest first." },
-    { part: "Held", holds: "Applications waiting on the applicant, and what for." },
-    { part: "Decisions", holds: "Granted and refused, each with its recorded reason and the person who made it." },
-  ],
-  "/admin/compliance/conflicts": [
-    { part: "Declarations", holds: "Every declared interest, who declared it and when." },
-    { part: "Constraints", holds: "The matters each declaration bars its holder from. I-07." },
-    { part: "Unresolved", holds: "Interests declared with no constraint recorded — a declaration nobody acted on." },
-  ],
-  "/admin/ledger": [
-    { part: "Entries", holds: "The append-only record. Nothing here is edited; a correction is a further entry." },
-    { part: "Reconciliation", holds: "Where the ledger and the vehicle records last agreed, and any current difference." },
-    { part: "Seal", holds: "The hash chain and its last verification. A ledger that cannot be verified is a spreadsheet." },
-  ],
-  "/admin/telemetry": [
-    { part: "Health", holds: "What is running, what is degraded, and since when." },
-    { part: "Volumes", holds: "Events by class over time, so an absence of events is visible as an absence." },
-    { part: "Failures", holds: "Errors by surface, with the route that raised them." },
-  ],
-  "/admin/authority": [
-    { part: "Rights", holds: "Every declared right and what it permits." },
-    { part: "Holders", holds: "Who holds each right, and under which grant." },
-    { part: "Unheld", holds: "Rights nobody holds. A right nobody holds is a capability nobody can exercise, and that is worth seeing." },
-  ],
-  "/admin/authority/grants": [
-    { part: "Grants", holds: "Each grant with its right, its holder, its reason and its expiry." },
-    { part: "Expiring", holds: "Grants ending within thirty days." },
-    { part: "Standing", holds: "Grants with no expiry, listed separately because a permanent grant deserves to be looked at." },
-  ],
-  "/admin/authority/revocations": [
-    { part: "Revocations", holds: "What was withdrawn, from whom, when and why." },
-    { part: "Effect", holds: "What each holder could no longer do from the moment it took effect." },
-    { part: "Pending", holds: "Revocations scheduled but not yet in force." },
-  ],
-  "/admin/reports": [
-    { part: "Standing", holds: "Reports produced on a schedule, with the last run and the next." },
-    { part: "Ad hoc", holds: "Reports built on request, with the parameters that produced them." },
-    { part: "Provenance", holds: "For each report, which records it drew on and at what time — a report with no as-at time cannot be reconciled later." },
-  ],
-  "/admin/research": [
-    { part: "Market intelligence", holds: "Records held, with source and confidence class." },
-    { part: "Coverage", holds: "Which regions and asset classes are covered, and which are not." },
-    { part: "Age", holds: "How old each record is. Research is treated as perishable and its age is shown, not buried." },
-  ],
-  "/admin/failure": [
-    { part: "Constitutional failure", holds: "What rule was breached, when, and by which capability." },
-    { part: "Containment", holds: "What was suspended automatically, and what remains running." },
-    { part: "Record", holds: "The full event, unedited. This page exists so a failure cannot be quietly resolved." },
-  ],
-  "/search": [
-    { part: "Query", holds: "One field. Results are scoped to what the viewer may already reach." },
-    { part: "Results", holds: "Grouped by kind — vehicles, properties, documents, resolutions." },
-    { part: "Absence", holds: "A result the viewer may not reach is not shown as withheld. It is not shown, because 'you may not see this' confirms it exists." },
-  ],
-  "/flow": [
-    { part: "Masthead", holds: "The property, its jurisdiction and its coordinates." },
-    { part: "The unit", holds: "Commitment, share, indicative distribution and entitlement, each with its confidence class." },
-    { part: "Capital stack", holds: "Land, formation and facility, on the paper ground because it is an assertion." },
-    { part: "The waterfall", holds: "Six stages in order, closing to 100%, with debt service stated as its own stage." },
-    { part: "Returns", holds: "Cash yield, cover ratio, payback and exit, each classed. The dossier's inconsistency is stated here rather than resolved silently." },
-    { part: "Governance", holds: "Voting basis and thresholds, read from the LLP Agreement." },
-  ],
-  "/flow/commit": [
-    { part: "Review", holds: "Vehicle, property, share, amount, completion window and lock-in — every term that binds, before the control that binds it." },
-    { part: "The piston", holds: "A three-second sustained press. The duration is the deliberation, and no undo follows." },
-    { part: "Derivation", holds: "How the unit falls out of the equity layer, on paper." },
-    { part: "Recorded", holds: "State becomes Committed, never Member. The Member Law fires on settlement." },
-  ],
-};
-
-// -----------------------------------------------------------------
-// THE PUBLIC SURFACE — PUB.01 through PUB.11
-//
-// From GC Collective Wireframes 2.0. Every one is public and
-// indexable: these are the pages that exist to be found.
-//
-// /gallery, /portfolio, /story, /voices, /answers and /journal already
-// serve PUB.03, PUB.04 and PUB.08, and are retained as they stand. The
-// endpoints below are the ones the wireframes add.
-// -----------------------------------------------------------------
-
-export const COLLECTIVE_ROUTES: readonly Route[] = [
-  R("/how-it-works", "How It Works", "gateway", "AS-32",
-    { notes: "PUB.02 / PUB.11 — the doctrine, then a hard cut to the arithmetic. Distinct from " +
-             "/how-capital-works, which is the waterfall itself rather than the argument for it." }),
-  R("/collective/partners", "The Foundation", "gateway", "AS-32",
-    { notes: "PUB.05 — the independent firms. Ships with functions stated and holders withheld " +
-             "until each engagement is recorded against the vehicle it serves." }),
-  R("/collective/operators", "The Operators", "gateway", "AS-32",
-    { notes: "PUB.06 — what runs a property, and who is accountable when it does not." }),
-  R("/collective/press", "The Wire", "gateway", "AS-32",
-    { notes: "PUB.10 — external coverage. Ships empty and says so; the wireframe's six clippings " +
-             "were quotes attributed to real publications that have not published them." }),
-  R("/communique/request", "Request the Dossier", "gateway", "AS-32",
-    { notes: "PUB.07 — the intelligence pack. What requesting it creates is stated above the form." }),
-  R("/signal", "The Signal", "gateway", "AS-32",
-    { notes: "PUB.09 — the weekly transmission. No tuner gate; the form is simply present." }),
-
-  /* The triad. Capital is already public at /how-capital-works, which is
-     the same page under an older name and is retained rather than
-     duplicated — /capital belongs to the office workspace. */
-  R("/space", "Space", "gateway", "AS-32",
-    { notes: "The physical product: what is built, from what, and what it takes to keep standing." }),
-  R("/time", "Time", "gateway", "AS-32",
-    { notes: "Entitlement: what it is, what it is not, and when it begins. The wireframe's " +
-             "exchange console is stated as unbuilt rather than described as though it exists." }),
-
-  R("/collective/gallery", "The Evidence Portfolio", "gateway", "AS-32",
-    { notes: "PUB.08. Ships empty: every plate must say whether it is a photograph, a render or " +
-             "a drawing, and a portfolio of renders shown as photographs is the commonest " +
-             "misrepresentation in this industry. /gallery (AS-09) is a property gallery and is " +
-             "a different thing; both are retained." }),
-  R("/structure", "The Vehicle", "gateway", "AS-32",
-    { notes: "From the PUB.01 footer, which calls it SPV Structure. The constitutional default " +
-             "is an LLP; an SPV needs Board approval per property, and the page says so." }),
+     They remain in this table because they ARE addressable states the
+     architecture has to describe — with an access class and an assembly,
+     like anything else. Only the file they compile to differs. Dropping
+     them removed both files as orphans and handed production Next's stock
+     pages, which is the one place a stack trace can still surface. */
+  R("GC-940", "/404", "Not Found", "gateway", "AS-16",
+    { notes: "No stack trace, no exception name, no auto-redirect. The middleware rewrites an " +
+             "unknown route and a missing right here, so this page must never confirm whether " +
+             "the surface exists." }),
+  R("GC-950", "/500", "System Error", "gateway", "AS-16",
+    { notes: "Renders the failure without rendering the error. An exception name or a stack tells " +
+             "anyone probing the site what the stack is." }),
 ];
 
 export const ROUTES: readonly Route[] = [
-  ...PUBLIC_ROUTES, ...LEGAL_ROUTES, ...AUTH_ROUTES,
-  ...MEMBER_ROUTES, ...CAPITAL_ROUTES, ...ADMIN_ROUTES, ...SYSTEM_ROUTES,
-  ...FLOW_ROUTES,
-  ...JOURNAL_ROUTES,
-  ...COLLECTIVE_ROUTES,
+  ...PUBLIC_ROUTES, ...LEGAL_ROUTES,
+  ...INVESTOR_ROUTES, ...MEMBER_ROUTES, ...OFFICE_ROUTES,
+  ...SYSTEM_ROUTES,
 ];
+
+/* ── The IA IDs are the spine, so they are checked like one ──────── */
+{
+  const seen = new Map<string, string>();
+  for (const r of ROUTES) {
+    if (!r.ia) throw new Error(`${r.path} carries no IA ID. The ID is the permanent reference.`);
+    for (const ia of [r.ia, ...(r.coLocatedIa ?? [])]) {
+      const prior = seen.get(ia);
+      if (prior) {
+        throw new Error(
+          `IA ${ia} is claimed by both ${prior} and ${r.path}. IDs are permanent and unique — ` +
+          `recycling one silently repoints every requirement, test and analytics event bound to it.`,
+        );
+      }
+      seen.set(ia, r.path);
+    }
+  }
+  const paths = new Set<string>();
+  for (const r of ROUTES) {
+    if (paths.has(r.path)) throw new Error(`Duplicate route path ${r.path}`);
+    paths.add(r.path);
+  }
+}
+
+/** The permanent identifier for a live path, or undefined. */
+export const iaOf = (path: string): string | undefined =>
+  ROUTES.find((r) => r.path === path)?.ia;
+
+export const routeByIA = (ia: string): Route | undefined =>
+  ROUTES.find((r) => r.ia === ia || r.coLocatedIa?.includes(ia));
 
 /**
  * The access class of a route: derived from its assembly's vantage, or

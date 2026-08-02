@@ -21,8 +21,8 @@
  *    empty "Governance" group would leak the same fact more quietly.
  *
  * 2. THE BREADCRUMB READS THE ROUTE TABLE, NOT THE URL.
- *    Splitting a pathname gives you "how-capital-works"; the route
- *    table gives you "How Capital Works", which is what the page is
+ *    Splitting a pathname gives you "how-it-works"; the route table gives
+ *    you "How It Works", which is what the page is
  *    called. It also gives the vantage, which is the more useful fact:
  *    a person should be able to see which aperture they are looking
  *    through without inferring it from the address.
@@ -54,7 +54,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PRIMARY_NAV, NAV_FOOT, type NavIcon } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
-import { canReach } from "@/lib/access";
+import { signOut } from "next-auth/react";
+import { canReach, ANONYMOUS } from "@/lib/access";
+import type { Subject } from "@/lib/access";
+
+/**
+ * What the rail calls the viewer's vantage.
+ *
+ * Names the highest class the subject actually satisfies. It never says
+ * "office" on the strength of a session alone — that word requires a
+ * live grant, which is what `rights` being non-empty means.
+ */
+function vantageLabel(s: Subject): string {
+  if (s.rights.length > 0) return "Office vantage";
+  if (s.member) return "Member vantage";
+  if (s.accredited) return "Accredited vantage";
+  if (s.identified) return "Identified vantage";
+  return "Public vantage";
+}
 import { plate } from "./data";
 import { hueOf } from "./compose";
 
@@ -120,7 +137,23 @@ function resolve(pathname: string) {
 
 const STORE = "gc-rail-collapsed";
 
-export function Shell({ children }: { children: React.ReactNode }) {
+export function Shell({
+  children,
+  subject = ANONYMOUS,
+}: {
+  children: React.ReactNode;
+  /**
+   * Resolved by the root layout, which is a Server Component and can
+   * therefore await the session. This is a Client Component and cannot,
+   * so the subject arrives as a prop.
+   *
+   * It DEFAULTS to anonymous rather than to a permissive value. If a
+   * future caller forgets to pass it, the rail shows only public
+   * surfaces — the failure is a rail that is too small, never one that
+   * advertises a surface the viewer cannot open.
+   */
+  subject?: Subject;
+}) {
   const pathname = usePathname() || "/";
   const [collapsed, setCollapsed] = useState(false);
   const [ready, setReady] = useState(false);
@@ -185,9 +218,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
   /* Filtered on every render, never cached: reachability is a property
      of the viewer, and a cached rail would outlive a revocation. */
   const sections = PRIMARY_NAV
-    .map((s) => ({ ...s, items: s.items.filter((i) => canReach(i.path).ok) }))
+    .map((s) => ({ ...s, items: s.items.filter((i) => canReach(i.path, subject).ok) }))
     .filter((s) => s.items.length > 0);
-  const foot = NAV_FOOT.filter((i) => canReach(i.path).ok);
+  const foot = NAV_FOOT.filter((i) => canReach(i.path, subject).ok);
 
   const isCurrent = (p: string) =>
     p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(p + "/");
@@ -263,16 +296,23 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </svg>
           </button>
           {foot.map(item)}
-          {/* Identity is not built, and the block says so rather than
-              inventing a name. A shell that shows a signed-in person
-              when nobody is signed in is the first lie a product tells. */}
+          {/* The block states the real vantage. A shell that shows a
+              signed-in person when nobody is signed in is the first lie a
+              product tells — and the inverse, hiding a live session,
+              hides the one control that ends it. */}
           <div className="rail-who">
-            <span className="sq" aria-hidden="true">—</span>
+            <span className="sq" aria-hidden="true">{subject.identified ? "•" : "—"}</span>
             <span className="who-meta">
-              <span className="nm">Not signed in</span>
-              <span className="rl t-mono-s">Public vantage</span>
+              <span className="nm">{subject.identified ? "Signed in" : "Not signed in"}</span>
+              <span className="rl t-mono-s">{vantageLabel(subject)}</span>
             </span>
           </div>
+          {/* A button, not a link. Sign-out is a state change, and a GET
+              that ends a session can be fired by any image tag on any
+              page — signOut() posts with the CSRF token. */}
+          {subject.identified
+            ? <button className="rail-signout t-mono-s" type="button" onClick={() => signOut({ callbackUrl: "/" })}>Sign out</button>
+            : <Link className="rail-signout t-mono-s" href="/sign-in">Sign in</Link>}
         </div>
       </nav>
 

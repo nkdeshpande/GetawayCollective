@@ -172,7 +172,7 @@ export const ROOT: PublicPage = {
         "The financial case is stated separately and in full, because a place you enjoy and an " +
         "asset that performs are two claims and each has to stand on its own.",
       ],
-      cta: { label: "How capital works", href: "/how-capital-works" },
+      cta: { label: "How capital works", href: "/collection/slowspace-coastal/investment" },
     },
     {
       n: "03", eyebrow: "The Triad", ground: "paper",
@@ -286,7 +286,7 @@ export const MANIFESTO: PublicPage = {
         { k: "The waterfall", v: "Six stages in order, closing to 100%. Debt service is stage five and stands on its own." },
         { k: "The entitlement", v: "Nights in proportion to contribution, beginning at handover and not before." },
       ],
-      cta: { label: "The waterfall in full", href: "/how-capital-works" },
+      cta: { label: "The waterfall in full", href: "/collection/slowspace-coastal/investment" },
     },
     {
       n: "04", eyebrow: "The Execution", ground: "paper",
@@ -531,7 +531,7 @@ export const OPERATORS: PublicPage = {
         "happens; that cost falls on partners and is disclosed as a risk rather than described " +
         "as a safeguard.",
       ],
-      cta: { label: "Where that sits in the waterfall", href: "/how-capital-works" },
+      cta: { label: "Where that sits in the waterfall", href: "/collection/slowspace-coastal/investment" },
     },
   ],
 };
@@ -739,7 +739,7 @@ export const SPACE: PublicPage = {
         { k: "Capital", v: "What the position is, what it pays, and in what order." },
         { k: "Time", v: "Nights, how many, and when they begin." },
       ],
-      cta: { label: "How capital works", href: "/how-capital-works" },
+      cta: { label: "How capital works", href: "/collection/slowspace-coastal/investment" },
     },
   ],
 };
@@ -880,7 +880,7 @@ export const EVIDENCE: PublicPage = {
         { id: "PDB-01/SEC-01", kind: "Not yet made", what: "Long section through the modular grid",
           spec: "Drawing · vector · from the IDO model" },
         { id: "GC/WF-01", kind: "Diagram", what: "The six-stage waterfall, closing to 100%",
-          spec: "Generated in the page from the vehicle record · /how-capital-works" },
+          spec: "Generated in the page from the vehicle record · /collection/slowspace-coastal/investment" },
       ],
       note:
         "Six required, one of which exists — and the one that exists is generated from the " +

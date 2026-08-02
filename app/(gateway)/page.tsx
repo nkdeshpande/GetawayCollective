@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 import { Root } from "@/app/_assemblies/publicpages";
 
 export const metadata: Metadata = {
-  title: "Home · Getaway Collective",
+  title: "Getaway Collective",
   robots: { index: true, follow: true },
 };
 

@@ -140,14 +140,30 @@ body.over-aperture #ring{width:64px;height:64px;border-color:var(--copper);
 .hud{position:sticky;top:0;z-index:600;background:rgba(10,10,10,.94);
   backdrop-filter:blur(12px);border-bottom:1px solid var(--hair)}
 .hud-in{max-width:1400px;margin:0 auto;padding:var(--s-xs) var(--s-m);
-  display:flex;align-items:center;gap:var(--s-m);flex-wrap:wrap}
+  display:flex;align-items:center;gap:var(--s-m)}
 .hud .brand{color:var(--forest-light);white-space:nowrap}
-.hud nav{display:flex;gap:var(--s-3xs);flex-wrap:wrap;margin-left:auto}
-.hud nav button{background:none;border:1px solid transparent;color:var(--steel-dim);
+.hud .catalog-tools{display:flex;align-items:center;gap:var(--s-xs);margin-left:auto;min-width:0}
+.hud .catalog-mode{display:flex;align-items:center;border:1px solid var(--hair)}
+.hud .catalog-mode button{background:none;border:0;border-right:1px solid var(--hair);color:var(--steel-dim);
   font:400 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;
   padding:var(--s-2xs) var(--s-xs);transition:color var(--d-instant),border-color var(--d-instant)}
-.hud nav button:hover{color:var(--ink-inv)}
-.hud nav button[aria-current="page"]{color:var(--ink-inv);border-color:var(--copper)}
+.hud .catalog-mode button:last-child{border-right:0}
+.hud .catalog-mode button:hover{color:var(--ink-inv)}
+.hud .catalog-mode button[aria-selected="true"]{background:var(--ink-inv);color:var(--void)}
+.hud .catalog-picker{display:flex;align-items:center;gap:var(--s-2xs);min-width:0}
+.hud .catalog-picker span{white-space:nowrap}
+.hud .catalog-picker select{min-width:260px;max-width:420px;background:var(--void-panel);color:var(--ink-inv);
+  border:1px solid var(--hair);padding:var(--s-2xs) var(--s-xs);font:400 11px/1.2 var(--f-mono);
+  text-transform:uppercase}
+.hud .catalog-count{white-space:nowrap;color:var(--steel-dim)}
+body[data-mode="cinematic"] .hud{background:rgba(10,10,10,.82)}
+body[data-mode="functional"] .hud{background:var(--void);border-bottom-color:var(--steel)}
+@media(max-width:900px){
+  .hud-in{align-items:flex-start;flex-wrap:wrap}
+  .hud .catalog-tools{width:100%;margin-left:0;flex-wrap:wrap}
+  .hud .catalog-picker{flex:1 1 260px}
+  .hud .catalog-picker select{width:100%;min-width:0}
+}
 
 /* ── Layout ──────────────────────────────────────────────────────── */
 .wrap{max-width:1400px;margin:0 auto;padding:0 var(--s-m)}
@@ -1581,6 +1597,68 @@ th.num{text-align:right}
 .rail-main:has(>section[data-sec] h1) >section[data-sec]:first-of-type>*{
   position:relative;z-index:1}
 
+/* -- Canonical chrome and qualified dossier specimens ------------- */
+.chrome-specimen{border:1px solid var(--hair);background:var(--void-panel);overflow:hidden}
+.chrome-demo-head{min-height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  gap:var(--s-m);padding:0 var(--s-m);border-bottom:1px solid var(--hair)}
+.chrome-demo-head .mark{font:700 11px/1 var(--f-mono);letter-spacing:.12em}
+.chrome-demo-head .where{color:var(--steel-dim);font:400 10px/1 var(--f-mono);
+  letter-spacing:.1em;text-transform:uppercase}
+.chrome-demo-head nav{justify-self:end;display:flex;gap:var(--s-s)}
+.chrome-demo-head a{color:var(--steel-dim);font:400 10px/1 var(--f-mono);
+  letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+.chrome-demo-head a[aria-current="page"]{color:var(--ink-inv);border-bottom:1px solid var(--copper)}
+.chrome-demo-body{min-height:240px;display:grid;place-items:center;padding:var(--s-xl);text-align:center;
+  background:linear-gradient(145deg,var(--forest),var(--void) 68%)}
+.chrome-demo-body p{max-width:48ch;color:var(--steel-dim)}
+.chrome-spine-stage{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:440px;
+  border:1px solid var(--hair);background:var(--void-panel)}
+.chrome-spine-stage .spine{position:static;top:auto}
+.chrome-spine-content{padding:var(--s-l);border-left:1px solid var(--hair)}
+.chrome-spine-content .functional-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px;margin-top:var(--s-l);background:var(--hair);border:1px solid var(--hair)}
+.chrome-spine-content .functional-grid>div{min-height:128px;padding:var(--s-s);background:var(--void)}
+.hero-viewport-demo{border:1px solid var(--hair)}
+.hero-viewport-demo .hero{min-height:clamp(420px,66vh,760px)}
+
+.dossier-shell{display:grid;grid-template-columns:220px minmax(0,1fr);border:1px solid var(--hair);
+  background:var(--void-panel)}
+.dossier-nav{padding:var(--s-m);border-right:1px solid var(--hair)}
+.dossier-nav .label{display:block;margin-bottom:var(--s-m)}
+.dossier-nav button{width:100%;display:flex;justify-content:space-between;gap:var(--s-s);
+  padding:var(--s-xs) 0;border:0;border-bottom:1px solid var(--hair);background:none;color:var(--steel-dim);
+  text-align:left;font:400 10px/1.35 var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
+.dossier-nav button[aria-selected="true"]{color:var(--ink-inv);box-shadow:inset 2px 0 0 var(--copper);
+  padding-left:var(--s-xs)}
+.dossier-main{min-width:0;padding:var(--s-l)}
+.dossier-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-m);
+  padding-bottom:var(--s-m);border-bottom:1px solid var(--hair)}
+.dossier-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
+  margin-top:var(--s-l);background:var(--hair);border:1px solid var(--hair)}
+.dossier-facts article{min-height:124px;padding:var(--s-s);background:var(--void)}
+.dossier-facts .k{display:block;color:var(--steel-dim);font:400 9px/1.3 var(--f-mono);
+  letter-spacing:.1em;text-transform:uppercase}
+.dossier-facts .v{display:block;margin-top:var(--s-m);font:400 16px/1.2 var(--f-display);
+  text-transform:uppercase}
+.dossier-ledger{margin-top:var(--s-l);border-top:1px solid var(--hair)}
+.dossier-row{display:grid;grid-template-columns:minmax(180px,1.5fr) 1fr 1fr auto;gap:var(--s-s);
+  align-items:center;padding:var(--s-xs) 0;border-bottom:1px solid var(--hair)}
+.dossier-row span,.dossier-row button{font:400 10px/1.4 var(--f-mono)}
+.dossier-row .state{color:var(--confirm)}
+.dossier-action{display:flex;justify-content:space-between;align-items:center;gap:var(--s-m);
+  margin-top:var(--s-l);padding-top:var(--s-m);border-top:1px solid var(--hair)}
+.dossier-action p{max-width:64ch;color:var(--steel-dim)}
+
+@media(max-width:760px){
+  .chrome-demo-head{grid-template-columns:1fr auto}
+  .chrome-demo-head .where{display:none}
+  .chrome-spine-stage,.dossier-shell{grid-template-columns:1fr}
+  .chrome-spine-content,.dossier-nav{border-left:0;border-right:0;border-bottom:1px solid var(--hair)}
+  .chrome-spine-content .functional-grid,.dossier-facts{grid-template-columns:1fr}
+  .dossier-row{grid-template-columns:1fr 1fr}
+  .dossier-action{align-items:stretch;flex-direction:column}
+}
+
 [hidden]{display:none !important}
 </style>
 </head>
@@ -1596,32 +1674,17 @@ th.num{text-align:right}
   <div class="hud-in">
     <span class="brand t-micro">GC.SYSTEM</span>
     <span class="t-micro label" id="hudVantage">gateway vantage</span>
-    <nav aria-label="Assemblies">
-      <button data-go="AS-01" aria-current="page">AS-01 Gateway</button>
-      <button data-go="AS-02">AS-02 Console</button>
-      <button data-go="AS-03">AS-03 Property</button>
-      <button data-go="AS-04">AS-04 Capital</button>
-      <button data-go="AS-05">AS-05 Member</button>
-      <button data-go="AS-06">AS-06 Commit</button>
-      <button data-go="AS-09">AS-09 Frame</button>
-      <button data-go="AS-10">AS-10 Strip</button>
-      <button data-go="AS-11">AS-11 Stages</button>
-      <button data-go="AS-12">AS-12 Location</button>
-      <button data-go="AS-13">AS-13 Docket</button>
-      <button data-go="AS-25">AS-25 Time</button>
-      <button data-go="AS-24">AS-24 Voices</button>
-      <button data-go="AS-14">AS-14 Risk</button>
-      <button data-go="AS-26">AS-26 Call</button>
-      <button data-go="AS-27">AS-27 Ballot</button>
-      <button data-go="AS-19">AS-19 Lock</button>
-      <button data-go="AS-28">AS-28 Risk Reg</button>
-      <button data-go="AS-17">AS-17 Answers</button>
-      <button data-go="AS-15">AS-15 Status</button>
-      <button data-go="AS-16">AS-16 404</button>
-      <button data-go="AS-07">AS-07 Brands</button>
-      <button data-go="AS-18">AS-18 Roles</button>
-      <button data-go="AS-08">AS-08 Story</button>
-    </nav>
+    <div class="catalog-tools">
+      <div class="catalog-mode" role="tablist" aria-label="Assembly presentation mode">
+        <button type="button" role="tab" data-catalog-mode="cinematic" aria-selected="true">Cinematic</button>
+        <button type="button" role="tab" data-catalog-mode="functional" aria-selected="false">Functional</button>
+      </div>
+      <label class="catalog-picker">
+        <span class="t-micro label">Assembly</span>
+        <select id="assemblyPicker" aria-label="Choose an assembly"></select>
+      </label>
+      <span class="catalog-count t-micro" id="catalogCount">35 / 35</span>
+    </div>
   </div>
 </header>
 
@@ -1858,6 +1921,47 @@ function AP02(p){
    ═══════════════════════════════════════════════════════════════════ */
 
 const A = {};
+
+/* The catalogue is a review surface, not a second assembly registry.
+   Names mirror constants/assemblies.ts. Mode governs presentation:
+   cinematic for public discovery; functional for decisions and writes. */
+const CATALOG = [
+  {id:"AS-01",name:"The Gateway Grid",vantage:"gateway",scope:"screen",mode:"cinematic"},
+  {id:"AS-02",name:"The Property Console",vantage:"capital",scope:"screen",mode:"functional"},
+  {id:"AS-03",name:"The Property Masthead",vantage:"space",scope:"screen",mode:"cinematic"},
+  {id:"AS-04",name:"The Capital Explainer",vantage:"capital",scope:"screen",mode:"functional"},
+  {id:"AS-05",name:"The Member Console",vantage:"member",scope:"screen",mode:"functional"},
+  {id:"AS-06",name:"The Commitment Flow",vantage:"capital",scope:"screen",mode:"functional"},
+  {id:"AS-07",name:"The Portfolio Narrative",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-08",name:"The Story Playback",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-09",name:"The Gallery Frame",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-10",name:"The Gallery Strip",vantage:"space",scope:"region",mode:"cinematic"},
+  {id:"AS-11",name:"The Stage Progression",vantage:"capital",scope:"screen",mode:"functional"},
+  {id:"AS-12",name:"Location Intelligence",vantage:"space",scope:"screen",mode:"cinematic"},
+  {id:"AS-13",name:"The LLP Docket",vantage:"admin",scope:"screen",mode:"functional"},
+  {id:"AS-14",name:"The Risk Disclosure",vantage:"capital",scope:"screen",mode:"functional"},
+  {id:"AS-15",name:"System Status",vantage:"gateway",scope:"screen",mode:"functional"},
+  {id:"AS-16",name:"Signal Lost",vantage:"gateway",scope:"screen",mode:"cinematic"},
+  {id:"AS-17",name:"The Knowledge Base",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-18",name:"Recruitment",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-19",name:"The Ledger Lock",vantage:"capital",scope:"screen",mode:"functional"},
+  {id:"AS-20",name:"The Header",vantage:"gateway",scope:"chrome",mode:"cinematic"},
+  {id:"AS-21",name:"The Navigation Spine",vantage:"member",scope:"chrome",mode:"functional"},
+  {id:"AS-22",name:"The Footer",vantage:"gateway",scope:"chrome",mode:"cinematic"},
+  {id:"AS-23",name:"The Hero Viewport",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-24",name:"Testimonials",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-25",name:"The Time Ledger",vantage:"time",scope:"screen",mode:"functional"},
+  {id:"AS-26",name:"The Capital Call",vantage:"member",scope:"screen",mode:"functional"},
+  {id:"AS-27",name:"The Ballot",vantage:"member",scope:"screen",mode:"functional"},
+  {id:"AS-28",name:"The Risk Register",vantage:"capital",scope:"screen",mode:"functional"},
+  {id:"AS-29",name:"The Standing Document",vantage:"gateway",scope:"screen",mode:"functional"},
+  {id:"AS-30",name:"The Journal",vantage:"gateway",scope:"region",mode:"cinematic"},
+  {id:"AS-31",name:"The Vehicle Console",vantage:"member",scope:"region",mode:"functional"},
+  {id:"AS-32",name:"The Public Surface",vantage:"gateway",scope:"screen",mode:"cinematic"},
+  {id:"AS-33",name:"The Member Surface",vantage:"member",scope:"screen",mode:"functional"},
+  {id:"AS-34",name:"The Admin Surface",vantage:"admin",scope:"screen",mode:"functional"},
+  {id:"AS-35",name:"The Investor Dossier",vantage:"gateway",scope:"screen",mode:"functional"},
+];
 
 /* ── AS-01 · THE GATEWAY GRID ────────────────────────────────────── */
 A["AS-01"] = { vantage:"gateway", render: () => `
@@ -3465,6 +3569,105 @@ function footer(){
   </footer>`;
 }
 
+/* AS-20 · THE HEADER — public-safe chrome, independently testable. */
+A["AS-20"] = { vantage:"gateway", render: () => `
+<section data-sec="AS-20.a" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-20</span>
+      <span class="t-micro label">Chrome · narrowest vantage wins</span></div>
+    <h1 class="t-display-l">The Header</h1>
+    <p class="t-body-l dim measure" style="margin-top:var(--s-s)">
+      Identity, current context and reachable routes. No balance, position or ownership figure can
+      enter chrome that is also present on a public screen.
+    </p>
+
+    <div class="chrome-specimen" style="margin-top:var(--s-xl)">
+      <header class="chrome-demo-head">
+        <span class="mark">GETAWAY COLLECTIVE</span>
+        <span class="where">Public / The Collection</span>
+        <nav aria-label="Header specimen routes">
+          <a href="#" aria-current="page">Collection</a>
+          <a href="#">Journal</a>
+          <a href="#">Sign in</a>
+        </nav>
+      </header>
+      <div class="chrome-demo-body">
+        <div><span class="t-micro label">AS-20 · persistent chrome</span>
+          <h2 class="t-display-l" style="margin-top:var(--s-2xs)">Nothing private follows you here.</h2>
+          <p class="t-body" style="margin:var(--s-s) auto 0">Routes without authority are absent, not disabled. The current context is named in words.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> The header inherits the gateway aperture because it persists across every surface.</span>
+      <span class="fix"><b>Rule</b> Session controls identify the relationship state; they never disclose a position.</span>
+    </div>
+  </div>
+</section>` };
+
+/* AS-21 · THE NAVIGATION SPINE — functional chrome, fixed order. */
+A["AS-21"] = { vantage:"member", render: () => `
+<section data-sec="AS-21.a" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-21</span>
+      <span class="t-micro label">Chrome · Member workspace</span></div>
+    <h1 class="t-display-l">The Navigation Spine</h1>
+    <p class="t-body-l dim measure" style="margin-top:var(--s-s)">
+      A fixed route order for a settled partner. Attention counts mean something is awaiting this
+      person; they never mean merely new.
+    </p>
+
+    <div class="chrome-spine-stage" style="margin-top:var(--s-xl)">
+      ${spine("Overview")}
+      <main class="chrome-spine-content">
+        <span class="t-micro label">SlowSpace Coastal LLP / Overview</span>
+        <h2 class="t-display-m" style="margin-top:var(--s-2xs)">Vehicle control</h2>
+        <div class="functional-grid">
+          <div><span class="t-micro label">Position</span><p class="t-body-s dim" style="margin-top:var(--s-m)">Ownership and contribution basis.</p></div>
+          <div><span class="t-micro label">Evidence</span><p class="t-body-s dim" style="margin-top:var(--s-m)">Current instruments and disclosures.</p></div>
+          <div><span class="t-micro label">Attention</span><p class="t-body-s dim" style="margin-top:var(--s-m)">Three owned actions across two controls.</p></div>
+        </div>
+      </main>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> Route order never changes by recency or frequency.</span>
+      <span class="fix"><b>Rule</b> On compact screens the spine becomes a horizontal rail; it never disappears.</span>
+    </div>
+  </div>
+</section>` };
+
+/* AS-22 · THE FOOTER — the canonical function shown on its own. */
+A["AS-22"] = { vantage:"gateway", render: () => `
+<section data-sec="AS-22.a">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-22</span>
+      <span class="t-micro label">Chrome · attribution and standing routes</span></div>
+    <h1 class="t-display-l">The Footer</h1>
+    <p class="t-body-l dim measure" style="margin-top:var(--s-s)">
+      The platform, Investment Vehicle and Operating Partner remain separately attributable wherever the platform speaks.
+    </p>
+  </div>
+</section>
+${footer()}` };
+
+/* AS-23 · THE HERO VIEWPORT — cinematic region, one claim only. */
+A["AS-23"] = { vantage:"gateway", render: () => `
+<div class="hero-viewport-demo">
+  ${hero({eyebrow:"AS-23 · Hero Viewport",claim:"One place.<br>One claim.",
+    sup:"A full-bleed opening for public discovery. No figure is placed over imagery.",
+    go:[{t:"Explore the property",to:"AS-03"},{t:"See the collection",to:"AS-01"}],hue:162})}
+</div>
+<section data-sec="AS-23.a" style="border-bottom:none">
+  <div class="wrap">
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> One display claim, one supporting line and no more than two onward routes.</span>
+      <span class="fix"><b>Rule</b> Any moving image has a visible pause control and is still under reduced motion.</span>
+    </div>
+  </div>
+</section>` };
+
 /* ═══ AS-24 · TESTIMONIALS ═══════════════════════════════════════════
    Every quote below is about the PLACE. Not one names a figure, a yield,
    a return or a gain — and the linter refuses the section if the rule
@@ -4700,6 +4903,79 @@ A["AS-34"] = { vantage:"admin", render: () => {
   </div>
 </div>` } };
 
+/* AS-35 · THE INVESTOR DOSSIER — qualified, functional disclosure. */
+const DOSSIER_CHAPTERS = [
+  {label:"Overview",title:"Private overview",note:"The Investment Vehicle, current disclosure version and scope of review.",
+    facts:[["Vehicle","SlowSpace Coastal LLP"],["Legal form","LLP"],["Offering","Open"],["Disclosure","Version 4 · current"]],
+    records:[["Private placement memorandum","v4","Verified"],["LLP Agreement","v3","Executed"],["Disclosure acknowledgement","v4","Required"]]},
+  {label:"Asset",title:"Property evidence",note:"The asset, acquisition basis and diligence selected for this qualified aperture.",
+    facts:[["Property","SlowSpace Coastal"],["Lifecycle","Pending"],["Title","Review current"],["Diligence","5 of 6 clear"]],
+    records:[["Title report","v2","Verified"],["Technical diligence","v3","Verified"],["Environmental diligence","v1","Condition open"]]},
+  {label:"Financials",title:"Financial basis",note:"Capital requirement, minimum commitment and modelled outcomes with their source class.",
+    facts:[["Target","₹4,00,00,000"],["Minimum","₹50,000"],["Reserve basis","Defined"],["Forecast","Modelled"]],
+    records:[["Sources and uses","v5","Verified"],["Financial model","v7","Modelled"],["Valuation report","v2","Independent"]]},
+  {label:"Structure",title:"Vehicle structure",note:"Ownership, agreements, governance and the separation between the platform and the LLP.",
+    facts:[["Vehicle","LLP"],["Units","10 issued"],["Voting","Equity weighted"],["Platform equity","None"]],
+    records:[["Structure memorandum","v3","Verified"],["Authority matrix","v4","Current"],["Related-party register","v2","Current"]]},
+  {label:"Risks",title:"Risk disclosure",note:"Material risks, mitigants and unresolved conditions shown before commitment.",
+    facts:[["Material risks","4"],["Open conditions","1"],["Reserve test","Pending"],["Review state","Acknowledgement due"]],
+    records:[["Risk disclosure","v4","Current"],["Risk register extract","v6","Current"],["Downside scenario","v3","Modelled"]]},
+  {label:"Evidence",title:"Evidence register",note:"Version, custody and activity for every document cleared for this investment decision.",
+    facts:[["Documents","18"],["Current","16"],["Superseded","2 retained"],["Downloads","Recorded"]],
+    records:[["Evidence index","v8","Verified"],["Disclosure bundle","v4","Current"],["Download activity","Append-only","Recorded"]]},
+];
+
+function dossierPanel(chapter){
+  return `
+    <div class="dossier-head">
+      <div><span class="t-micro label">Qualified disclosure / ${esc(chapter.label)}</span>
+        <h2 class="t-display-m" style="margin-top:var(--s-2xs)">${esc(chapter.title)}</h2>
+        <p class="t-body-s dim measure" style="margin-top:var(--s-xs)">${esc(chapter.note)}</p></div>
+      <span class="conf verified">Access current</span>
+    </div>
+    <div class="dossier-facts">
+      ${chapter.facts.map(([k,v])=>`<article><span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></article>`).join("")}
+    </div>
+    <div class="dossier-ledger">
+      ${chapter.records.map(([name,version,state])=>`<div class="dossier-row">
+        <strong>${esc(name)}</strong><span>${esc(version)}</span><span class="state">${esc(state)}</span>
+        <button class="btn">Open</button></div>`).join("")}
+    </div>
+    <div class="dossier-action">
+      <p class="t-body-s">The commitment handoff opens a separate controlled record. Reviewing evidence does not create a commitment.</p>
+      <button class="btn primary" data-dossier-action>Continue to commitment</button>
+    </div>`;
+}
+
+A["AS-35"] = { vantage:"gateway", render: () => `
+<section data-sec="AS-35.a" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-ref">AS-35</span>
+      <span class="t-micro label">Functional · qualified Investor</span></div>
+    <h1 class="t-display-l">The Investor Dossier</h1>
+    <p class="t-body-l dim measure" style="margin-top:var(--s-s)">
+      A fixed review sequence for the asset, financial basis, structure, risks and governed evidence.
+      Office-only records never enter this aperture.
+    </p>
+
+    <div class="dossier-shell" style="margin-top:var(--s-xl)">
+      <nav class="dossier-nav" aria-label="Dossier chapters">
+        <span class="t-micro label">Review chapters</span>
+        ${DOSSIER_CHAPTERS.map((chapter,index)=>`<button type="button" role="tab"
+          aria-selected="${index===0}" data-dossier-tab="${index}">
+          <span>${String(index+1).padStart(2,"0")} · ${esc(chapter.label)}</span><span>→</span>
+        </button>`).join("")}
+      </nav>
+      <div class="dossier-main" id="dossierPanel" role="tabpanel">${dossierPanel(DOSSIER_CHAPTERS[0])}</div>
+    </div>
+
+    <div class="fixes">
+      <span class="fix"><b>Rule</b> Every figure names its source class and every document retains version and custody.</span>
+      <span class="fix"><b>Rule</b> Qualification controls arrival; it does not widen the evidence cleared for this aperture.</span>
+    </div>
+  </div>
+</section>` };
+
 
 /* ═══════════════════════════════════════════════════════════════════
    AS-16 · SIGNAL LOST
@@ -5252,16 +5528,33 @@ ${footer()}` };
    NAVIGATION
    ═══════════════════════════════════════════════════════════════════ */
 const stage = document.getElementById("stage");
+const picker = document.getElementById("assemblyPicker");
+const catalogueMissing = CATALOG.filter(item => !A[item.id]);
+if (CATALOG.length !== 35 || catalogueMissing.length){
+  throw new Error(`Assembly catalogue incomplete: ${catalogueMissing.map(item => item.id).join(", ") || CATALOG.length}`);
+}
 let current = null;
+
+function populatePicker(mode, selected){
+  const items = CATALOG.filter(item => item.mode === mode);
+  picker.innerHTML = items.map(item =>
+    `<option value="${item.id}" ${item.id===selected?"selected":""}>${item.id} · ${esc(item.name)}</option>`
+  ).join("");
+}
 
 function mount(id){
   const a = A[id]; if (!a) return;
+  const meta = CATALOG.find(item => item.id === id);
+  if (!meta) return;
   current = id;
+  document.body.dataset.mode = meta.mode;
   stage.innerHTML = a.render();
-  document.getElementById("hudVantage").textContent = a.vantage + " vantage";
-  document.querySelectorAll(".hud nav button").forEach(b =>
-    b.hasAttribute("aria-current") && b.dataset.go !== id ? b.removeAttribute("aria-current")
-      : b.dataset.go === id && b.setAttribute("aria-current","page"));
+  document.getElementById("hudVantage").textContent = `${meta.vantage} · ${meta.scope}`;
+  document.getElementById("catalogCount").textContent = `${id} · ${CATALOG.indexOf(meta)+1} / ${CATALOG.length}`;
+  document.querySelectorAll("[data-catalog-mode]").forEach(button =>
+    button.setAttribute("aria-selected", String(button.dataset.catalogMode === meta.mode)));
+  populatePicker(meta.mode, id);
+  document.title = `${id} · ${meta.name} — GC Assemblies`;
   window.scrollTo(0,0);
   wire();
 }
@@ -5281,9 +5574,17 @@ function go(id){
 }
 
 document.addEventListener("click", e => {
+  const mode = e.target.closest("[data-catalog-mode]");
+  if (mode){
+    const first = CATALOG.find(item => item.mode === mode.dataset.catalogMode);
+    if (first) go(first.id);
+    return;
+  }
   const g = e.target.closest("[data-go]");
   if (g){ go(g.dataset.go); return; }
 });
+
+picker.addEventListener("change", () => go(picker.value));
 
 /* ── Per-assembly wiring ─────────────────────────────────────────── */
 function wire(){
@@ -5483,6 +5784,37 @@ function wire(){
         pick(n); n.focus();
       });
     });
+  }
+
+  /* AS-35 — a fixed review sequence. Chapters switch in place and the
+     handoff states its consequence without pretending to create a record. */
+  const dossierTabs = [...stage.querySelectorAll("[data-dossier-tab]")];
+  if (dossierTabs.length){
+    const panel = document.getElementById("dossierPanel");
+    const wireHandoff = () => panel.querySelector("[data-dossier-action]")
+      ?.addEventListener("click", () => signal("Commitment handoff prepared — no record created", "ok"));
+    const pickDossier = (index) => {
+      dossierTabs.forEach((tab, position) => {
+        const selected = position === index;
+        tab.setAttribute("aria-selected", String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      panel.innerHTML = dossierPanel(DOSSIER_CHAPTERS[index]);
+      wireHandoff();
+    };
+    dossierTabs.forEach((tab,index) => {
+      tab.tabIndex = index === 0 ? 0 : -1;
+      tab.addEventListener("click", () => pickDossier(index));
+      tab.addEventListener("keydown", event => {
+        const delta = {ArrowDown:1,ArrowRight:1,ArrowUp:-1,ArrowLeft:-1}[event.key];
+        if (!delta) return;
+        event.preventDefault();
+        const next = (index + delta + dossierTabs.length) % dossierTabs.length;
+        pickDossier(next);
+        dossierTabs[next].focus();
+      });
+    });
+    wireHandoff();
   }
 
 

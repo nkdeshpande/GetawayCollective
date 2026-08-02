@@ -132,7 +132,7 @@ export function Footer() {
           </div>
           <div>
             <h4>Capital</h4>
-            <Link href="/how-capital-works">How it works</Link>
+            <Link href="/collection/slowspace-coastal/investment">How it works</Link>
             <Link href="/legal/risk-disclosure">Risk disclosure</Link>
             <Link href="/answers">Answers</Link>
           </div>
@@ -171,7 +171,7 @@ export function Header({ vantage = "gateway" }: { vantage?: string }) {
         <span className="t-micro label">{vantage} vantage</span>
         <nav aria-label="Main">
           <Link href="/collection">Collection</Link>
-          <Link href="/how-capital-works">Capital</Link>
+          <Link href="/collection/slowspace-coastal/investment">Capital</Link>
           <Link href="/voices">Voices</Link>
           <Link href="/answers">Answers</Link>
           <Link href="/auth/sign-in">Sign in</Link>

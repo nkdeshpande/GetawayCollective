@@ -36,7 +36,7 @@ export const PUB: Record<string, Entry> = {
       { kind: "links", items: [
         { t: "Sign in", to: "/auth/sign-in", primary: true },
         { t: "The Collection", to: "/collection" },
-        { t: "How capital works", to: "/how-capital-works" },
+        { t: "How capital works", to: "/collection/slowspace-coastal/investment" },
       ] },
     ],
   },

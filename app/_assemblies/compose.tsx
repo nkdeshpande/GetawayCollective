@@ -388,8 +388,10 @@ function DisclosureStrip({ d }: { d: Record<Stage, string> }) {
 /* ── The page ────────────────────────────────────────────────────── */
 
 import { COMPOSITIONS } from "@/content/compositions";
+import { SystemSurface } from "./systempages";
 
 export function Composed({ path, param }: { path: string; param?: string }) {
+  if (["/auth/verify", "/status", "/403"].includes(path)) return <SystemSurface path={path} />;
   const entry = COMPOSITIONS[path];
   if (!entry) {
     /* A composed route with no composition is a build defect. Loudly. */
