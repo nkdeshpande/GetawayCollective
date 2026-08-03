@@ -1,0 +1,49 @@
+# GENERATED ARTIFACTS ARE LF, EVERYWHERE
+#
+# Git stores text as LF and, with core.autocrlf=true — the Windows
+# default — writes CRLF into the working tree on checkout. That is fine
+# for files a person edits. It is not fine for files a generator writes,
+# because every `--check` compares what the generator produced (LF)
+# against what is on disk (CRLF) and finds them different.
+#
+# The symptom is a gate that cannot pass. `gen-communication-reference.js
+# --check` reported STALE on every Windows machine while CI, running on
+# Linux, went green — so `npm run verify` was unusable on the only
+# platform this repository is developed on, and the failure looked like a
+# real staleness rather than a line-ending artefact.
+#
+# Two fixes exist and both are needed. Each checker normalises \r\n before
+# comparing, which several already did. And the files are pinned to LF
+# here, so the mismatch does not arise in the first place and the next
+# generated artifact does not have to remember.
+#
+# Only generated output is pinned. Source files keep the platform default,
+# because nothing compares those byte for byte.
+
+# Registry-generated TypeScript
+generated/*.ts        text eol=lf
+
+# Generated reference documents
+INFORMATION-ARCHITECTURE.html   text eol=lf
+DESIGN-REFERENCE.html           text eol=lf
+ASSEMBLY-REFERENCE.html         text eol=lf
+PENDING-ASSEMBLIES.html         text eol=lf
+GC-COMMUNICATION-SYSTEM.html    text eol=lf
+WAVE-6-EXIT-GATE.html           text eol=lf
+
+# Lifted from GC-ASSEMBLIES.html by gen-assembly-css.js
+app/_assemblies/assemblies.css  text eol=lf
+
+# Drizzle output. Applied verbatim against Postgres.
+migrations/*.sql      text eol=lf
+migrations/meta/*.json text eol=lf
+
+# Shell scripts must be LF or they do not run. The pre-commit gate is one.
+*.sh                  text eol=lf
+.githooks/*           text eol=lf
+
+# Binary — never touch these.
+*.xlsx                binary
+*.png                 binary
+*.jpg                 binary
+*.woff2               binary
