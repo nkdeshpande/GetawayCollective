@@ -17,11 +17,11 @@ describe("workspace module taxonomy", () => {
     expect(classified).toHaveLength(13);
   });
 
-  it("partitions the Office realm into seven general routes and 54 vehicle IA records", () => {
+  it("partitions the Office realm into eight general routes and 54 vehicle IA records", () => {
     const general = OFFICE_ROUTES.filter((route) => workspaceModuleOf(route) === "admin-general");
     const vehicle = OFFICE_ROUTES.filter((route) => workspaceModuleOf(route) === "admin-vehicle");
     expect(general.map((route) => route.ia)).toEqual([...ADMIN_GENERAL_IA]);
-    expect(general).toHaveLength(7);
+    expect(general).toHaveLength(8);
     expect(vehicle).toHaveLength(53);
     expect(vehicle.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])])).toHaveLength(54);
     expect(general.length + vehicle.length).toBe(OFFICE_ROUTES.length);

@@ -37,7 +37,10 @@ export const MEMBER_VEHICLE_IA = [
   "MEM-160", "MEM-170", "MEM-180", "MEM-190",
 ] as const;
 export const ADMIN_GENERAL_IA = [
-  "OFF-090", "OFF-100", "NET-100", "NET-110", "SYS-100", "SYS-110", "SYS-120",
+  /* OFF-095 (The Desk) is general, not vehicle-scoped, and deliberately
+     so: it is the one Office surface about people who do not yet have a
+     vehicle. Everything from OFF-110 onward is scoped to one. */
+  "OFF-090", "OFF-095", "OFF-100", "NET-100", "NET-110", "SYS-100", "SYS-110", "SYS-120",
 ] as const;
 
 const MEMBER_GENERAL = new Set<string>(MEMBER_GENERAL_IA);

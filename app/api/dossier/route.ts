@@ -2,6 +2,11 @@
 import { NextResponse } from "next/server";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { DossierLead, sendLead } from "@/lib/leads";
+/* Recorded, not published as an event. See the note in api/signal/route.ts:
+   a stranger on a public form has no actorId and no right, so forcing the
+   arrival through the capability machinery would weaken I-01 and E-01 to
+   record something neither law was written for. */
+import { recordContact } from "@/lib/events/store";
 
 export async function POST(req: Request) {
   /* G-10. Before the body is even read: a limited caller costs nothing. */
@@ -20,6 +25,16 @@ export async function POST(req: Request) {
   }
 
   const { name, email, city } = parsed.data;
+
+  const correlationId = crypto.randomUUID();
+  await recordContact({
+    email,
+    name,
+    note: city ? `City: ${city}` : undefined,
+    source: "dossier",
+    correlationId,
+  }).catch(() => false);
+
   const to = process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co";
   const result = await sendLead({
     to,

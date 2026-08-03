@@ -366,6 +366,22 @@ export const OFFICE_ROUTES: readonly Route[] = [
   R("OFF-090", "/office", "Lifecycle Board", "admin", "AS-13",
     { rights: ["portfolio.manage"],
       notes: "Every vehicle against the fifteen-state lifecycle. Where does each investment sit?" }),
+  /* OFF-095, between the lifecycle board and the Collection — the
+     Numbering Law advances in tens precisely so an insertion can take a
+     five without renumbering anything after it.
+
+     It sits before the Collection deliberately. Everything from OFF-100
+     onward is scoped to a vehicle; this is the one Office surface about
+     people who do not have one yet.
+
+     `compliance.record` rather than `accreditation.grant`: reading who
+     has arrived is not the power to qualify them, and a junior desk needs
+     the first without the second. */
+  R("OFF-095", "/office/contacts", "The Desk", "admin", "AS-13",
+    { rights: ["compliance.record"],
+      notes: "Who has reached us and has not yet been answered. Inbound only — a contact is not " +
+             "an Investor until somebody with authority says so." }),
+
   R("OFF-100", "/office/collection", "Collection", "admin", "AS-13",
     { rights: ["portfolio.manage"],
       notes: "What is happening across GC? The master workspace." }),

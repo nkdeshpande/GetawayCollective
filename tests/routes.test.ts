@@ -35,11 +35,11 @@ describe("canonical IA v5", () => {
      GC-440 rather than GC-410: the Numbering Law never recycles an id,
      and 410/420/430 were spent on the v4 About sub-pages before they
      were consolidated into GC-400. */
-  it("wires 104 canonical URLs plus the aliases, conventions and general contact", () => {
-    expect(ROUTES).toHaveLength(110);
-    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(110);
+  it("wires the canon plus the aliases, conventions, contact and the desk", () => {
+    expect(ROUTES).toHaveLength(111);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(111);
     const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
-    expect(records).toHaveLength(111);
+    expect(records).toHaveLength(112);
     expect(new Set(records).size).toBe(records.length);
   });
 

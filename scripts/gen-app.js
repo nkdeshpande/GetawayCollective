@@ -194,6 +194,9 @@ const BY_PATH = {
   "/structure": { component: "Structure", from: "@/app/_assemblies/publicpages" },
   /* System surfaces have their own cinematic renderer, selected by the
      current canonical path rather than the retired /auth aliases. */
+  /* OFF-095. Live data, so it is a component rather than a composition —
+     compositions are static content read at build time. */
+  "/office/contacts": { component: "ContactDesk", from: "@/app/_assemblies/contactdesk" },
   "/sign-in": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/sign-in" },
   "/verify": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/verify" },
   "/status": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/status" },

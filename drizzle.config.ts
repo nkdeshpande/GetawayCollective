@@ -19,7 +19,14 @@ import type { Config } from "drizzle-kit";
  * migration that saw only half of it would propose dropping the other.
  */
 export default {
-  schema: ["./generated/db-schema.ts", "./lib/auth/schema.ts"],
+  schema: [
+    "./generated/db-schema.ts",
+    "./lib/auth/schema.ts",
+    /* The event store and inbound contacts. Infrastructure, not ratified
+       objects — the L2 sheet rules that activity is a capability/event
+       artifact rather than a twenty-eighth object. */
+    "./lib/events/schema.ts",
+  ],
   out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {

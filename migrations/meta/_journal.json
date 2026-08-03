@@ -15,6 +15,13 @@
       "when": 1785681731541,
       "tag": "0001_naive_puck",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785764708724,
+      "tag": "0002_clear_captain_america",
+      "breakpoints": true
     }
   ]
 }

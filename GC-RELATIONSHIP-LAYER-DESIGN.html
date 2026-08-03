@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GC.SYSTEM · The Relationship Layer — design, build, launch</title>
+<style>
+:root{
+  --void:#0A0A0A; --panel:#121212; --panel-2:#171717; --paper:#F2F2F2;
+  --ink-inv:#F2F2F2; --steel:#6B6B6B; --dim:#9A9A9A;
+  --confirm:#1FAA59; --hazard:#E8672E; --critical:#FF3B30; --electric:#2061DE;
+  --copper:#C79F6B; --forest-light:#228A68;
+  --hair:rgba(242,242,242,.10);
+  --f-d:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
+  --f-b:'Inter','Segoe UI Variable',-apple-system,system-ui,sans-serif;
+  --f-m:'Space Mono',ui-monospace,Consolas,'SFMono-Regular',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+body{background:var(--void);color:var(--ink-inv);
+  font:400 15px/1.55 var(--f-b);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1400px;margin:0 auto;padding:0 24px 120px}
+
+header{padding:72px 0 40px;border-bottom:1px solid var(--hair)}
+.eyebrow{font:400 11px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+h1{font:600 clamp(38px,6vw,62px)/0.98 var(--f-d);letter-spacing:-.035em;
+  margin:14px 0 0;text-wrap:balance}
+.verdict{margin-top:24px;max-width:76ch;font-size:17px;line-height:1.6;color:#D8D8D8}
+.verdict strong{color:var(--ink-inv)}
+.verdict + .verdict{margin-top:14px}
+
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:40px}
+.score div{background:var(--panel);padding:20px 18px}
+.score b{display:block;font:600 28px/1 var(--f-m);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.score span{display:block;font:400 10px/1.4 var(--f-m);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);margin-top:7px}
+.score .ok b{color:var(--confirm)} .score .warn b{color:var(--hazard)}
+.score .bad b{color:var(--critical)} .score .fut b{color:#7FA4EE}
+
+.reframe{margin-top:44px;padding:26px 28px;background:var(--panel);border-left:3px solid var(--copper)}
+.reframe h3{font:600 17px/1.3 var(--f-d);margin-bottom:12px}
+.reframe p{max-width:82ch;color:#D2D2D2;font-size:14.5px;margin-bottom:9px}
+.reframe p:last-child{margin-bottom:0}
+.reframe code{font-family:var(--f-m);font-size:12.5px;color:var(--copper)}
+
+.flow{margin:30px 0 6px;padding:22px;background:var(--panel-2);border:1px solid var(--hair);
+  font:400 12.5px/2 var(--f-m);color:var(--dim);white-space:pre;overflow-x:auto}
+.flow b{color:var(--ink-inv);font-weight:400}
+
+.sec{margin-top:80px;padding-top:38px;border-top:1px solid var(--hair)}
+.sec > .eyebrow{margin-bottom:12px}
+.sec h2{font:600 30px/1.15 var(--f-d);letter-spacing:-.028em;margin-bottom:14px}
+.sec p.lede{max-width:80ch;color:#D2D2D2;margin-bottom:9px}
+.sec code{font-family:var(--f-m);font-size:12.5px;color:var(--copper)}
+
+.cap{margin-top:34px;background:var(--panel);border:1px solid var(--hair);border-left:3px solid var(--electric)}
+.cap.c1{border-left-color:var(--confirm)}
+.cap.c2{border-left-color:var(--copper)}
+.cap.c3{border-left-color:var(--electric)}
+.cap-h{padding:20px 24px 18px;border-bottom:1px solid var(--hair);display:flex;gap:16px;
+  align-items:baseline;flex-wrap:wrap}
+.cap-h .n{font:600 13px/1 var(--f-m);letter-spacing:.1em;color:var(--copper)}
+.cap-h h3{font:600 22px/1.2 var(--f-d);letter-spacing:-.02em;flex:1;min-width:240px}
+.cap-b{padding:22px 24px 24px}
+.step{margin-bottom:24px}
+.step:last-child{margin-bottom:0}
+.step > .k{font:400 10px/1 var(--f-m);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:9px}
+.step p{max-width:84ch;color:#D2D2D2;font-size:14.5px;margin-bottom:8px}
+.step p:last-child{margin-bottom:0}
+.step ul{margin:6px 0 0 18px;color:#C8C8C8;font-size:14px}
+.step li{margin-bottom:5px}
+.ev{font:400 12px/1.65 var(--f-m);color:var(--dim);background:rgba(242,242,242,.04);
+  padding:12px 15px;margin-top:10px;overflow-x:auto;white-space:pre}
+
+.tag{font:400 9.5px/1 var(--f-m);letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 7px;border:1px solid;white-space:nowrap;display:inline-block}
+.tag.ok{color:var(--confirm);border-color:rgba(31,170,89,.45)}
+.tag.warn{color:var(--hazard);border-color:rgba(232,103,46,.45)}
+.tag.bad{color:var(--critical);border-color:rgba(255,59,48,.45)}
+.tag.fut{color:#7FA4EE;border-color:rgba(32,97,222,.5);border-style:dashed}
+
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:13px}
+th{text-align:left;font:400 10px/1.3 var(--f-m);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);padding:0 14px 9px 0;border-bottom:1px solid var(--hair)}
+td{padding:10px 14px 10px 0;border-bottom:1px solid rgba(242,242,242,.05);vertical-align:top}
+td.m{font-family:var(--f-m);white-space:nowrap;color:var(--dim)}
+.scroll{overflow-x:auto}
+
+.trap{margin-top:22px;border-left:3px solid var(--critical);padding:0 0 4px 20px}
+.trap .rk{font:400 10px/1 var(--f-m);letter-spacing:.16em;text-transform:uppercase;color:var(--critical)}
+.trap h4{font:600 16px/1.3 var(--f-d);margin:7px 0 8px}
+.trap p{max-width:82ch;color:#D2D2D2;font-size:14px;margin-bottom:7px}
+
+footer{margin-top:80px;padding-top:28px;border-top:1px solid var(--hair);
+  color:var(--dim);font:400 12px/1.7 var(--f-m)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">GC.SYSTEM · Design → Build → Launch · 03 Aug 2026</div>
+  <h1>Three overlooked features<br>are one missing layer.</h1>
+  <p class="verdict">
+    CRM, CMS and the IRIS chat were treated as three product categories, so they read as three
+    projects. They are not. <strong>They are three faces of the relationship layer</strong>, and GC
+    already owns its spine — 55 event types, an envelope carrying actor, object and causing command,
+    and a projection doctrine that says every read model is a pure fold over events.
+  </p>
+  <p class="verdict">
+    That reframing changes what gets built. <strong>None of the three is a system to buy or bolt
+    on.</strong> One is a projection nobody has written. One is an authoring path, not a CMS. One is
+    an engine that cannot run until the other two feed it.
+  </p>
+
+  <div class="score">
+    <div class="ok"><b>55</b><span>Event types already</span></div>
+    <div class="ok"><b>11</b><span>AI contracts declared</span></div>
+    <div class="warn"><b>0</b><span>Interaction records</span></div>
+    <div class="bad"><b>0</b><span>Approved-content workflow</span></div>
+    <div class="fut"><b>1</b><span>Layer, not three projects</span></div>
+  </div>
+
+  <div class="reframe">
+    <h3>Why each looked missing, and what is actually absent</h3>
+    <p><strong>CRM is not missing — it is unprojected.</strong> Every consequential command already
+      publishes an event with <code>actorId</code>, <code>objectType</code> and <code>causedBy</code>.
+      A CRM in GC is a fold over that log scoped to a person. ADR-0007 already requires projections
+      to be pure functions of a readonly event array. Nobody has written this particular fold.</p>
+    <p><strong>CMS is not missing — it was refused, and the refusal was right.</strong> Copy lives in
+      <code>content/</code> as TypeScript so <code>vocab-lint</code> and <code>voice-lint</code> can
+      read it. A conventional CMS puts words where those linters cannot reach, which is a regression
+      dressed as a feature. What is genuinely absent is an <em>authoring path that still passes the
+      gates</em>.</p>
+    <p><strong>IRIS is not missing — it is unfed.</strong> Eleven contracts exist with governed
+      outputs, human gates and prohibitions. AI-102 emits an "Investor Context Update" and there is
+      nothing to update. AI-101 may speak only from "the public approved projection" and no approval
+      workflow exists. An agent with no memory and no sanctioned vocabulary is a demo.</p>
+  </div>
+
+  <div class="flow"><b>THE LAYER</b>
+
+  events (55 types, exists)  ──fold──▶  <b>INTERACTION RECORD</b>   "the CRM"
+                                              │
+  content + approval gate    ──────────▶      │   what IRIS may say
+        "the CMS"                             │
+                                              ▼
+                                         <b>IRIS</b>  reads memory, speaks approved facts,
+                                              escalates to a named human</div>
+</header>
+
+<!-- ═══ THE ORDER ═══════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Define</div>
+  <h2>The order is forced, not chosen</h2>
+  <p class="lede">
+    The instinct is to build IRIS first because it demos well. It has to be last, and the reason is
+    in your own contracts rather than in general engineering caution.
+  </p>
+  <div class="scroll"><table>
+    <thead><tr><th>Contract</th><th>What it needs that does not exist</th><th>Consequence of building it first</th></tr></thead>
+    <tbody>
+      <tr><td class="m">AI-101</td><td>"Public approved projection"</td><td>No approval workflow, so "approved" means whatever the model read</td></tr>
+      <tr><td class="m">AI-102</td><td>Output: "Investor Context Update"</td><td>Nothing to update. The output object has no home</td></tr>
+      <tr><td class="m">AI-103</td><td>Handoff carrying "intent, questions, documents, commitments"</td><td>None of that is recorded, so the handoff carries nothing and UX-07 fails at the moment it matters</td></tr>
+      <tr><td class="m">AI-104</td><td>"Own entitlement + source refs"</td><td>No entitlement record; the agent guesses or refuses</td></tr>
+    </tbody>
+  </table></div>
+  <p class="lede" style="margin-top:22px">
+    So: <strong>interaction record → approved content → engine.</strong> Each stage is independently
+    useful, which is what makes the sequence safe to stop halfway.
+  </p>
+</section>
+
+<!-- ═══ CAPABILITY 1 ════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Capability 1</div>
+  <h2>The interaction record — "CRM"</h2>
+
+  <div class="cap c1">
+    <div class="cap-h"><span class="n">R-01</span>
+      <h3>Every touch, folded per person, from the log you already write</h3>
+      <div><span class="tag ok">Spine exists</span></div></div>
+    <div class="cap-b">
+
+      <div class="step"><span class="k">Design · the job to be done</span>
+        <p>Investor Relations opens one person and sees: what they asked, what was sent, what they
+          signed, where they stalled, what is owed to them and by when. Today that lives in an inbox
+          and somebody's memory.</p>
+        <p>The constitutional framing matters more than the feature list. A CRM usually stores
+          opinions about people. <strong>This stores acts</strong> — each already carrying an actor,
+          a command and a timestamp, because E-01 made that mandatory before anyone wanted a CRM.</p>
+      </div>
+
+      <div class="step"><span class="k">Design · what it must not become</span>
+        <ul>
+          <li><strong>Not a second identity.</strong> The L2 sheet is explicit: use one
+            <code>Investor</code> before and after settlement. No Contact, no Lead, no Person object.</li>
+          <li><strong>Not a new object at all.</strong> "Task / notice / activity — capability/event
+            artifact, not L2 object." It is a projection.</li>
+          <li><strong>Not free-text opinion.</strong> A note field becomes an unaudited record about
+            a person, which is exactly what disclosure classes exist to govern.</li>
+        </ul>
+      </div>
+
+      <div class="step"><span class="k">Build · the first slice</span>
+        <p>One fold and one surface. No schema beyond what the event store already needs.</p>
+        <div class="ev">lib/projections.ts
+  relationshipOf(investorId, events) -> {
+    stage            derived from the lifecycle events, never stored
+    interactions[]   every event where this identity is actor or subject
+    owed[]           obligations opened and not closed
+    lastContact      the most recent outbound notice with a delivery record
+    stalled          time in stage against the gate's target ETA
+  }</div>
+        <p>Surfaced at <code>PAR-110</code> (the partner record) for the Office and folded into
+          <code>MEM-200 /activity</code> for the member's own view — the same fold, two apertures,
+          which is UX-02 holding rather than being asserted.</p>
+      </div>
+
+      <div class="step"><span class="k">Launch · how you know it worked</span>
+        <p>Investor Relations answers "where is this person and what do they need" without opening
+          email. And the member sees the identical history at <code>/activity</code>, redacted but
+          never restated.</p>
+      </div>
+
+      <div class="trap">
+        <div class="rk">The trap</div>
+        <h4>A CRM is where UX-08 usually breaks</h4>
+        <p>Internal notes, deal stages and probability scores are administrative machinery. If the
+          fold is shared between apertures without a disclosure class on every field, the member's
+          own activity view will eventually show them what the Office thinks of them.</p>
+        <p>Close it by giving each projected field a <code>DisclosureClass</code> — the enum landed
+          in <code>constants/taxonomies.ts</code> — and filtering the fold by aperture at the edge,
+          not in the component.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CAPABILITY 2 ════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Capability 2</div>
+  <h2>The authoring path — "CMS"</h2>
+
+  <div class="cap c2">
+    <div class="cap-h"><span class="n">R-02</span>
+      <h3>Publishing that a non-engineer can do and the gates still refuse</h3>
+      <div><span class="tag warn">Deliberate refusal</span></div></div>
+    <div class="cap-b">
+
+      <div class="step"><span class="k">Design · the real requirement</span>
+        <p>The ask sounds like "we need a CMS". The requirement is narrower and better:
+          <strong>someone who does not run a terminal must be able to publish a Journal entry, a
+          progress update or a property description, and the vocabulary and voice rules must still
+          run on what they wrote.</strong></p>
+        <p>This build has already demonstrated why that clause is load-bearing. Writing the contact
+          page an hour ago, <code>vocab-lint</code> refused the word "booking", then refused
+          "concierge", then refused a sentence containing an operating-company noun. A CMS that
+          bypasses those checks would have published all three.</p>
+      </div>
+
+      <div class="step"><span class="k">Design · the shape that survives the constitution</span>
+        <p>Not "a CMS". An <strong>authoring surface whose publish button is a gate run</strong>.</p>
+        <div class="ev">author writes  ─▶  draft stored (Evidence artifact, not an L2 object)
+                       │
+                       ├─ vocab-lint      forbidden terms
+                       ├─ voice-lint      brand voice, no hedging
+                       └─ disclosure      class set, aperture chosen
+                       │
+                  approval by a named right (content.publish)
+                       │
+                       ▼
+                  EFFECTIVE — and only now may IRIS quote it</div>
+        <p>Note what this gives you beyond publishing: it is also the thing that makes
+          <code>AI-101</code>'s "approved claims only" enforceable. The CMS and the AI guardrail are
+          the same mechanism seen twice.</p>
+      </div>
+
+      <div class="step"><span class="k">Build · the first slice</span>
+        <ul>
+          <li>Journal entries only. One content type, lowest risk, no figures.</li>
+          <li>Draft → review → effective, using the Evidence state taxonomy already declared
+            (<code>RECEIVED → CLASSIFIED → VERIFIED → EFFECTIVE → SUPERSEDED</code>).</li>
+          <li>The linters run server-side on submit and the failures are shown to the author in
+            their own words, not as a build log.</li>
+        </ul>
+      </div>
+
+      <div class="step"><span class="k">Launch · how you know it worked</span>
+        <p>A Journal entry goes live without a deploy, and an attempt to publish one containing a
+          forbidden term is refused <em>with the reason</em> — the same reason the linter gives an
+          engineer.</p>
+      </div>
+
+      <div class="trap">
+        <div class="rk">The trap</div>
+        <h4>Do not let content become a second source of truth</h4>
+        <p>The moment an author can type a yield, a valuation or a date into a page, the platform has
+          two numbers for one fact and no way to know which is current. T-14 already states it:
+          public content is an aperture projection of approved Property and evidence, never a second
+          source.</p>
+        <p>Close it by making figures <strong>uninsertable</strong>. The authoring surface offers a
+          reference to a canonical value; it does not offer a number field.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CAPABILITY 3 ════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Capability 3</div>
+  <h2>IRIS — the engine, last</h2>
+
+  <div class="cap c3">
+    <div class="cap-h"><span class="n">R-03</span>
+      <h3>Contracts exist. Give them memory, a vocabulary and a mouth.</h3>
+      <div><span class="tag fut">Contracts declared</span></div></div>
+    <div class="cap-b">
+
+      <div class="step"><span class="k">Design · what is already settled</span>
+        <p>More than people expect. Eleven contracts with triggers, input scopes, governed output
+          objects, mutation levels, human gates, cross-agent rules, provenance requirements and named
+          prohibitions. Both agents hold <code>requestableRoles: []</code>, so neither can acquire a
+          right — enforced by the shape of the type, not by policy.</p>
+        <p>What is not settled is the model provider, and that is correctly separate.</p>
+      </div>
+
+      <div class="step"><span class="k">Design · the one thing to get right</span>
+        <p><strong>The output object is the product, not the chat.</strong> A conversational reply
+          that leaves no record is exactly the "invisible agent action" FIX-10 exists to prevent.
+          Every consequential IRIS turn produces a typed, sourced artifact — an Interaction, a
+          Context Update, a Handoff Package — and the chat is a view over those.</p>
+        <p>Build the artifact first and the transcript second. Doing it the other way produces a
+          product that is impossible to audit and pleasant to demo.</p>
+      </div>
+
+      <div class="step"><span class="k">Build · the first slice</span>
+        <ul>
+          <li><strong>AI-101 only</strong> — the public question. Smallest scope, lowest stakes, no
+            member data, no investor projection.</li>
+          <li>Retrieval restricted to content in <code>EFFECTIVE</code> state from capability 2. If it
+            is not approved, IRIS cannot see it.</li>
+          <li>Every answer carries source ids. No source, no answer — refusal is a valid output.</li>
+          <li>Escalation writes a Handoff Package and hands to a named human. Not a mailto.</li>
+        </ul>
+      </div>
+
+      <div class="step"><span class="k">Launch · how you know it worked</span>
+        <p>Ask it something the approved corpus does not cover and it declines and offers the human
+          path, rather than answering. <strong>The refusal is the acceptance test</strong>, not the
+          answer.</p>
+      </div>
+
+      <div class="trap">
+        <div class="rk">The trap</div>
+        <h4>The name is a constitutional decision, not branding</h4>
+        <p>"Concierge" is forbidden outright — an operating-company concern belonging to the Operating
+          Partner. And "Investor Relations" is a constituted internal office that can request
+          <code>compliance_office</code>, which holds <code>accreditation.grant</code>. Naming the
+          agent after it would give the thing that may hold no authority the name of the office that
+          may accredit.</p>
+        <p>It also breaks the handoff: AI-103 escalates "to a named human (IR handoff)". If the agent
+          is Investor Relations, that reads as Investor Relations escalating to itself.</p>
+        <p><strong>IRIS is the system name.</strong> Label the member-facing control "Ask about this
+          place" if the codename feels cold — presentation, not identity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SEQUENCE ════════════════════════════════════════════════════ -->
+<section class="sec">
+  <div class="eyebrow">Sequence</div>
+  <h2>What to do, in order</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Step</th><th>Ship</th><th>Depends on</th><th>Independently useful?</th></tr></thead>
+    <tbody>
+      <tr><td class="m">1</td><td>Relationship fold + partner record surface</td><td class="m">DATABASE_URL, event persistence</td><td>Yes — IR stops working from an inbox</td></tr>
+      <tr><td class="m">2</td><td>Member <code>/activity</code> from the same fold</td><td class="m">Step 1</td><td>Yes — and it proves UX-02 across apertures</td></tr>
+      <tr><td class="m">3</td><td>Journal authoring with linters at the gate</td><td class="m">Evidence states, <code>content.publish</code></td><td>Yes — publishing without a deploy</td></tr>
+      <tr><td class="m">4</td><td>Approval workflow → EFFECTIVE corpus</td><td class="m">Step 3</td><td>Yes — and it is what makes AI-101 safe</td></tr>
+      <tr><td class="m">5</td><td>IRIS AI-101, public questions only</td><td class="m">Steps 2 and 4</td><td>Yes</td></tr>
+      <tr><td class="m">6</td><td>AI-103 handoff package</td><td class="m">Step 5</td><td>Yes — closes UX-07</td></tr>
+      <tr><td class="m">7</td><td>AI-102 / AI-104, investor and member scopes</td><td class="m">Disclosure projections</td><td>Last, and deliberately</td></tr>
+    </tbody>
+  </table></div>
+  <p class="lede" style="margin-top:24px">
+    Everything here waits on the same thing the rest of the build waits on: <strong>persistence.</strong>
+    Events that vanish in-process cannot be folded into a relationship, drafts have nowhere to sit,
+    and IRIS has nothing to remember.
+  </p>
+</section>
+
+<footer>
+  GC.SYSTEM · The relationship layer · design, build, launch · 03 Aug 2026<br>
+  Grounded in what exists: 55 event types · EventEnvelope with actor, object and causing command ·
+  ADR-0007 projections are folds · 11 AI contracts · 8 taxonomies<br>
+  Three product categories, one capability. Build the record, then the vocabulary, then the voice.
+</footer>
+
+</div>
+</body>
+</html>
