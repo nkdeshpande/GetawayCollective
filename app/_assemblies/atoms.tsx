@@ -123,18 +123,36 @@ export function Footer() {
           platform paraphrases them.
         */}
 
+        {/*
+          Repointed at the v5 IA, on the route table's own authority.
+
+          Seven of these twelve links pointed at v4 paths that the v5
+          migration retired. They kept compiling — `href` takes a string —
+          and 404'd for every person who used the footer, which is the
+          part of a page people reach for when they are already lost.
+
+          Where each went: constants/routes.ts records that story, people
+          and voices were consolidated into GC-400, so those go to /about.
+          Answers is doctrine, which is GC-300. There is no gallery route
+          in v5 and inventing one here would be inventing IA in a footer —
+          the Collection is where places are seen, so Places holds the two
+          surfaces that exist.
+
+          The Capital column linked "How it works" to one named vehicle.
+          That is a nav pointing at a single item of inventory, and it
+          breaks the moment that vehicle is not the one being raised.
+        */}
         <div className="foot-map">
           <div>
             <h4>Places</h4>
             <Link href="/collection">Collection</Link>
-            <Link href="/gallery">Gallery</Link>
-            <Link href="/story">Story</Link>
+            <Link href="/journal">Journal</Link>
           </div>
           <div>
             <h4>Capital</h4>
-            <Link href="/collection/slowspace-coastal/investment">How it works</Link>
+            <Link href="/how-it-works">How it works</Link>
             <Link href="/legal/risk-disclosure">Risk disclosure</Link>
-            <Link href="/answers">Answers</Link>
+            <Link href="/invest/qualify">Qualification</Link>
           </div>
           <div>
             <h4>Legal</h4>
@@ -144,9 +162,9 @@ export function Footer() {
           </div>
           <div>
             <h4>Collective</h4>
-            <Link href="/voices">Voices</Link>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
             <Link href="/portfolio">Portfolio</Link>
-            <Link href="/roles">Roles</Link>
           </div>
         </div>
       </div>
@@ -169,12 +187,18 @@ export function Header({ vantage = "gateway" }: { vantage?: string }) {
           GC.SYSTEM
         </Link>
         <span className="t-micro label">{vantage} vantage</span>
+        {/*
+          Three of these five were v4 paths. `/auth/sign-in` is the one
+          that mattered most: the sign-in link in the header of every
+          page on the platform went to a route that does not exist, so
+          the only way in was to type /sign-in.
+        */}
         <nav aria-label="Main">
           <Link href="/collection">Collection</Link>
-          <Link href="/collection/slowspace-coastal/investment">Capital</Link>
-          <Link href="/voices">Voices</Link>
-          <Link href="/answers">Answers</Link>
-          <Link href="/auth/sign-in">Sign in</Link>
+          <Link href="/how-it-works">How it works</Link>
+          <Link href="/journal">Journal</Link>
+          <Link href="/about">About</Link>
+          <Link href="/sign-in">Sign in</Link>
         </nav>
       </div>
     </header>

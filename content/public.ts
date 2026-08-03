@@ -212,7 +212,7 @@ export const ROOT: PublicPage = {
       lede:
         "Held separately, because a partner talking about returns is regulated speech with " +
         "attribution and verification obligations attached.",
-      cta: { label: "Voices", href: "/voices" },
+      cta: { label: "Who is behind it", href: "/about" },
     },
     {
       n: "07", eyebrow: "The Authority", ground: "void",
@@ -224,7 +224,7 @@ export const ROOT: PublicPage = {
         "The consequence is that the party setting the rules does not profit from the outcome " +
         "those rules produce.",
       ],
-      cta: { label: "The mesh behind the asset", href: "/collective/partners" },
+      cta: { label: "The mesh behind the asset", href: "/about" },
     },
     {
       n: "08", eyebrow: "The Blueprint", ground: "paper",
@@ -240,7 +240,7 @@ export const ROOT: PublicPage = {
       n: "09", eyebrow: "The Signal", ground: "paper",
       title: "Weekly intelligence on solitude and assets.",
       lede: "One transmission a week. No tracking pixel, and the list is never sold.",
-      cta: { label: "Tune in", href: "/signal" },
+      cta: { label: "Tune in", href: "/contact" },
     },
   ],
 };
@@ -321,7 +321,7 @@ export const MANIFESTO: PublicPage = {
           "on the commitment. Governance rights and entitlement begin at that moment, and it is " +
           "irreversible." },
       ],
-      cta: { label: "Walk it end to end", href: "/flow" },
+      cta: { label: "Walk it end to end", href: "/how-it-works" },
     },
     {
       n: "05", eyebrow: "The Exit", ground: "paper",
@@ -470,7 +470,7 @@ export const PARTNERS: PublicPage = {
         "than evidence. Where a firm is engaged, the engagement is recorded against the vehicle, " +
         "with its scope and its date, and that record is what a partner can rely on.",
       ],
-      cta: { label: "Who runs the machine", href: "/collective/operators" },
+      cta: { label: "Who runs the machine", href: "/about" },
     },
   ],
 };
@@ -722,7 +722,7 @@ export const SPACE: PublicPage = {
         "asked of them and nobody met at a desk. That is an operating promise. It is paid for " +
         "before anything reaches partners, and it can fail.",
       ],
-      cta: { label: "Who runs it, and who answers", href: "/collective/operators" },
+      cta: { label: "Who runs it, and who answers", href: "/about" },
     },
     {
       n: "05", eyebrow: "The Assets", ground: "void",
@@ -810,7 +810,7 @@ export const TIME: PublicPage = {
         { k: "Space", v: "What is built, from what, and what it takes to keep standing." },
         { k: "Capital", v: "What the position pays, and in what order." },
       ],
-      cta: { label: "The physical product", href: "/space" },
+      cta: { label: "The physical product", href: "/collection" },
     },
   ],
 };
@@ -1035,7 +1035,7 @@ export const IDENTIFY: PublicPage = {
         { k: "An application in flight", v: "To the furthest incomplete stage. Nothing is lost by leaving it." },
         { k: "Neither", v: "To accreditation, which is where anyone starts." },
       ],
-      cta: { label: "What accreditation asks for", href: "/flow/accreditation" },
+      cta: { label: "What accreditation asks for", href: "/invest/qualify" },
     },
   ],
 };

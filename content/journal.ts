@@ -135,7 +135,7 @@ const J01: Entry = {
   onward: [
     { path: "/legal/terms", title: "Terms and Conditions",
       why: "Part A sets out the three entities and what each is responsible for." },
-    { path: "/governance", title: "Governance",
+    { path: "/how-it-works", title: "Governance without ownership",
       why: "How a contested decision is actually resolved." },
   ],
 };
@@ -241,8 +241,8 @@ const J03: Entry = {
       "figure being committed stays on screen throughout." },
   ],
   onward: [
-    { path: "/flow", title: "The worked flow",
-      why: "One offering walked end to end, including this moment." },
+    { path: "/how-it-works", title: "The model, end to end",
+      why: "Where this moment sits in the sequence, and what precedes it." },
     { path: "/legal/terms", title: "Terms and Conditions",
       why: "Part D states it as an obligation rather than as prose." },
   ],
@@ -396,8 +396,8 @@ const J06: Entry = {
       "attached to the property is a forecast about a building that does not exist." },
   ],
   onward: [
-    { path: "/flow", title: "SlowSpace Coastal",
-      why: "The offering for this property, walked end to end." },
+    { path: "/collection/slowspace-coastal/investment", title: "SlowSpace Coastal",
+      why: "The position in this property, with a confidence class on every figure." },
   ],
 };
 

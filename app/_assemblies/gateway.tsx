@@ -259,7 +259,13 @@ export function PropertyMasthead({ p }: { p: Property }) {
               Reserve position, waterfall detail, telemetry and the ledger sit at the capital
               vantage.
             </p>
-            <Link className="btn" href="/capital" style={{ marginTop: "var(--gc-sp-s)" }}>
+            {/* `/capital` was the v4 console and does not exist in v5.
+                The copy above is right that this detail sits at the
+                capital vantage — and in v5 that vantage is reached by
+                qualifying (INV-090), not by following a link. Pointing at
+                the gate is the honest destination; pointing at a vehicle's
+                accredited pages would 403 whoever clicked it. */}
+            <Link className="btn" href="/invest/qualify" style={{ marginTop: "var(--gc-sp-s)" }}>
               Open the console →
             </Link>
           </div>

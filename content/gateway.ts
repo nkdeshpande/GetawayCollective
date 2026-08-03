@@ -236,14 +236,14 @@ export const ANSWERS: readonly Answer[] = [
     q: "What happens if the operating partner is bad at this?",
     a: "It is measured against a Service Level and can be replaced. Replacement takes time and " +
        "the property earns less while it happens, and that cost falls on partners.",
-    cite: { label: "The operators", href: "/collective/operators" },
+    cite: { label: "The operators", href: "/about" },
   },
   {
     group: "Governance",
     q: "Can I be outvoted?",
     a: "Yes. Votes are weighted by contribution, so a small holder can be outvoted on everything " +
        "that is not entrenched. A tie is not approval — the resolution fails.",
-    cite: { label: "The vehicle", href: "/structure" },
+    cite: { label: "The vehicle", href: "/how-it-works" },
   },
 ];
 
