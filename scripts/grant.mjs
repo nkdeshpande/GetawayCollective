@@ -33,9 +33,33 @@ import postgres from "postgres";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+/**
+ * Load .env.local if the variable is not already in the environment.
+ *
+ * Next.js reads .env.local for you; a standalone node script does not, so
+ * this tool reported "DATABASE_URL is not set" on a machine where the
+ * application connected perfectly well. A real environment variable still
+ * wins — CI and production set it directly and must not be overridden by
+ * a developer's local file.
+ */
+function loadEnvLocal() {
+  if (process.env.DATABASE_URL) return;
+  const file = path.join(ROOT, ".env.local");
+  if (!fs.existsSync(file)) return;
+  for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+    const m = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*)\s*$/);
+    if (!m) continue;
+    const [, k, raw] = m;
+    if (process.env[k]) continue;
+    process.env[k] = raw.replace(/^["']|["']$/g, "");
+  }
+}
+loadEnvLocal();
+
 const url = process.env.DATABASE_URL;
 if (!url) {
-  console.error("DATABASE_URL is not set. Authority lives in the database; there is nowhere to write.");
+  console.error("DATABASE_URL is not set, and no .env.local supplied one.");
+  console.error("Authority lives in the database; there is nowhere to write.");
   process.exit(2);
 }
 

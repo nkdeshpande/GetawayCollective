@@ -26,7 +26,7 @@
     "test:run": "vitest run",
     "lint:cap": "node scripts/cap-lint.js",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "node scripts/migrate.mjs",
     "grant": "node scripts/grant.mjs",
     "gate": "node scripts/gen-gate-report.js",
     "lint:sm": "node scripts/sm-lint.js",

@@ -80,17 +80,25 @@ DATABASE_URL=postgresql://USER:PASSWORD@ep-xxxx-pooler.REGION.aws.neon.tech/neon
 
 ### 4. Apply the migrations
 
-Use the **direct** string for this one command only:
-
 ```bash
-DATABASE_URL="<DIRECT-STRING>" npx drizzle-kit migrate
+npm run db:migrate
 ```
 
-On Windows PowerShell:
+It reads `.env.local` if `DATABASE_URL` is not already exported, prints the
+host and whether the endpoint is pooled, and is idempotent — re-running it
+is a safe no-op.
 
-```bash
-$env:DATABASE_URL="<DIRECT-STRING>"; npx drizzle-kit migrate
+**Do not use `npx drizzle-kit migrate`.** On Windows its spinner swallows
+the driver error and it exits 1 with no message at all:
+
 ```
+[⣷] applying migrations...
+exit 1
+```
+
+`scripts/migrate.mjs` calls the identical migrator underneath and lets the
+exception through with its code, detail, hint and query. That is why
+`db:migrate` points at it.
 
 That applies both migrations:
 
@@ -99,13 +107,40 @@ That applies both migrations:
 
 ### 5. Confirm it took
 
-```bash
-node -e "const p=require('postgres');const s=p(process.env.DATABASE_URL,{prepare:false});s\`select tablename from pg_tables where schemaname='public' order by 1\`.then(r=>{console.log(r.map(x=>x.tablename).join('\n'));return s.end()})"
+`db:migrate` reports the count itself:
+
+```
+[migrate] OK — 32 tables (5 auth, 27 institutional)
 ```
 
-You should see the five `auth_*` tables among the rest. If you see none,
-the migration ran against a different database than the one you are
-querying — check you are not mixing the pooled and direct strings.
+32 is the expected total. If you see fewer, or none, the migration ran
+against a different database than the one you are querying — check you are
+not mixing the pooled and direct strings.
+
+### 6. Status of the instance provisioned on 02 Aug 2026
+
+Done and verified:
+
+- Neon project on **PostgreSQL 18.4**, region `ap-southeast-1` (Singapore),
+  the nearest available to Vercel's `bom1`.
+- Both migrations applied. **32 tables** — 27 institutional, 5 `auth_*`.
+- Column shapes verified against the Auth.js adapter contract.
+- `npm run grant list` reaches it and correctly reports no grants.
+- The application serves against it with no errors: public routes 200,
+  private 403, `/api/auth/session` returns `null`.
+
+**Two things still outstanding on this instance.**
+
+The connection string in use is the **direct** endpoint — its host has no
+`-pooler` segment. That is correct for migrations and fine for local
+development, but **Vercel needs the pooled string**, or serverless
+functions will exhaust the connection limit. Fetch it from the Neon
+console: same project, the endpoint whose host contains `-pooler`.
+
+The credential was shared over a chat transcript. **Rotate it in the Neon
+console** — Roles → reset password — and update `.env.local` and Vercel.
+Nothing in the repository holds it; `.env.local` is gitignored and was
+verified as ignored before it was written.
 
 ---
 
