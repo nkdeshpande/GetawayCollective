@@ -78,9 +78,29 @@ export async function GET() {
   const canGoogle = auth.AUTH_SECRET && auth.GOOGLE_CLIENT_ID && auth.GOOGLE_CLIENT_SECRET;
   const canReachRealRecipients = mail.RESEND_API_KEY && mail.RESEND_FROM && !mail.RESEND_FROM_is_sandbox;
 
+  /**
+   * Which deployment is answering, and what Vercel thinks it is.
+   *
+   * Without this, "I set the variable and it is still missing" has three
+   * indistinguishable causes: not redeployed, scoped to the wrong
+   * environment, or never saved. `env` settles the second — a variable
+   * ticked for Preview only will read as missing here while `env` says
+   * production — and `commit` settles the first, because a deployment
+   * older than the change never saw it.
+   *
+   * All three values are Vercel's own build-time metadata. A commit SHA
+   * is already public in the repository.
+   */
+  const deployment = {
+    env: process.env.VERCEL_ENV ?? "local",
+    commit: (process.env.VERCEL_GIT_COMMIT_SHA ?? "").slice(0, 7) || "unknown",
+    branch: process.env.VERCEL_GIT_COMMIT_REF ?? "unknown",
+  };
+
   return NextResponse.json(
     {
       ok: canSignIn,
+      deployment,
       capabilities: {
         authEndpointsRespond: canSignIn,
         magicLinkSignIn: canMagicLink,
