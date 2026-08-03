@@ -135,7 +135,16 @@ Everything below waits on it. Migrations exist and have never been applied.
 restore from backup tested and timed; one integration test that writes,
 reads back and survives a redeploy.
 
-### A1 · Canon reconciliation — but only the lifecycle spine
+### A1 · Canon reconciliation — smaller than it looked
+
+**Superseded 02 Aug by ADR-0012.** The "L2 Lifecycle Alignment" sheet rules
+that Partnership Interest, Member, Project, Document, Time allocation and a
+generic exception docket are **not objects** — they are labels, states,
+derived quantities, evidence and views over the 27 already ratified.
+
+The ontology therefore stays at 27 and the largest item in the decision
+register evaporates. Reconciliation is now what it should always have been:
+**states on `Investor`, not new objects.**
 
 The previous assessment is right that the build language and the operating
 model have diverged, and right to say **do not finish Waves 8–10 against
