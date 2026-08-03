@@ -14,6 +14,57 @@ import { position, ALLOCATION, LLP } from "@/app/_assemblies/slowspace";
 const pct = (bps: number) => (bps / 100).toFixed(0) + "%";
 
 export const PUB: Record<string, Entry> = {
+  /**
+   * GC-440. The general channel, and deliberately not an investment one.
+   *
+   * An investment enquiry belongs to the vehicle it concerns (GC-160) and
+   * a qualified investor reaches a named person through INV-170. Press, a
+   * prospective operating partner and a supplier have neither, and this
+   * page exists so they are not filed against an offering they never
+   * asked about.
+   *
+   * It states what it cannot do. Nothing here accepts an instruction, and
+   * saying so is the honest version of a contact page that in this build
+   * would otherwise imply a desk that answers.
+   */
+  "/contact": {
+    title: "Contact",
+    eyebrow: "General",
+    lead: "One address for everything that is not an investment enquiry.",
+    disclosure: d(
+      "This page and the addresses on it. Nothing here is qualified, and nothing here is advice.",
+      "An investment enquiry belongs to the vehicle it concerns, so that it arrives with its subject.",
+      "A committed investor reaches a named person directly, carrying the context already given.",
+      "Operational matters route to the Operating Partner, which is a different entity from GC.",
+    ),
+    sections: [
+      { kind: "prose", paras: [
+        "Getaway Collective raises and governs capital. It does not operate the properties — " +
+        "Sensory Getaways does that under a Management Agreement — so anything about using a " +
+        "property, or about one already in operation, belongs to the Operating Partner and not here.",
+        "If your question is about a specific investment, the enquiry surface on that vehicle " +
+        "carries the vehicle with it. That matters more than it sounds: an enquiry that arrives " +
+        "without its subject has to be reconstructed by whoever reads it, and reconstruction is " +
+        "where a fact gets lost.",
+      ] },
+      { kind: "kv", rows: [
+        { k: "General", v: "hello@getawaycollective.co" },
+        { k: "Investor relations", v: "ir@getawaycollective.co" },
+        { k: "Press", v: "press@getawaycollective.co" },
+        { k: "Registered office", v: "Getaway Collective · India" },
+      ] },
+      { kind: "note", tone: "hazard", strong: "Capital is at risk.", text:
+        "Getaway Collective is an investment platform. Past performance is not a guide, and nothing " +
+        "on this page is an offer, a recommendation or advice. The standing risk disclosure states " +
+        "the position in full." },
+      { kind: "links", items: [
+        { t: "Enquire about a vehicle", to: "/collection/slowspace-coastal/enquire", primary: true },
+        { t: "Risk disclosure", to: "/legal/risk-disclosure" },
+        { t: "About Getaway Collective", to: "/about" },
+      ] },
+    ],
+  },
+
   "/403": {
     title: "Not available to you",
     eyebrow: "Access",

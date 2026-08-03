@@ -29,13 +29,17 @@ const vantageOf = (route: (typeof ROUTES)[number]) =>
   route.assembly ? assemblyById(route.assembly)?.vantage ?? GROUP_VANTAGE[route.group] : GROUP_VANTAGE[route.group];
 
 describe("canonical IA v5", () => {
-  /* 109 = 104 canonical URLs + three design-review aliases + the two
-     framework conventions (/404, /500) restored to the table. */
-  it("wires 104 canonical URLs plus three design-review aliases and two conventions", () => {
-    expect(ROUTES).toHaveLength(109);
-    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(109);
+  /* 110 = 104 canonical URLs + three design-review aliases + the two
+     framework conventions (/404, /500) + GC-440 /contact.
+
+     GC-440 rather than GC-410: the Numbering Law never recycles an id,
+     and 410/420/430 were spent on the v4 About sub-pages before they
+     were consolidated into GC-400. */
+  it("wires 104 canonical URLs plus the aliases, conventions and general contact", () => {
+    expect(ROUTES).toHaveLength(110);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(110);
     const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
-    expect(records).toHaveLength(110);
+    expect(records).toHaveLength(111);
     expect(new Set(records).size).toBe(records.length);
   });
 

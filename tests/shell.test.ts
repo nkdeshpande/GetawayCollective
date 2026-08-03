@@ -56,7 +56,12 @@ describe("primary navigation", () => {
       .filter((i) => canReach(i.path).ok)
       .map((i) => i.path);
 
-    expect(visible).toHaveLength(6);
+    /* Eight, not six. About and Contact joined the footer and both are
+       public, so an anonymous viewer legitimately sees two more. The
+       count is pinned rather than derived on purpose: the number rising
+       should require someone to look at WHICH surface rose, because that
+       is exactly how an office route would slip into an anonymous rail. */
+    expect(visible).toHaveLength(8);
     for (const p of visible) {
       expect(accessOf(routeFor(p)!), `${p} reached anonymously`).toBe("public");
     }

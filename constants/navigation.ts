@@ -196,6 +196,13 @@ export const PRIMARY_NAV: readonly NavSection[] = [
 
 /** The rail foot. Reachable at every vantage, so it is never filtered out. */
 export const NAV_FOOT: readonly NavItem[] = [
+  /* About carries "who is behind GC" — the canon's answer to a team page.
+     There is deliberately no staff listing: authority here is a grant, not
+     a title, so a page of names and job descriptions would describe
+     something the constitution does not use. Offices and committees are
+     what hold rights, and they are constituted rather than hired. */
+  { path: "/about", label: "About", icon: "member" },
+  { path: "/contact", label: "Contact", icon: "answers" },
   { path: "/legal", label: "Legal", icon: "documents" },
   { path: "/status", label: "System status", icon: "compliance" },
 ];

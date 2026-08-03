@@ -236,6 +236,19 @@ export const PUBLIC_ROUTES: readonly Route[] = [
   // ── About ─────────────────────────────────────────────────────────
   R("GC-400", "/about", "About", "gateway", "AS-32",
     { notes: "Who is behind GC, and which of the three entities is speaking." }),
+  /* GC-440, not GC-410. The Numbering Law never recycles an id, and
+     410/420/430 were spent on the v4 About sub-pages (story, people,
+     voices) before they were consolidated into GC-400.
+
+     A general contact is NOT the vehicle-scoped enquiry. GC-160 exists so
+     an INVESTMENT enquiry is anchored to the vehicle it concerns, and
+     INV-170 carries a qualified investor to a named human. Press, a
+     prospective operating partner and a supplier have none of those, and
+     routing them through a vehicle enquiry would file them against an
+     offering they are not asking about. */
+  R("GC-440", "/contact", "Contact", "gateway", "AS-32",
+    { notes: "The general channel. Investment enquiries belong to a vehicle (GC-160) and a " +
+             "qualified investor reaches a person through INV-170; this is for everything else." }),
   // ── The legal corpus ──────────────────────────────────────────────
   R("GC-500", "/legal", "Legal", "gateway", "AS-29",
     { notes: "Seven standing documents, versioned, with effective dates. Nothing on this " +
