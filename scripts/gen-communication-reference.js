@@ -388,7 +388,20 @@ if (inlineScripts.length !== 1) {
 new Function(inlineScripts[0][1]);
 const check = process.argv.includes("--check");
 if (check) {
-  if (!fs.existsSync(OUT) || fs.readFileSync(OUT, "utf8") !== html) {
+  /* Normalise \r\n before comparing, exactly as gen-assembly-css.js does.
+     With core.autocrlf=true — the Windows default — git checks this file
+     out with CRLF while the generator emits LF, so a raw string compare
+     reports STALE on every Windows machine forever and `npm run verify`
+     can never pass there. CI runs on Linux and never saw it.
+
+     This is the same \r\n hazard the parsing scripts warn about in ten
+     places, arriving from the other direction: there a stray \r makes a
+     check silently pass, here it makes one permanently fail. Loud is the
+     better failure of the two, but it is still wrong. */
+  const current = fs.existsSync(OUT)
+    ? fs.readFileSync(OUT, "utf8").replace(/\r\n/g, "\n")
+    : null;
+  if (current !== html.replace(/\r\n/g, "\n")) {
     console.error("[communication-reference] STALE — run npm run communications");
     process.exit(1);
   }
