@@ -19,6 +19,7 @@ import {
   type StandingDocument, type Clause,
 } from "@/content/legal";
 import { JOURNAL, entryBySlug, JOURNAL_INTRO, KIND_LABEL, type Entry, type Block } from "@/content/journal";
+import { channelById, franchiseById, DISCLOSURE_TEXT } from "@/constants/journal-taxonomy";
 import { Footer } from "./atoms";
 
 /* ── Shared ───────────────────────────────────────────────────────── */
@@ -258,14 +259,43 @@ export function JournalEntry({ slug }: { slug: string }) {
         <div className="wrap">
           <div className="sec-head" style={{ flexDirection: "column", alignItems: "flex-start", gap: "var(--gc-sp-2xs)" }}>
             <span className="sec-ref">
-              {e.id} · {KIND_LABEL[e.kind]} · {e.published}
+              {e.id} · {e.meta ? channelById(e.meta.channel)?.name : KIND_LABEL[e.kind]} · {e.published}
             </span>
             <h1 className="t-display-l">{e.title}</h1>
             <p className="t-body-l dim measure">{e.standfirst}</p>
-            <span className="t-mono-s dim">about {e.minutes} minutes</span>
+            <span className="t-mono-s dim">
+              about {e.minutes} minutes
+              {e.meta?.franchise ? ` · ${franchiseById(e.meta.franchise)?.name}` : ""}
+            </span>
           </div>
 
+          {/* AS-30.b — the disclosure, before the first sentence.
+              JOURNAL_LAWS.disclosureIsMandatory holds that independence is
+              a claim rather than an absence, which means it has to be
+              readable. Placed above the body deliberately: the one time it
+              matters is the time somebody would otherwise finish the piece
+              believing something about who wrote it. */}
+          {e.meta ? (
+            <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-m)" }}>
+              {DISCLOSURE_TEXT[e.meta.disclosure]}
+            </p>
+          ) : null}
+
           {e.body.map((b, i) => <JournalBlock key={i} b={b} />)}
+
+          {/* Somewhere else worth going, including off this site. A Journal
+              that only ever cites itself is a brochure with footnotes. */}
+          {e.meta?.elsewhere?.length ? (
+            <div className="panel on-panel" style={{ marginTop: "var(--gc-sp-xl)" }}>
+              <span className="t-micro label">Read elsewhere</span>
+              {e.meta.elsewhere.map((x) => (
+                <div key={x.label} style={{ marginTop: "var(--gc-sp-2xs)" }}>
+                  <span className="t-body" style={{ fontWeight: 600 }}>{x.label}</span>
+                  <p className="t-body-s dim measure">{x.why}</p>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           {/* AS-30.c — what this entry depends on, and where it was read. */}
           {e.cites?.length ? (
@@ -333,7 +363,9 @@ export function JournalIndex() {
               <Link key={e.slug} href={`/journal/${e.slug}`} className="panel on-panel"
                     style={{ textDecoration: "none" }}>
                 <div className="kv" style={{ borderBottom: "none", paddingBottom: 0 }}>
-                  <span className="t-mono-s dim">{e.id} · {KIND_LABEL[e.kind]}</span>
+                  <span className="t-mono-s dim">
+                    {e.id} · {e.meta ? channelById(e.meta.channel)?.name : KIND_LABEL[e.kind]}
+                  </span>
                   <span className="t-mono-s dim">{e.published} · {e.minutes} min</span>
                 </div>
                 <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-2xs)" }}>{e.title}</h2>
