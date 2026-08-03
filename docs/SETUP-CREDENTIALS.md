@@ -10,6 +10,44 @@ first means one sign-in gets you all the way in.
 
 ---
 
+## The fast path — magic link, no Google
+
+**Updated 03 Aug 2026.** This document originally led with Google OAuth.
+It should not, and the reason is in the code: `auth.config.ts` registers
+Google only when both credentials exist, and `auth.ts` attaches the magic
+link independently when a database and a Resend key exist. They are not
+sequential — either alone gives a working sign-in.
+
+Since `getawaycollective.co` is now verified in Resend, the magic link
+needs nothing you do not already have:
+
+| Variable | Where it comes from |
+|---|---|
+| `AUTH_SECRET` | `npx auth secret` — 10 seconds |
+| `DATABASE_URL` | Neon console, the **pooled** string |
+| `RESEND_API_KEY` | Already set by the Vercel integration |
+| `RESEND_FROM` | **Not set by the integration.** See below. |
+
+Google remains worth adding for the one-click path. It is not a
+prerequisite for anyone signing in, and treating it as one has already
+cost time.
+
+### The one that silently breaks it
+
+The Vercel Resend integration injects `RESEND_API_KEY` and **not**
+`RESEND_FROM`. Without it, both `lib/leads.ts` and the magic-link provider
+fall back to `onboarding@resend.dev` — Resend's sandbox sender, which
+delivers only to the account owner's own address and rejects every other
+recipient.
+
+The failure lands at send time, not at configuration time. Everything
+reads as wired, and the first real recipient simply never receives
+anything.
+
+```
+RESEND_FROM=Getaway Collective <notices@getawaycollective.co>
+```
+
 ## Before you start
 
 Check what you already have. `.env.local` is gitignored and already holds
