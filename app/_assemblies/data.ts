@@ -83,17 +83,36 @@ export function allocate(total: bigint, weights: bigint[]): bigint[] {
   return base;
 }
 
-export type Confidence =
-  | "observed" | "verified" | "modelled" | "estimated" | "forecast" | "pending";
+/**
+ * Re-exported, not redeclared.
+ *
+ * This file used to hold its own copy of the six classes, identical to the
+ * one in lib/provenance.ts and to a third in content/legal.ts. Three
+ * copies of a constitutional type are three chances to disagree, and they
+ * disagreed the moment v5 changed the axis. One definition now, in
+ * constants/taxonomies.ts, read through the domain layer.
+ */
+export type { Confidence } from "@/lib/provenance";
+import type { Confidence } from "@/lib/provenance";
 
 export const CONFIDENCE_LABEL: Record<Confidence, string> = {
-  observed: "Observed", verified: "Verified", modelled: "Modelled",
-  estimated: "Estimated", forecast: "Forecast", pending: "Pending",
+  VERIFIED: "Verified",
+  CORROBORATED: "Corroborated",
+  REPORTED: "Reported",
+  INFERRED: "Inferred",
+  FORECAST: "Forecast",
+  UNKNOWN: "Unknown",
 };
 
-/** A provisional figure carries the mark. Trust it the same amount. */
+/**
+ * A provisional figure carries the mark. Trust it the same amount.
+ *
+ * Everything weaker than CORROBORATED. REPORTED is included deliberately:
+ * a management assertion is exactly the figure a reader would otherwise
+ * mistake for an independent one.
+ */
 export const PROVISIONAL = new Set<Confidence>([
-  "modelled", "estimated", "forecast", "pending",
+  "REPORTED", "INFERRED", "FORECAST", "UNKNOWN",
 ]);
 
 export interface Property {
@@ -130,7 +149,7 @@ export const PROPERTIES: readonly Property[] = [
     ufr0101: "2026-06-30", ufr0061: "Coastal Collection SPV I",
     ufr0065: "110 m²", ufr0066: "Stabilised", ufr0067: "2025-11-14",
     ufr0068: "Machiya restoration · timber reuse 78%",
-    yield: { v: 8.4, conf: "modelled" }, availability: "Q3 2026",
+    yield: { v: 8.4, conf: "INFERRED" }, availability: "Q3 2026",
     telemetry: { state: "live", at: "2026-07-31 09:12" },
     units: 12, held: 1, hue: 158,
   },
@@ -160,7 +179,7 @@ export const PROPERTIES: readonly Property[] = [
     ufr0101: "2026-06-19", ufr0061: "SlowSpace Coastal LLP",
     ufr0065: "1.42 acres · dual frontage", ufr0066: "Pre-construction", ufr0067: null,
     ufr0068: "CRZ compliant · Blue Flag adjacent · modular assembly",
-    yield: { v: 18, conf: "modelled" }, availability: "45% remaining",
+    yield: { v: 18, conf: "INFERRED" }, availability: "45% remaining",
     /* No feed: there is nothing built to instrument. Saying "stale"
        would imply one existed and stopped. */
     telemetry: { state: "stale", at: "no feed — pre-construction" },
@@ -178,7 +197,7 @@ export const PROPERTIES: readonly Property[] = [
     ufr0101: "2026-07-15", ufr0061: "Nordic Collection SPV I",
     ufr0065: "140 m²", ufr0066: "Lease-up", ufr0067: null,
     ufr0068: "Mass timber · district heat",
-    yield: { v: 9.7, conf: "estimated" }, availability: "Q1 2027",
+    yield: { v: 9.7, conf: "REPORTED" }, availability: "Q1 2027",
     telemetry: { state: "live", at: "2026-07-31 09:08" },
     units: 12, held: 0, hue: 24,
   },

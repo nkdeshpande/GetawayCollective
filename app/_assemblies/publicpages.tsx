@@ -31,7 +31,7 @@
 
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import {
   pageByPath, BRIDGE,
@@ -39,6 +39,7 @@ import {
 } from "@/content/public";
 import { PROPERTIES, inr } from "./data";
 import { ConfidenceTag, Footer } from "./atoms";
+import { SystemSurface } from "./systempages";
 
 /* ═══════════════════════════════════════════════════════════════════
    FOUR ARRANGEMENTS
@@ -624,9 +625,96 @@ export function PublicSurface({ path }: { path: string }) {
   );
 }
 
+const INVESTMENT_LENSES = [
+  ["00", "The world", "What does ownership make possible?", "A small collection of quiet places, shaped around privacy, material permanence and the freedom to arrive without arranging a life around it."],
+  ["01", "Space", "What is being acquired?", "One vehicle holds one asset. The physical brief, acquisition evidence, planning position and protection record remain legible together."],
+  ["02", "Time", "How does access work?", "Time is finite inventory attached to the vehicle. Entitlement follows the agreed ownership basis and is administered transparently."],
+  ["03", "Capital", "How is the position structured?", "A defined contribution establishes an interest in the vehicle. Cash flow, reserves, debt and distributions are presented as distinct layers."],
+  ["04", "Governance", "Who can decide what?", "The vehicle's constitution gives rights, responsibilities and decision thresholds an explicit home. Ownership and governance are related, but never blurred."],
+] as const;
+
+function ScenarioCalculator({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [share, setShare] = useState(5);
+  const [horizon, setHorizon] = useState(5);
+  const shareId = useId();
+  const horizonId = useId();
+  const contribution = 25_000_000 * (share / 100);
+  const days = Math.round(365 * (share / 100));
+  const illustration = Math.round(contribution * 0.035 * horizon);
+  if (!open) return null;
+  return <div className="invest-modal-back" role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <section className="invest-modal" role="dialog" aria-modal="true" aria-labelledby="calculator-title">
+      <header className="invest-modal-head"><div><span className="t-micro label">Illustrative scenario</span><h2 id="calculator-title" className="t-display-s">Shape your point of view</h2></div><button className="btn" onClick={onClose} autoFocus>Close</button></header>
+      <div className="invest-calculator-grid">
+        <div className="invest-controls">
+          <label htmlFor={shareId}>Interest selected <output>{share}%</output></label>
+          <input id={shareId} type="range" min="5" max="25" step="5" value={share} onChange={(e) => setShare(Number(e.target.value))} />
+          <div className="invest-range-scale"><span>5%</span><span>25%</span></div>
+          <label htmlFor={horizonId}>Illustrative horizon <output>{horizon} years</output></label>
+          <input id={horizonId} type="range" min="3" max="10" step="1" value={horizon} onChange={(e) => setHorizon(Number(e.target.value))} />
+          <div className="invest-range-scale"><span>3 years</span><span>10 years</span></div>
+        </div>
+        <dl className="invest-results" aria-live="polite"><div><dt>Illustrative contribution</dt><dd>{inr(BigInt(contribution))}</dd></div><div><dt>Indicative annual time basis</dt><dd>{days} days</dd></div><div><dt>Illustrative distribution basis</dt><dd>{inr(BigInt(illustration))}</dd></div></dl>
+      </div>
+      <p className="invest-disclaimer">Illustration only. This is not an offer, valuation, forecast or promise of availability, distribution or return. The private materials govern any opportunity.</p>
+    </section>
+  </div>;
+}
+
+export function InvestmentOverview() {
+  const [calculatorOpen, setCalculatorOpen] = useState(false);
+  return <>
+    <section data-sec="AS-32.investment" className="investment-hero"><div className="wrap"><div className="investment-hero-grid"><div><span className="sec-ref">GC-300 · Private ownership, made legible</span><h1 className="investment-title">A place in your life.<br /><em>A position you can understand.</em></h1><p className="t-body-l investment-intro">Getaway Collective brings space, time, capital and governance into one disciplined ownership model.</p><div className="row" style={{ marginTop: "var(--gc-sp-m)", gap: "var(--gc-sp-s)" }}><button className="btn primary" onClick={() => setCalculatorOpen(true)}>Explore a scenario</button><a className="btn" href="#invitation">View the invitation</a></div></div><div className="investment-orbit" aria-hidden="true"><span>SPACE</span><span>TIME</span><span>CAPITAL</span><span>GOVERNANCE</span><strong>GC</strong></div></div></div></section>
+    <nav className="investment-lens-nav" aria-label="Ownership chapters"><div className="wrap"><span className="t-micro label">Explore by lens</span><div>{INVESTMENT_LENSES.map((item) => <a key={item[1]} href={`#lens-${item[0]}`}><span>{item[0]}</span>{item[1]}</a>)}</div></div></nav>
+    <section data-sec="AS-32.lenses" className="investment-section"><div className="wrap"><div className="sec-head"><span className="sec-ref">The five lenses</span><span className="t-micro label">One vehicle · one coherent view</span></div><div className="investment-lens-sequence">{INVESTMENT_LENSES.map((item, index) => <article key={item[0]} id={`lens-${item[0]}`} className="investment-lens-panel"><span className="t-micro label">{item[0]} / {item[1]}</span><span className="investment-lens-index">0{index + 1}</span><h2 className="t-display-m">{item[2]}</h2><p className="t-body-l">{item[3]}</p><p className="investment-lens-note">A single vehicle truth, examined through {item[1].toLowerCase()}.</p></article>)}</div></div></section>
+    <section data-sec="AS-32.location" className="investment-section on-paper"><div className="wrap"><div className="sec-head"><span className="sec-ref">Location intelligence</span><span className="t-micro label">Evidence before attachment</span></div><div className="investment-location-grid"><div className="investment-map" aria-label="Illustrative location intelligence map"><i /><i /><i /><b>01</b></div><div className="investment-location-copy"><h2 className="t-display-m">The right place has more than a view.</h2><p className="t-body">Each prospective asset is tested through access, ecological context, local character, planning conditions and the evidence required to hold it over time.</p><dl className="investment-facts"><div><dt>Access envelope</dt><dd>Drive, rail and air</dd></div><div><dt>Protection review</dt><dd>Title, risk and boundary</dd></div><div><dt>Local rhythm</dt><dd>Seasonality and demand</dd></div></dl></div></div></div></section>
+    <section data-sec="AS-32.roadmap" className="investment-section"><div className="wrap"><div className="sec-head"><span className="sec-ref">Project roadmap</span><span className="t-micro label">A linear record, not a promise</span></div><ol className="investment-roadmap">{[["01", "Origination", "A site enters disciplined review."], ["02", "Formation", "The vehicle and its governing basis are established."], ["03", "Acquisition", "Evidence, terms and authority meet before the asset closes."], ["04", "Delivery", "Design, approvals and construction are reported against an agreed baseline."], ["05", "Stewardship", "Capital, time and material decisions remain visible to the holders."]].map(([n, title, body]) => <li key={n}><span>{n}</span><div><h3>{title}</h3><p>{body}</p></div></li>)}</ol></div></section>
+    <section data-sec="AS-32.invitation" id="invitation" className="investment-invitation"><div className="wrap"><div className="investment-invitation-grid"><div><span className="sec-ref">Private invitation</span><h2 className="investment-title">Begin with the material that should be read.</h2></div><div><p className="t-body-l">An invitation starts a considered conversation. It does not create a commitment. When a specific opportunity is available, the applicable materials state its vehicle, terms, risks, eligibility and evidence.</p>{/* /communique/request was retired by the v4 migration. It still
+    resolves — constants/redirects.ts 301s it to the vehicle-scoped
+    enquiry — but that table exists for INBOUND links from the old
+    site. An internal link riding a redirect costs a round trip and
+    quietly depends on a row nobody would think to keep. */}
+<div className="investment-invitation-actions"><Link className="btn primary" href="/collection/slowspace-coastal/enquire">Request the private materials</Link><button className="btn" onClick={() => setCalculatorOpen(true)}>Open calculator</button></div><p className="t-body-s invest-disclaimer">Private materials are provided only through the appropriate relationship and qualification process. Capital is at risk.</p></div></div></div></section>
+    <ScenarioCalculator open={calculatorOpen} onClose={() => setCalculatorOpen(false)} /><Footer />
+  </>;
+}
+
+function HomePage() {
+  const places = [
+    ["01", "THE WESTERN GHATS", "Forest / mist / stone"],
+    ["02", "THE COAST", "Tide / wind / horizon"],
+    ["03", "THE HILLS", "Altitude / fire / quiet"],
+  ] as const;
+  return <>
+    <section data-sec="AS-32.home.hero" className="gc-home-hero">
+      <div className="gc-home-hero-image" aria-hidden="true" />
+      <div className="gc-home-hero-scrim" aria-hidden="true" />
+      <div className="wrap gc-home-hero-content">
+        <span className="sec-ref">GETAWAY COLLECTIVE · INDIA</span>
+        <h1>Own the quiet.<br /><em>Keep the proof.</em></h1>
+        <p>A collection of remarkable places held through clear, vehicle-specific ownership.</p>
+        <div className="row" style={{ marginTop: "var(--gc-sp-m)", gap: "var(--gc-sp-s)" }}><Link className="btn primary" href="/collection">Explore the collection</Link><Link className="btn" href="/how-it-works">How the structure works</Link></div>
+      </div>
+    </section>
+
+    <section data-sec="AS-32.home.statement" className="gc-home-statement"><div className="wrap"><span className="t-micro label">A different ownership rhythm</span><div className="gc-home-statement-grid"><h2>Less arrangement.<br />More belonging.</h2><div><p className="t-body-l">The rarest luxury is a place that holds its own weight: architecturally, operationally and financially.</p><p className="t-body">Getaway Collective brings the asset, its vehicle and the evidence behind both into one legible relationship.</p></div></div></div></section>
+
+    <section data-sec="AS-32.home.places" className="gc-home-places"><div className="wrap"><div className="sec-head"><span className="sec-ref">The collection</span><Link className="btn" href="/collection">View every place</Link></div><div className="gc-place-grid">{places.map(([number, name, detail]) => <Link key={number} href="/collection" className="gc-place"><div className="gc-place-image" data-place={number} /><div className="gc-place-caption"><span>{number}</span><h2>{name}</h2><p>{detail}</p></div></Link>)}</div></div></section>
+
+    <section data-sec="AS-32.home.triad" className="gc-home-triad on-paper"><div className="wrap"><span className="sec-ref">One vehicle · four views</span><h2 className="gc-home-display">A place is not merely a picture.<br />It is an arrangement that must hold.</h2><div className="gc-home-triad-grid">{[["SPACE", "The physical asset, its condition and its protection."], ["TIME", "Finite inventory, allocated on a clear basis."], ["CAPITAL", "Contribution, reserve, debt and distribution layers."], ["GOVERNANCE", "Rights and thresholds recorded before action is required."]].map(([title, body], index) => <Link key={title} href="/how-it-works" className="gc-home-triad-item"><span>0{index + 1}</span><h3>{title}</h3><p>{body}</p><b>→</b></Link>)}</div></div></section>
+
+    <section data-sec="AS-32.home.material" className="gc-home-material"><div className="wrap gc-home-material-grid"><div><span className="sec-ref">The materials</span><h2 className="gc-home-display">Before conviction,<br />there is evidence.</h2></div><div className="gc-home-material-list">{[["01", "The asset", "Site, brief, diligence and protection."], ["02", "The vehicle", "Constitution, interest and authority."], ["03", "The record", "Reports, resolutions and material events."]].map(([number, title, body]) => <Link key={number} href="/communique/request"><span>{number}</span><div><h3>{title}</h3><p>{body}</p></div><b>→</b></Link>)}<Link className="btn" href="/communique/request">Request private materials</Link></div></div></section>
+
+    <section data-sec="AS-32.home.team" className="gc-home-team"><div className="wrap"><div className="sec-head"><span className="sec-ref">The collective</span><Link className="btn" href="/collective/partners">Meet the people</Link></div><div className="gc-home-team-grid"><h2>Builders.<br /><em>Not brokers.</em></h2><p className="t-body-l">The platform governs the relationship. Specialist partners are appointed to originate, deliver and protect the asset. Each role is disclosed with its authority and evidence.</p><div className="gc-home-team-portrait" aria-hidden="true"><span>GC</span></div></div></div></section>
+
+    <section data-sec="AS-32.home.invite" className="gc-home-invite"><div className="wrap"><span className="sec-ref">Begin deliberately</span><h2>Find a place<br />worth returning to.</h2><p className="t-body-l">Request an introduction to the collection and the ownership model behind it.</p><Link className="btn primary" href="/communique/request">Request an introduction</Link><p className="t-body-s">Capital is at risk. Specific opportunities are governed by their applicable private materials.</p></div></section>
+    <Footer />
+  </>;
+}
+
 /* Thin wrappers, so gen-app emits one component per route. */
-export const Root = () => <PublicSurface path="/" />;
-export const HowItWorks = () => <PublicSurface path="/how-it-works" />;
+export const Root = () => <HomePage />;
+export const HowItWorks = () => <InvestmentOverview />;
 export const Partners = () => <PublicSurface path="/collective/partners" />;
 export const Operators = () => <PublicSurface path="/collective/operators" />;
 export const Dossier = () => <PublicSurface path="/communique/request" />;
@@ -636,4 +724,4 @@ export const Space = () => <PublicSurface path="/space" />;
 export const Time = () => <PublicSurface path="/time" />;
 export const Evidence = () => <PublicSurface path="/collective/gallery" />;
 export const Structure = () => <PublicSurface path="/structure" />;
-export const Identify = () => <PublicSurface path="/auth/sign-in" />;
+export const Identify = () => <SystemSurface path="/auth/sign-in" />;

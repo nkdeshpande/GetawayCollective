@@ -16,6 +16,14 @@
 @import url("../dist/tokens.css");
 /* The real interface, ported from GC-ASSEMBLIES.html. */
 @import url("./_assemblies/assemblies.css");
+@import url("./_assemblies/publicpages.css");
+@import url("./_assemblies/systempages.css");
+@import url("./_assemblies/investorpages.css");
+@import url("./_assemblies/investor-overrides.css");
+@import url("./_assemblies/memberpages.css");
+@import url("./_assemblies/officepages.css");
+@import url("./_assemblies/office-lifecycle.css");
+@import url("./_assemblies/office-collection.css");
 
 *,
 *::before,

@@ -96,7 +96,7 @@ function PositionPanel({ p }: { p: Holding }) {
           <span className="t-mono-s dim">
             {pct(p.bps)} of {LLP.name} · {p.units} × {inr(MIN_UNIT)}
           </span>
-          <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="verified" /></div>
+          <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="CORROBORATED" /></div>
         </div>
         <div className="panel on-panel" style={{ flex: "1 1 240px" }}>
           <span className="t-micro label">Indicative annual distribution</span>
@@ -104,7 +104,7 @@ function PositionPanel({ p }: { p: Holding }) {
             {inr(p.distribution)}
           </div>
           <span className="t-mono-s dim">{(p.yieldBps / 100).toFixed(1)}% once stabilised</span>
-          <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="modelled" /></div>
+          <div style={{ marginTop: "var(--gc-sp-2xs)" }}><ConfidenceTag c="INFERRED" /></div>
         </div>
         <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
           <span className="t-micro label">Voting weight</span>

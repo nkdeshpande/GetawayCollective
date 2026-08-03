@@ -13,6 +13,7 @@ import type { Metadata } from "next";
 import { fontVars } from "./_system/fonts";
 import { CookieConsent, Specimens } from "./_assemblies/dialogs";
 import { Shell } from "./_assemblies/shell";
+import { currentSubject } from "@/lib/session";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,7 +34,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  /* Resolved here because this is the outermost Server Component — the
+     last place that can await before the tree turns into client
+     components. The Shell needs it and cannot fetch it itself. */
+  const subject = await currentSubject();
+
   return (
     /* No `user-scalable=no`. AS-06 collects a PAN number and AS-14 is a
        mandatory reading surface; disabling zoom on either is WCAG 1.4.4. */
@@ -43,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             render, so the shell shows an anonymous visitor exactly the
             surfaces an anonymous visitor can open — and nothing that
             would confirm the rest exist. */}
-        <Shell>{children}</Shell>
+        <Shell subject={subject}>{children}</Shell>
         {/* P-03: asserts at the foot, never blocks, declines by default.
             Specimens renders a dialog only when ?specimen= names one —
             zero footprint otherwise. */}

@@ -55,9 +55,9 @@ export const MEMBER_PAGES: Record<string, Entry> = {
     sections: [
       { kind: "figures", items: [
         { label: "Position", value: inr(p.commitment), money: true,
-          sub: `${pct(p.bps)} of ${LLP.name}`, conf: "verified" },
+          sub: `${pct(p.bps)} of ${LLP.name}`, conf: "CORROBORATED" },
         { label: "Indicative annual", value: inr(p.distribution), money: true,
-          sub: `${(p.yieldBps / 100).toFixed(1)}% once stabilised`, conf: "modelled" },
+          sub: `${(p.yieldBps / 100).toFixed(1)}% once stabilised`, conf: "INFERRED" },
         { label: "Voting weight", value: pct(p.bps), sub: "contribution-weighted · §24a" },
         { label: "Nights", value: "0", nights: true, sub: `of ${p.nights.min}–${p.nights.max}, from handover` },
       ] },
@@ -124,7 +124,7 @@ export const MEMBER_PAGES: Record<string, Entry> = {
     lead: "What stage six has paid you. Nothing has run yet, and the page says so.",
     disclosure: d(
       "Nothing — distributions are never public.",
-      "The waterfall mechanics are public at /how-capital-works; your figures are not.",
+      "The waterfall mechanics are public at /collection/slowspace-coastal/investment; your figures are not.",
       "Declared and paid amounts per period, against the modelled expectation.",
       "This is the page operation fills: quarterly, from stabilisation, unless blocked by the reserve floor.",
     ),
@@ -132,9 +132,9 @@ export const MEMBER_PAGES: Record<string, Entry> = {
       { kind: "figures", items: [
         { label: "Received to date", value: inr(0n), money: true, sub: "no period has closed" },
         { label: "Modelled annual", value: inr(p.distribution), money: true,
-          sub: "once stabilised", conf: "modelled" },
+          sub: "once stabilised", conf: "INFERRED" },
         { label: "First expected", value: "post-" + PROGRAMME[3].w.split("– ")[1],
-          sub: "after handover and stabilisation", conf: "forecast" },
+          sub: "after handover and stabilisation", conf: "FORECAST" },
       ] },
       { kind: "empty", what: "No distributions",
         because: PRE_OP + " Stage six runs only after operating costs, the brand, both reserves and " +
@@ -224,7 +224,7 @@ export const MEMBER_PAGES: Record<string, Entry> = {
         { label: "Your allocation", value: `${p.nights.min}–${p.nights.max}`, nights: true,
           sub: `floor of ${NIGHT_POOL.min}–${NIGHT_POOL.max} × ${pct(p.bps)}` },
         { label: "Drawable now", value: "0", nights: true, sub: "begins at handover" },
-        { label: "Handover", value: PROGRAMME[3].w, sub: PROGRAMME[3].stage, conf: "forecast" },
+        { label: "Handover", value: PROGRAMME[3].w, sub: PROGRAMME[3].stage, conf: "FORECAST" },
       ] },
       { kind: "note", tone: "steel", strong: "The pool is divided, never multiplied.",
         text: "Each position takes its floor of the vehicle pool, so the sum of every partner's " +

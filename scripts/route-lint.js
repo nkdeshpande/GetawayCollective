@@ -28,6 +28,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { parseRoutesSource } = require("./lib/route-source-parser");
 
 const ROOT = path.resolve(__dirname, "..");
 
@@ -102,71 +103,20 @@ const GROUP_VANTAGE = {
   time: "time", member: "member", admin: "admin",
 };
 
-/**
- * Resolve `export const NAME = "..." + "..."` from the routes file.
- *
- * Returns "" when the name does not resolve, which the caller treats as a
- * missing reason — so a typo in the constant name fails the build rather
- * than silently passing an override with no justification.
- */
-function resolveConst(name) {
-  const m = src.match(
-    new RegExp(`export const ${name}\\s*=\\s*((?:"(?:[^"\\\\]|\\\\.)*"\\s*\\+?\\s*\\n?\\s*)+);`),
-  );
-  if (!m) return "";
-  return [...m[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]).join("");
-}
-
 // ── Parse routes ─────────────────────────────────────────────────────
-function routes() {
-  const out = [];
-  // R("path", "name", "group", assembly, { ... })
-  for (const m of src.matchAll(
-    /R\(\s*(`[^`]*`|"[^"]*")\s*,\s*(`[^`]*`|"[^"]*")\s*,\s*"(\w+)"\s*,\s*(null|"[^"]*")([\s\S]*?)\n?\s*\),?\n/g,
-  )) {
-    const tail = m[5];
-    const unq = (s) => s.replace(/^[`"]|[`"]$/g, "");
-    out.push({
-      path: unq(m[1]), name: unq(m[2]), group: m[3],
-      assembly: m[4] === "null" ? null : unq(m[4]),
-      dynamic: /^`/.test(m[1]),
-      params: [...((tail.match(/params:\s*\[([^\]]*)\]/) || [, ""])[1])
-        .matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-      rightsCited: [...((tail.match(/rights:\s*\[([^\]]*)\]/) || [, ""])[1])
-        .matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-      override: (() => {
-        const o = tail.match(
-          /accessOverride:\s*\{\s*access:\s*"(\w+)"[\s\S]*?because:\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+|[A-Z][A-Z0-9_]*)/,
-        );
-        if (!o) return null;
-        // A reason may be an inline string OR a named constant declared in
-        // the same file. Sixteen passport stages share one reason, and
-        // writing it out sixteen times would make it sixteen things to
-        // keep in step. Resolving the reference is cheaper than banning it.
-        const why = /^[A-Z][A-Z0-9_]*$/.test(o[2].trim())
-          ? resolveConst(o[2].trim())
-          : [...o[2].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((x) => x[1]).join("");
-        return { access: o[1], because: why };
-      })(),
-      hasOverrideKey: /accessOverride:/.test(tail),
-      indexable: (tail.match(/indexable:\s*(true|false)/) || [])[1],
-      raw: tail,
-    });
-  }
-  return out;
-}
-
-const ROUTES = routes();
+const ROUTES = parseRoutesSource(src).map((route) => ({
+  ...route,
+  dynamic: false,
+  rightsCited: route.rights,
+  override: route.override
+    ? { access: route.override, because: route.overrideBecause }
+    : null,
+}));
 
 if (ROUTES.length === 0 || assemblyVantage.size === 0 || rights.size === 0) {
   console.error("[route-lint] Parsed zero routes, assemblies or rights. Refusing to pass vacuously.");
   process.exit(2);
 }
-// The template-literal passport stages are generated, not literal, so the
-// static count is lower than the runtime count. Both are reported.
-const STAGES = ((src.match(/export const PASSPORT_STAGES = \[([\s\S]*?)\] as const;/) || [, ""])[1]
-  .match(/"/g) || []).length / 2;
-
 const seen = new Map();
 let overrides = 0;
 let widenings = 0;
@@ -308,7 +258,7 @@ for (const r of ROUTES) {
 }
 
 console.log(
-  `[route-lint] ${ROUTES.length} literal routes (+${STAGES} generated passport stages) · ` +
+  `[route-lint] ${ROUTES.length} canonical routes · ` +
     `${new Set(ROUTES.map((r) => r.group)).size} groups · ${overrides} access override(s)\n`,
 );
 console.log(

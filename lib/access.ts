@@ -175,7 +175,7 @@ export function paramsOf(route: Route, pathname: string): Record<string, string>
  */
 export function denialRoute(d: Denial): string {
   if (d.ok) return "";
-  if (d.reason === "insufficient-access" && d.held === "public") return "/auth/sign-in";
+  if (d.reason === "insufficient-access" && d.held === "public") return "/sign-in";
   if (d.reason === "insufficient-access") return "/403";
   return "/404";
 }

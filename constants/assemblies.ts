@@ -683,6 +683,7 @@ export const COMMITMENT_FLOW: Assembly = {
 export const PORTFOLIO_NARRATIVE: Assembly = {
   id: "AS-07",
   name: "The Portfolio Narrative",
+  scope: "region",
   route: "gateway",
   vantage: "gateway",
   intent: "Explain what the operating partner's brands are, and how they differ.",
@@ -746,6 +747,7 @@ export const PORTFOLIO_NARRATIVE: Assembly = {
 export const STORY_PLAYBACK: Assembly = {
   id: "AS-08",
   name: "The Story Playback",
+  scope: "region",
   route: "gateway",
   vantage: "gateway",
   intent: "Show a place at full bleed, in sequence, to someone who has not decided anything yet.",
@@ -824,6 +826,7 @@ export const STORY_PLAYBACK: Assembly = {
 export const GALLERY_FRAME: Assembly = {
   id: "AS-09",
   name: "The Gallery Frame",
+  scope: "region",
   route: "gateway",
   vantage: "gateway",
   intent: "Show places at full bleed, one at a time, to someone who has decided nothing yet.",
@@ -1453,6 +1456,7 @@ export const SIGNAL_LOST: Assembly = {
 export const KNOWLEDGE_BASE: Assembly = {
   id: "AS-17",
   name: "The Knowledge Base",
+  scope: "region",
   route: "gateway",
   vantage: "gateway",
   intent: "Answer the questions people actually ask, and cite what governs each answer.",
@@ -1515,6 +1519,7 @@ export const KNOWLEDGE_BASE: Assembly = {
 export const RECRUITMENT: Assembly = {
   id: "AS-18",
   name: "Recruitment",
+  scope: "region",
   route: "gateway",
   vantage: "gateway",
   intent: "Describe the open roles honestly enough that the right people recognise themselves.",
@@ -2621,6 +2626,42 @@ export const ADMIN_SURFACE: Assembly = {
 };
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   AS-35 · THE INVESTOR DOSSIER
+
+   A qualified disclosure surface. It does not render the Office-only
+   Property Console aperture; evidence is selected for the investment
+   decision and the route narrows access to an accredited Investor.
+   ═══════════════════════════════════════════════════════════════════ */
+export const INVESTOR_DOSSIER: Assembly = {
+  id: "AS-35",
+  name: "The Investor Dossier",
+  scope: "screen",
+  route: "capital",
+  vantage: "gateway",
+  intent: "Let a qualified Investor examine one vehicle without exposing Office records.",
+  answers: "What is the asset, how is it funded, what binds me, and how can it fail?",
+  sections: [
+    S("AS-35.a", "Private Overview", "masthead",
+      "The vehicle, disclosure state and the scope of this review.",
+      [],
+      "Qualification controls arrival. The assembly still selects only evidence cleared for this aperture."),
+    S("AS-35.b", "Diligence Chapters", "narrative",
+      "Asset, financials, structure and risks in a fixed review sequence.",
+      [],
+      "Every figure carries its basis and every claim links to a governed record."),
+    S("AS-35.c", "Evidence Register", "ledger",
+      "Versioned material with source, custody, effective date and download activity.",
+      [],
+      "Access to a document never implies authority to change it."),
+    S("AS-35.d", "Commitment Handoff", "action",
+      "The move from examination into the private transaction record.",
+      [],
+      "No commitment is created until the governed instrument, verified funds and admission record agree."),
+  ],
+};
+
+
 export const ASSEMBLIES: readonly Assembly[] = [
   GATEWAY_GRID,
   PROPERTY_CONSOLE_SCREEN,
@@ -2656,6 +2697,7 @@ export const ASSEMBLIES: readonly Assembly[] = [
   PUBLIC_SURFACE,
   MEMBER_SURFACE,
   ADMIN_SURFACE,
+  INVESTOR_DOSSIER,
 ];
 
 /**

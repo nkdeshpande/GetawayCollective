@@ -23,3 +23,9 @@ Thumbs.db
 # Package-manager store and tool debris — never tracked
 .pnpm-store/
 *.inspect.ndjson
+
+# Agent working directory. The scripts that BUILT the canon live here;
+# the canon itself is committed under outputs/. Ignored rather than
+# deleted — nothing is lost, and it can be tracked later if the
+# generation scripts turn out to be worth versioning.
+.codex-sheet-work/

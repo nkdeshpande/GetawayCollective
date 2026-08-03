@@ -1,158 +1,193 @@
-/**
- * AS-33 · THE MEMBER SURFACE
- *
- * Wave 8 · Member
- * Source: GC 2.0 Wireframes — MEM.01, MEM.02, MEM.05, MEM.06, MEM.07, MEM.08
- *
- * One renderer for the member surfaces. The copy lives in
- * content/member.ts.
- *
- * ── THE UNDRAFTED BLOCK ──────────────────────────────────────────────
- * A block may declare `undrafted`: a capability the source specifies
- * that is deliberately not built. It renders as a marked panel rather
- * than as body copy, because the whole point is that a reader must not
- * mistake it for something in force. MEM.07's conduct-linked forfeiture
- * is the one that matters — see the note in content/member.ts.
- *
- * ── WHAT IS NOT HERE ─────────────────────────────────────────────────
- * Live telemetry: grid status, sync state, thermal readings, a host
- * presence light. Every property in the collection is at
- * pre-construction or lease-up, so those would be readings from a
- * building that is not sending any. The controls are described and the
- * state says so.
- */
+"use client";
 
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { surfaceByPath, POSITION, type MemberSurface, type Block } from "@/content/member";
-import { Footer } from "./atoms";
+import { useSearchParams } from "next/navigation";
+import { ROUTES } from "@/constants/routes";
 
-function BlockView({ b }: { b: Block }) {
-  const paper = b.ground === "paper";
+type MemberProps = { path: string; param?: string };
+type MemberView = "home" | "portfolio" | "vehicle" | "space" | "capital" | "time" | "project" | "partners" | "governance" | "documents" | "activity" | "profile";
+type RecordRow = readonly [string, string, string, string];
+
+const generalViews = ["home", "portfolio", "activity", "profile"] as const;
+const vehicleViews = ["vehicle", "space", "capital", "time", "project", "partners", "governance", "documents", "activity"] as const;
+
+const copy: Record<MemberView, { ia: string; eyebrow: string; title: string; lead: string; guidance: string }> = {
+  home: { ia: "MEM-000", eyebrow: "RELATIONSHIP / HOME", title: "Your relationship, in one clear view.", lead: "Ownership, rights, notices and the next material action across every investment vehicle.", guidance: "Start with the item requiring attention. Nothing here changes a vehicle record." },
+  portfolio: { ia: "MEM-100", eyebrow: "RELATIONSHIP / PORTFOLIO", title: "Every interest you hold.", lead: "A cross-vehicle view of recorded ownership, current lifecycle state and the next material update.", guidance: "Choose an investment vehicle to enter its private record." },
+  vehicle: { ia: "MEM-110", eyebrow: "VEHICLE / OVERVIEW", title: "The vehicle, as it stands.", lead: "One connected member view of Space, Capital, Time, Project, Partners, Governance and evidence.", guidance: "The source record is shared with the Office and redacted to the recorded relationship." },
+  space: { ia: "MEM-120", eyebrow: "VEHICLE / SPACE", title: "What the LLP owns and protects.", lead: "The asset record, title basis, physical condition and current protection position.", guidance: "Open the evidence beside a fact when its basis matters." },
+  capital: { ia: "MEM-130", eyebrow: "VEHICLE / CAPITAL", title: "Its financial position.", lead: "Your recorded interest, contributions, distributions, reserve basis and latest value reference.", guidance: "Amounts come from the governed ledger; estimates remain visibly classified." },
+  time: { ia: "MEM-140", eyebrow: "VEHICLE / TIME", title: "Your time rights.", lead: "The approved annual pool, your derived entitlement and the handoff to the separate allocation platform.", guidance: "Entitlement follows recorded ownership and the effective policy." },
+  project: { ia: "MEM-150", eyebrow: "VEHICLE / PROJECT", title: "Progress made legible.", lead: "Approved baseline, completed milestones, current work and material decisions affecting delivery.", guidance: "Photography and certification identify what exists today." },
+  partners: { ia: "MEM-160", eyebrow: "VEHICLE / PARTNERS", title: "Who participates.", lead: "The constitutional Partner register, presented within the member disclosure boundary.", guidance: "Private identity material outside the shared relationship remains withheld." },
+  governance: { ia: "MEM-170", eyebrow: "VEHICLE / GOVERNANCE", title: "How decisions are made.", lead: "Voting basis, current matters, resolutions, policies and the authority behind every decision.", guidance: "Voting power is derived from recorded equity." },
+  documents: { ia: "MEM-180", eyebrow: "VEHICLE / DOCUMENTS", title: "The records themselves.", lead: "Effective instruments, reports and notices with version, source, custody and visibility.", guidance: "A newer version never erases the document trail." },
+  activity: { ia: "MEM-190 / MEM-200", eyebrow: "ACTIVITY / PRIVATE LEDGER", title: "What has materially changed.", lead: "A chronological record of evidence, decisions, notices and state transitions.", guidance: "Open a vehicle-scoped event for its authority and source record." },
+  profile: { ia: "MEM-210", eyebrow: "RELATIONSHIP / PROFILE", title: "Your record and preferences.", lead: "Identity reference, communication preferences and controlled personal updates.", guidance: "Profile preferences never change ownership or the Partner register." },
+};
+
+const records: Record<MemberView, readonly RecordRow[]> = {
+  home: [
+    ["Active interests", "02", "Relationship record", "Current"],
+    ["Open notice", "Project update", "Communications", "Read"],
+    ["Next decision", "Reserve basis", "Board record", "12 Aug 2026"],
+    ["Identity evidence", "Verified", "IRIS", "Current"],
+  ],
+  portfolio: [
+    ["SlowSpace Coastal LLP", "18.50% interest", "Delivery", "Open vehicle"],
+    ["Kyoto House Vehicle", "12.00% interest", "Live + Time", "Open vehicle"],
+    ["Relationship total", "2 interests", "Canonical register", "Current"],
+  ],
+  vehicle: [
+    ["Lifecycle", "07 / Space + Progress", "Vehicle record", "Controlled"],
+    ["Ownership", "18.50%", "Partner register", "Settled"],
+    ["Next gate", "Delivery evidence", "Project baseline", "Due"],
+    ["Material exception", "01", "Risk record", "Owned"],
+  ],
+  space: [
+    ["Property", "Coastal land + residence", "Title record", "Verified"],
+    ["Title basis", "Registered LLP ownership", "Legal evidence", "Current"],
+    ["Protection", "Policy in force", "Protection register", "Current"],
+    ["Last inspection", "18 Jul 2026", "Project evidence", "Accepted"],
+  ],
+  capital: [
+    ["Recorded contribution", "INR 50,00,000", "Capital ledger", "Reconciled"],
+    ["Ownership interest", "18.50%", "Partner register", "Settled"],
+    ["Distributions to date", "INR 2,40,000", "Distribution ledger", "Executed"],
+    ["Latest value reference", "30 Jun 2026", "Valuation record", "Published"],
+  ],
+  time: [
+    ["Annual pool", "120 nights", "Time policy 2026", "Approved"],
+    ["Derived entitlement", "22 nights", "Ownership × pool", "Published"],
+    ["Allocated", "14 nights", "External platform", "Confirmed"],
+    ["Available balance", "8 nights", "Allocation record", "Current"],
+  ],
+  project: [
+    ["Overall progress", "68%", "Certified baseline", "Current"],
+    ["Completed milestone", "Envelope sealed", "Project evidence", "Accepted"],
+    ["Current work", "Interior fit-out", "Workstream record", "In progress"],
+    ["Next decision", "Landscape variation", "Decision record", "Due"],
+  ],
+  partners: [
+    ["Partners admitted", "08", "Partner register", "Current"],
+    ["Interests issued", "100.00%", "Ownership register", "Reconciled"],
+    ["Voting basis", "Equity weighted", "LLP agreement", "Effective"],
+    ["Register update", "30 Jun 2026", "Legal custody", "Published"],
+  ],
+  governance: [
+    ["Constitution", "LLP Agreement v3", "Legal custody", "Effective"],
+    ["Open matter", "Reserve approval", "Board agenda", "12 Aug 2026"],
+    ["Voting basis", "Equity weighted", "Governance policy", "Active"],
+    ["Last resolution", "Project variation", "Resolution record", "Passed"],
+  ],
+  documents: [
+    ["LLP Agreement", "Version 3", "Legal", "Download"],
+    ["Quarterly report", "Q2 2026", "Finance", "Download"],
+    ["Project update", "July 2026", "Project", "Download"],
+    ["Time policy", "2026", "Board", "Download"],
+  ],
+  activity: [
+    ["Project evidence accepted", "31 Jul 2026", "Project", "Recorded"],
+    ["Quarterly report issued", "18 Jul 2026", "Finance", "Read"],
+    ["Resolution passed", "04 Jul 2026", "Board", "Recorded"],
+    ["Ownership register reconciled", "30 Jun 2026", "Legal", "Recorded"],
+  ],
+  profile: [
+    ["Identity reference", "ID-20481", "IRIS", "Verified"],
+    ["Primary address", "n••••@example.com", "Identity record", "Current"],
+    ["Document notices", "Email", "Preference", "Enabled"],
+    ["Board notices", "Email + message", "Preference", "Enabled"],
+  ],
+};
+
+function viewFor(path: string, requested: string | null): MemberView {
+  if (path === "/member-workspace-preview") {
+    const candidate = requested as MemberView | null;
+    return candidate && candidate in copy ? candidate : "home";
+  }
+  if (path === "/home") return "home";
+  if (path === "/portfolio") return "portfolio";
+  if (path === "/activity") return "activity";
+  if (path === "/profile") return "profile";
+  if (path === "/portfolio/[vehicle]") return "vehicle";
+  const candidate = path.split("/").at(-1) as MemberView;
+  return candidate in copy ? candidate : "vehicle";
+}
+
+function MemberWorkspace({ path, param }: MemberProps) {
+  const search = useSearchParams();
+  const [saved, setSaved] = useState(false);
+  const preview = path === "/member-workspace-preview";
+  const view = viewFor(path, search.get("view"));
+  const vehicleMode = view !== "home" && view !== "portfolio" && view !== "profile" && !(view === "activity" && path === "/activity");
+  const vehicle = param || "slowspace-coastal";
+  const base = `/portfolio/${vehicle}`;
+  const route = ROUTES.find((item) => item.path === path);
+  const page = copy[view];
+  const navigation = vehicleMode ? vehicleViews : generalViews;
+
+  const hrefFor = (target: MemberView) => {
+    if (preview) return `/member-workspace-preview?view=${target}`;
+    if (target === "home") return "/home";
+    if (target === "portfolio") return "/portfolio";
+    if (target === "profile") return "/profile";
+    if (target === "activity" && !vehicleMode) return "/activity";
+    return target === "vehicle" ? base : `${base}/${target}`;
+  };
+
   return (
-    <section data-sec={`AS-33.${b.ref}`} className={paper ? "on-paper" : undefined}>
-      <div className="wrap">
-        <div className="sec-head">
-          <span className="sec-ref">{b.ref}</span>
-          <span className="t-micro label">{b.title}</span>
-          {paper ? <span className="ground-note t-mono-s">Paper ground · assertion</span> : null}
-        </div>
+    <main className="member-workspace p-hero-own">
+      <header className="member-topbar">
+        <Link href="/" className="sysmark">GETAWAY COLLECTIVE</Link>
+        <div><span>{preview ? "DESIGN PREVIEW / PLACEHOLDER MATERIAL" : "MEMBER-RESTRICTED"}</span><b>RECORD CURRENT</b></div>
+      </header>
 
-        {b.lede ? <p className="t-body-l dim measure">{b.lede}</p> : null}
+      <div className="member-grid">
+        <aside className="member-rail">
+          <div className="member-brand"><b>{vehicleMode ? "VEHICLE" : "RELATIONSHIP"}</b><span>MEMBER MODULE</span></div>
+          {vehicleMode ? <div className="member-context"><span>INVESTMENT VEHICLE</span><b>SlowSpace Coastal LLP</b><small>Interest · 18.50%</small></div> : null}
+          <nav aria-label={vehicleMode ? "Member vehicle" : "Member relationship"}>
+            {navigation.map((item) => <Link key={item} className={view === item ? "active" : ""} href={hrefFor(item)}><span>{item === "vehicle" ? "overview" : item}</span><i>→</i></Link>)}
+          </nav>
+          {vehicleMode
+            ? <Link className="member-module-link" href={preview ? "/member-workspace-preview?view=portfolio" : "/portfolio"}>← Back to relationship</Link>
+            : <Link className="member-module-link" href={preview ? "/member-workspace-preview?view=vehicle" : base}>Enter vehicle module →</Link>}
+        </aside>
 
-        {b.fields ? (
-          <div className={paper ? "panel on-paper" : "panel on-panel"}
-               style={{ marginTop: "var(--gc-sp-m)", maxWidth: "760px" }}>
-            {b.fields.map((f) => (
-              <div key={f.k} className="kv">
-                <span className="label t-micro">{f.k}</span>
-                <span className={f.mono ? "v t-mono-s" : "v t-body-s"}>
-                  {f.v}
-                  {f.note ? (
-                    <span className="t-body-s dim" style={{ display: "block", marginTop: "var(--gc-sp-3xs)" }}>
-                      {f.note}
-                    </span>
-                  ) : null}
-                </span>
-              </div>
-            ))}
+        <section className="member-main">
+          <header className="member-hero">
+            <div><span className="eyebrow">{page.eyebrow}</span><h1>{page.title}</h1><p>{page.lead}</p></div>
+            <dl>
+              <div><dt>IA RECORD</dt><dd>{route?.ia || page.ia}</dd></div>
+              <div><dt>MODULE</dt><dd>{vehicleMode ? "MEMBER / VEHICLE" : "MEMBER / GENERAL"}</dd></div>
+              <div><dt>VISIBILITY</dt><dd>{preview ? "PLACEHOLDER" : "RECORDED RELATIONSHIP"}</dd></div>
+            </dl>
+          </header>
+
+          <div className="member-kpis">
+            {records[view].slice(0, 4).map(([label, value, source, state]) => <article key={label}><span>{label}</span><b>{value}</b><small>{source}</small><em>{state}</em></article>)}
           </div>
-        ) : null}
 
-        {(b.body ?? []).map((para, i) => (
-          <p key={i} className="t-body measure" style={{ marginTop: "var(--gc-sp-s)" }}>{para}</p>
-        ))}
-
-        {/* Marked, never mistaken for body copy. */}
-        {b.undrafted ? (
-          <div className="panel on-panel"
-               style={{ marginTop: "var(--gc-sp-m)", maxWidth: "76ch",
-                        borderLeft: "2px solid var(--gc-critical)" }}>
-            <span className="t-micro" style={{ color: "var(--gc-critical)" }}>
-              Specified, not drafted, not in force
-            </span>
-            <p className="t-body" style={{ marginTop: "var(--gc-sp-2xs)" }}>{b.undrafted}</p>
+          <div className="member-section-head"><div><span className="eyebrow">CANONICAL RECORD</span><h2>{view === "activity" ? "Material change" : "Facts and current state"}</h2></div><p>{page.guidance}</p></div>
+          <div className="member-table">
+            <header><span>RECORD</span><span>VALUE</span><span>SOURCE</span><span>STATE / ACTION</span></header>
+            {records[view].map(([label, value, source, state]) => <article key={label}><b>{label}</b><span>{value}</span><span>{source}</span><button type="button">{state} →</button></article>)}
           </div>
-        ) : null}
+
+          <div className="member-evidence">
+            <article><span>01 / PROVENANCE</span><b>Every fact retains its governed source.</b><p>Source, version, effective date and accountable owner travel with the record.</p></article>
+            <article><span>02 / DISCLOSURE</span><b>Only the recorded relationship is visible.</b><p>Other Partners’ private evidence and Office-only controls remain outside this aperture.</p></article>
+            <article><span>03 / GUIDANCE</span><b>IRIS explains; authority decides.</b><p>Guidance can find and explain a record but cannot create a right or approve a write.</p></article>
+          </div>
+
+          {view === "profile" ? <div className="member-preferences"><div><span className="eyebrow">COMMUNICATION PREFERENCES</span><p>Choose how governed notices reach you. Formal delivery rules still apply.</p></div><label><input type="checkbox" defaultChecked /> Document notices</label><label><input type="checkbox" defaultChecked /> Board notices</label><button type="button" className="btn primary" onClick={() => setSaved(true)}>{saved ? "Preferences saved" : "Save preferences"}</button></div> : null}
+        </section>
       </div>
-    </section>
+    </main>
   );
 }
 
-/** The position, on every member surface. Read from the vehicle record. */
-function PositionStrip() {
-  return (
-    <section data-sec="AS-33.position">
-      <div className="wrap">
-        <div className="row" style={{ gap: "var(--gc-sp-s)", alignItems: "stretch" }}>
-          <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
-            <span className="t-micro label">Contributed</span>
-            <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-              {POSITION.contributed}
-            </div>
-            <span className="t-mono-s dim">{POSITION.share} of {POSITION.vehicle}</span>
-          </div>
-          <div className="panel on-panel" style={{ flex: "1 1 220px" }}>
-            <span className="t-micro label">Indicative annual</span>
-            <div className="t-display-m money" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-              {POSITION.distribution}
-            </div>
-            <span className="t-mono-s dim">modelled · nothing distributable yet</span>
-          </div>
-          <div className="panel on-panel needs-you" style={{ flex: "1 1 220px" }}>
-            <span className="t-micro label">Nights available</span>
-            <div className="t-display-m nights" style={{ marginTop: "var(--gc-sp-2xs)" }}>0</div>
-            <span className="t-mono-s dim">of {POSITION.nights} a year, from handover</span>
-          </div>
-        </div>
-        <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-m)" }}>
-          The source dashboard shows a trailing twelve-month yield of 14.8% against this position.
-          A property that has never traded has no trailing twelve months, so the modelled figure is
-          shown with its class instead.
-        </p>
-      </div>
-    </section>
-  );
+export function MemberSurface(props: MemberProps) {
+  return <Suspense fallback={<main className="member-workspace p-hero-own" aria-busy="true" />}><MemberWorkspace {...props} /></Suspense>;
 }
-
-export function MemberSurfaceView({ path }: { path: string }) {
-  const s: MemberSurface | undefined = surfaceByPath(path);
-  if (!s) return null;
-
-  return (
-    <>
-      <section data-sec="AS-33.a" style={{ paddingBottom: 0 }}>
-        <div className="wrap">
-          <span className="sec-ref">{s.id} · {s.alias}</span>
-          <h1 className="t-display-l" style={{ marginTop: "var(--gc-sp-2xs)" }}>{s.title}</h1>
-          <p className="t-body-l dim measure" style={{ marginTop: "var(--gc-sp-s)" }}>
-            {s.standfirst}
-          </p>
-        </div>
-      </section>
-
-      <PositionStrip />
-
-      {s.blocks.map((b) => <BlockView key={b.ref} b={b} />)}
-
-      <section data-sec="AS-33.onward">
-        <div className="wrap">
-          <span className="t-micro label">Elsewhere</span>
-          <div className="row" style={{ marginTop: "var(--gc-sp-s)", gap: "var(--gc-sp-2xs)" }}>
-            <Link className="btn" href="/member">Your position</Link>
-            <Link className="btn" href="/legal/terms">Terms and Conditions</Link>
-            <Link className="btn" href="/legal/risk-disclosure">Asset Disclosure</Link>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </>
-  );
-}
-
-export const Passport = () => <MemberSurfaceView path="/member/profile" />;
-export const Boardroom = () => <MemberSurfaceView path="/member/resolutions" />;
-export const Calibration = () => <MemberSurfaceView path="/member/calibration" />;
-export const SignalLog = () => <MemberSurfaceView path="/member/signal" />;
-export const Codex = () => <MemberSurfaceView path="/member/codex" />;
-export const Pass = () => <MemberSurfaceView path="/member/pass" />;

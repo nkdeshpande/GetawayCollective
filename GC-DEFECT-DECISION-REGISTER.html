@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GC.SYSTEM · Defect → Proposal → Fix → Implications</title>
+<style>
+:root{
+  --void:#0A0A0A; --panel:#121212; --panel-2:#171717; --paper:#F2F2F2;
+  --ink-inv:#F2F2F2; --steel:#6B6B6B; --dim:#9A9A9A;
+  --confirm:#1FAA59; --hazard:#E8672E; --critical:#FF3B30; --electric:#2061DE;
+  --copper:#C79F6B; --forest-light:#228A68;
+  --hair:rgba(242,242,242,.10);
+  --f-d:'Outfit','Segoe UI Variable Display',-apple-system,system-ui,sans-serif;
+  --f-b:'Inter','Segoe UI Variable',-apple-system,system-ui,sans-serif;
+  --f-m:'Space Mono',ui-monospace,Consolas,'SFMono-Regular',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+body{background:var(--void);color:var(--ink-inv);
+  font:400 15px/1.55 var(--f-b);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1500px;margin:0 auto;padding:0 24px 120px}
+
+header{padding:72px 0 40px;border-bottom:1px solid var(--hair)}
+.eyebrow{font:400 11px/1 var(--f-m);letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+h1{font:600 clamp(38px,6vw,62px)/0.98 var(--f-d);letter-spacing:-.035em;
+  margin:14px 0 0;text-wrap:balance}
+.verdict{margin-top:24px;max-width:76ch;font-size:17px;line-height:1.6;color:#D8D8D8}
+.verdict strong{color:var(--ink-inv)}
+.verdict + .verdict{margin-top:14px}
+
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:40px}
+.score div{background:var(--panel);padding:20px 18px}
+.score b{display:block;font:600 30px/1 var(--f-m);font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em}
+.score span{display:block;font:400 10px/1.4 var(--f-m);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);margin-top:7px}
+.score .ok b{color:var(--confirm)} .score .warn b{color:var(--hazard)}
+.score .bad b{color:var(--critical)} .score .unk b{color:var(--dim)}
+.score .fut b{color:#7FA4EE}
+
+.howto{margin-top:44px;padding:22px 24px;background:var(--panel);
+  border-left:3px solid var(--copper)}
+.howto h3{font:600 15px/1.3 var(--f-d);margin-bottom:10px}
+.howto p{max-width:82ch;color:#D2D2D2;font-size:14px;margin-bottom:7px}
+.howto p:last-child{margin-bottom:0}
+.howto code{font-family:var(--f-m);font-size:12.5px;color:var(--copper)}
+
+/* ── Track ──────────────────────────────────────────────────────── */
+.track{margin-top:80px;padding-top:36px;border-top:1px solid var(--hair)}
+.track-h{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.track-h .n{font:400 11px/1 var(--f-m);letter-spacing:.16em;color:var(--copper)}
+.track-h h2{font:600 30px/1.15 var(--f-d);letter-spacing:-.028em}
+.track-h .t{margin-left:auto;font:400 11px/1 var(--f-m);color:var(--dim)}
+.track > p.lede{max-width:80ch;color:#D2D2D2;margin:10px 0 6px}
+
+/* ── Decision card ──────────────────────────────────────────────── */
+.dec{margin-top:32px;background:var(--panel);border:1px solid var(--hair);
+  border-left:3px solid var(--steel)}
+.dec.p0{border-left-color:var(--critical)}
+.dec.p1{border-left-color:var(--hazard)}
+.dec.p2{border-left-color:var(--electric)}
+.dec.p3{border-left-color:var(--steel)}
+.dec-h{padding:18px 22px 16px;border-bottom:1px solid var(--hair);
+  display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+.dec-h .id{font:600 13px/1 var(--f-m);letter-spacing:.1em;color:var(--copper)}
+.dec-h h3{font:600 19px/1.25 var(--f-d);letter-spacing:-.02em;flex:1;min-width:260px}
+.dec-h .meta{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.dec-b{padding:20px 22px 22px}
+.row{margin-bottom:20px}
+.row:last-child{margin-bottom:0}
+.row > .k{font:400 10px/1 var(--f-m);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);display:block;margin-bottom:8px}
+.row p{max-width:84ch;color:#D2D2D2;font-size:14.5px;margin-bottom:7px}
+.row p:last-child{margin-bottom:0}
+.row code{font-family:var(--f-m);font-size:12.5px;color:var(--copper)}
+.ev{font:400 12px/1.6 var(--f-m);color:var(--dim);
+  background:rgba(242,242,242,.04);padding:11px 14px;margin-top:9px;
+  overflow-x:auto;white-space:pre}
+
+/* ── Options ────────────────────────────────────────────────────── */
+.opts{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.opt{background:var(--panel-2);padding:14px 16px}
+.opt.rec{background:rgba(31,170,89,.07);border-left:2px solid var(--confirm)}
+.opt .oh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.opt .oid{font:600 11px/1 var(--f-m);letter-spacing:.1em;color:var(--ink-inv)}
+.opt.rec .oid{color:var(--confirm)}
+.opt .recflag{font:400 9px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--confirm);border:1px solid rgba(31,170,89,.45);padding:3px 6px}
+.opt .warnflag{font:400 9px/1 var(--f-m);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--critical);border:1px solid rgba(255,59,48,.45);padding:3px 6px}
+.opt p{font-size:13.5px;color:#C8C8C8;max-width:84ch;margin:0}
+.opt p + p{margin-top:6px}
+
+.tag{font:400 9.5px/1 var(--f-m);letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 7px;border:1px solid;white-space:nowrap;display:inline-block}
+.tag.ok{color:var(--confirm);border-color:rgba(31,170,89,.45)}
+.tag.warn{color:var(--hazard);border-color:rgba(232,103,46,.45)}
+.tag.bad{color:var(--critical);border-color:rgba(255,59,48,.45)}
+.tag.fut{color:#7FA4EE;border-color:rgba(32,97,222,.5);border-style:dashed}
+.tag.off{color:var(--steel);border-color:rgba(107,107,107,.4);border-style:dotted}
+.tag.sz{color:var(--copper);border-color:rgba(199,159,107,.45)}
+
+table{width:100%;border-collapse:collapse;margin-top:22px;font-size:13px}
+th{text-align:left;font:400 10px/1.3 var(--f-m);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);padding:0 14px 9px 0;border-bottom:1px solid var(--hair)}
+td{padding:10px 14px 10px 0;border-bottom:1px solid rgba(242,242,242,.05);vertical-align:top}
+td.m{font-family:var(--f-m);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--dim)}
+td.id{font-family:var(--f-m);color:var(--copper);white-space:nowrap}
+.scroll{overflow-x:auto}
+
+footer{margin-top:88px;padding-top:28px;border-top:1px solid var(--hair);
+  color:var(--dim);font:400 12px/1.7 var(--f-m)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">GC.SYSTEM · Decision Register · 02 Aug 2026</div>
+  <h1>Twenty-four decisions,<br>five tracks, one dependency.</h1>
+  <p class="verdict">
+    Every defect from the build-status assessment, stated as a decision you can take. Each one gives the
+    <strong>defect with its evidence</strong>, the <strong>options</strong> with a recommendation,
+    the <strong>implications</strong> of each, and what it <strong>depends on</strong>.
+  </p>
+  <p class="verdict">
+    Two things are worth knowing before you read further. <strong>Track A is four small decisions and the
+    public site is launchable at the end of them</strong> — three need nothing you do not already have, and
+    the fourth needs one free-tier service. <strong>Almost everything else terminates at one decision:
+    D-05, the database.</strong> Twelve of the remaining twenty name it as a dependency.
+  </p>
+  <p class="verdict">
+    One recommendation inverts what you would expect. <strong>D-02 recommends NOT fixing the security
+    advisories</strong>, because the automated fix downgrades Next.js by six major versions and no patched
+    version exists. The reasoning is set out in full.
+  </p>
+
+  <div class="score">
+    <div class="bad"><b>5</b><span>P0 · blocks launch</span></div>
+    <div class="warn"><b>7</b><span>P1 · blocks Wave 8</span></div>
+    <div class="fut"><b>11</b><span>P2 · canon &amp; Wave 8+</span></div>
+    <div class="unk"><b>1</b><span>P3 · later waves</span></div>
+    <div class="ok"><b>3</b><span>Need nothing new</span></div>
+    <div class="warn"><b>12</b><span>Wait on D-05</span></div>
+  </div>
+
+  <div class="howto">
+    <h3>How to use this</h3>
+    <p>Each decision has an id (<code>D-01</code>) and lettered options (<code>A1</code>, <code>A2</code>).
+      Reply with the ones you want — <code>D-01 A1, D-02 B1, D-05 E2</code> — or say
+      <code>approve recommended</code> to take every green option.</p>
+    <p>Sizes are <strong>relative effort, not calendar time</strong>: S is under a session, M is a focused
+      day, L is several days, XL is a body of work with its own decisions inside it. I have no basis for
+      estimating your team's velocity and have not pretended otherwise.</p>
+    <p>Nothing here is started. Nothing is irreversible until you choose.</p>
+  </div>
+</header>
+
+<!-- ══ TRACK A ═════════════════════════════════════════════════════ -->
+<div class="track">
+  <div class="track-h"><span class="n">TRACK A</span><h2>Ship what already works</h2>
+    <span class="t">4 decisions · one free-tier service · public site goes live</span></div>
+  <p class="lede">
+    The public site is production-quality today: 27 routes serving, zero console errors, 19 gates and 735
+    tests green, security headers set, 301s wired. These four decisions get it committed, defended and
+    deployed without provisioning anything.
+  </p>
+
+  <div class="dec p0">
+    <div class="dec-h"><span class="id">D-01</span>
+      <h3>The entire v5 migration is uncommitted</h3>
+      <div class="meta"><span class="tag bad">P0</span><span class="tag sz">Size S</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>171 tracked changes plus the new auth layer exist only in the working tree, on <code>main</code>,
+          level with <code>origin/main</code>. The last commit is the v4 workbook. A stray
+          <code>git checkout</code> loses the v5 route migration, the repaired generators,
+          <code>next.config.ts</code>, the auth layer and the eligibility layer.</p>
+        <div class="ev">128 deleted · 37 modified · 63 untracked
+last commit: f3460a2 "Canonical IA v4.0 workbook"</div></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">A1</span><span class="recflag">Recommended</span></div>
+            <p>One commit on a feature branch, then a PR so the <code>verify</code> workflow runs on a clean checkout.</p>
+            <p><b>Implication:</b> the tree was never green before this session — <code>verify</code> was red on
+              four checks and <code>app/</code> was mid-migration — so there is no meaningful intermediate
+              state to preserve. One commit is the honest unit of work.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">A2</span></div>
+            <p>Split into two commits: migration, then auth.</p>
+            <p><b>Implication:</b> not cleanly separable. <code>routes.ts</code>, <code>gen-app.js</code>,
+              <code>shell.tsx</code> and <code>routes.test.ts</code> each contain both. The split would be
+              artificial and neither commit would build alone.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">A3</span><span class="warnflag">Not advised</span></div>
+            <p>Commit straight to <code>main</code>.</p>
+            <p><b>Implication:</b> skips the only gate that cannot be bypassed. The CI workflow's own header
+              says branch protection is the real merge gate.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Nothing. Do this first regardless of everything else.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p0">
+    <div class="dec-h"><span class="id">D-02</span>
+      <h3>Ten security advisories, and the automated fix is a trap</h3>
+      <div class="meta"><span class="tag bad">P0</span><span class="tag sz">Size S</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>1 critical, 4 high, 5 moderate. But <code>npm audit fix --force</code> proposes installing
+          <code>next@9.3.3</code> — a downgrade of six major versions that would delete the App Router and
+          every route in this build.</p>
+        <p>The advisory range for Next is <code>9.3.4-canary.0 – 16.3.0-preview.7</code>. Today's latest
+          release is 16.2.12, which is <strong>inside that range</strong>. There is no patched version to
+          upgrade to.</p>
+        <div class="ev">critical  vitest    dev-only · UI server arbitrary file read
+high      vite      dev-only · path traversal in optimized deps
+high      postcss   build-time · XSS + sourceMappingURL path traversal
+high      sharp     libvips CVEs · reachable only via next/image
+high      next      transitive: postcss + sharp
+
+npm audit fix --force  ->  "Will install next@9.3.3, which is a breaking change"</div></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">B1</span><span class="recflag">Recommended</span></div>
+            <p>Accept all five with written rationale, pin the review, and re-evaluate when a patched Next ships.</p>
+            <p><b>Implication:</b> each is genuinely low-risk <em>for this application</em>, and the rationale
+              is specific rather than hand-waving. <code>vitest</code> and <code>vite</code> are
+              devDependencies and the Vitest UI server is never started in CI or production.
+              <code>postcss</code> runs at build time over CSS this repository authors — an attacker has no
+              input to it. <code>sharp</code>'s libvips CVEs are reachable through <code>next/image</code>
+              processing untrusted remote images; this app serves local imagery and has no remote loader
+              configured.</p>
+            <p>Recording the reasoning matters more than the outcome: an accepted risk with a stated basis
+              can be re-examined, a silently ignored one cannot.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">B2</span></div>
+            <p>Upgrade Next to 16.x anyway.</p>
+            <p><b>Implication:</b> buys nothing — 16.2.12 is inside the advisory range — and costs a major
+              framework upgrade with its own regression surface across 107 generated pages.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">B3</span><span class="warnflag">Destructive</span></div>
+            <p>Run <code>npm audit fix --force</code>.</p>
+            <p><b>Implication:</b> installs <code>next@9.3.3</code>. The build would not survive it. Listed
+              only so nobody reaches for it later.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Nothing.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p0">
+    <div class="dec-h"><span class="id">D-03</span>
+      <h3>Rate limiting will not survive serverless</h3>
+      <div class="meta"><span class="tag bad">P0</span><span class="tag sz">Size S</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p><code>lib/rate-limit.ts</code> is an in-memory map. Its own comment concedes the problem: on
+          serverless, instance memory is per-instance. The two public lead endpoints are the only
+          unauthenticated write paths in the system, and G-10 is declared but unenforced across instances.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">C1</span><span class="recflag">Recommended</span></div>
+            <p>Upstash Redis via its HTTP API.</p>
+            <p><b>Implication:</b> free tier covers this volume comfortably, works on both edge and Node
+              runtimes, one new environment variable, and the change is confined to
+              <code>lib/rate-limit.ts</code> behind the existing <code>rateLimit()</code> signature — no
+              caller changes.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">C2</span></div>
+            <p>Vercel KV.</p>
+            <p><b>Implication:</b> identical shape and equally correct, but it is now a billed product and it
+              ties this defence to the host. Choose it if you prefer one vendor over one fewer bill.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">C3</span></div>
+            <p>Accept and launch.</p>
+            <p><b>Implication:</b> defensible only while the endpoints send email to you rather than acting on
+              anything. It becomes untenable the moment a form writes to the database.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Nothing. Independent of D-05.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p1">
+    <div class="dec-h"><span class="id">D-04</span>
+      <h3>The gates exist but are not armed</h3>
+      <div class="meta"><span class="tag warn">P1</span><span class="tag sz">Size S</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>The CI workflow exists and passes. Branch protection on <code>main</code> is unconfirmed — the
+          workflow header says so itself. The pre-commit hook is present but inert until someone runs
+          <code>git config core.hooksPath .githooks</code>.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">D1</span><span class="recflag">Recommended</span></div>
+            <p>Require the <code>verify</code> status check on <code>main</code>, and enable the hook locally.</p>
+            <p><b>Implication:</b> a red run becomes a blocked merge. This is a dashboard action only the
+              repository owner can take — I cannot do it for you.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">D2</span></div>
+            <p>Leave both unarmed.</p>
+            <p><b>Implication:</b> nineteen gates that a hurried <code>--no-verify</code> walks straight past.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-01 (a branch to protect).</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TRACK B ═════════════════════════════════════════════════════ -->
+<div class="track">
+  <div class="track-h"><span class="n">TRACK B</span><h2>Make identity real</h2>
+    <span class="t">4 decisions · unlocks 82 routes</span></div>
+  <p class="lede">
+    Everything in this track is wired and waiting on credentials. D-05 is the hinge of the whole programme:
+    fifteen of the remaining decisions cannot start without it.
+  </p>
+
+  <div class="dec p0">
+    <div class="dec-h"><span class="id">D-05</span>
+      <h3>No database is provisioned</h3>
+      <div class="meta"><span class="tag bad">P0 · HINGE</span><span class="tag sz">Size S–M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Two migrations are written; neither has been applied. This blocks the email magic link, the grant
+          table, the sixteen-stage passport, notifications, search, and every Wave 8 module. Google sign-in
+          is the sole exception — an OAuth handshake with a JWT session needs no adapter.</p>
+        <div class="ev">migrations/0000_productive_scorpion.sql   institutional schema — never applied
+migrations/0001_naive_puck.sql           5 auth tables    — never applied</div></div>
+      <div class="row"><span class="k">Options</span>
+        <p>The installed driver is <code>postgres</code> (postgres.js), which speaks to all of these through a
+          pooled connection string. <strong>No application code changes whichever you pick.</strong></p>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">E1 · Neon</span><span class="recflag">Recommended</span></div>
+            <p><code>.env.example</code> already names it, so the intent is on record. Serverless-native with
+              scale-to-zero, a generous free tier, and database branching that maps onto Vercel preview
+              deployments — a preview can get its own data without touching production.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">E2 · Supabase</span></div>
+            <p>Also Postgres, also free-tier viable. Brings auth, storage and realtime you do not need —
+              Auth.js already owns identity here, and adopting Supabase auth would mean unwinding this
+              session's work.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">E3 · Vercel Postgres</span></div>
+            <p>Tightest integration, one dashboard, one bill. Now a paid product, and it is Neon underneath.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">E4 · Self-hosted</span></div>
+            <p>Full control and data residency in India, which may matter for a SEBI-adjacent platform.
+              Costs you backups, patching, connection pooling and an on-call expectation.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Implications regardless of choice</span>
+        <p>Set <code>DATABASE_URL</code>, run <code>npx drizzle-kit migrate</code>, and the magic link, the
+          grant table and <code>lib/session.ts</code> all begin working with no further code. Residency is
+          worth a deliberate thought rather than a default: E1 and E3 offer regional placement, E4 guarantees it.</p></div>
+      <div class="row"><span class="k">Depends on</span><p>Nothing. Everything else depends on this.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p0">
+    <div class="dec-h"><span class="id">D-06</span>
+      <h3>No Google OAuth credentials</h3>
+      <div class="meta"><span class="tag bad">P0</span><span class="tag sz">Size S</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Without both variables the provider is not registered and the button is not drawn. That is correct
+          degradation, but it means there is currently no way to sign in at all.</p>
+        <div class="ev">Redirect URIs, exactly:
+  http://localhost:3000/api/auth/callback/google
+  https://getawaycollective.co/api/auth/callback/google</div></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">F1</span><span class="recflag">Recommended</span></div>
+            <p>External consent screen, published.</p>
+            <p><b>Implication:</b> anyone with a Google account can sign in — which is what an investor
+              platform needs. Google requires a privacy policy and terms URL; both exist at
+              <code>/legal/privacy</code> and <code>/legal/terms</code>. Unverified apps show an
+              "unverified" interstitial and are capped at 100 users until verification completes, so start
+              this early — review can take days.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">F2</span></div>
+            <p>Internal consent screen.</p>
+            <p><b>Implication:</b> instant, no review, but restricted to your Workspace domain. Fine for
+              testing the Office; useless for investors.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">F3</span></div>
+            <p>Magic link only, no Google.</p>
+            <p><b>Implication:</b> removes the Google dependency entirely. Costs the one-click path and makes
+              every sign-in a round trip through email.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Nothing for F2/F3. F1 wants D-05 first so real accounts persist.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p1">
+    <div class="dec-h"><span class="id">D-07</span>
+      <h3>The first office grant cannot issue itself</h3>
+      <div class="meta"><span class="tag warn">P1</span><span class="tag sz">Size S</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p><code>authority.grant</code> is itself a right, so an empty grant table can never produce the first
+          grant and the Office stays unreachable forever.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">G1</span><span class="recflag">Recommended</span></div>
+            <p>Set <code>GC_OFFICE_BOOTSTRAP</code>, sign in once, then remove the variable and manage grants
+              with <code>npm run grant</code>.</p>
+            <p><b>Implication:</b> the mechanism is already built, auditable and narrow — it names itself as
+              grantor, refuses to re-grant an identity that already has a row (including a revoked one, so it
+              cannot undo a constitutional act), and is now checked against GP-06 separation.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">G2</span><span class="warnflag">Not advised</span></div>
+            <p>Insert the row directly in SQL.</p>
+            <p><b>Implication:</b> bypasses the LAW 2 separation check and writes a grant with no auditable
+              grantor. It is the exact hole that was closed this session.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05, D-06.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p1">
+    <div class="dec-h"><span class="id">D-08</span>
+      <h3>Accredited and member are not derivable</h3>
+      <div class="meta"><span class="tag warn">P1</span><span class="tag sz">Size L</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Both return <code>false</code> and will keep doing so. Twenty of the 109 routes are unreachable by
+          anyone. "Sign in and see your portfolio" is not a journey the platform can complete.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">H1</span><span class="recflag">Recommended</span></div>
+            <p>Implement the Investor record and the accreditation state machine, and derive both from it.</p>
+            <p><b>Implication:</b> accreditation becomes the recorded outcome of PR-01 and membership fires on
+              settlement, as the constitution already says. This is the honest path and it is the same work as
+              D-14 (passport persistence) — do them together.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">H2</span><span class="warnflag">Not advised</span></div>
+            <p>A manual flag on the identity for now.</p>
+            <p><b>Implication:</b> a mis-set flag puts a stranger on a member surface holding another
+              partner's capital position. This is the precise inference <code>lib/session.ts</code> currently
+              refuses to make, and refusing it is why the system is safe today.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">H3</span></div>
+            <p>Leave as-is and launch Office-only.</p>
+            <p><b>Implication:</b> entirely reasonable sequencing. The Office is the workspace you need first;
+              investors and members can follow once there is something for them to hold.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TRACK C ═════════════════════════════════════════════════════ -->
+<div class="track">
+  <div class="track-h"><span class="n">TRACK C</span><h2>Close Wave 8</h2>
+    <span class="t">6 decisions · the only wave with absent modules</span></div>
+  <p class="lede">
+    Wave 8 is due now. Two modules are entirely absent and three are shapes with nothing behind them.
+    D-09 is the keystone: approvals is what the LG-01…LG-10 gate register, the SoD controls and half of
+    Wave 9 all rest on.
+  </p>
+
+  <div class="dec p1">
+    <div class="dec-h"><span class="id">D-09</span>
+      <h3>No approvals engine · Wave 8 · Aw</h3>
+      <div class="meta"><span class="tag warn">P1 · KEYSTONE</span><span class="tag sz">Size XL</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Absent. Your v5 LG gate register defines ten gates that each require PREPARE → APPROVE → EXECUTE
+          separation; none is executable. <code>CapabilityDefinition</code> has no operation class, no allowed
+          object states and no SoD group — the five columns the v5 Command Rights sheet is built on.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">I1</span><span class="recflag">Recommended</span></div>
+            <p>Implement the v5 Command Rights register properly: 40 rights with operation classes, state
+              gates and SoD groups, extending <code>lib/commands.ts</code> and <code>lib/authority.ts</code>.</p>
+            <p><b>Implication:</b> this is the largest single item in the programme and it unblocks the most.
+              It splits <code>distribution.execute</code> into prepare/approve/execute/reconcile, which
+              changes existing call sites and tests. It also makes the 10 SoD controls (D-16) implementable —
+              today all ten are blocked because their commands do not exist as rights.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">I2</span></div>
+            <p>A minimal two-step approval on distributions and capital calls only.</p>
+            <p><b>Implication:</b> gets one gate working quickly and would need replacing wholesale when the
+              full register lands. Reasonable only if a specific transaction is imminent.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">I3</span></div>
+            <p>Defer the whole of Wave 8.</p>
+            <p><b>Implication:</b> honest and possibly correct. Nothing in the platform can currently move
+              money, so an approval engine has nothing to approve until D-08 and payments exist.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05. Blocks D-10, D-13, D-16.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-10</span>
+      <h3>No automation or scheduler · Wave 8 · Au</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>No rule engine, no scheduler, no reminder queue. Twelve of the sixteen shared capabilities in the
+          v5 Technology Capability Map are automation-shaped — due-date tracking, missing-item escalation,
+          expiry alerts, reminder queues.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">J1</span><span class="recflag">Recommended</span></div>
+            <p>Vercel Cron hitting authorised internal endpoints.</p>
+            <p><b>Implication:</b> no new vendor, declarative in <code>vercel.json</code>. Each endpoint must
+              call <code>authorise()</code> itself — the middleware matcher excludes <code>/api</code>, and
+              that exemption is documented at the point it is granted.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">J2</span></div>
+            <p>A dedicated worker (Inngest, Trigger.dev, or a queue).</p>
+            <p><b>Implication:</b> better retry semantics, observability and long-running jobs. A new vendor
+              and a new failure domain.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05, D-09.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p1">
+    <div class="dec-h"><span class="id">D-11</span>
+      <h3>23 notices are written and none is delivered · Wave 8 · Nt</h3>
+      <div class="meta"><span class="tag warn">P1</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>The catalogue N-01…N-23 has copy and is tested. Nothing delivers a notice, records that it was
+          delivered, or tracks acknowledgement — and several of your LG gate exit conditions require exactly
+          that delivery evidence.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">K1</span><span class="recflag">Recommended</span></div>
+            <p>Resend for delivery plus a notice-delivery table recording sent, delivered, opened and acknowledged.</p>
+            <p><b>Implication:</b> Resend is already a dependency and already used by the two lead forms, so
+              this adds no vendor. The delivery record is the part that matters — a notice you cannot prove you
+              sent is not evidence, and LG-10 requires a delivery record as an exit condition.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">K2</span></div>
+            <p>In-app notices only, no email.</p>
+            <p><b>Implication:</b> cheaper, and useless for anything time-critical to someone not logged in.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05 and <code>RESEND_API_KEY</code>.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-12</span>
+      <h3>Signals are emitted and discarded · Wave 8 · Ob</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p><code>lib/telemetry.ts</code> emits in-process, fire-and-forget. No sink, no dashboard, no exception
+          queue — and the exception queue is one of the twelve shared capabilities every LG gate names.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">L1</span><span class="recflag">Recommended</span></div>
+            <p>Sentry for errors plus a Vercel log drain, and an in-app exception queue backed by the database.</p>
+            <p><b>Implication:</b> the in-app queue is the part your operating model actually requires; Sentry
+              is for the failures nobody modelled. Note that <code>telemetry.ts</code> is documented as never
+              being about a person — keep that true when wiring a third party.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">L2</span></div>
+            <p>Vercel's built-in logs only.</p>
+            <p><b>Implication:</b> free and immediate. No alerting, short retention, no exception docket.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05 for the in-app queue.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-13</span>
+      <h3>Risk renders but is not registered · Wave 8 · Rk</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>AS-14 renders risk to investors and there is a <code>Risk</code> business object. There is no risk
+          register, docket, severity model, owner assignment or closure evidence — the things VD-05's exception
+          stack and LG-07's issue docket both assume.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">M1</span><span class="recflag">Recommended</span></div>
+            <p>Build the register on the existing <code>Risk</code> object with severity, owner, target date and
+              closure evidence, surfaced through the exception stack.</p>
+            <p><b>Implication:</b> also delivers the exception queue D-12 needs, and gives VD-05 something real
+              to render.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">M2</span></div>
+            <p>Defer to Wave 9.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05, D-09.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p1">
+    <div class="dec-h"><span class="id">D-14</span>
+      <h3>The passport claims to save and does not · Wave 7 · Pp</h3>
+      <div class="meta"><span class="tag warn">P1</span><span class="tag sz">Size L</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Sixteen stages are routed and access-scoped. Nothing persists. The route note for stage 1 states
+          "every field saves as you leave it — nothing here has to be done in one sitting", and that is
+          currently untrue of every field.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">N1</span><span class="recflag">Recommended</span></div>
+            <p>Persist per-stage with resumption, together with D-08's Investor record.</p>
+            <p><b>Implication:</b> one body of work delivers accreditation state, membership derivation, and a
+              qualification flow that can actually be completed. Doing them separately means building the same
+              record twice.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">N2</span></div>
+            <p>Correct the copy to match the behaviour and defer persistence.</p>
+            <p><b>Implication:</b> cheap and honest. A sixteen-stage form that cannot be resumed will not be
+              completed by anyone, so this is a holding position rather than a solution.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05. Pairs with D-08.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TRACK D ═════════════════════════════════════════════════════ -->
+<div class="track">
+  <div class="track-h"><span class="n">TRACK D</span><h2>The v5 semantic canon</h2>
+    <span class="t">7 decisions · declared, not implemented</span></div>
+  <p class="lede">
+    Seven areas the v5 Operating Canon declares that the codebase does not yet implement. These are not
+    defects in the build — they are scope you have specified and not yet commissioned. One of them (D-15)
+    requires a constitutional amendment and is the only item in this register I will not start without an
+    explicit decision.
+  </p>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-15</span>
+      <h3>Object model · 27 ratified vs 25 canonical, 14 genuinely new</h3>
+      <div class="meta"><span class="tag bad">NEEDS RATIFICATION</span><span class="tag sz">Size XL</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>v5 declares OBJ-001…OBJ-025. Five names match today's objects exactly, three are near-matches under
+          different names, three are already registered §33 candidates, and fourteen are new — including
+          Partnership Interest, which the audit sheet calls the missing economic bridge.</p>
+        <p>Three collisions make this a constitutional act rather than a code change: it reverses the
+          documented decision that <em>"Time is a derived quantity"</em> and holds no ratified object; it
+          promotes three §33 candidates past a load-time check written to prevent exactly that; and three
+          tests pin the count at exactly 27.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt"><div class="oh"><span class="oid">O1</span></div>
+            <p>Ratify the v5 model and implement in full.</p>
+            <p><b>Implication:</b> largest blast radius in the register — <code>business-objects.ts</code>,
+              <code>vehicle-domain.ts</code>, <code>ufr.ts</code>, the generated DB schema, and three pinned
+              tests. Everything downstream of the object model moves with it.</p></div>
+          <div class="opt rec"><div class="oh"><span class="oid">O2</span><span class="recflag">Recommended</span></div>
+            <p>Implement the non-conflicting subset now — Partnership Interest, Distribution Waterfall, the
+              three Project objects — and defer the Time objects and candidate promotions to a deliberate
+              amendment.</p>
+            <p><b>Implication:</b> unblocks the economic bridge and Wave 8's project control without reversing
+              a documented constitutional decision in passing. The deferred items get their own decision with
+              their own reasoning, which is what an amendment deserves.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">O3</span></div>
+            <p>Defer entirely.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Your ratification. I will not start O1 without it.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-16</span>
+      <h3>Ten SoD controls, all blocked</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>SOD-01…SOD-10 require enforcement at grant time <em>and command time</em>. Today
+          <code>completesSeparationTriad()</code> covers the grant path and <code>execute()</code> has no SoD
+          step at all. All ten controls are blocked on D-09, because their commands do not yet exist as rights.</p>
+        <p>The type also cannot express half the register: <code>SEPARATION_TRIADS</code> is a fixed 3-tuple
+          and three of the ten controls are pairs.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">P1</span><span class="recflag">Recommended</span></div>
+            <p>Widen the type to a control record supporting pairs, severity and exception clauses; add a
+              command-time gate inside <code>execute()</code>.</p>
+            <p><b>Implication:</b> small in code, entirely gated on D-09. Also needs a model for a
+              <em>permitted</em> override — SOD-01 allows one "with written constitutional exception" and
+              nothing today can represent that.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-09.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-17</span>
+      <h3>56 aperture projections, 7 built · plus no disclosure classes</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size L</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>v5 requires 4 apertures × 14 objects. <code>apertures.ts</code> declares 7 apertures over 3 objects.
+          There is no <code>investor</code> vantage at all, despite it being the aperture the diligence path
+          runs on.</p>
+        <p>The six Disclosure Classes (PUBLIC → PRIVILEGED) do not exist. <code>Access</code> is who-may-reach-a-route;
+          disclosure is how-sensitive-a-record-is. Different axes, both needed — and the RBAC "Sees" column
+          you sent is prose today, so no linter can enforce "never another partner's capital account".</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">Q1</span><span class="recflag">Recommended</span></div>
+            <p>Add the disclosure-class enum and the investor vantage first, then the projection matrix
+              incrementally per object.</p>
+            <p><b>Implication:</b> the enum and the vantage are small and unblock field-level redaction; the
+              56-row matrix is volume rather than difficulty and can follow object by object.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">Q2</span></div><p>All 56 in one pass.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-15 for objects that do not yet exist.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-18</span>
+      <h3>Evidence model · 12 types, and a name collision</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>EVD-001…EVD-012 with authority rank, version law and per-type expiry. None exists.
+          <code>provenance.ts</code> is strong and covers different ground.</p>
+        <p>One item needs a deliberate call: <strong>the two Confidence enums disagree.</strong> The repo has
+          <code>observed / verified / modelled / estimated / forecast / pending</code>; v5 declares
+          <code>VERIFIED / CORROBORATED / REPORTED / INFERRED / FORECAST / UNKNOWN</code>. Six values each,
+          two different axes, one name. Merging them silently would corrupt every provenance claim in the system.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">R1</span><span class="recflag">Recommended</span></div>
+            <p>Keep them as two named axes — derivation confidence and corroboration level — rather than
+              reconciling into one.</p>
+            <p><b>Implication:</b> they measure genuinely different things. <code>modelled</code> says how a
+              value was produced; <code>CORROBORATED</code> says how many sources agree. A record can be both.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">R2</span></div>
+            <p>Adopt v5's enum and migrate the existing one.</p>
+            <p><b>Implication:</b> touches every provenanced value and loses the derivation axis that
+              <code>derive()</code> and <code>fitForFiling()</code> depend on.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Independent. Can run in parallel.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-19</span>
+      <h3>Vehicle lifecycle · 6 states vs 15</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size L</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Nine new states, and three of them are architectural: Idea, Pipeline and Diligence are
+          <em>pre-formation</em>, so the vehicle record must exist before the LLP does. Today
+          <code>initial: "forming"</code> assumes the entity exists first.</p>
+        <p>Also: <code>ACCREDITATION_LIFECYCLE</code> has no <code>DECLINED</code> state, yet v5 requires
+          Under Review → Valid <em>or Declined</em>. A declined applicant currently has nowhere to be.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">S1</span><span class="recflag">Recommended</span></div>
+            <p>Add <code>DECLINED</code> immediately as part of D-08; take the 15-state lifecycle with D-15.</p>
+            <p><b>Implication:</b> the missing DECLINED state is a real defect reachable today and costs
+              almost nothing; the lifecycle expansion cascades into <code>enums.ts</code>, the generated
+              schema and every new machine having to satisfy the existing reachability linter.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>DECLINED: D-08. Full lifecycle: D-15.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-20</span>
+      <h3>Eight cross-cutting taxonomies with nowhere to live</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>47 values across 8 vocabularies. None can go in <code>enums.ts</code>: its keys are
+          <code>"Object.field"</code> and <code>enum-lint</code> pairs every entry against a UFR field. These
+          eight have no owning object — they apply to all records, all commands, or the AI layer. A structural
+          mismatch, not a missing row.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">T1</span><span class="recflag">Recommended</span></div>
+            <p>A new <code>constants/taxonomies.ts</code> with its own linter, starting with Operation Class
+              and Disclosure Class.</p>
+            <p><b>Implication:</b> those two unblock D-09 and D-17 respectively, so they should land first.
+              Note the tone budget: <code>CRITICAL_TONE_BUDGET</code> is 12 and several new values
+              (RISK, URGENT, BLOCKED, DECLINED) are critical-adjacent.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Nothing. Should precede D-09 and D-17.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-21</span>
+      <h3>AI contracts · ATLAS and IRIS have posture but no output</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Eleven contracts, AI-001…AI-105, none implemented. The constitutional posture is already correct —
+          both agents hold <code>requestableRoles: []</code>, so neither can hold a right by construction — but
+          v5's thesis is that intelligence produces <em>governed outputs</em>, and none of the eleven output
+          objects exists. The names ATLAS and IRIS appear nowhere in the codebase.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">U1</span><span class="recflag">Recommended</span></div>
+            <p>Declare the contracts and output types as data now; wire the engine after Wave 8 closes.</p>
+            <p><b>Implication:</b> the cheapest item in Track D and the most self-contained. Declaring the
+              governed output object is what makes an agent auditable later; wiring a model before that exists
+              produces exactly the invisible agent action FIX-10 was written to prevent.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Independent for the declaration.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TRACK E ═════════════════════════════════════════════════════ -->
+<div class="track">
+  <div class="track-h"><span class="n">TRACK E</span><h2>Commerce, search and the terminal waves</h2>
+    <span class="t">3 decisions</span></div>
+
+  <div class="dec p1">
+    <div class="dec-h"><span class="id">D-22</span>
+      <h3>The transaction room cannot transact</h3>
+      <div class="meta"><span class="tag warn">P1</span><span class="tag sz">Size L</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p><code>/invest/[vehicle]/commit</code> is described as the private transaction room and the piston is
+          the only control that moves capital. No payment code exists; Razorpay is named in
+          <code>.env.example</code> and referenced nowhere.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">V1</span><span class="recflag">Recommended</span></div>
+            <p>Do not take payments in-platform yet. Keep LG-04's model: issue an execution pack with bank
+              instructions, then reconcile against a bank confirmation.</p>
+            <p><b>Implication:</b> this is what your own gate register already specifies — "payment accepted
+              only after external bank confirmation and records match". For LLP capital contributions a
+              gateway is often the wrong instrument anyway, and it removes PCI scope entirely.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">V2</span></div>
+            <p>Integrate Razorpay.</p>
+            <p><b>Implication:</b> brings settlement, refunds, reconciliation and compliance obligations, and
+              needs D-09 first so nothing executes without approval.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05, D-09.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p2">
+    <div class="dec-h"><span class="id">D-23</span>
+      <h3>Search returns nothing · Wave 9 · Ix</h3>
+      <div class="meta"><span class="tag fut">P2</span><span class="tag sz">Size M</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p><code>/search</code> is routed, access-scoped and correct about why it needs identity — results must
+          be scoped to what the viewer may see. There is no index.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">W1</span><span class="recflag">Recommended</span></div>
+            <p>Postgres full-text search, filtered through <code>canReach()</code> and the disclosure class.</p>
+            <p><b>Implication:</b> no new vendor, and the access filter stays in one place. An external index
+              would need its own copy of the permission model — a second source of truth about who may see
+              what, which is the failure mode this architecture is built to avoid.</p></div>
+          <div class="opt"><div class="oh"><span class="oid">W2</span></div>
+            <p>Algolia or Typesense.</p>
+            <p><b>Implication:</b> better relevance and faceting; you now maintain permissions in two systems.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>D-05, and D-17 for disclosure filtering.</p></div>
+    </div>
+  </div>
+
+  <div class="dec p3">
+    <div class="dec-h"><span class="id">D-24</span>
+      <h3>Waves 9 and 10 · twelve modules not yet due</h3>
+      <div class="meta"><span class="tag off">P3</span><span class="tag sz">Size XL</span></div></div>
+    <div class="dec-b">
+      <div class="row"><span class="k">Defect</span>
+        <p>Not a defect. Knowledge, graph queries, operating cycle, AI canvas, assurance, and the whole
+          sovereign tier — amendment procedure, stewardship charter, succession, replay, retention, release
+          automation.</p></div>
+      <div class="row"><span class="k">Options</span>
+        <div class="opts">
+          <div class="opt rec"><div class="oh"><span class="oid">X1</span><span class="recflag">Recommended</span></div>
+            <p>Do not plan these yet. Revisit when Wave 8 closes.</p>
+            <p><b>Implication:</b> Wave 9 builds cognition over the operating model, and the operating model
+              cannot yet approve anything. Wave 10 governs the whole. Sequencing them earlier means building
+              on decisions that have not been made — and one Wave 10 item, "Sovereign", may not be built at
+              all: <code>IA_LAWS.noSuperAdmin</code> argues that a role holding every right is the exact
+              condition <code>separationViolations()</code> exists to detect.</p></div>
+        </div></div>
+      <div class="row"><span class="k">Depends on</span><p>Wave 8 exit.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SEQUENCING ══════════════════════════════════════════════════ -->
+<div class="track">
+  <div class="track-h"><span class="n">RECOMMENDED PATH</span><h2>If you approve the green options</h2></div>
+  <div class="scroll"><table>
+    <thead><tr><th>Step</th><th>Decisions</th><th>Outcome</th><th>Needs from you</th></tr></thead>
+    <tbody>
+      <tr><td class="id">1</td><td class="id">D-01 · D-02 · D-03 · D-04</td>
+        <td>Work is committed and defended. <strong>Public site can go live.</strong></td>
+        <td>Approve; enable branch protection; Upstash account</td></tr>
+      <tr><td class="id">2</td><td class="id">D-05 · D-06 · D-07</td>
+        <td>Sign-in works. Office reachable. 82 routes unlock.</td>
+        <td>Provision Postgres; create Google OAuth client</td></tr>
+      <tr><td class="id">3</td><td class="id">D-20 · D-18 · D-21</td>
+        <td>Taxonomies, evidence and AI contracts declared. Cheap, unblocks the rest.</td>
+        <td>Confirm D-18 R1 (two confidence axes)</td></tr>
+      <tr><td class="id">4</td><td class="id">D-08 · D-14 · D-19</td>
+        <td>Investor record, passport persistence, DECLINED state. Members become real.</td>
+        <td>Nothing</td></tr>
+      <tr><td class="id">5</td><td class="id">D-09 · D-16 · D-11</td>
+        <td>Approvals, SoD, notification delivery. <strong>Wave 8 substantially closed.</strong></td>
+        <td>Nothing</td></tr>
+      <tr><td class="id">6</td><td class="id">D-12 · D-13 · D-10 · D-15 · D-17</td>
+        <td>Observability, risk register, automation, object model subset, projections.</td>
+        <td>Ratification call on D-15</td></tr>
+      <tr><td class="id">7</td><td class="id">D-22 · D-23</td>
+        <td>Settlement flow and search.</td>
+        <td>Bank reconciliation process</td></tr>
+      <tr><td class="id">8</td><td class="id">D-24</td><td>Revisit Waves 9–10.</td><td>Fresh planning</td></tr>
+    </tbody>
+  </table></div>
+  <p class="lede" style="margin-top:22px">
+    <strong>Step 1 is independent of everything.</strong> It needs no service, no credential and no decision
+    beyond approval, and at the end of it the public site is live. If you approve nothing else today,
+    approve step 1.
+  </p>
+</div>
+
+<footer>
+  GC.SYSTEM · Decision register · 24 decisions across 5 tracks · 02 Aug 2026<br>
+  Every defect carries the evidence it was found from. Sizes are relative effort, not calendar time.<br>
+  Reply with option ids (D-01 A1, D-05 E1 …) or "approve recommended" for every green option.<br>
+  Status is carried by label and position as well as colour. No decision relies on hue alone.
+</footer>
+
+</div>
+</body>
+</html>

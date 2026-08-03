@@ -211,17 +211,21 @@ export const SURFACE = {
 /**
  * Confidence colours map onto the provenance spine (`lib/provenance.ts`).
  *
- * Note `observed` and `verified` share a colour: both are facts about the
- * world rather than judgements, and the distinction between them is
- * carried by the label, not the hue.
+ * Note VERIFIED and CORROBORATED share a colour: both are facts somebody
+ * stands behind rather than judgements, and the distinction between them
+ * is carried by the label, not the hue. They are also exactly the two
+ * classes FILING_FIT admits, so the shared colour marks the filing gate.
+ *
+ * Migrated to the v5 confidence axis (R2). The keys were observed /
+ * verified / modelled / estimated / forecast / pending.
  */
 export const CONFIDENCE_COLOUR = {
-  observed: COLOUR.confirm,
-  verified: COLOUR.confirm,
-  modelled: COLOUR.copper,
-  estimated: COLOUR.electric,
-  forecast: COLOUR.electric,
-  pending: COLOUR.steel,
+  VERIFIED: COLOUR.confirm,
+  CORROBORATED: COLOUR.confirm,
+  REPORTED: COLOUR.electric,
+  INFERRED: COLOUR.copper,
+  FORECAST: COLOUR.electric,
+  UNKNOWN: COLOUR.steel,
 } as const;
 
 export const HEALTH_COLOUR = {
@@ -450,12 +454,12 @@ export const ADDENDUM_CSS_VARS = `
   --surface-alert: ${SURFACE.alert};
 
   /* Provenance */
-  --conf-observed: ${CONFIDENCE_COLOUR.observed};
-  --conf-verified: ${CONFIDENCE_COLOUR.verified};
-  --conf-modelled: ${CONFIDENCE_COLOUR.modelled};
-  --conf-estimated: ${CONFIDENCE_COLOUR.estimated};
-  --conf-forecast: ${CONFIDENCE_COLOUR.forecast};
-  --conf-pending: ${CONFIDENCE_COLOUR.pending};
+  --conf-verified: ${CONFIDENCE_COLOUR.VERIFIED};
+  --conf-corroborated: ${CONFIDENCE_COLOUR.CORROBORATED};
+  --conf-reported: ${CONFIDENCE_COLOUR.REPORTED};
+  --conf-inferred: ${CONFIDENCE_COLOUR.INFERRED};
+  --conf-forecast: ${CONFIDENCE_COLOUR.FORECAST};
+  --conf-unknown: ${CONFIDENCE_COLOUR.UNKNOWN};
 
   --health-strong: ${HEALTH_COLOUR.strong};
   --health-adequate: ${HEALTH_COLOUR.adequate};

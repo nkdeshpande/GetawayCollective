@@ -166,12 +166,15 @@ export const DIGITAL_PROFILES: readonly DigitalProfile[] = [
     boundary: "Executes assigned property work only; cannot alter ownership, capital terms, or governance.",
   },
   {
-    id: "gc_01_platform_operations_agent", name: "GC-01 · Platform Operations Agent", kind: "ai", baseAccess: "office",
+    /* ATLAS. The proper name is carried here and in constants/ai-contracts.ts;
+       the gc_01 id is the durable half and nothing keys off the name. */
+    id: "gc_01_platform_operations_agent", name: "GC-01 · ATLAS · Platform Operations Agent", kind: "ai", baseAccess: "office",
     fn: "ai_operating_layer", requestableRoles: [], web: { ai_console: "contribute", work_docket: "contribute" },
     boundary: "May monitor, draft, route, and escalate. It holds no constitutional right and never approves or executes a fiduciary act.",
   },
   {
-    id: "gc_02_investor_intelligence_agent", name: "GC-02 · Investor Intelligence Agent", kind: "ai", baseAccess: "identified",
+    /* IRIS. See AI-101…AI-105 for what it may do with a consented context. */
+    id: "gc_02_investor_intelligence_agent", name: "GC-02 · IRIS · Investor Intelligence Agent", kind: "ai", baseAccess: "identified",
     fn: "ai_operating_layer", requestableRoles: [], web: { ai_console: "contribute", gateway: "contribute" },
     boundary: "May explain, collect, and escalate with consented context. It cannot accredit, recommend, accept, bind, or decide.",
   },

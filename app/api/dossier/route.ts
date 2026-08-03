@@ -5,7 +5,7 @@ import { DossierLead, sendLead } from "@/lib/leads";
 
 export async function POST(req: Request) {
   /* G-10. Before the body is even read: a limited caller costs nothing. */
-  const rl = rateLimit(clientKey(req));
+  const rl = await rateLimit(clientKey(req));
   if (!rl.ok) {
     return NextResponse.json(
       { ok: false, error: "rate-limited" },

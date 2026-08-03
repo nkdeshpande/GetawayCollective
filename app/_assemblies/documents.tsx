@@ -165,6 +165,11 @@ export function StandingDoc({ path }: { path: string }) {
   );
 }
 
+/** Canonical IA v5 collapses document-specific URLs into one governed route. */
+export function StandingDocBySlug({ document }: { document: string }) {
+  return <StandingDoc path={`/legal/${document}`} />;
+}
+
 /* The /legal index. */
 export function DocumentIndex() {
   return (

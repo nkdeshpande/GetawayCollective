@@ -3,13 +3,23 @@ import type { Config } from "drizzle-kit";
 /**
  * Drizzle configuration.
  *
- * `schema` points at a GENERATED file. Do not edit it — add the field to
- * constants/ufr.ts and run `npm run db:schema`. The migration SQL is
+ * ── TWO SCHEMAS, ONE DATABASE, DIFFERENT GOVERNANCE ──────────────────
+ * `generated/db-schema.ts` is GENERATED. Do not edit it — add the field
+ * to constants/ufr.ts and run `npm run db:schema`. The migration SQL is
  * therefore downstream of the Unified Field Registry, which is what keeps
  * E-06 true at the database.
+ *
+ * `lib/auth/schema.ts` is HAND-WRITTEN and deliberately outside the UFR.
+ * A session row is transport for a browser tab, not an institutional
+ * record: it carries no provenance, nobody files it, and it is deleted
+ * rather than superseded. Registering it would put a cookie on the same
+ * shelf as a Distribution. The file's own header argues this at length.
+ *
+ * Both are listed here because they share one Postgres database, and a
+ * migration that saw only half of it would propose dropping the other.
  */
 export default {
-  schema: "./generated/db-schema.ts",
+  schema: ["./generated/db-schema.ts", "./lib/auth/schema.ts"],
   out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {

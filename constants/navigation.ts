@@ -118,7 +118,7 @@ export function objectsCovered(): Set<string> {
 // PRIMARY NAVIGATION — prominence, which is not the same as existence
 //
 // constants/routes.ts owns what EXISTS. This owns what is PROMINENT.
-// Keeping them apart is deliberate: 120 routes exist and a navigation
+// Keeping them apart is deliberate: the canonical route table is wider than a navigation
 // listing all of them is a sitemap, not a rail. The two cannot drift,
 // because the check at the foot of this file resolves every path below
 // against the route table and refuses to load if one has gone.
@@ -174,51 +174,22 @@ export const PRIMARY_NAV: readonly NavSection[] = [
       { path: "/collection", label: "Collection", icon: "collection" },
       { path: "/how-it-works", label: "How it works", icon: "doctrine" },
       { path: "/journal", label: "The Journal", icon: "journal" },
-      { path: "/answers", label: "Answers", icon: "answers" },
-    ],
-  },
-  {
-    title: "Space", id: "space",
-    items: [
-      { path: "/space", label: "Space", icon: "space" },
-      { path: "/gallery", label: "Gallery", icon: "gallery" },
-      { path: "/portfolio", label: "Portfolio", icon: "portfolio" },
-    ],
-  },
-  {
-    title: "Time", id: "time",
-    items: [
-      { path: "/time", label: "Time", icon: "time" },
-      { path: "/member/entitlement", label: "Entitlement", icon: "entitlement" },
-    ],
-  },
-  {
-    title: "Capital", id: "capital",
-    items: [
-      { path: "/how-capital-works", label: "How capital works", icon: "capital" },
-      { path: "/flow", label: "The offering", icon: "offering" },
-      { path: "/capital", label: "Capital office", icon: "ledger" },
     ],
   },
   {
     title: "Member", id: "member",
     items: [
-      { path: "/member", label: "Member", icon: "member" },
-      { path: "/member/position", label: "Position", icon: "position" },
-      { path: "/member/documents", label: "Documents", icon: "documents" },
-      { path: "/member/resolutions", label: "Resolutions", icon: "resolutions" },
-      { path: "/member/notifications", label: "Notifications", icon: "notifications" },
+      { path: "/home", label: "Member Home", icon: "home" },
+      { path: "/portfolio", label: "Portfolio", icon: "portfolio" },
+      { path: "/activity", label: "Activity", icon: "documents" },
+      { path: "/profile", label: "Profile", icon: "member" },
     ],
   },
   {
     title: "Governance", id: "governance",
     items: [
-      { path: "/admin", label: "Administration", icon: "admin" },
-      { path: "/admin/vehicles", label: "Vehicles", icon: "vehicles" },
-      { path: "/admin/governance", label: "Governance", icon: "governance" },
-      { path: "/admin/compliance", label: "Compliance", icon: "compliance" },
-      { path: "/admin/authority", label: "Authority", icon: "authority" },
-      { path: "/admin/media", label: "Media", icon: "media" },
+      { path: "/office", label: "Lifecycle Board", icon: "admin" },
+      { path: "/office/collection", label: "Collection", icon: "vehicles" },
     ],
   },
 ];

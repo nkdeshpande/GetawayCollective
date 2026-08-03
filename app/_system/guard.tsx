@@ -9,27 +9,33 @@
  * the guard has to protect the ones it does not.
  *
  * ── IT FAILS CLOSED ──────────────────────────────────────────────────
- * `resolveSubject()` returns ANONYMOUS because authentication is not
- * built. That means every non-public group denies right now, and that is
- * the correct behaviour for an unfinished system — a guard that admitted
- * everyone while the session was pending would ship, because it works and
- * nothing complains.
+ * No session means the ANONYMOUS subject, and every non-public group
+ * denies. That did not change when authentication landed: there is still
+ * no branch here that admits anyone because something was absent.
  *
  * The denial is visible rather than silent, so the state is obvious in
  * development instead of being discovered in production.
+ *
+ * ── THIS READ IS THE AUTHORITATIVE ONE ───────────────────────────────
+ * `currentSubject()` re-reads the grant table rather than trusting the
+ * token's snapshot, so a revocation lands here on the very next request
+ * even while a 30-minute token still claims otherwise. Middleware is the
+ * fast boundary; this is the true one.
  */
 
 import Link from "next/link";
 import { ACCESS_FOR_VANTAGE, GROUP_VANTAGE, ACCESS_RANK } from "@/constants/routes";
 import type { RouteGroup } from "@/constants/layout";
-import { resolveSubject, accessOfSubject } from "@/lib/access";
+import { accessOfSubject } from "@/lib/access";
+import { currentSubject } from "@/lib/session";
 
 /**
  * Defence in depth, deliberately weaker than the middleware.
  *
  * This can only see the GROUP, and an access override belongs to a ROUTE
  * — which is why the first version of this denied /legal/risk-disclosure
- * and /how-capital-works, both public by override inside (capital). The
+ * and /collection/slowspace-coastal/investment, both public by override
+ * inside (capital). The
  * real decision now happens in middleware.ts, which sees the pathname.
  *
  * It stays because middleware can be misconfigured and a matcher can grow
@@ -39,7 +45,7 @@ import { resolveSubject, accessOfSubject } from "@/lib/access";
  * `respectsOverride` is how a generated layout says "middleware already
  * approved a route in this group that the group itself would refuse".
  */
-export function GroupGuard({
+export async function GroupGuard({
   group,
   respectsOverride = true,
   children,
@@ -49,7 +55,7 @@ export function GroupGuard({
   children: React.ReactNode;
 }) {
   const required = ACCESS_FOR_VANTAGE[GROUP_VANTAGE[group]];
-  const subject = resolveSubject();
+  const subject = await currentSubject();
   const held = accessOfSubject(subject);
 
   if (respectsOverride) return <>{children}</>;
@@ -68,19 +74,13 @@ export function GroupGuard({
       </p>
 
       <div className="gate-actions">
-        <Link className="btn primary" href="/auth/sign-in">
+        <Link className="btn primary" href="/sign-in">
           Sign in
         </Link>
         <Link className="btn" href="/">
           Back to the collection
         </Link>
       </div>
-
-      <p className="gate-note">
-        Authentication is not yet built, so every signed-in surface denies. That is deliberate: a
-        guard that admitted everyone while the session was pending would have shipped, because it
-        would have worked and nothing would have complained.
-      </p>
     </main>
   );
 }

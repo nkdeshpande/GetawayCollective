@@ -56,7 +56,7 @@ describe("primary navigation", () => {
       .filter((i) => canReach(i.path).ok)
       .map((i) => i.path);
 
-    expect(visible.length).toBeGreaterThan(6);
+    expect(visible).toHaveLength(6);
     for (const p of visible) {
       expect(accessOf(routeFor(p)!), `${p} reached anonymously`).toBe("public");
     }

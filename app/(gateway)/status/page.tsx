@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Composed } from "@/app/_assemblies/compose";
+import { SystemSurface } from "@/app/_assemblies/systempages";
 
 export const metadata: Metadata = {
   title: "System Status · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pstatus() {
-  return <Composed path="/status" />;
+  return <SystemSurface path="/status" />;
 }

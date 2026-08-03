@@ -1,0 +1,5 @@
+/* Investor workspace deliberately carries no hero/media treatment. */
+.investor-surface,
+.investor-surface * {
+  background-image: none !important;
+}

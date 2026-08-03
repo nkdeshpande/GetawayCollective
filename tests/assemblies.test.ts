@@ -666,7 +666,9 @@ describe("assembly scope", () => {
     // header appears on every screen and had no stated rule about what
     // it may show.
     expect(CHROME.map((a) => a.id)).toEqual(["AS-20", "AS-21", "AS-22"]);
-    expect(REGIONS.map((a) => a.id)).toEqual(["AS-23", "AS-24", "AS-31"]);
+    expect(REGIONS.map((a) => a.id)).toEqual([
+      "AS-07", "AS-08", "AS-09", "AS-17", "AS-18", "AS-23", "AS-24", "AS-31",
+    ]);
     expect(SCREENS.length + CHROME.length + REGIONS.length).toBe(ASSEMBLIES.length);
   });
 
@@ -833,20 +835,22 @@ describe("build completeness", () => {
   const built = readFileSync(resolve(__dirname, "..", "GC-ASSEMBLIES.html"), "utf8");
 
   it("ships every registered assembly", () => {
-    // A screen ships as an A["AS-nn"] entry; chrome and regions ship as
-    // helper functions. Counting only the former is what produced the
-    // wrong "15 pending" figure in the exit assessment.
-    const HELPERS: Record<string, RegExp> = {
-      "AS-20": /class="hud"/, "AS-21": /function spine\(/,
-      "AS-22": /function footer\(/, "AS-23": /function hero\(/,
-    };
+    // Every canonical item has an independent specimen. Chrome and regions
+    // still use shared helpers, but can now be reviewed without finding a
+    // host screen that happens to compose them.
     const screens = new Set([...built.matchAll(/A\["(AS-\d+)"\]\s*=/g)].map((m) => m[1]));
-    const missing = ASSEMBLIES.filter((a) => {
-      if (screens.has(a.id)) return false;
-      const h = HELPERS[a.id];
-      return !(h && h.test(built));
-    }).map((a) => a.id);
+    const missing = ASSEMBLIES.filter((a) => !screens.has(a.id)).map((a) => a.id);
     expect(missing, `not built: ${missing.join(" ")}`).toEqual([]);
+    expect(screens.size).toBe(ASSEMBLIES.length);
+  });
+
+  it("classifies all specimens as cinematic or functional", () => {
+    const entries = [...built.matchAll(
+      /\{id:"(AS-\d+)",name:"[^"]+",vantage:"[^"]+",scope:"[^"]+",mode:"(cinematic|functional)"\}/g,
+    )].map((match) => ({ id: match[1], mode: match[2] }));
+    expect(new Set(entries.map((entry) => entry.id))).toEqual(new Set(ASSEMBLIES.map((a) => a.id)));
+    expect(entries.some((entry) => entry.mode === "cinematic")).toBe(true);
+    expect(entries.some((entry) => entry.mode === "functional")).toBe(true);
   });
 
   it("wires every chrome helper rather than only defining it", () => {

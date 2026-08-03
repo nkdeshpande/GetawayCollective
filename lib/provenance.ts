@@ -14,62 +14,87 @@
  * A confidence class travels WITH the value. It cannot be dropped by a
  * formatting layer or lost in a join, because it is part of the value.
  *
- * ── THE CLASSES ARE ORDERED ──────────────────────────────────────────
- * observed > verified > modelled > estimated > forecast > pending
+ * ── THE CLASSES CHANGED AXIS (v5 · decision R2) ──────────────────────
+ * This file used to declare its own six classes measuring HOW A VALUE WAS
+ * PRODUCED:
  *
- * The ordering matters more than the labels: it means a derived value can
- * be given the confidence of its WEAKEST input automatically. A NAV built
- * from one independent valuation and one management estimate is not
- * "mostly independent" — it is an estimate, and the arithmetic should say
- * so without anyone remembering to.
+ *   observed > verified > modelled > estimated > forecast > pending
+ *
+ * The v5 canon declares six measuring HOW WELL SOURCED IT IS:
+ *
+ *   VERIFIED > CORROBORATED > REPORTED > INFERRED > FORECAST > UNKNOWN
+ *
+ * Six values each, one shared name, two different questions. They were
+ * reconciled onto the v5 set, which is now the single definition in
+ * constants/taxonomies.ts — this file imports it rather than restating it.
+ * Two further copies existed in app/_assemblies/data.ts and content/legal.ts;
+ * both now re-export from here. Three copies of a constitutional type is
+ * three chances to disagree.
+ *
+ * The mapping applied:
+ *
+ *   observed   -> VERIFIED       an authoritative direct source
+ *   verified   -> CORROBORATED   a second party independently agreed
+ *   modelled   -> INFERRED       derived by a defined formula
+ *   estimated  -> REPORTED       asserted by a party with an interest
+ *   forecast   -> FORECAST       unchanged
+ *   pending    -> UNKNOWN        insufficient evidence
+ *
+ * ── ONE WART THIS CREATES, STATED PLAINLY ────────────────────────────
+ * `verifiedAt` now pairs with CORROBORATED, not with VERIFIED.
+ *
+ * That reads backwards and it is not a mistake. The field records when a
+ * SECOND party confirmed something, which was the old `verified` and is
+ * now CORROBORATED. VERIFIED means the source is authoritative in itself —
+ * a bank feed, a registry extract — and it is established at `observedAt`
+ * by the source, with no separate confirmation to date.
+ *
+ * The ordering is what the arithmetic depends on: a derived value takes
+ * the confidence of its WEAKEST input automatically. A NAV built from one
+ * authoritative valuation and one management assertion is not "mostly
+ * authoritative" — it is REPORTED, and the arithmetic says so without
+ * anyone remembering to.
  */
 
-export type Confidence =
-  /** Directly measured. A bank balance, a settled payment. */
-  | "observed"
-  /** Independently confirmed by a third party. An independent valuation. */
-  | "verified"
-  /** Computed from other values by a defined formula. IRR, NAV, coverage. */
-  | "modelled"
-  /** Judgement by a party with an interest. A management valuation. */
-  | "estimated"
-  /** About the future. Necessarily unverifiable today. */
-  | "forecast"
-  /** Not yet available. Distinct from zero, and from unknown. */
-  | "pending";
+import { weakestConfidence, CONFIDENCE_RANK, taxonomyValues } from "../constants/taxonomies";
+import type { ConfidenceClass } from "../constants/taxonomies";
+
+/**
+ * The corroboration class of a value.
+ *
+ * Defined in constants/taxonomies.ts, aliased here because this is where
+ * the domain reads it from and the name `Confidence` is what fifty call
+ * sites already say.
+ */
+export type Confidence = ConfidenceClass;
 
 /** Strongest first. Index is the rank; higher index is weaker. */
-export const CONFIDENCE_ORDER: readonly Confidence[] = [
-  "observed", "verified", "modelled", "estimated", "forecast", "pending",
-] as const;
+export const CONFIDENCE_ORDER = taxonomyValues("confidence") as readonly Confidence[];
 
-export const rankOf = (c: Confidence): number => CONFIDENCE_ORDER.indexOf(c);
+export const rankOf = (c: Confidence): number => CONFIDENCE_RANK[c];
 export const isWeaker = (a: Confidence, b: Confidence): boolean => rankOf(a) > rankOf(b);
 
 /**
  * The weakest of several classes.
  *
- * This is the function that keeps a derived figure honest: combine an
- * independent valuation with a management estimate and the result is an
- * estimate, because that is what it is.
+ * Keeps a derived figure honest: combine an authoritative valuation with a
+ * management assertion and the result is REPORTED, because that is what it
+ * is. Delegates to the taxonomy so the ordering has exactly one definition.
  */
-export function weakest(cs: readonly Confidence[]): Confidence {
-  if (cs.length === 0) return "pending";
-  return cs.reduce((a, b) => (isWeaker(b, a) ? b : a));
-}
+export const weakest = weakestConfidence;
 
 export interface Provenanced<T> {
   value: T;
   confidence: Confidence;
   /** When the underlying fact was true. Not when the row was written. */
   observedAt: string;
-  /** When a third party confirmed it. Absent unless confidence is verified. */
+  /** When a SECOND party confirmed it. Pairs with CORROBORATED — see the header. */
   verifiedAt?: string;
   /** Where it came from: a valuer's name, a bank feed, a model id. */
   source: string;
   /** The identity that recorded it. */
   observer: string;
-  /** For modelled values: what produced them. */
+  /** For INFERRED values: what produced them. */
   derivedFrom?: string[];
 }
 
@@ -85,21 +110,25 @@ export function provenance<T>(p: Provenanced<T>): Provenanced<T> {
   if (!/^\d{4}-\d{2}-\d{2}/.test(p.observedAt)) {
     throw new ProvenanceError(`observedAt must be an ISO date, received "${p.observedAt}"`);
   }
-  if (p.confidence === "verified" && !p.verifiedAt) {
+  /* CORROBORATED, not VERIFIED. The field dates a second party's
+     confirmation, and VERIFIED is authoritative without one. The header
+     explains why that reads backwards. */
+  if (p.confidence === "CORROBORATED" && !p.verifiedAt) {
     throw new ProvenanceError(
-      "a value claiming 'verified' must say when it was verified. Verification without a date " +
-        "cannot be aged, and an unaged verification is indistinguishable from an old one.",
+      "a value claiming 'CORROBORATED' must say when it was confirmed. Confirmation without a date " +
+        "cannot be aged, and an unaged confirmation is indistinguishable from an old one.",
     );
   }
-  if (p.confidence !== "verified" && p.verifiedAt) {
+  if (p.confidence !== "CORROBORATED" && p.verifiedAt) {
     throw new ProvenanceError(
-      `confidence is "${p.confidence}" but a verifiedAt is present. Either it was verified or it was not.`,
+      `confidence is "${p.confidence}" but a verifiedAt is present. Either a second party confirmed ` +
+        `it or none did.`,
     );
   }
-  if (p.confidence === "modelled" && (!p.derivedFrom || p.derivedFrom.length === 0)) {
+  if (p.confidence === "INFERRED" && (!p.derivedFrom || p.derivedFrom.length === 0)) {
     throw new ProvenanceError(
-      "a modelled value must name its inputs. A model whose inputs are unknown cannot be re-run, " +
-        "and a figure that cannot be re-run cannot be reconciled (F-14).",
+      "an inferred value must name its inputs. A derivation whose inputs are unknown cannot be " +
+        "re-run, and a figure that cannot be re-run cannot be reconciled (F-14).",
     );
   }
   return Object.freeze({ ...p });
@@ -108,8 +137,8 @@ export function provenance<T>(p: Provenanced<T>): Provenanced<T> {
 /**
  * Derive a value from provenanced inputs.
  *
- * The result is `modelled`, inherits the WEAKEST input confidence when that
- * is weaker than modelled, and records what it was built from. Nobody has
+ * The result is INFERRED, inherits the WEAKEST input confidence when that
+ * is weaker than INFERRED, and records what it was built from. Nobody has
  * to remember to downgrade it — the arithmetic does.
  */
 export function derive<T>(
@@ -118,7 +147,25 @@ export function derive<T>(
   opts: { source: string; observer: string; observedAt: string },
 ): Provenanced<T> {
   const inherited = weakest(inputs.map((i) => i.confidence));
-  const confidence: Confidence = isWeaker(inherited, "modelled") ? inherited : "modelled";
+
+  /* NOT simply the weaker of the two — and this is the one place the v5
+     axis change would have quietly broken a regulatory gate.
+
+     On the old axis `modelled` ranked STRONGER than `estimated`, so
+     taking the weaker of the two downgraded a NAV built from a management
+     estimate to `estimated`, which fitForFiling() refuses.
+
+     On the v5 axis INFERRED ranks WEAKER than REPORTED — inference is
+     less well-sourced than a direct report — so the same "take the
+     weaker" rule now returns INFERRED, which fitForFiling() ADMITS with
+     disclosure. The migration would have turned a refused figure into an
+     admitted one without a single test noticing.
+
+     So the rule is stated in terms of filing-fitness rather than rank: a
+     derivation from filing-fit inputs is INFERRED, and a derivation
+     touching anything weaker keeps that weaker class. F-13 survives the
+     change of axis. */
+  const confidence: Confidence = FILING_FIT.has(inherited) ? "INFERRED" : inherited;
   return provenance({
     value,
     confidence,
@@ -132,20 +179,28 @@ export function derive<T>(
 /**
  * Whether a value is fit for a regulatory filing.
  *
- * F-13: filings use INDEPENDENT valuations only. `estimated` is where a
+ * F-13: filings use INDEPENDENT valuations only. REPORTED is where a
  * management valuation lands, and this is the gate that stops one reaching
  * a filing by being formatted the same as an independent one.
  */
+/**
+ * The classes an independent source stands behind.
+ *
+ * F-13's gate, named once so `derive()` and `fitForFiling()` cannot drift
+ * apart — which is exactly what the v5 axis change nearly caused.
+ */
+export const FILING_FIT: ReadonlySet<Confidence> = new Set<Confidence>(["VERIFIED", "CORROBORATED"]);
+
 export function fitForFiling(p: Provenanced<unknown>): { ok: boolean; reason?: string } {
-  if (p.confidence === "observed" || p.confidence === "verified") return { ok: true };
-  if (p.confidence === "modelled") {
-    return { ok: true, reason: "modelled from filing-fit inputs; the derivation must be disclosed" };
+  if (FILING_FIT.has(p.confidence)) return { ok: true };
+  if (p.confidence === "INFERRED") {
+    return { ok: true, reason: "inferred from filing-fit inputs; the derivation must be disclosed" };
   }
   return {
     ok: false,
     reason:
       `confidence "${p.confidence}" is not fit for a regulatory filing. ` +
-      `Filings use independent valuations only (F-13); a management estimate is not one.`,
+      `Filings use independent valuations only (F-13); a management assertion is not one.`,
   };
 }
 
@@ -160,10 +215,10 @@ export function ageInDays(p: Provenanced<unknown>, atIso: string): number {
 /**
  * A value can decay in confidence without anyone touching it.
  *
- * An independent valuation is `verified` on the day it is signed. Twelve
+ * An independent valuation is CORROBORATED on the day it is signed. Twelve
  * months later the property has not been revalued and nothing has changed
- * in the record — but the number is no longer a verified statement about
- * today. It has become an estimate, and saying so is more honest than
+ * in the record — but the number is no longer a well-sourced statement
+ * about today. It has become REPORTED, and saying so is more honest than
  * letting it keep a badge it has outgrown.
  */
 export function decayed(
@@ -171,9 +226,9 @@ export function decayed(
   atIso: string,
   staleAfterDays: number,
 ): Confidence {
-  if (p.confidence !== "verified" && p.confidence !== "observed") return p.confidence;
+  if (p.confidence !== "CORROBORATED" && p.confidence !== "VERIFIED") return p.confidence;
   const age = ageInDays(p, atIso);
-  return Number.isNaN(age) || age <= staleAfterDays ? p.confidence : "estimated";
+  return Number.isNaN(age) || age <= staleAfterDays ? p.confidence : "REPORTED";
 }
 
 /** Constitutional staleness windows. */

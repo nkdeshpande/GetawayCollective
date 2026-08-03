@@ -36,7 +36,7 @@ export const PUB: Record<string, Entry> = {
       { kind: "links", items: [
         { t: "Sign in", to: "/auth/sign-in", primary: true },
         { t: "The Collection", to: "/collection" },
-        { t: "How capital works", to: "/how-capital-works" },
+        { t: "How capital works", to: "/collection/slowspace-coastal/investment" },
       ] },
     ],
   },
@@ -148,9 +148,9 @@ export const PUB: Record<string, Entry> = {
       sections: [
         { kind: "figures", items: [
           { label: "Position", value: inr(p.commitment), money: true,
-            sub: pct(p.bps) + " of " + LLP.name, conf: "modelled" },
+            sub: pct(p.bps) + " of " + LLP.name, conf: "INFERRED" },
           { label: "Indicative annual", value: inr(p.distribution), money: true,
-            sub: (p.yieldBps / 100).toFixed(1) + "% once stabilised", conf: "modelled" },
+            sub: (p.yieldBps / 100).toFixed(1) + "% once stabilised", conf: "INFERRED" },
           { label: "Entitlement", value: `${p.nights.min}–${p.nights.max}`, nights: true,
             sub: "nights a year, from handover" },
         ] },
@@ -216,7 +216,7 @@ export const PUB: Record<string, Entry> = {
         { kind: "figures", items: [
           { label: "Valuation", value: inr(p.ufr0102), money: true,
             sub: p.ufr0103 + " · " + p.ufr0101,
-            conf: p.ufr0103.includes("appraisal") ? "verified" : "estimated" },
+            conf: p.ufr0103.includes("appraisal") ? "CORROBORATED" : "REPORTED" },
           { label: "Fraction", value: inr(fractionPrice(p)), money: true,
             sub: `1 of ${p.units} · largest remainder` },
         ] },

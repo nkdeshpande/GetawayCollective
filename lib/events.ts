@@ -92,6 +92,68 @@ export type EventType =
   | "PerformanceReportPublished"
   | "LedgerEntryPosted";
 
+/**
+ * Runtime mirror of the union. Downstream catalogues use this to prove exact
+ * coverage while the source-parsing gates continue to read the declared type.
+ */
+export const EVENT_TYPES = [
+  "OrganizationRegistered",
+  "CommitteeConstituted",
+  "CommitteeAuthorityDelegated",
+  "ContentVersionPublished",
+  "ContentVersionWithdrawn",
+  "MediaAssetRegistered",
+  "MediaAssetReclassified",
+  "InvestmentVehicleFormed",
+  "InvestmentVehicleStabilised",
+  "InvestmentVehicleDissolved",
+  "PortfolioCreated",
+  "PropertyAssignedToPortfolio",
+  "PropertyRegistered",
+  "PropertyLifecycleAdvanced",
+  "AcquisitionCompleted",
+  "ValuationRecorded",
+  "DispositionCompleted",
+  "EnvironmentalCommitmentStrengthened",
+  "OfferingOpened",
+  "OfferingClosed",
+  "CommitmentOffered",
+  "CommitmentAccepted",
+  "CommitmentLapsed",
+  "CommitmentWithdrawn",
+  "CommitmentSettled",
+  "CapitalCalled",
+  "CapitalDrawn",
+  "CapitalDeployed",
+  "CapitalReturned",
+  "OwnershipPositionOpened",
+  "OwnershipTransferred",
+  "DistributionExecuted",
+  "DistributionBlocked",
+  "IdentityAuthenticated",
+  "AccreditationGranted",
+  "AccreditationExpired",
+  "MemberStatePromoted",
+  "SessionOpened",
+  "SessionClosed",
+  "ResolutionTabled",
+  "VoteCast",
+  "ResolutionResolved",
+  "PolicyVersionApproved",
+  "ConflictDisclosed",
+  "AuthorityGranted",
+  "AuthorityRevoked",
+  "ReserveFunded",
+  "ReserveBreachDeclared",
+  "ReserveBreachCleared",
+  "ComplianceEventRecorded",
+  "ConstitutionalFailureDeclared",
+  "InvestmentThesisVersioned",
+  "DueDiligenceCompleted",
+  "PerformanceReportPublished",
+  "LedgerEntryPosted",
+] as const satisfies readonly EventType[];
+
 export interface EventEnvelope<P = Record<string, unknown>> {
   /** Permanent. Never reused. */
   eventId: string;

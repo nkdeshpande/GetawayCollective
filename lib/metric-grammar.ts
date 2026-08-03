@@ -126,8 +126,8 @@ function compactIndian(value: number): string {
  * the provenance module.
  */
 export function isProvisional(confidence?: Confidence): boolean {
-  return confidence === "forecast" || confidence === "modelled" ||
-         confidence === "estimated" || confidence === "pending";
+  return confidence === "FORECAST" || confidence === "INFERRED" ||
+         confidence === "REPORTED" || confidence === "UNKNOWN";
 }
 
 /** Mark appended to a provisional figure. Visible, not merely a colour. */

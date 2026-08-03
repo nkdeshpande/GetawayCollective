@@ -23,6 +23,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { parseRoutesSource } = require("./lib/route-source-parser");
 
 const ROOT = path.resolve(__dirname, "..");
 const APP = path.join(ROOT, "app");
@@ -59,46 +60,15 @@ const resolveConst = (n) => {
   return m ? join(m[1]) : "";
 };
 
-const STAGES = [...((src.match(/export const PASSPORT_STAGES = \[([\s\S]*?)\] as const;/) || [, ""])[1])
-  .matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+// ── Parse every route ────────────────────────────────────────────────
+/* Route declarations carry their stable IA identifier first:
+   R(ia, path, name, group, assembly, extra).  The generator must use
+   the URL field for its directory tree; treating the IA identifier as
+   a URL produces invalid routes such as /GC-900. */
+const ROUTES = parseRoutesSource(src);
 
-// ── Parse every route, expanding the generated passport stages ───────
-const RE = /R\(\s*(`[^`]*`|"[^"]*")\s*,\s*(`[^`]*`|"[^"]*")\s*,\s*"(\w+)"\s*,\s*(null|"[^"]*")([\s\S]*?)\n?\s*\),?\n/g;
-
-function parseAll() {
-  const out = [];
-  for (const m of src.matchAll(RE)) {
-    const tail = m[5];
-    const unq = (s) => s.replace(/^[`"]|[`"]$/g, "");
-    const o = tail.match(
-      /accessOverride:\s*\{\s*access:\s*"(\w+)"[\s\S]*?because:\s*\n?\s*((?:"(?:[^"\\]|\\.)*"\s*\+?\s*\n?\s*)+|[A-Z][A-Z0-9_]*)/,
-    );
-    const base = {
-      rawPath: unq(m[1]), rawName: unq(m[2]), group: m[3],
-      assembly: m[4] === "null" ? null : unq(m[4]),
-      params: [...((tail.match(/params:\s*\[([^\]]*)\]/) || [, ""])[1]).matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-      rights: [...((tail.match(/rights:\s*\[([^\]]*)\]/) || [, ""])[1]).matchAll(/"([^"]+)"/g)].map((x) => x[1]),
-      override: o ? o[1] : null,
-      isTemplate: /^`/.test(m[1]),
-    };
-    if (base.isTemplate) {
-      // The sixteen passport stages are generated from PASSPORT_STAGES.
-      for (const st of STAGES) {
-        out.push({ ...base, isTemplate: false,
-          path: base.rawPath.replace("${st}", st),
-          name: `Passport · ${st.replace(/-/g, " ")}` });
-      }
-    } else {
-      out.push({ ...base, path: base.rawPath, name: base.rawName });
-    }
-  }
-  return out;
-}
-
-const ROUTES = parseAll();
-
-if (ROUTES.length === 0 || asmVantage.size === 0 || STAGES.length === 0) {
-  console.error("[gen-app] Parsed zero routes, assemblies or stages. Refusing to run.");
+if (ROUTES.length === 0 || asmVantage.size === 0) {
+  console.error("[gen-app] Parsed zero routes or assemblies. Refusing to run.");
   process.exit(2);
 }
 
@@ -222,7 +192,37 @@ const BY_PATH = {
   "/time": { component: "Time", from: "@/app/_assemblies/publicpages" },
   "/collective/gallery": { component: "Evidence", from: "@/app/_assemblies/publicpages" },
   "/structure": { component: "Structure", from: "@/app/_assemblies/publicpages" },
-  "/auth/sign-in": { component: "Identify", from: "@/app/_assemblies/publicpages" },
+  /* System surfaces have their own cinematic renderer, selected by the
+     current canonical path rather than the retired /auth aliases. */
+  "/sign-in": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/sign-in" },
+  "/verify": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/verify" },
+  "/status": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/status" },
+  "/403": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/403" },
+  "/invest/qualify": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/qualify" },
+  "/investor-workspace-preview": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/investor-workspace-preview" },
+  "/member-workspace-preview": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/member-workspace-preview" },
+  "/office-workspace-preview": { component: "OfficeSurface", from: "@/app/_assemblies/officepages", prop: "/office-workspace-preview" },
+  "/home": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/home" },
+  "/portfolio": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio" },
+  "/portfolio/[vehicle]": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]", param: "vehicle" },
+  "/portfolio/[vehicle]/space": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/space", param: "vehicle" },
+  "/portfolio/[vehicle]/capital": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/capital", param: "vehicle" },
+  "/portfolio/[vehicle]/time": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/time", param: "vehicle" },
+  "/portfolio/[vehicle]/project": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/project", param: "vehicle" },
+  "/portfolio/[vehicle]/partners": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/partners", param: "vehicle" },
+  "/portfolio/[vehicle]/governance": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/governance", param: "vehicle" },
+  "/portfolio/[vehicle]/documents": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/documents", param: "vehicle" },
+  "/portfolio/[vehicle]/activity": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/activity", param: "vehicle" },
+  "/activity": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/activity" },
+  "/profile": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/profile" },
+  "/invest/[vehicle]": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]", param: "vehicle" },
+  "/invest/[vehicle]/asset": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/asset", param: "vehicle" },
+  "/invest/[vehicle]/financials": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/financials", param: "vehicle" },
+  "/invest/[vehicle]/structure": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/structure", param: "vehicle" },
+  "/invest/[vehicle]/risks": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/risks", param: "vehicle" },
+  "/invest/[vehicle]/dataroom": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/dataroom", param: "vehicle" },
+  "/invest/[vehicle]/commit": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/commit", param: "vehicle" },
+  "/invest/[vehicle]/speak": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/speak", param: "vehicle" },
 
   /* The member surfaces: MEM.01, MEM.02, MEM.05-MEM.08. */
   "/member/profile": { component: "Passport", from: "@/app/_assemblies/memberpages" },
@@ -236,16 +236,10 @@ const BY_PATH = {
   /* The legal corpus: one renderer, seven documents, chosen by path.
      AS-29 takes the path as a prop rather than being seven components. */
   "/legal": { component: "DocumentIndex", from: "@/app/_assemblies/documents" },
-  "/legal/terms": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/terms" },
-  "/legal/risk-disclosure": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/risk-disclosure" },
-  "/legal/privacy": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/privacy" },
-  "/legal/cookies": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/cookies" },
-  "/legal/disclosures": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/disclosures" },
-  "/legal/complaints": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/complaints" },
-  "/legal/accessibility": { component: "StandingDoc", from: "@/app/_assemblies/documents", prop: "/legal/accessibility" },
+  "/legal/[document]": { component: "StandingDocBySlug", from: "@/app/_assemblies/documents", param: "document" },
 
   "/journal": { component: "JournalIndex", from: "@/app/_assemblies/documents" },
-  "/journal/[slug]": { component: "JournalEntry", from: "@/app/_assemblies/documents", param: "slug" },
+  "/journal/[story]": { component: "JournalEntry", from: "@/app/_assemblies/documents", param: "story", passAs: "slug" },
 
   "/flow": { component: "Offering", from: "@/app/_assemblies/flow" },
   "/flow/accreditation": { component: "Accreditation", from: "@/app/_assemblies/flow" },
@@ -295,6 +289,10 @@ function conventionSource(r, conv) {
 function pageSource(r) {
   const access = accessOf(r);
   let port = BY_PATH[r.path] || (r.assembly ? PORTED[r.assembly] : null);
+  if (!port && (r.path === "/office" || r.path.startsWith("/office/"))) {
+    port = { component: "OfficeSurface", from: "@/app/_assemblies/officepages",
+             prop: r.path, needsParams: true };
+  }
   /* A composition builds any route nothing more specific claims. */
   if (!port && COMPOSED.has(r.path)) {
     port = { component: "Composed", from: "@/app/_assemblies/compose",
@@ -302,9 +300,13 @@ function pageSource(r) {
   }
   const indexable = access === "public";
   const hasParams = r.params.length > 0;
-  const title = `${r.name} · Getaway Collective`;
+  const usesParams = hasParams && (!port || port.needsProperty || port.needsParams || port.param);
+  /* The root's name IS the brand, so the suffix would render "Getaway
+     Collective · Getaway Collective" on the one page most likely to be
+     shared. */
+  const title = r.name === "Getaway Collective" ? r.name : `${r.name} · Getaway Collective`;
 
-  const paramsType = hasParams
+  const paramsType = usesParams
     ? `{ params: Promise<{ ${r.params.map((p) => `${p}: string`).join("; ")} }> }`
     : "Record<string, never>";
 
@@ -327,7 +329,7 @@ function pageSource(r) {
       `  robots: { index: true, follow: true },\n` +
       `};\n`
     : `export async function generateMetadata(): Promise<Metadata> {\n` +
-      `  const reachable = canReach(${JSON.stringify(r.path)}).ok;\n` +
+      `  const reachable = canReach(${JSON.stringify(r.path)}, await currentSubject()).ok;\n` +
       `  return {\n` +
       `    title: reachable ? ${JSON.stringify(title)} : "Getaway Collective",\n` +
       `    robots: { index: false, follow: false },\n` +
@@ -349,14 +351,19 @@ function pageSource(r) {
             `import { notFound } from "next/navigation";\n`
           : "")
       : `import { Surface } from "@/app/_system/surface";\n`) +
-    (indexable ? "" : `import { canReach } from "@/lib/access";\n`) +
+    (indexable
+      ? ""
+      : `import { canReach } from "@/lib/access";\n` +
+        `import { currentSubject } from "@/lib/session";\n`) +
     `\n${meta}\n` +
-    `export default async function ${ident(r.path)}(${hasParams ? `props: ${paramsType}` : ""}) {\n` +
-    (hasParams ? `  const params = await props.params;\n` : "") +
+    `export default async function ${ident(r.path)}(${usesParams ? `props: ${paramsType}` : ""}) {\n` +
+    (usesParams ? `  const params = await props.params;\n` : "") +
     (port && port.needsProperty
       ? `  const property = propertyBySlug(params.${r.params[0]});\n` +
         `  if (!property) notFound();\n` +
         `  return <${port.component} p={property} />;\n`
+      : port && port.needsParams
+        ? `  return <${port.component} path=${JSON.stringify(port.prop)}${hasParams ? " params={params}" : ""} />;\n`
       : port && port.prop && port.param
         /* A composed dynamic route needs both: the path names the
            composition, the param feeds it. */
@@ -367,7 +374,7 @@ function pageSource(r) {
            document it is rather than resolving it at request time. */
         ? `  return <${port.component} path=${JSON.stringify(port.prop)} />;\n`
       : port && port.param
-        ? `  return <${port.component} ${port.param}={params.${port.param}} />;\n`
+        ? `  return <${port.component} ${port.passAs || port.param}={params.${port.param}} />;\n`
       : port
         ? `  return <${port.component} />;\n`
         : `  return (\n` +

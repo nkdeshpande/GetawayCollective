@@ -12,10 +12,13 @@ node scripts/organism-lint.js       || { echo "BLOCKED: organism surface"; exit 
 node scripts/aperture-lint.js       || { echo "BLOCKED: aperture laws"; exit 1; }
 node scripts/assembly-lint.js       || { echo "BLOCKED: assembly laws"; exit 1; }
 node scripts/route-lint.js          || { echo "BLOCKED: information architecture"; exit 1; }
+node scripts/eligibility-lint.js    || { echo "BLOCKED: role eligibility layer (RBAC LAW 1)"; exit 1; }
+node scripts/taxonomy-lint.js       || { echo "BLOCKED: cross-cutting taxonomies / critical-tone budget"; exit 1; }
 node scripts/gen-app.js --check     || { echo "BLOCKED: app tree has drifted from the route table"; exit 1; }
 node scripts/token-lint.js          || { echo "BLOCKED: design literals / contrast (§29)"; exit 1; }
 node scripts/gen-schemas.js --check || { echo "BLOCKED: contracts diverged (E-06)"; exit 1; }
 node scripts/gen-db.js --check      || { echo "BLOCKED: db schema diverged (E-06)"; exit 1; }
 node scripts/gen-fixtures.js --check|| { echo "BLOCKED: fixtures stale"; exit 1; }
 node scripts/export-tokens.js       || { echo "BLOCKED: token drift (§29)"; exit 1; }
+node scripts/gen-assembly-css.js --check || { echo "BLOCKED: assembly CSS diverged from GC-ASSEMBLIES.html"; exit 1; }
 echo "[pre-commit] OK"
