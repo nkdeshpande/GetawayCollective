@@ -29,9 +29,34 @@
  */
 
 import { noticeById, SPECIMEN_CONTEXT } from "../../content/notifications";
-import type { SpecimenContext } from "../../content/notifications";
+import type { Audience, SpecimenContext } from "../../content/notifications";
 import { renderNotice } from "./render";
 import type { RenderedEmail } from "./render";
+
+/**
+ * Where a reply goes, decided by who the notice was for.
+ *
+ * Every message sends FROM notices@, which nobody reads — automated mail
+ * in a human inbox buries the human mail. But somebody will reply to a
+ * distribution notice asking what it means, and a reply that bounces is a
+ * worse answer than no email at all.
+ *
+ * So the reply address follows the audience rather than being one global
+ * setting. An applicant asking about their accreditation reaches Investor
+ * Relations, not a general inbox where it waits behind press enquiries.
+ *
+ * These are the three addresses published on /contact. If one of them
+ * stops accepting mail, this silently recreates the bounce it exists to
+ * prevent — they have to be real mailboxes, not just real strings.
+ */
+const REPLY_TO: Record<Audience, string> = {
+  /* Mid-qualification. Every question they have is an IR question. */
+  applicant: "ir@getawaycollective.co",
+  investor: "ir@getawaycollective.co",
+  member: "ir@getawaycollective.co",
+  /* Internal notices. A reply is a colleague, not a counterparty. */
+  office: "hello@getawaycollective.co",
+};
 
 export type SendOutcome =
   | { ok: true; id: string; to: string; providerId?: string }
@@ -92,7 +117,15 @@ export async function sendNotice(
   try {
     const { Resend } = await import("resend");
     const resend = new Resend(apiKey);
-    const { data, error } = await resend.emails.send({ from, to, subject, html, text });
+    const { data, error } = await resend.emails.send({
+      from,
+      to,
+      subject,
+      html,
+      text,
+      /* Sent from an address nobody reads; replies go where a person is. */
+      replyTo: REPLY_TO[spec.audience],
+    });
     if (error) {
       console.error(`[email] Resend rejected ${noticeId}:`, error);
       return { ok: false, id: noticeId, reason: "send-failed", detail: String(error.message ?? error) };
