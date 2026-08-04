@@ -1,0 +1,59 @@
+/* AS-PROP · the property page.
+   Every value a token — §29 forbids design literals. */
+
+.prop{background:var(--gc-paper);color:var(--gc-ink)}
+.prop .wrap{max-width:1160px;margin:0 auto;padding:0 var(--gc-sp-m)}
+
+/* ── Declared frames ─────────────────────────────────────────── */
+.pf{position:relative;margin:0;overflow:hidden}
+.pf img{display:block;width:100%;height:100%;object-fit:cover}
+.pf figcaption{position:absolute;right:var(--gc-sp-2xs);bottom:var(--gc-sp-2xs)}
+/* A placeholder that stays uncomfortable. See the note in property.tsx. */
+.pf-empty{display:flex;flex-direction:column;justify-content:flex-end;gap:var(--gc-sp-3xs);padding:var(--gc-sp-s);border:var(--gc-stroke-idle) dashed var(--gc-hairline);background:var(--gc-panel,transparent);color:var(--gc-steel)}
+.pf[data-aspect="full-bleed"]{aspect-ratio:21/9}
+.pf[data-aspect="wide"]{aspect-ratio:16/9}
+.pf[data-aspect="square"]{aspect-ratio:1/1}
+.pf[data-aspect="portrait"]{aspect-ratio:3/4}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.prop-hero{position:relative}
+.prop-hero .prop-hero-img{aspect-ratio:21/9;min-height:60svh}
+.prop-hero-in{padding:var(--gc-sp-xl) var(--gc-sp-m);max-width:1160px;margin:0 auto}
+.prop-hero-in h1{margin-top:var(--gc-sp-2xs)}
+.prop-hero-in .row{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs);margin-top:var(--gc-sp-m)}
+
+/* ── Spine ───────────────────────────────────────────────────── */
+.prop-spine{position:sticky;top:0;z-index:20;border-top:var(--gc-stroke-idle) solid var(--gc-hairline);border-bottom:var(--gc-stroke-idle) solid var(--gc-hairline);background:var(--gc-paper)}
+.prop-spine .wrap{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-s);padding-top:var(--gc-sp-2xs);padding-bottom:var(--gc-sp-2xs)}
+.prop-spine ul{display:flex;flex-wrap:wrap;gap:var(--gc-sp-s);margin:0;padding:0;list-style:none}
+.prop-spine a{color:inherit;text-decoration:none;text-transform:uppercase;letter-spacing:.1em}
+.prop-spine a:hover{text-decoration:underline}
+
+/* ── Sections ────────────────────────────────────────────────── */
+.prop-sec{padding:var(--gc-sp-3xl) 0}
+.prop-sec.on-panel{background:var(--gc-panel,var(--gc-paper))}
+.prop-sec em{font-style:normal;color:var(--gc-steel)}
+
+.prop-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-l);padding-top:var(--gc-sp-m);border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}
+.prop-authors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-m);margin-top:var(--gc-sp-l)}
+.prop-intent{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--gc-sp-l);align-items:start}
+.prop-pair{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-m)}
+.prop-triad{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gc-sp-s);margin-top:var(--gc-sp-s)}
+.prop-palette{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-l)}
+.prop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-m)}
+.prop-grid>div{padding:var(--gc-sp-s);border:var(--gc-stroke-idle) solid var(--gc-hairline)}
+
+.prop-chapter{margin-top:var(--gc-sp-2xl)}
+.prop-chapter-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--gc-sp-m);margin-top:var(--gc-sp-s)}
+
+.prop-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--gc-sp-l);margin-top:var(--gc-sp-m)}
+/* A held figure set is marked structurally, not by colour alone. */
+.prop-hold{border-left:var(--gc-stroke-active) solid var(--gc-hazard)}
+.prop-tier{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-m)}
+.prop-tier .t-micro.label{text-transform:uppercase}
+
+@media (max-width:900px){
+  .prop-strip,.prop-palette,.prop-triad,.prop-grid,.prop-pair,.prop-authors,.prop-intent,.prop-figures{grid-template-columns:1fr}
+  .prop-tier{flex-direction:column;align-items:flex-start}
+  .prop-hero .prop-hero-img{aspect-ratio:4/5}
+}

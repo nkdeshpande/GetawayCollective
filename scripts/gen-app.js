@@ -131,7 +131,13 @@ const ident = (s) => "P" + s.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_+|_+$/g, 
  */
 const PORTED = {
   "AS-01": { component: "GatewayGrid", from: "@/app/_assemblies/gateway" },
-  "AS-03": { component: "PropertyMasthead", from: "@/app/_assemblies/gateway", needsProperty: true },
+  /* AS-03 was the masthead — one card's worth of a place. The property
+     page replaces it: same route, the whole wireframe, driven by
+     constants/property-page.ts. It takes the SLUG rather than a Property
+     row, because it reads the vehicle and the estate registries itself. */
+  "AS-03": { component: "PropertySurface", from: "@/app/_assemblies/property",
+             param: "vehicle", passAs: "slug",
+             titleFrom: "propertyTitle", titleFromModule: "@/constants/property-page" },
   "AS-04": { component: "CapitalExplainer", from: "@/app/_assemblies/gateway" },
   "AS-23": { component: "Home", from: "@/app/_assemblies/gateway" },
   "AS-24": { component: "Testimonials", from: "@/app/_assemblies/gateway" },
@@ -326,7 +332,30 @@ function pageSource(r) {
    * Everything else resolves its title against the subject, so the
    * specific name appears only to someone who can actually reach it.
    */
-  const meta = indexable
+  /**
+   * A route whose page IS one of several things needs a title per thing.
+   *
+   * /collection/[vehicle] shipped titled "Opportunity" for all three
+   * properties — which is what the route is called in the table, and not
+   * what any of the pages is about. A shared link, a browser tab and a
+   * search result all read that title before anything else.
+   *
+   * `titleFrom` names a resolver called with the route's first param. The
+   * page stays indexable: the title is public either way, so nothing is
+   * disclosed that the page itself does not already show.
+   */
+  const meta = indexable && port && port.titleFrom
+    ? `export async function generateMetadata(\n` +
+      `  props: { params: Promise<{ ${r.params[0]}: string }> },\n` +
+      `): Promise<Metadata> {\n` +
+      `  const params = await props.params;\n` +
+      `  const name = ${port.titleFrom}(params.${r.params[0]});\n` +
+      `  return {\n` +
+      `    title: name ?? ${JSON.stringify(title)},\n` +
+      `    robots: { index: true, follow: true },\n` +
+      `  };\n` +
+      `}\n`
+    : indexable
     ? `export const metadata: Metadata = {\n` +
       `  title: ${JSON.stringify(title)},\n` +
       `  robots: { index: true, follow: true },\n` +
@@ -349,6 +378,12 @@ function pageSource(r) {
     `\nimport type { Metadata } from "next";\n` +
     (port
       ? `import { ${port.component} } from ${JSON.stringify(port.from)};\n` +
+        /* `indexable &&` matters. The same assembly serves an office
+           route, which resolves its title against the subject instead —
+           so it must not import a resolver it never calls. */
+        (indexable && port.titleFrom
+          ? `import { ${port.titleFrom} } from ${JSON.stringify(port.titleFromModule)};\n`
+          : "") +
         (port.needsProperty
           ? `import { propertyBySlug } from "@/app/_assemblies/data";\n` +
             `import { notFound } from "next/navigation";\n`

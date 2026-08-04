@@ -11,18 +11,21 @@
  */
 
 import type { Metadata } from "next";
-import { PropertyMasthead } from "@/app/_assemblies/gateway";
-import { propertyBySlug } from "@/app/_assemblies/data";
-import { notFound } from "next/navigation";
+import { PropertySurface } from "@/app/_assemblies/property";
+import { propertyTitle } from "@/constants/property-page";
 
-export const metadata: Metadata = {
-  title: "Opportunity · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata(
+  props: { params: Promise<{ vehicle: string }> },
+): Promise<Metadata> {
+  const params = await props.params;
+  const name = propertyTitle(params.vehicle);
+  return {
+    title: name ?? "Opportunity · Getaway Collective",
+    robots: { index: true, follow: true },
+  };
+}
 
 export default async function Pcollection_vehicle(props: { params: Promise<{ vehicle: string }> }) {
   const params = await props.params;
-  const property = propertyBySlug(params.vehicle);
-  if (!property) notFound();
-  return <PropertyMasthead p={property} />;
+  return <PropertySurface slug={params.vehicle} />;
 }

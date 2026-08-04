@@ -1,7 +1,7 @@
 /**
  * THE COLLECTION — the three vehicles, transcribed from the intake
  *
- * Source: GC-LLP-INTAKE-TEMPLATE.xlsx, saved 4 Aug 2026 07:31.
+ * Source: GC-LLP-INTAKE-TEMPLATE.xlsx, saved 4 Aug 2026 16:21.
  * Sheets 1 Vehicle · 2 Property · 3 Capital stack · 4 Units & ladder ·
  * 5 Operating & waterfall · 6 Time · 7 Governance.
  *
@@ -298,7 +298,7 @@ const SOLACE: Vehicle = {
   propertyName: "Slowspace Solace",
   assetCode: "CKB-01",
   jurisdiction: "Chikkaballapur, Karnataka",
-  coordinates: null,
+  coordinates: "13°24'40.5\"N 77°49'26.9\"E",
   landArea: "1.55 acres (0.20 owned + 1.35 leased)",
   keys: 6,
   propertyLifecycle: "development",
@@ -321,10 +321,10 @@ const SOLACE: Vehicle = {
     totalEquity: 25000000_0000n,
     promoter: 10000000_0000n,
     offered: 15000000_0000n,
-    units: 6,
+    units: 4,
     unitPrice: 2500000_0000n,
     subscribed: 0,
-    available: 6,
+    available: 4,
     deposit: 50000_0000n,
     lockIn: "36 months from financial close",
   },
@@ -332,19 +332,12 @@ const SOLACE: Vehicle = {
     adr: 12000_0000n,
     occupancyBps: 5000,
     grossRevenue: 13140000_0000n,
-    /*
-     * Four of six, given by the founder on 4 Aug 2026 and superseding the
-     * intake's blank row.
-     *
-     * The operator takes 4,000 bps here against 3,500 on both other
-     * vehicles — a real difference, stated rather than smoothed. What is
-     * still open is how the remaining 4,000 bps divide between the debt
-     * and the partners. On a vehicle carrying a ₹3.0 Cr facility that
-     * split is the whole of what a partner receives.
-     */
+    /* Complete as of the 16:21 intake. The operator takes 4,000 bps here
+       and on The Creek, against 3,500 on Confluence — a real difference
+       between the vehicles, carried rather than smoothed. */
     waterfall: {
       operator: 4000, brand: 1500, adminReserve: 250,
-      sinkingFund: 250, debtService: null, toPartners: null,
+      sinkingFund: 250, debtService: 2308, toPartners: 1692,
     },
     reserveFloor: null,
     yieldConfidence: null,
@@ -369,7 +362,7 @@ const COORGCREEK: Vehicle = {
   propertyName: "Coorg Coffee Creek",
   assetCode: "COG-03",
   jurisdiction: "Coorg, Karnataka",
-  coordinates: null,
+  coordinates: "12°23'25.8\"N 75°49'15.2\"E",
   landArea: "10 acres (possession)",
   keys: 20,
   propertyLifecycle: "acquired",
@@ -408,8 +401,8 @@ const COORGCREEK: Vehicle = {
        reconciliation will chase. */
     grossRevenue: 48180000_0000n,
     waterfall: {
-      operator: 3500, brand: 1500, adminReserve: 250,
-      sinkingFund: 250, debtService: 1500, toPartners: 3000,
+      operator: 4000, brand: 1500, adminReserve: 250,
+      sinkingFund: 250, debtService: 1500, toPartners: 2500,
     },
     reserveFloor: 8700000_0000n,
     yieldConfidence: "estimated",
@@ -491,41 +484,46 @@ export const CONFLICTS: readonly Conflict[] = [
     what: "The capital stack disagrees with the offering sheet.",
     sides: [
       "Sheet 3 (Capital stack): equity ₹2.00 Cr, project ₹5.00 Cr",
-      "Sheet 4 (Units & ladder): equity ₹2.50 Cr, project ₹5.50 Cr",
+      "Sheet 4 (Units & ladder): equity ₹2.50 Cr, offering ₹1.50 Cr, project ₹5.50 Cr",
+      "Sheet 4 units: 4 × ₹25 lakh = ₹1.00 Cr, which is ₹50 lakh short of its own offering",
     ],
     why:
-      "₹50 lakh of equity, and the two sheets are the two places the same number is stated. Every " +
-      "unit price, share percentage and yield for this vehicle divides by it.",
-    settledBy: "Whichever sheet is current",
+      "The 16:21 intake cut Solace from six units to four without moving the offering, so sheet 4 " +
+      "now contradicts itself as well as sheet 3 — by the same ₹50 lakh. Both discrepancies " +
+      "disappear if equity is ₹2.00 Cr with a ₹1.00 Cr promoter stake and a ₹1.00 Cr offering, " +
+      "which is sheet 3 plus four units at their stated price. That reading is arithmetically " +
+      "clean and it is not what sheet 4 says.",
+    settledBy: "Whether the offering is ₹1.00 Cr (four units) or ₹1.50 Cr (six)",
   },
   {
     id: "C-04", vehicle: "slowspace", severity: "blocking",
     what: "Site area disagrees with the figure the platform has been showing.",
     sides: [
       "Intake sheet 2: .3 acres · dual frontage",
-      "app/_assemblies/data.ts, from the site dossier: 1.42 acres · dual frontage",
-      "Spatial ledger (Confluence): site 4.4 acres, buildable envelope 2.3 acres",
+      "Spatial ledger, genesis registry (16:20): Confluence 0.3",
+      "Spatial ledger, land profile: Confluence site 4.4 acres, buildable 2.3 acres",
+      "app/_assemblies/data.ts, from the site dossier: 1.42 acres",
     ],
     why:
-      "Three figures for one site, on the vehicle that is already public and already has five of " +
-      "six units subscribed. The ledger's 2.3-acre buildable envelope is close enough to the " +
-      "intake's '.3' to suggest a truncated 2.3 — which would make the site 4.4 acres and both " +
-      "smaller figures wrong. Somebody who has committed money has been shown one of these.",
-    settledBy: "The survey record, against the Confluence site dossier",
+      "The 16:20 ledger changed its registry row for Confluence from 4.4 acres to 0.3 and left its " +
+      "own land-and-development profile at 4.4. Two of the four sources now say 0.3, which makes " +
+      "that the likeliest figure and makes the ledger internally inconsistent. Still blocking, and " +
+      "for the same reason as before: this is the vehicle with five of six units already " +
+      "subscribed, and somebody has been shown one of these numbers.",
+    settledBy: "The survey record. If 0.3 is right, the ledger's land profile needs correcting too.",
   },
   {
-    id: "C-05", vehicle: "solace", severity: "blocking",
-    what: "The waterfall states four stages of six. — PARTLY SETTLED 4 Aug 2026",
+    id: "C-05", vehicle: "solace", severity: "advisory",
+    what: "The waterfall closes, but no reserve floor is set. — SETTLED 4 Aug 2026",
     sides: [
-      "Stated: operator 4,000 · brand 1,500 · admin reserve 250 · sinking fund 250 = 6,000 bps",
-      "Outstanding: debt service and to partners, together 4,000 bps",
+      "Waterfall: 4,000 · 1,500 · 250 · 250 · 2,308 · 1,692 = 10,000 bps",
+      "Reserve floor: still blank, on both this vehicle and its sinking fund stage",
     ],
     why:
-      "The four settled stages supersede the intake's blank row. What remains is the one split a " +
-      "partner actually cares about: on a vehicle carrying a ₹3.0 Cr facility, how 4,000 bps of " +
-      "gross divides between servicing that debt and reaching the partners. Nothing downstream — " +
-      "distribution, yield, reserve adequacy — can be computed until it is set.",
-    settledBy: "The debt service and partner shares, which must total 4,000 bps",
+      "The six stages now close at 100%, so a partner share can finally be computed. What is still " +
+      "absent is the floor stage 6 is tested against — L1-16 §2.6a stops a distribution that would " +
+      "take the reserve below it, and with no floor that test cannot run at all.",
+    settledBy: "The reserve floor for this vehicle",
   },
   {
     id: "C-06", vehicle: "slowspace", severity: "blocking",
@@ -578,6 +576,20 @@ export const CONFLICTS: readonly Conflict[] = [
       "disagree by five months, and the earlier date is the one in the construction programme " +
       "while the later one is in the document a partner reads.",
     settledBy: "The programme date, against what subscribers have been told",
+  },
+  {
+    id: "C-10", vehicle: "coorgcreek", severity: "advisory",
+    what: "The Creek is SlowSpace, not ESKAPE. — SETTLED 4 Aug 2026",
+    sides: [
+      "Spatial ledger registry and codex: The Creek is ESKAPE, T3 Flagship (ESKAPE-class)",
+      "Founder, 4 Aug 2026: all three vehicles in scope are SlowSpace",
+    ],
+    why:
+      "Scope resolves C-07 in the founder's favour, and the ledger has not caught up — its Creek " +
+      "codex still reads T3 FLAGSHIP (ESKAPE-CLASS). Recorded rather than closed silently, because " +
+      "the brand decides the design pack and the price position, and the ledger will be read again " +
+      "by somebody who was not in this conversation.",
+    settledBy: "Settled. The ledger needs updating to match.",
   },
 ];
 

@@ -61,12 +61,29 @@ export type ClimatePack =
   | "PACK_RIPARIAN_FOREST"
   | "PACK_MOUNTAIN_RIDGE";
 
-export type Brand = "SlowSpace" | "ESKAPE";
+/**
+ * One brand in scope.
+ *
+ * The ledger marks The Creek ESKAPE and describes it as "T3 Flagship
+ * (ESKAPE-class)". The founder placed all three in-scope vehicles under
+ * SlowSpace on 4 Aug 2026, which settles it — see C-10, kept as an
+ * advisory so the ledger gets corrected rather than quietly diverging.
+ */
+export type Brand = "SlowSpace";
 
 export type DevelopmentStatus = "confirmed" | "in-progress";
 
-export type EstateId =
-  | "solace" | "coffee-fields" | "confluence" | "the-creek" | "nine-hills";
+/**
+ * Three, not five.
+ *
+ * The Genesis Portfolio registry lists five estates. Scope as of 4 Aug
+ * 2026 is the three SlowSpace ones — Solace, Confluence and The Creek —
+ * and each has a vehicle. Coffee Fields Forever and Nine Hills are real
+ * and are not in scope, so they are not modelled here: an estate in this
+ * registry is one the platform can be asked about, and carrying two it
+ * cannot answer for would be the same mistake as Kyoto House.
+ */
+export type EstateId = "solace" | "confluence" | "the-creek";
 
 /**
  * One key typology on one estate. The unit the whole system repeats.
@@ -163,40 +180,15 @@ export const ESTATES: readonly Estate[] = [
     programme: { start: "2026-07", end: "2027-06" },
   },
   {
-    id: "coffee-fields",
-    name: "Coffee Fields Forever",
-    brand: "ESKAPE",
-    region: "Coorg",
-    pack: "PACK_DENSE_FOREST",
-    siteArea: 3.0,
-    buildableEnvelope: 2.0,
-    landscapePreserved: "≥65%",
-    keys: 20,
-    status: "confirmed",
-    strategicRole: "Establish the flagship benchmark for ESKAPE",
-    ecology: "Coffee estate and dense forest",
-    character: "Immersion within a living plantation ecosystem",
-    /* No vehicle, and this is the estate the intake's name pointed at
-       without meaning to. "Coorg Coffee Creek" borrows this estate's
-       middle word; the vehicle is The Creek. Confirmed 4 Aug 2026. */
-    vehicle: null,
-    footprint: { lodgingBuilt: 11372, workingBuilt: 3760, hardscape: 7905, softscape: 4800 },
-    keyTypes: [
-      { name: "Earth (Prithvi)", count: 6, area: 450, note: "Mivan cast, modular." },
-      { name: "Ether (Akasha)", count: 6, area: 450, note: "Mivan cast, modular." },
-      { name: "Air (Vayu)", count: 8, area: 450, note: "Mivan cast, modular." },
-      { name: "Tree House", count: 1, area: 322,
-        note: "Tension-suspended stilt cabin in the canopy. Not Mivan." },
-    ],
-    programme: { start: "2026-11", end: "2027-10" },
-  },
-  {
     id: "confluence",
     name: "Confluence",
     brand: "SlowSpace",
     region: "Mangaluru–Udupi",
     pack: "PACK_COASTAL_ESTUARY",
-    siteArea: 4.4,
+    /* The 16:20 registry changed this from 4.4 to 0.3, while the same
+       workbook's land profile still reads 4.4. Carried as the registry
+       states it and registered as C-04, unresolved. */
+    siteArea: 0.3,
     buildableEnvelope: 2.3,
     landscapePreserved: "≥65%",
     keys: 12,
@@ -220,7 +212,7 @@ export const ESTATES: readonly Estate[] = [
   {
     id: "the-creek",
     name: "The Creek",
-    brand: "ESKAPE",
+    brand: "SlowSpace",
     region: "Coorg",
     pack: "PACK_RIPARIAN_FOREST",
     siteArea: 10.0,
@@ -244,32 +236,18 @@ export const ESTATES: readonly Estate[] = [
      */
     vehicle: "coorgcreek",
     alsoKnownAs: ["Coorg Coffee Creek"],
-    /* No footprint matrix in the ledger. Stated by the founder as not
-       available yet rather than missing by oversight. */
-    footprint: null,
-    keyTypes: [],
+    /* The 16:20 ledger adds The Creek's codex — Sheet2, DOS-004 — which
+       is where this comes from. It was genuinely absent before. */
+    footprint: { lodgingBuilt: 11690, workingBuilt: 4060, hardscape: 15600, softscape: null },
+    keyTypes: [
+      { name: "Upper Escarpment · Ridge", count: 16, area: 465,
+        note: "ARC-CH-02. Four clusters of four, on a pier field among the trees so the ground " +
+              "stays unsealed and monsoon runoff is unimpeded. View cones angled outward at 15°." },
+      { name: "Stream-Side · Summit", count: 4, area: 550,
+        note: "ARC-CH-05. One linear cluster on tension piles above the 100-year flood band, with " +
+              "no wet concrete near the water. The stream is the acoustic masking." },
+    ],
     programme: { start: "2027-10", end: "2028-09" },
-  },
-  {
-    id: "nine-hills",
-    name: "Nine Hills",
-    brand: "SlowSpace",
-    region: "Chikmagalur",
-    pack: "PACK_MOUNTAIN_RIDGE",
-    siteArea: 5.0,
-    buildableEnvelope: 2.0,
-    landscapePreserved: "≥65%",
-    /* The registry says 12–20; the gantt commits to 16. The gantt is the
-       one with a date attached, so it is the one carried. */
-    keys: 16,
-    status: "in-progress",
-    strategicRole: "Standardise mountain hospitality for future replication",
-    ecology: "Mountain ridge and mist forest",
-    character: "Elevation, contemplation and panoramic views",
-    vehicle: null,
-    footprint: null,
-    keyTypes: [],
-    programme: { start: "2027-09", end: "2028-08" },
   },
 ];
 
@@ -320,10 +298,25 @@ export const MAX_KEY_SQFT = 550;
 /** The stated minimum. Reported alongside each estate, never derived. */
 export const MIN_LANDSCAPE_RATIO = 0.65;
 
-export const ROADMAP: readonly { phase: string; estates: readonly EstateId[]; objective: string }[] = [
-  { phase: "Phase I", estates: ["solace", "coffee-fields", "confluence"],
+/**
+ * The deployment phases, filtered to what is in scope.
+ *
+ * `alsoInPhase` names the out-of-scope estates rather than dropping them,
+ * because the phase is a construction sequence and a single Mivan
+ * formwork set moves between all five. Omitting two would make the
+ * staggered start dates look arbitrary.
+ */
+export const ROADMAP: readonly {
+  phase: string;
+  estates: readonly EstateId[];
+  alsoInPhase: readonly string[];
+  objective: string;
+}[] = [
+  { phase: "Phase I", estates: ["solace", "confluence"],
+    alsoInPhase: ["Coffee Fields Forever"],
     objective: "Validate the SGDS reference architecture" },
-  { phase: "Phase 1.5", estates: ["the-creek", "nine-hills"],
+  { phase: "Phase 1.5", estates: ["the-creek"],
+    alsoInPhase: ["Nine Hills"],
     objective: "Complete the climate mutation library" },
 ];
 
