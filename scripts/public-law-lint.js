@@ -148,8 +148,8 @@ const LEAK = /\bvantage\b|GC-\d{3}|AS-\d{2}\b/g;
    growing while that work happens. */
 const BASELINE = {
   "app/_assemblies/atoms.tsx": 4,
-  "app/_assemblies/shell.tsx": 7,
-  "app/_assemblies/gateway.tsx": 19,
+  "app/_assemblies/shell.tsx": 2,
+  "app/_assemblies/gateway.tsx": 18,
   "app/_assemblies/gatewaypages.tsx": 19,
   "app/_assemblies/publicpages.tsx": 21,
   "app/_assemblies/systempages.tsx": 0,

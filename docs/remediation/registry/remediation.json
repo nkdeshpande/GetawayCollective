@@ -73,7 +73,7 @@
       "id": "REM-008",
       "title": "25 declared media absences render as 25 placeholders",
       "severity": "P1",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.08"
       ]
@@ -100,7 +100,7 @@
       "id": "REM-011",
       "title": "The Collection defends itself before it seduces",
       "severity": "P2",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.05"
       ]

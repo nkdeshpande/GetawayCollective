@@ -65,12 +65,14 @@ import type { Subject } from "@/lib/access";
  * "office" on the strength of a session alone — that word requires a
  * live grant, which is what `rights` being non-empty means.
  */
-function vantageLabel(s: Subject): string {
-  if (s.rights.length > 0) return "Office vantage";
-  if (s.member) return "Member vantage";
-  if (s.accredited) return "Accredited vantage";
-  if (s.identified) return "Identified vantage";
-  return "Public vantage";
+function vantageLabel(s: Subject): string | null {
+  if (s.rights.length > 0) return "Office";
+  if (s.member) return "Partner";
+  if (s.accredited) return "Accredited";
+  /* Null for everybody else. This said "Public vantage" beside "Not
+     signed in" — our word for an aperture, printed to a visitor who has
+     no use for it, restating what the line above already says. */
+  return null;
 }
 import { plate } from "./data";
 import { hueOf } from "./compose";
@@ -322,7 +324,9 @@ export function Shell({
             <span className="sq" aria-hidden="true">{subject.identified ? "•" : "—"}</span>
             <span className="who-meta">
               <span className="nm">{subject.identified ? "Signed in" : "Not signed in"}</span>
-              <span className="rl t-mono-s">{vantageLabel(subject)}</span>
+              {vantageLabel(subject)
+                ? <span className="rl t-mono-s">{vantageLabel(subject)}</span>
+                : null}
             </span>
           </div>
           {/* A button, not a link. Sign-out is a state change, and a GET

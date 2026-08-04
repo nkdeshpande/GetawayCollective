@@ -54,23 +54,31 @@ import { Footer } from "./atoms";
  * which is the correct amount of comfortable.
  */
 function Frame({ m, className = "" }: { m: MediaSlot; className?: string }) {
-  if (m.asset) {
-    return (
-      <figure className={`pf ${className}`} data-aspect={m.aspect}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={m.asset} alt={m.subject} />
-        <figcaption className="t-micro dim">
-          {m.kind}{m.taken ? ` · ${m.taken}` : ""}
-        </figcaption>
-      </figure>
-    );
-  }
+  /*
+   * PUBLIC.08. An unproduced frame renders NOTHING.
+   *
+   * This used to draw a labelled placeholder per slot, which was honest
+   * and — at twenty-five of them on a page whose entire proposition is an
+   * extraordinary physical place — read as an unfinished product rather
+   * than a candid one. Absence acquired the visual authority of the thing
+   * that was absent, which inverts the intent exactly.
+   *
+   * The shot list is not lost: it is still declared in
+   * constants/property-page.ts, still counted by mediaGap(), and still
+   * the commission brief. It simply belongs to the office rather than to
+   * a stranger deciding whether they want the place. The page states the
+   * gap ONCE, at the end, where it reads as candour instead of scaffolding.
+   */
+  if (!m.asset) return null;
   return (
-    <div className={`pf pf-empty ${className}`} data-aspect={m.aspect} role="img"
-         aria-label={`Not yet produced: ${m.subject}`}>
-      <span className="t-micro label">{m.kind} · not yet produced</span>
-      <p className="t-body-s">{m.subject}</p>
-    </div>
+    <figure className={`pf ${className}`} data-aspect={m.aspect}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={m.asset} alt={m.subject} />
+      {/* The wireframe's own instruction: kind and date on every frame. */}
+      <figcaption className="t-micro dim">
+        {m.kind}{m.taken ? ` · ${m.taken}` : ""}
+      </figcaption>
+    </figure>
   );
 }
 
@@ -173,11 +181,7 @@ export function PropertySurface({ slug }: { slug: string }) {
           <div className="prop-authors">
             {["Architectural author", "Land and delivery author"].map((role) => (
               <article key={role} className="panel on-paper">
-                <div className="pf pf-empty" data-aspect="portrait" role="img"
-                     aria-label={`No portrait: ${role} is not yet appointed`}>
-                  <span className="t-micro label">portrait · not yet produced</span>
-                </div>
-                <span className="t-micro label" style={{ marginTop: "var(--gc-sp-2xs)" }}>{role}</span>
+                <span className="t-micro label">{role}</span>
                 {/* Withheld rather than invented. An appointment is a
                     recorded act, and naming somebody before it exists
                     would be the same failure as an unappraised valuation. */}
@@ -465,10 +469,18 @@ export function PropertySurface({ slug }: { slug: string }) {
             materials, not by this public property page.
           </p>
 
-          {/* The shot list, stated. See PROPERTY_PAGE_LAWS. */}
-          <p className="t-mono-s dim" style={{ marginTop: "var(--gc-sp-l)" }}>
-            {gap.filled} of {gap.declared} frames on this page have been produced.
-          </p>
+          {/*
+            The gap, stated ONCE and only while it exists.
+            Twenty-five placeholders said the same thing twenty-five times
+            and made the absence the loudest thing on the page.
+          */}
+          {gap.filled < gap.declared ? (
+            <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-l)" }}>
+              Photography and drawings for this property are being produced. {gap.declared} frames
+              are commissioned and {gap.filled} are finished; the rest will appear here as they
+              are made, each carrying what it is and when it was taken.
+            </p>
+          ) : null}
         </div>
       </section>
 

@@ -106,14 +106,22 @@ export function GatewayGrid() {
     <>
       <section data-sec="AS-01.a">
         <div className="wrap">
+          {/* The assembly id was rendered at full weight above the page's
+              own name (PUBLIC.01). */}
           <div className="sec-head">
-            <span className="sec-ref">AS-01</span>
             <span className="t-micro label">The Collection</span>
           </div>
-          <h1 className="t-display-xl">The Collection</h1>
+          <h1 className="t-display-xl">Three places, three vehicles.</h1>
+          {/*
+            PUBLIC.05. This opened by explaining what the interface
+            withholds — constraint before object, rigour offered to
+            somebody not yet given a reason to want anything. The
+            discipline has not gone anywhere; it sits after the places now
+            rather than greeting people with it.
+          */}
           <p className="t-body-l dim measure" style={{ marginTop: "var(--gc-sp-s)" }}>
-            Three properties, held in three vehicles. What you can see here is what can be said
-            without a figure needing its provenance alongside it.
+            Each one is a house worth returning to, owned through a company that holds it and
+            nothing else. All three in Karnataka, within a few hours of each other.
           </p>
         </div>
       </section>

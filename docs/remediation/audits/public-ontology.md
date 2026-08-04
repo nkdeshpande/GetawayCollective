@@ -10,32 +10,26 @@ constants/remediation.ts follow-ups, not here — this file is regenerated.
 |---|---|---|---|
 | app/_assemblies/atoms.tsx | 112 | `export function Header({ vantage = "gateway" }: { vantage?: string }) {` | UNCLASSIFIED |
 | app/_assemblies/atoms.tsx | 119 | `<span className="t-micro label">{vantage} vantage</span>` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 16 | `if (s.rights.length > 0) return "Office vantage";` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 17 | `if (s.member) return "Member vantage";` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 18 | `if (s.accredited) return "Accredited vantage";` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 19 | `if (s.identified) return "Identified vantage";` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 20 | `return "Public vantage";` | UNCLASSIFIED |
 | app/_assemblies/shell.tsx | 175 | `<span className="vantage t-mono-s" title="The aperture this surface is seen through">` | UNCLASSIFIED |
 | app/_assemblies/shell.tsx | 176 | `{here ? here.group : "—"} vantage` | UNCLASSIFIED |
 | app/_assemblies/gateway.tsx | 75 | `<section data-sec="AS-01.a">` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 78 | `<span className="sec-ref">AS-01</span>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 89 | `<section data-sec="AS-01.b">` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 99 | `<section data-sec="AS-01.c" style={{ borderBottom: "none" }}>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 136 | `<section data-sec="AS-03.a" style={{ paddingTop: 0 }}>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 168 | `<section data-sec="AS-03.b">` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 222 | `vantage.` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 233 | `<strong>30 nights</strong> a year, scheduled from the member vantage.` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 243 | `<section data-sec="AS-03.c" style={{ borderBottom: "none" }}>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 275 | `<section data-sec="AS-04.a">` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 290 | `<section data-sec="AS-04.b">` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 293 | `<span className="sec-ref">AS-04.b</span>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 314 | `<section data-sec="AS-04.c" className="on-paper">` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 317 | `<span className="sec-ref">AS-04.c</span>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 347 | `<section data-sec="AS-04.d" className="on-paper" style={{ borderBottom: "none" }}>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 350 | `<span className="sec-ref">AS-04.d</span>` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 388 | `eyebrow="Voices · AS-24"` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 399 | `<section data-sec="AS-24.a">` | UNCLASSIFIED |
-| app/_assemblies/gateway.tsx | 455 | `<section data-sec="AS-23.c">` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 90 | `<section data-sec="AS-01.b">` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 100 | `<section data-sec="AS-01.c" style={{ borderBottom: "none" }}>` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 137 | `<section data-sec="AS-03.a" style={{ paddingTop: 0 }}>` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 169 | `<section data-sec="AS-03.b">` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 223 | `vantage.` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 234 | `<strong>30 nights</strong> a year, scheduled from the member vantage.` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 244 | `<section data-sec="AS-03.c" style={{ borderBottom: "none" }}>` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 276 | `<section data-sec="AS-04.a">` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 291 | `<section data-sec="AS-04.b">` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 294 | `<span className="sec-ref">AS-04.b</span>` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 315 | `<section data-sec="AS-04.c" className="on-paper">` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 318 | `<span className="sec-ref">AS-04.c</span>` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 348 | `<section data-sec="AS-04.d" className="on-paper" style={{ borderBottom: "none" }}>` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 351 | `<span className="sec-ref">AS-04.d</span>` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 389 | `eyebrow="Voices · AS-24"` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 400 | `<section data-sec="AS-24.a">` | UNCLASSIFIED |
+| app/_assemblies/gateway.tsx | 456 | `<section data-sec="AS-23.c">` | UNCLASSIFIED |
 | app/_assemblies/gatewaypages.tsx | 19 | `<section data-sec="AS-07.a">` | UNCLASSIFIED |
 | app/_assemblies/gatewaypages.tsx | 21 | `<span className="sec-ref">AS-07 · The Portfolio Narrative</span>` | UNCLASSIFIED |
 | app/_assemblies/gatewaypages.tsx | 33 | `<section key={b.name} data-sec="AS-07.b">` | UNCLASSIFIED |
@@ -85,7 +79,7 @@ constants/remediation.ts follow-ups, not here — this file is regenerated.
 | app/_assemblies/documents.tsx | 296 | `<section data-sec="AS-30.d">` | UNCLASSIFIED |
 | app/_assemblies/documents.tsx | 322 | `<section data-sec="AS-30.a">` | UNCLASSIFIED |
 | app/_assemblies/documents.tsx | 332 | `<section data-sec="AS-30.a">` | UNCLASSIFIED |
-| app/_assemblies/property.tsx | 308 | `<p className="t-body">Reports, documents and resolutions, at the vantage you hold</p>` | UNCLASSIFIED |
+| app/_assemblies/property.tsx | 298 | `<p className="t-body">Reports, documents and resolutions, at the vantage you hold</p>` | UNCLASSIFIED |
 | app/_system/surface.tsx | 34 | `{assembly ? `${assembly} · ${a?.vantage ?? "?"} vantage` : "Shell · no assembly"}` | UNCLASSIFIED |
 
-Total lines carrying ontology: 79. The lint ratchets the term count; this lists where.
+Total lines carrying ontology: 73. The lint ratchets the term count; this lists where.

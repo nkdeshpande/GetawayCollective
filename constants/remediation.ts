@@ -356,7 +356,11 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "visual",
     dependencies: [],
-    status: "OPEN",
+    /* Frame() now returns null for an unproduced slot and the page states
+       the gap once, at the end. The shot list survives in
+       constants/property-page.ts and mediaGap() — it is a commission
+       brief, and a brief belongs to the office. */
+    status: "RESOLVED",
   }),
 
   R({
@@ -429,7 +433,9 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "editorial",
     dependencies: [],
-    status: "OPEN",
+    /* The heading is the places now; the provenance discipline moved
+       after them. */
+    status: "RESOLVED",
   }),
 
   R({
