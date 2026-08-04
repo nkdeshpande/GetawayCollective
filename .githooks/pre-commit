@@ -14,6 +14,10 @@ node scripts/assembly-lint.js       || { echo "BLOCKED: assembly laws"; exit 1; 
 node scripts/route-lint.js          || { echo "BLOCKED: information architecture"; exit 1; }
 node scripts/eligibility-lint.js    || { echo "BLOCKED: role eligibility layer (RBAC LAW 1)"; exit 1; }
 node scripts/taxonomy-lint.js       || { echo "BLOCKED: cross-cutting taxonomies / critical-tone budget"; exit 1; }
+node scripts/journal-lint.js        || { echo "BLOCKED: journal editorial axes"; exit 1; }
+node scripts/link-lint.js           || { echo "BLOCKED: internal links (a 404 a reader is guaranteed to find)"; exit 1; }
+node scripts/ai-lint.js             || { echo "BLOCKED: agent contracts (FIX-10)"; exit 1; }
+node scripts/public-law-lint.js     || { echo "BLOCKED: public laws / remediation registry"; exit 1; }
 node scripts/gen-app.js --check     || { echo "BLOCKED: app tree has drifted from the route table"; exit 1; }
 node scripts/token-lint.js          || { echo "BLOCKED: design literals / contrast (§29)"; exit 1; }
 node scripts/gen-schemas.js --check || { echo "BLOCKED: contracts diverged (E-06)"; exit 1; }
