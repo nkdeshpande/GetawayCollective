@@ -87,14 +87,67 @@ export interface Ladder {
   readonly ceilingBps: number;
 }
 
-/** The six stages, in order, in basis points of gross. Must sum to 10000. */
+/**
+ * The six stages, in order, in basis points of gross.
+ *
+ * Every stage is individually nullable because a waterfall arrives in
+ * pieces. Solace states four of six: the operator, brand, admin reserve
+ * and sinking fund are settled, and the split of what remains between
+ * debt service and the partners is not.
+ *
+ * Modelling that as `Waterfall | null` — which this was — forced a choice
+ * between throwing away four real figures and inventing two. Nullable
+ * stages let a partial waterfall be exactly what it is, and
+ * `waterfallState()` below is what reads it.
+ */
 export interface Waterfall {
-  readonly operator: number;
-  readonly brand: number;
-  readonly adminReserve: number;
-  readonly sinkingFund: number;
-  readonly debtService: number;
-  readonly toPartners: number;
+  readonly operator: number | null;
+  readonly brand: number | null;
+  readonly adminReserve: number | null;
+  readonly sinkingFund: number | null;
+  readonly debtService: number | null;
+  readonly toPartners: number | null;
+}
+
+export const WATERFALL_STAGES = [
+  ["operator", "1 Operator"], ["brand", "2 Brand"],
+  ["adminReserve", "3 Admin reserve"], ["sinkingFund", "4 Sinking fund"],
+  ["debtService", "5 Debt service"], ["toPartners", "6 To partners"],
+] as const;
+
+/** Basis points actually stated. Never treats a blank as a zero. */
+export const statedBps = (w: Waterfall | null): number =>
+  w === null ? 0 : WATERFALL_STAGES.reduce((n, [k]) => n + (w[k] ?? 0), 0);
+
+export const statedStages = (w: Waterfall | null): number =>
+  w === null ? 0 : WATERFALL_STAGES.filter(([k]) => w[k] !== null).length;
+
+/**
+ * How much of the waterfall is known.
+ *
+ * `complete` means all six are stated AND they close at 100% — a
+ * waterfall that names every stage and sums to 96% is not complete, it is
+ * wrong, and it gets its own answer so nobody reads "complete" as
+ * "checked".
+ */
+export function waterfallState(w: Waterfall | null): {
+  state: "absent" | "partial" | "complete" | "does-not-close";
+  statedBps: number;
+  outstandingBps: number;
+  missing: string[];
+} {
+  const bps = statedBps(w);
+  const missing = w === null
+    ? WATERFALL_STAGES.map(([, label]) => label)
+    : WATERFALL_STAGES.filter(([k]) => w[k] === null).map(([, label]) => label);
+
+  const state =
+    w === null || statedStages(w) === 0 ? "absent" as const
+      : missing.length > 0 ? "partial" as const
+      : bps === 10000 ? "complete" as const
+      : "does-not-close" as const;
+
+  return { state, statedBps: bps, outstandingBps: 10000 - bps, missing };
 }
 
 export interface Operating {
@@ -279,13 +332,20 @@ const SOLACE: Vehicle = {
     adr: 12000_0000n,
     occupancyBps: 5000,
     grossRevenue: 13140000_0000n,
-    /* CONFLICT C-05. Sheet 5 leaves five of the six stages blank and puts
-       10000 bps against "6 To partners" — 100% of gross to partners, with
-       no operator, brand, reserve, sinking fund or debt service. That
-       cannot be the intended split, so it is not transcribed at all.
-       null means the waterfall is unknown; writing the row down would
-       make an obvious mis-key look like a decision. */
-    waterfall: null,
+    /*
+     * Four of six, given by the founder on 4 Aug 2026 and superseding the
+     * intake's blank row.
+     *
+     * The operator takes 4,000 bps here against 3,500 on both other
+     * vehicles — a real difference, stated rather than smoothed. What is
+     * still open is how the remaining 4,000 bps divide between the debt
+     * and the partners. On a vehicle carrying a ₹3.0 Cr facility that
+     * split is the whole of what a partner receives.
+     */
+    waterfall: {
+      operator: 4000, brand: 1500, adminReserve: 250,
+      sinkingFund: 250, debtService: null, toPartners: null,
+    },
     reserveFloor: null,
     yieldConfidence: null,
   },
@@ -455,16 +515,17 @@ export const CONFLICTS: readonly Conflict[] = [
   },
   {
     id: "C-05", vehicle: "solace", severity: "blocking",
-    what: "The waterfall is not stated.",
+    what: "The waterfall states four stages of six. — PARTLY SETTLED 4 Aug 2026",
     sides: [
-      "Sheet 5: five of six stages blank, with 10000 bps against 'to partners'",
-      "Every other vehicle: six stages summing to 10000 bps",
+      "Stated: operator 4,000 · brand 1,500 · admin reserve 250 · sinking fund 250 = 6,000 bps",
+      "Outstanding: debt service and to partners, together 4,000 bps",
     ],
     why:
-      "Read literally it gives partners 100% of gross with no operator share, no reserve, no " +
-      "sinking fund and no debt service, on a vehicle carrying a ₹3.0 Cr facility. It is a blank " +
-      "row rather than a split, so nothing is transcribed.",
-    settledBy: "The six-stage split for this vehicle",
+      "The four settled stages supersede the intake's blank row. What remains is the one split a " +
+      "partner actually cares about: on a vehicle carrying a ₹3.0 Cr facility, how 4,000 bps of " +
+      "gross divides between servicing that debt and reaching the partners. Nothing downstream — " +
+      "distribution, yield, reserve adequacy — can be computed until it is set.",
+    settledBy: "The debt service and partner shares, which must total 4,000 bps",
   },
   {
     id: "C-06", vehicle: "slowspace", severity: "blocking",
@@ -546,10 +607,21 @@ export function publishable(v: Vehicle): { ok: boolean; because: string[] } {
   const blocking = blockingFor(v.key);
   const because = blocking.map((c) => `${c.id}: ${c.what}`);
 
-  /* Structural completeness, separately from the conflicts. A vehicle with
-     no waterfall cannot state what a partner receives, and a public
-     offering page that cannot answer that should not exist. */
-  if (v.operating.waterfall === null) because.push("The waterfall is not stated.");
+  /* Structural completeness, separately from the conflicts. A vehicle
+     that cannot state what a partner receives should not have a public
+     offering page, and a PARTIAL waterfall cannot state it — the
+     outstanding stages are exactly the ones that decide the answer. */
+  const wf = waterfallState(v.operating.waterfall);
+  if (wf.state === "absent") {
+    because.push("The waterfall is not stated.");
+  } else if (wf.state === "partial") {
+    because.push(
+      `The waterfall states ${wf.statedBps.toLocaleString()} of 10,000 bps. ` +
+      `Outstanding: ${wf.missing.join(", ")}.`,
+    );
+  } else if (wf.state === "does-not-close") {
+    because.push(`The waterfall names every stage but sums to ${wf.statedBps} bps, not 10,000.`);
+  }
   if (v.governance === null) because.push("Governance thresholds are not stated.");
 
   return { ok: because.length === 0, because };

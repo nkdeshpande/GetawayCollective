@@ -93,7 +93,7 @@ export function allocate(total: bigint, weights: bigint[]): bigint[] {
  * constants/taxonomies.ts, read through the domain layer.
  */
 export type { Confidence } from "@/lib/provenance";
-import { VEHICLES, publishable } from "../../constants/vehicles";
+import { VEHICLES, publishable, waterfallState } from "../../constants/vehicles";
 import { estateOf } from "../../constants/spatial";
 import type { Confidence } from "@/lib/provenance";
 
@@ -183,7 +183,14 @@ export const PROPERTIES: readonly Property[] = VEHICLES.map((v): Property => {
   /* A vehicle with no waterfall cannot state a yield, and a placeholder
      yield on a card is the invented figure this replacement removed. */
   const yieldOf = (): { v: number; conf: Confidence } => {
-    if (!v.operating.waterfall) return { v: 0, conf: "UNKNOWN" };
+    /* A COMPLETE waterfall, not merely a present one. Solace states four
+       of six stages and the partner share is one of the two missing, so
+       there is nothing to compute a yield from — and a partial waterfall
+       is exactly the case where a plausible number would slip through. */
+    const wf = waterfallState(v.operating.waterfall);
+    if (wf.state !== "complete" || v.operating.waterfall?.toPartners == null) {
+      return { v: 0, conf: "UNKNOWN" };
+    }
     const toPartners = (v.operating.grossRevenue * BigInt(v.operating.waterfall.toPartners)) / 10000n;
     const bps = Number((toPartners * 10000n) / v.offering.totalEquity);
     return {

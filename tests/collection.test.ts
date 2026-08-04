@@ -14,7 +14,7 @@
 import { describe, it, expect } from "vitest";
 import {
   VEHICLES, CONFLICTS, conflictsFor, blockingFor,
-  publishable, promoterBps,
+  publishable, promoterBps, waterfallState,
 } from "../constants/vehicles";
 import {
   ESTATES, estateOf, estateById, standardsBreached, TOTAL_KEYS,
@@ -44,22 +44,33 @@ describe("the three vehicles", () => {
     for (const v of VEHICLES) expect(toSlug(v.propertyName)).toBe(v.slug);
   });
 
-  it("states a waterfall that sums to 100%, or none at all", () => {
+  it("never reports a waterfall as complete unless it closes at 100%", () => {
     for (const v of VEHICLES) {
-      const w = v.operating.waterfall;
-      if (w === null) continue;
-      const sum = w.operator + w.brand + w.adminReserve + w.sinkingFund + w.debtService + w.toPartners;
-      expect(sum, v.key).toBe(10000);
+      const wf = waterfallState(v.operating.waterfall);
+      if (wf.state === "complete") expect(wf.statedBps, v.key).toBe(10000);
+      /* The state nobody should ever see: every stage named, and wrong. */
+      expect(wf.state, v.key).not.toBe("does-not-close");
     }
   });
 
-  it("keeps Solace's waterfall absent rather than guessed", () => {
-    /* The intake's row would read as 100% to partners. Transcribing it
-       would have been worse than leaving it out. */
+  it("carries Solace's four stated stages without inventing the other two", () => {
     const solace = VEHICLES.find((v) => v.key === "solace")!;
-    expect(solace.operating.waterfall).toBeNull();
+    const wf = waterfallState(solace.operating.waterfall);
+    expect(wf.state).toBe("partial");
+    expect(wf.statedBps).toBe(6000);
+    expect(wf.outstandingBps).toBe(4000);
+    expect(wf.missing).toEqual(["5 Debt service", "6 To partners"]);
+    /* Still unset, and must remain unset until somebody sets them. */
+    expect(solace.operating.waterfall!.debtService).toBeNull();
+    expect(solace.operating.waterfall!.toPartners).toBeNull();
     expect(solace.operating.reserveFloor).toBeNull();
     expect(solace.governance).toBeNull();
+  });
+
+  it("keeps a partial waterfall out of the public Collection", () => {
+    const solace = VEHICLES.find((v) => v.key === "solace")!;
+    expect(publishable(solace).ok).toBe(false);
+    expect(publishable(solace).because.join(" ")).toMatch(/6,000 of 10,000/);
   });
 
   it("balances the promoter stake against what is offered", () => {
@@ -202,9 +213,9 @@ describe("the public Collection", () => {
     for (const v of VEHICLES) expect(propertyBySlug(v.slug)?.assetId).toBe(v.assetCode);
   });
 
-  it("never states a yield for a vehicle with no waterfall", () => {
+  it("never states a yield unless the waterfall closes at 100%", () => {
     for (const v of VEHICLES) {
-      if (v.operating.waterfall !== null) continue;
+      if (waterfallState(v.operating.waterfall).state === "complete") continue;
       const row = propertyBySlug(v.slug)!;
       expect(row.yield.v).toBe(0);
       expect(row.yield.conf).toBe("UNKNOWN");
@@ -215,7 +226,7 @@ describe("the public Collection", () => {
     /* Nothing is built. A yield here is a model's output about a future,
        and FORECAST is the only class that says so. */
     for (const v of VEHICLES) {
-      if (v.operating.waterfall === null) continue;
+      if (waterfallState(v.operating.waterfall).state !== "complete") continue;
       expect(propertyBySlug(v.slug)!.yield.conf).toBe("FORECAST");
     }
   });

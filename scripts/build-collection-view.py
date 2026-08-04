@@ -323,24 +323,47 @@ for label, k in STAGES:
     ws.cell(row=r, column=1).border = BOX
     for i, v in enumerate(V, start=2):
         w = v["operating"]["waterfall"]
-        c = ws.cell(row=r, column=i, value=(w[k] if w else None))
+        val = w[k] if w else None
+        c = ws.cell(row=r, column=i, value=val)
         c.font = IN; c.number_format = NUM; c.border = BOX
-        if not w: c.fill = WARN
+        if val is None: c.fill = WARN
     r += 1
 bps_end = r - 1
 
-ws.cell(row=r, column=1, value="Sums to 10,000?").font = LBL
+ws.cell(row=r, column=1, value="Stated (bps)").font = LBL
+ws.cell(row=r, column=1).border = BOX
+stated = r
+for i in range(2, 5):
+    L = get_column_letter(i)
+    c = ws.cell(row=r, column=i, value=f"=SUM({L}{bps_start}:{L}{bps_end})")
+    c.font = CALC; c.number_format = NUM; c.border = BOX
+r += 1
+
+ws.cell(row=r, column=1, value="Outstanding (bps)").font = LBL
+ws.cell(row=r, column=1).border = BOX
+outstanding = r
+for i in range(2, 5):
+    L = get_column_letter(i)
+    c = ws.cell(row=r, column=i, value=f"=10000-{L}{stated}")
+    c.font = CALC; c.number_format = NUM; c.border = BOX
+r += 1
+
+ws.cell(row=r, column=1, value="Closes at 100%?").font = LBL
 ws.cell(row=r, column=1).border = BOX
 for i in range(2, 5):
     L = get_column_letter(i)
     c = ws.cell(row=r, column=i,
-                value=f'=IF(COUNT({L}{bps_start}:{L}{bps_end})<6,"NOT STATED",'
-                      f'IF(SUM({L}{bps_start}:{L}{bps_end})=10000,"closes at 100%",'
-                      f'"OUT BY "&SUM({L}{bps_start}:{L}{bps_end})-10000&" bps"))')
+                value=f'=IF(COUNT({L}{bps_start}:{L}{bps_end})=0,"NOT STATED",'
+                      f'IF(COUNT({L}{bps_start}:{L}{bps_end})<6,'
+                      f'TEXT({L}{stated},"#,##0")&" of 10,000 — "&(6-COUNT({L}{bps_start}:{L}{bps_end}))&" stage(s) outstanding",'
+                      f'IF({L}{stated}=10000,"closes at 100%","DOES NOT CLOSE — out by "&TEXT({L}{stated}-10000,"#,##0")&" bps")))')
     c.font = CALC; c.border = BOX
 ws.cell(row=r, column=5,
-        value="Solace states no waterfall. Its intake row would read as 100% of gross to partners with no "
-              "operator, reserve or debt service — a blank row, not a split. Conflict C-05.").font = DIM
+        value="Solace states four stages of six: operator, brand, admin reserve and sinking fund. How the "
+              "outstanding 4,000 bps divide between debt service and the partners is the one split a "
+              "partner actually cares about, and on a vehicle carrying a ₹3.0 Cr facility it decides "
+              "everything downstream. Conflict C-05, partly settled.").font = DIM
+ws.row_dimensions[r].height = 44
 r += 2
 
 ws.cell(row=r, column=1, value="To partners (₹)").font = LBL
@@ -348,7 +371,8 @@ ws.cell(row=r, column=1).border = BOX
 part = r
 for i in range(2, 5):
     L = get_column_letter(i)
-    c = ws.cell(row=r, column=i, value=f"=IF({L}{bps_end}=\"\",\"\",{L}{gross}*{L}{bps_end}/10000)")
+    c = ws.cell(row=r, column=i,
+                value=f'=IF(COUNT({L}{bps_start}:{L}{bps_end})<6,"",{L}{gross}*{L}{bps_end}/10000)')
     c.font = CALC; c.number_format = RUP; c.border = BOX
 r += 1
 
@@ -356,7 +380,8 @@ ws.cell(row=r, column=1, value="Forecast yield on equity").font = LBL
 ws.cell(row=r, column=1).border = BOX
 for i in range(2, 5):
     L = get_column_letter(i)
-    c = ws.cell(row=r, column=i, value=f"=IF(OR({L}{part}=\"\",Capital!{L}9=0),\"\",{L}{part}/Capital!{L}9)")
+    c = ws.cell(row=r, column=i,
+                value=f'=IF(OR({L}{part}="",Capital!{L}9=0),"",{L}{part}/Capital!{L}9)')
     c.font = LINK; c.number_format = PCT; c.border = BOX
 ws.cell(row=r, column=5,
         value="Against the offering sheet's equity. A forecast from a model on an asset that does not "
@@ -572,6 +597,14 @@ ws.cell(row=r, column=1,
 ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=6)
 
 os.makedirs("outputs", exist_ok=True)
-out = "outputs/GC-COLLECTION-FULL-VIEW.xlsx"
-wb.save(out)
+out = os.environ.get("GC_OUT", "outputs/GC-COLLECTION-FULL-VIEW.xlsx")
+try:
+    wb.save(out)
+except PermissionError:
+    # Excel holds an exclusive lock on an open workbook. Writing beside it
+    # beats failing: the caller can diff or replace once it is closed.
+    alt = out.replace(".xlsx", "-NEW.xlsx")
+    wb.save(alt)
+    print("LOCKED — wrote", alt, "instead of", out)
+    raise SystemExit(0)
 print("wrote", out)
