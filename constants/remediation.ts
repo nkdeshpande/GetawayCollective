@@ -110,7 +110,7 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "editorial",
     dependencies: [],
-    status: "OPEN",
+    status: "RESOLVED",
   }),
 
   R({
@@ -216,7 +216,7 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "legal",
     dependencies: [],
-    status: "OPEN",
+    status: "RESOLVED",
   }),
 
   R({
@@ -252,7 +252,7 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "code",
     dependencies: [],
-    status: "OPEN",
+    status: "RESOLVED",
   }),
 
   /* ═══ P1 ═══════════════════════════════════════════════════════ */
@@ -318,7 +318,7 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "visual",
     dependencies: [],
-    status: "OPEN",
+    status: "RESOLVED",
   }),
 
   R({

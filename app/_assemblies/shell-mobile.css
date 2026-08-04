@@ -1,0 +1,68 @@
+/**
+ * THE PHONE SHELL — REM-007
+ *
+ * A hand-written override, deliberately NOT in assemblies.css: that file
+ * is generated from GC-ASSEMBLIES.html and anything written into it is
+ * erased by the next `npm run assembly:css`. The prototype is the source
+ * of truth for the ported design; this is a remediation decision made
+ * after it, and it belongs where a person owns it.
+ *
+ * Loaded after assemblies.css in globals.css, so specificity is not the
+ * mechanism — order is.
+ *
+ * ── WHAT CHANGES, AND WHY IT IS NOT A REMOVAL ────────────────────────
+ * The 60px spine took a sixth of a 360px screen to show eight glyphs.
+ * PUBLIC.06 gives narrow viewports to content.
+ *
+ * The rule that kept the rail at every width — "a control that hides the
+ * only way to bring itself back is not a control" — is honoured rather
+ * than overturned: the spine ROTATES. It becomes a horizontal bar along
+ * the bottom, thumb height, labels restored, scrolling sideways.
+ * Navigation is still permanently visible; it changed axis.
+ *
+ * Bottom rather than top because the top already carries the brand and
+ * the breadcrumb, and PUBLIC.04 permits one global navigator — two bars
+ * stacked at the top would read as two.
+ */
+
+@media (max-width:768px){
+  .shell{--rail:0px;grid-template-columns:minmax(0,1fr);grid-template-rows:56px 1fr}
+  .rail-top{grid-column:1;padding:0 var(--gc-sp-s)}
+
+  .rail-main{grid-column:1;grid-row:1/3;padding-left:0;
+    /* Clear the bottom spine plus the safe area on a notched phone. */
+    padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  .rail-main .wrap,.rail-main .narrow{padding-left:var(--gc-sp-s);padding-right:var(--gc-sp-s)}
+  .p-hero{margin-left:0;padding-left:0}
+  .rail-main:has(>section[data-sec] h1) >section[data-sec]:first-of-type{
+    margin-left:0;padding-left:0}
+
+  .rail-left{position:fixed;inset:auto 0 0 0;height:auto;
+    grid-column:1;grid-row:auto;top:auto;
+    flex-direction:row;align-items:stretch;justify-content:flex-start;
+    background:var(--gc-void-panel);border-right:0;
+    border-top:1px solid var(--gc-hairline-inv);
+    padding-bottom:env(safe-area-inset-bottom,0px);z-index:640}
+  .on-paper .rail-left,.on-paper .rail-left[data-solid="1"]{
+    background:var(--gc-paper-panel);border-top-color:var(--gc-hairline)}
+  /* Always solid down here: it sits over content, never over a hero. */
+  .rail-left[data-solid="0"]{background:var(--gc-void-panel)}
+
+  .rail-scroll{display:flex;flex-direction:row;overflow-x:auto;overflow-y:hidden;
+    padding:0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .rail-scroll::-webkit-scrollbar{display:none}
+  .rail-group{flex-direction:row;padding-bottom:0}
+  /* Group headings are vertical-list furniture. On a strip they would be
+     unlabelled gaps between destinations. */
+  .rail-head{display:none}
+
+  .rail-item{flex-direction:column;justify-content:center;gap:var(--gc-sp-3xs);
+    /* 44px is the PUBLIC.07 floor; 56 gives the label room. */
+    min-width:72px;min-height:56px;padding:var(--gc-sp-2xs) var(--gc-sp-xs);
+    white-space:nowrap}
+  .rail-item .lbl{display:block;font-size:10px;letter-spacing:.08em}
+
+  /* No collapse control: there is nothing left to collapse. The person
+     block and foot links live in the page footer at this width. */
+  .rail-foot,.rail-collapse,.rail-who{display:none}
+}

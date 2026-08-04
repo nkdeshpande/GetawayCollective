@@ -26,6 +26,10 @@
 @import url("./_assemblies/office-collection.css");
 @import url("./_assemblies/iris.css");
 @import url("./_assemblies/property.css");
+@import url("./_assemblies/about.css");
+/* After assemblies.css: shell-mobile.css overrides the generated
+   prototype CSS by ORDER, and must never be folded into it. */
+@import url("./_assemblies/shell-mobile.css");
 
 *,
 *::before,

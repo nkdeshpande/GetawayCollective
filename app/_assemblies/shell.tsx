@@ -253,16 +253,34 @@ export function Shell({
         {/* Names the page and the aperture it is seen through. Both come
             from the route table; neither is parsed out of the URL. */}
         <nav className="crumbs" aria-label="Breadcrumb">
-          <span className="v">{here ? here.group : "—"}</span>
-          <span className="sep" aria-hidden="true">/</span>
+          {/* The route GROUP is an internal partition, not a place the
+              reader has been. Shown to the office, hidden from everyone
+              else — the page's own name is the whole breadcrumb. */}
+          {subject.rights.length > 0 ? (
+            <>
+              <span className="v">{here ? here.group : "—"}</span>
+              <span className="sep" aria-hidden="true">/</span>
+            </>
+          ) : null}
           <span className="now">{here ? here.name : "Not a declared surface"}</span>
         </nav>
 
         <span className="rail-spacer" />
 
-        <span className="vantage t-mono-s" title="The aperture this surface is seen through">
-          {here ? here.group : "—"} vantage
-        </span>
+        {/*
+          PUBLIC.01. This said "gateway vantage" to every visitor on every
+          page — our filing word for an aperture, given the same weight as
+          the page's own name. It is genuinely useful to somebody holding
+          office rights, who needs to know which aperture they are looking
+          through, and meaningless to everybody else.
+
+          So it survives where it earns its place and goes where it does not.
+        */}
+        {subject.rights.length > 0 ? (
+          <span className="vantage t-mono-s" title="The aperture this surface is seen through">
+            {here ? here.group : "—"} vantage
+          </span>
+        ) : null}
       </header>
 
       <nav className="rail-left" data-solid={solid ? "1" : "0"} aria-label="Main">
@@ -339,7 +357,10 @@ export function Shell({
           <span className="sc" aria-hidden="true" />
           <div className="wrap in">
             <span className="t-micro eyebrow">
-              {here ? `${here.group} vantage` : "Undeclared surface"}
+              {/* Was "{group} vantage" over the title of every page. An
+                  eyebrow carries the brand; it does not carry our filing
+                  partition. */}
+              {here ? "Getaway Collective" : "Not a declared surface"}
             </span>
             <h1 className="t-display-l">{here ? here.name : "Not a declared surface"}</h1>
           </div>

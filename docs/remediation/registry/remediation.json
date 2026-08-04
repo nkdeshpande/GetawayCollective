@@ -5,7 +5,7 @@
       "id": "REM-001",
       "title": "/about renders the internal scaffold, not an about page",
       "severity": "P0",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.01"
       ]
@@ -34,7 +34,7 @@
       "id": "REM-004",
       "title": "The complaints policy promises /status figures that /status does not show",
       "severity": "P0",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.10",
         "PUBLIC.03"
@@ -44,7 +44,7 @@
       "id": "REM-005",
       "title": "Sign-in is presented as live while status says it is not connected",
       "severity": "P0",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.03",
         "PUBLIC.09"
@@ -63,7 +63,7 @@
       "id": "REM-007",
       "title": "The mobile viewport inherits the desktop rail",
       "severity": "P1",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.04",
         "PUBLIC.06"

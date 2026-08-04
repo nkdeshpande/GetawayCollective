@@ -91,13 +91,21 @@ describe("the remediation registry", () => {
     for (const r of items) expect(r.humanCanonNeeded, r.id).toBeTruthy();
   });
 
-  it("does not claim the release is clear", () => {
-    /* Five P0s stand. The day this assertion fails is a good day — flip
-       it deliberately, with the registry, not around it. */
+  it("does not claim the release is clear while blocking items stand", () => {
+    /* Day 02 closed four: REM-001 (/about), REM-004 (complaints),
+       REM-005 (sign-in threshold), REM-007 (mobile rail). What remains
+       blocking is the two decisions that need a person plus the P1s.
+       This assertion is meant to keep failing until they are answered. */
     const { ok, blocking } = releaseClear();
     expect(ok).toBe(false);
-    expect(blocking.length).toBeGreaterThanOrEqual(5);
-    expect(openItems().length).toBe(REMEDIATION.length);
+    expect(blocking.length).toBeGreaterThan(0);
+    expect(openItems().length).toBeLessThan(REMEDIATION.length);
+  });
+
+  it("keeps the two human decisions open", () => {
+    /* No agent resolves these by inference. If either closes, a person
+       supplied the vocabulary or the basis. */
+    expect(needsHuman().map((r) => r.id).sort()).toEqual(["REM-002", "REM-003"]);
   });
 
   it("keeps the audit as evidence, not canon", () => {

@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { About } from "@/app/_assemblies/about";
 
 export const metadata: Metadata = {
   title: "About · Getaway Collective",
@@ -19,10 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pabout() {
-  return (
-    <Surface
-      path="/about"
-      assembly={"AS-32"}
-    />
-  );
+  return <About />;
 }

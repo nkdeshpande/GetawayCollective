@@ -1,0 +1,31 @@
+/* AS-32.about — every value a token (§29). */
+.about{background:var(--gc-paper);color:var(--gc-ink)}
+.about .wrap{max-width:1080px;margin:0 auto;padding:0 var(--gc-sp-m)}
+.about-hero{padding:var(--gc-sp-3xl) 0 var(--gc-sp-2xl)}
+.about-hero h1{margin-top:var(--gc-sp-2xs)}
+.about-sec{padding:var(--gc-sp-2xl) 0}
+.about-sec.on-panel{background:var(--gc-panel,var(--gc-mist))}
+.about em{font-style:normal;color:var(--gc-steel)}
+
+.about-cols{display:grid;grid-template-columns:1.15fr 1fr;gap:var(--gc-sp-l);margin-top:var(--gc-sp-m)}
+
+.about-entities{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-l)}
+.about-entities article{padding:var(--gc-sp-s);border-top:var(--gc-stroke-active) solid var(--gc-ink)}
+.about-entities h3{margin-top:var(--gc-sp-2xs)}
+/* What an entity may NOT do is marked structurally, not by colour — it
+   is the half that carries the argument. */
+.about-not{margin-top:var(--gc-sp-2xs);padding-top:var(--gc-sp-2xs);
+  border-top:var(--gc-stroke-idle) solid var(--gc-hairline);color:var(--gc-steel)}
+
+.about-not-list{margin-top:var(--gc-sp-m);padding-left:0;list-style:none}
+.about-not-list li{padding:var(--gc-sp-s) 0;border-bottom:var(--gc-stroke-idle) solid var(--gc-hairline)}
+.about-not-list li:first-child{border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}
+
+.about-count{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xl);margin-top:var(--gc-sp-xl)}
+.about-count div{display:flex;flex-direction:column;gap:var(--gc-sp-3xs)}
+
+@media (max-width:768px){
+  .about-cols,.about-entities{grid-template-columns:1fr}
+  .about-count{gap:var(--gc-sp-l)}
+  .about-hero{padding:var(--gc-sp-2xl) 0 var(--gc-sp-xl)}
+}

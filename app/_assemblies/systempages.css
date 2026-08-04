@@ -46,3 +46,16 @@
 .system-secondary:hover{background:var(--gc-ink);border-color:var(--gc-ink);color:var(--gc-paper)}
 @media (max-width:700px){.sysbar{padding:0 var(--gc-sp-m)}.sysbar span{display:none}.system-corner{right:var(--gc-sp-m)}.status-head,.status-foot{display:block}.status-timestamp{display:block;margin-top:var(--gc-sp-m)}.status-foot .btn{margin-top:var(--gc-sp-m)}.health-row{grid-template-columns:12px 1fr}.health-row>span{grid-column:2}.identity-card{margin-top:var(--gc-sp-2xl)}}
 @media (prefers-reduced-motion:reduce){.system-atmosphere{display:none}}
+
+/* The complaints record DOC-06 promises on /status. */
+.status-complaints{margin-top:var(--gc-sp-l);padding-top:var(--gc-sp-m);
+  border-top:var(--gc-stroke-idle) solid var(--gc-hairline-inv)}
+.status-complaints p{max-width:60ch;margin-top:var(--gc-sp-2xs);color:var(--gc-steel-dim);font-size:13px}
+.status-figs{display:flex;gap:var(--gc-sp-2xl);margin-top:var(--gc-sp-m)}
+.status-figs div{display:flex;flex-direction:column;gap:var(--gc-sp-3xs)}
+.status-figs b{font:400 32px/1 var(--gc-font-display);letter-spacing:-.03em}
+.status-figs span{font:400 10px/1 var(--gc-font-mono);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gc-steel-dim)}
+.status-foot{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs);align-items:center}
+.status-foot p{flex:1 1 320px}
+@media (max-width:768px){ .status-figs{gap:var(--gc-sp-l)} }

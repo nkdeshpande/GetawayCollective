@@ -8,16 +8,15 @@ constants/remediation.ts follow-ups, not here — this file is regenerated.
 
 | File | Line | Occurrence | Classification |
 |---|---|---|---|
-| app/_assemblies/atoms.tsx | 111 | `export function Header({ vantage = "gateway" }: { vantage?: string }) {` | UNCLASSIFIED |
-| app/_assemblies/atoms.tsx | 118 | `<span className="t-micro label">{vantage} vantage</span>` | UNCLASSIFIED |
+| app/_assemblies/atoms.tsx | 112 | `export function Header({ vantage = "gateway" }: { vantage?: string }) {` | UNCLASSIFIED |
+| app/_assemblies/atoms.tsx | 119 | `<span className="t-micro label">{vantage} vantage</span>` | UNCLASSIFIED |
 | app/_assemblies/shell.tsx | 16 | `if (s.rights.length > 0) return "Office vantage";` | UNCLASSIFIED |
 | app/_assemblies/shell.tsx | 17 | `if (s.member) return "Member vantage";` | UNCLASSIFIED |
 | app/_assemblies/shell.tsx | 18 | `if (s.accredited) return "Accredited vantage";` | UNCLASSIFIED |
 | app/_assemblies/shell.tsx | 19 | `if (s.identified) return "Identified vantage";` | UNCLASSIFIED |
 | app/_assemblies/shell.tsx | 20 | `return "Public vantage";` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 168 | `<span className="vantage t-mono-s" title="The aperture this surface is seen through">` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 169 | `{here ? here.group : "—"} vantage` | UNCLASSIFIED |
-| app/_assemblies/shell.tsx | 226 | `{here ? `${here.group} vantage` : "Undeclared surface"}` | UNCLASSIFIED |
+| app/_assemblies/shell.tsx | 175 | `<span className="vantage t-mono-s" title="The aperture this surface is seen through">` | UNCLASSIFIED |
+| app/_assemblies/shell.tsx | 176 | `{here ? here.group : "—"} vantage` | UNCLASSIFIED |
 | app/_assemblies/gateway.tsx | 73 | `<section data-sec="AS-01.a">` | UNCLASSIFIED |
 | app/_assemblies/gateway.tsx | 76 | `<span className="sec-ref">AS-01</span>` | UNCLASSIFIED |
 | app/_assemblies/gateway.tsx | 87 | `<section data-sec="AS-01.b">` | UNCLASSIFIED |
@@ -76,10 +75,6 @@ constants/remediation.ts follow-ups, not here — this file is regenerated.
 | app/_assemblies/publicpages.tsx | 558 | `<section data-sec="AS-32.home.material" className="gc-home-material"><div className="wrap ` | UNCLASSIFIED |
 | app/_assemblies/publicpages.tsx | 560 | `<section data-sec="AS-32.home.team" className="gc-home-team"><div className="wrap"><div cl` | UNCLASSIFIED |
 | app/_assemblies/publicpages.tsx | 562 | `<section data-sec="AS-32.home.invite" className="gc-home-invite"><div className="wrap"><sp` | UNCLASSIFIED |
-| app/_assemblies/systempages.tsx | 82 | `</section><p className="system-corner">GC-900 · PUBLIC · SESSION REQUEST</p>` | UNCLASSIFIED |
-| app/_assemblies/systempages.tsx | 88 | `return <main className="system-page system-page-paper"><SystemMark section="IDENTITY / VER` | UNCLASSIFIED |
-| app/_assemblies/systempages.tsx | 99 | `return <main className="system-page system-page-dark"><SystemMark section="SYSTEM / STATUS` | UNCLASSIFIED |
-| app/_assemblies/systempages.tsx | 103 | `return <main className="system-page system-page-paper"><SystemMark section="ACCESS / 403" ` | UNCLASSIFIED |
 | app/_assemblies/documents.tsx | 58 | `<section data-sec="AS-29.a">` | UNCLASSIFIED |
 | app/_assemblies/documents.tsx | 65 | `<section data-sec="AS-29.b">` | UNCLASSIFIED |
 | app/_assemblies/documents.tsx | 88 | `<section key={part.ref} data-sec="AS-29.c" id={`part-${part.ref}`}>` | UNCLASSIFIED |
@@ -93,4 +88,4 @@ constants/remediation.ts follow-ups, not here — this file is regenerated.
 | app/_assemblies/property.tsx | 305 | `<p className="t-body">Reports, documents and resolutions, at the vantage you hold</p>` | UNCLASSIFIED |
 | app/_system/surface.tsx | 34 | `{assembly ? `${assembly} · ${a?.vantage ?? "?"} vantage` : "Shell · no assembly"}` | UNCLASSIFIED |
 
-Total lines carrying ontology: 84. The lint ratchets the term count; this lists where.
+Total lines carrying ontology: 79. The lint ratchets the term count; this lists where.

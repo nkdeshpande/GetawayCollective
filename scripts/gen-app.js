@@ -183,6 +183,9 @@ const BY_PATH = {
   /* The public surface: PUB.01-PUB.11, one renderer, chosen by path. */
   "/": { component: "Root", from: "@/app/_assemblies/publicpages" },
   "/how-it-works": { component: "HowItWorks", from: "@/app/_assemblies/publicpages" },
+  /* GC-400. Was falling through to the registry scaffold, which published
+     the assembly id and the section slots to anybody who asked what GC is. */
+  "/about": { component: "About", from: "@/app/_assemblies/about" },
   "/collective/partners": { component: "Partners", from: "@/app/_assemblies/publicpages" },
   "/collective/operators": { component: "Operators", from: "@/app/_assemblies/publicpages" },
   "/collective/press": { component: "Wire", from: "@/app/_assemblies/publicpages" },

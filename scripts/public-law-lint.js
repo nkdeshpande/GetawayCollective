@@ -148,11 +148,11 @@ const LEAK = /\bvantage\b|GC-\d{3}|AS-\d{2}\b/g;
    growing while that work happens. */
 const BASELINE = {
   "app/_assemblies/atoms.tsx": 4,
-  "app/_assemblies/shell.tsx": 8,
+  "app/_assemblies/shell.tsx": 7,
   "app/_assemblies/gateway.tsx": 19,
   "app/_assemblies/gatewaypages.tsx": 19,
   "app/_assemblies/publicpages.tsx": 21,
-  "app/_assemblies/systempages.tsx": 4,
+  "app/_assemblies/systempages.tsx": 0,
   "app/_assemblies/documents.tsx": 10,
   "app/_assemblies/property.tsx": 1,
   "app/_system/surface.tsx": 2,
@@ -184,8 +184,13 @@ const RESOLVERS = {
     const gen = read("scripts", "gen-app.js");
     return /"\/about":/.test(gen) || /"AS-32":\s*\{/.test(gen);
   },
-  /* REM-004: /status carries a complaint figure. */
-  "REM-004": () => /Complaints this quarter/i.test(read("app", "_assemblies", "systempages.tsx")),
+  /* REM-004: /status carries the complaints figure DOC-06 promises.
+     Checks the record EXISTS and is RENDERED — a constant nothing reads
+     would satisfy a laxer test while the promise stayed unkept. */
+  "REM-004": () => {
+    const src = read("app", "_assemblies", "systempages.tsx");
+    return /const COMPLAINTS = \{/.test(src) && /\{COMPLAINTS\./.test(src);
+  },
   /* REM-008: public property page renders at most one consolidated
      missing-media disclosure — approximated by the per-slot placeholder
      branch no longer rendering per empty slot. */

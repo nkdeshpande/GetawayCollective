@@ -164,7 +164,10 @@ export function Footer() {
             <h4>Collective</h4>
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
-            <Link href="/portfolio">Portfolio</Link>
+            {/* States the gate at the link. Following this used to end in
+                a bare refusal — correct behaviour, discovered the wrong
+                way round. */}
+            <Link href="/portfolio">Portfolio · private</Link>
           </div>
         </div>
       </div>
@@ -198,7 +201,13 @@ export function Header({ vantage = "gateway" }: { vantage?: string }) {
           <Link href="/how-it-works">How it works</Link>
           <Link href="/journal">Journal</Link>
           <Link href="/about">About</Link>
-          <Link href="/sign-in">Sign in</Link>
+          {/* "Private access", not "Sign in".
+              PUBLIC.09: an affordance names what is behind it rather than
+              promising an action the deployment may not be able to
+              complete. When identity is connected this destination signs
+              somebody in; until then it explains itself, and either way
+              the label was true. */}
+          <Link href="/sign-in">Private access</Link>
         </nav>
       </div>
     </header>
