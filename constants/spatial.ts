@@ -358,6 +358,36 @@ export function standardsBreached(e: Estate): string[] {
   return out;
 }
 
+/**
+ * THE LEDGER DISAGREES WITH ITSELF ABOUT LANDSCAPE.
+ *
+ * It calls 70:30 the "Fundamental Invariant" and prints "≥65%" against
+ * every estate in its land and development profile. Its own buildable
+ * envelopes do not leave that much on four of the five:
+ *
+ *   Solace          0.2 of 0.6 acres   →  67% held   passes
+ *   Coffee Fields   2.0 of 3.0 acres   →  33% held   fails
+ *   Confluence      2.3 of 4.4 acres   →  48% held   fails
+ *   The Creek       5.0 of 10.0 acres  →  50% held   fails
+ *   Nine Hills      2.0 of 5.0 acres   →  60% held   fails
+ *
+ * Stated as an observation rather than an error, because there is a
+ * reading that reconciles it: "buildable envelope" may be the area a
+ * building may sit ANYWHERE within rather than the area it covers, in
+ * which case the preserved fraction is measured against actual footprint
+ * and could still clear 65%.
+ *
+ * That reading is plausible and it is not what the column says. Until
+ * somebody confirms which measure is meant, standardsBreached() reports
+ * the arithmetic the ledger's own numbers produce — because a
+ * "Fundamental Invariant" that nothing checks is a phrase, and this is
+ * the sentence that stops it being one.
+ */
+export const LANDSCAPE_NOTE =
+  "The ledger claims ≥65% landscape preservation on every estate. Its own buildable envelopes " +
+  "leave that much on Solace only. Either 'buildable envelope' means the permitted zone rather " +
+  "than the footprint, or four estates are outside the invariant.";
+
 export const SPATIAL_LAWS = {
   oneSystemManyClimates:
     "Five estates, one building system, differing only by climate pack. That is the ledger's claim " +
