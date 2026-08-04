@@ -145,10 +145,15 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "legal",
     dependencies: [],
-    status: "NEEDS_HUMAN_CANON",
-    humanCanonNeeded:
-      "The lifecycle vocabulary itself, and which value each of the three vehicles holds today. " +
-      "Legal state names are not an agent's to invent.",
+    /* SETTLED 4 Aug 2026. Founder: diligence completed on The Creek.
+       The fix went further than the label: the intake's single lifecycle
+       field was answering two questions — how the land is held and what
+       stage the building is at — and "acquired" was set for the first
+       while the hero rendered it as the second. Split into `tenure` and
+       `buildStage`, both canonical, both with canonical labels, and
+       tenure is NULL where a record states no position rather than
+       inferred from an adjacent sentence. */
+    status: "RESOLVED",
   }),
 
   R({
@@ -183,10 +188,16 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "financial",
     dependencies: [],
-    status: "NEEDS_HUMAN_CANON",
-    humanCanonNeeded:
-      "The exact basis wording per vehicle: pre- or post-tax, which year it stabilises, gross or " +
-      "net of the reserve stages. The arithmetic is in the registry; the words are not.",
+    /* SETTLED 4 Aug 2026. Founder: eighteen per cent from year three,
+       stabilised. The denominator is the offering equity, which is what
+       yieldOf() already divides by, so the basis states what the
+       arithmetic does rather than a second claim beside it.
+
+       ONE THING REMAINS UNSTATED and is deliberately not invented: tax
+       treatment. The basis says nothing about pre- or post-tax because
+       nobody has, and a wrong word there is exactly the confusion this
+       item exists to prevent. Raised as REM-018. */
+    status: "RESOLVED",
   }),
 
   R({
@@ -516,6 +527,36 @@ export const REMEDIATION: readonly RemediationItem[] = [
   }),
 
   /* ═══ Inventories that unblock the above ══════════════════════ */
+
+  R({
+    id: "REM-018",
+    title: "The yield basis does not state tax treatment",
+    route: ["/collection", "/collection/[vehicle]"],
+    viewport: "ALL",
+    severity: "P1",
+    lawIds: ["PUBLIC.02"],
+    issue:
+      "REM-003 settled the denominator and the period — offering equity, from year 3 at stabilised " +
+      "occupancy. It did not settle whether the figure is before or after tax, and nobody has said. " +
+      "For an Indian LLP the difference between a pre-tax and post-tax partner distribution is " +
+      "material, and a reader will assume one of the two.",
+    evidence: [
+      "constants/vehicles.ts — yieldBasis states denominator and period, not tax",
+      "founder instruction, 4 Aug 2026: \"18% from year 3 stabilized\"",
+    ],
+    affectedSources: ["constants/vehicles.ts"],
+    recommendation:
+      "Append the tax position to yieldBasis once stated. One clause, three vehicles, no code change.",
+    acceptanceCriteria: [
+      "Every stated yieldBasis says whether the figure is before or after tax.",
+    ],
+    reviewType: "financial",
+    dependencies: [],
+    status: "NEEDS_HUMAN_CANON",
+    humanCanonNeeded:
+      "Whether the modelled partner yield is stated before or after tax. One word, and not one an " +
+      "agent may choose.",
+  }),
 
   R({
     id: "REM-016",

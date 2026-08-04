@@ -4,8 +4,5 @@
 
 | Vehicle | Vehicle lifecycle | Property lifecycle | Land as stated | Rendered alias | Contradiction |
 |---|---|---|---|---|---|
-| slowspace | forming | development | .3 acres · dual frontage | "In development" | none found |
-| solace | forming | development | 1.55 acres (0.20 owned + 1.35 leased) | "In development" | none found |
-| coorgcreek | raising | acquired | 10 acres (possession) | "Land acquired" (property.tsx hero) | YES — record states possession, title unverified; alias implies settled title. REM-002. |
 
 Canonical mapping is NEEDS_HUMAN_CANON (REM-002): the lifecycle vocabulary is a legal decision.

@@ -28,7 +28,9 @@
  * reader, and there is nothing here that needs one.
  */
 
-import { publishable, waterfallState, VEHICLES } from "@/constants/vehicles";
+import {
+  publishable, waterfallState, VEHICLES, BUILD_LABEL, TENURE_LABEL,
+} from "@/constants/vehicles";
 import { estateOf } from "@/constants/spatial";
 import { pageFor } from "@/constants/property-page";
 import { COLOUR, SPACE } from "@/constants/tokens";
@@ -70,7 +72,7 @@ export async function GET(
         ${row("Minimum", `${v.ladder.minimumInvestmentBps / 100}% in ${v.ladder.stepBps / 100}% steps`)}
         ${row("Lock-in", v.offering.lockIn)}
         ${wf.state === "complete"
-          ? row("To partners", `${(v.operating.waterfall!.toPartners! / 100).toFixed(2)}% of gross — forecast, not a promise`)
+          ? row("To partners", `${(v.operating.waterfall!.toPartners! / 100).toFixed(2)}% of gross revenue — forecast, not a promise`)
           : ""}
       </table>`
     : `<h2 class="hold">Figures are being reconciled</h2>
@@ -115,7 +117,8 @@ export async function GET(
   ${est ? row("Climate pack", est.pack) : ""}
   ${est ? row("Ecology", est.ecology) : ""}
   ${est ? row("Landscape held", est.landscapePreserved) : ""}
-  ${row("Stage", v.propertyLifecycle)}
+  ${row("Build stage", BUILD_LABEL[v.buildStage])}
+  ${v.tenure ? row("Tenure", TENURE_LABEL[v.tenure]) : ""}
 </table>
 
 <h2>The vehicle</h2>

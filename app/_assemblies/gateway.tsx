@@ -61,10 +61,14 @@ function GatewayCard({ p }: { p: Property }) {
           {second}
         </h3>
         <span className="deferred">
+          {/* "YIELD ~18.0%" alone let a reader choose between a yield, a
+              return and a share of gross. The basis now travels with the
+              number rather than living in a tooltip (PUBLIC.02). */}
           <span className="t-mono-s" style={{ color: "var(--gc-copper)" }}>
-            YIELD <Pct v={p.yield.v} conf={p.yield.conf} />
+            PARTNER YIELD <Pct v={p.yield.v} conf={p.yield.conf} />
           </span>
           <ConfidenceTag c={p.yield.conf} />
+          {p.yieldBasis ? <span className="t-mono-s dim">{p.yieldBasis}</span> : null}
           <span className="rule-x" aria-hidden="true" />
           <span className="t-mono-s">{p.availability}</span>
         </span>
@@ -249,10 +253,11 @@ export function PropertyMasthead({ p }: { p: Property }) {
                 <span className="source t-mono-s">Derived from valuation</span>
               </div>
               <div className="field">
-                <span className="k t-micro">Indicative yield</span>
+                <span className="k t-micro">Modelled partner yield</span>
                 <span className="v">
                   <Pct v={p.yield.v} conf={p.yield.conf} /> <ConfidenceTag c={p.yield.conf} />
                 </span>
+                {p.yieldBasis ? <span className="source t-mono-s">{p.yieldBasis}</span> : null}
               </div>
             </div>
             <p className="t-body dim measure" style={{ marginTop: "var(--gc-sp-m)" }}>

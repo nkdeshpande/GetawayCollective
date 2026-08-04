@@ -37,7 +37,9 @@ import {
   PROPERTY_PAGES, SPINE, EVIDENCE_TIERS, mediaGap,
   type MediaSlot, type PropertyPage,
 } from "@/constants/property-page";
-import { vehicleByKey, publishable, waterfallState } from "@/constants/vehicles";
+import {
+  vehicleByKey, publishable, waterfallState, BUILD_LABEL, TENURE_LABEL,
+} from "@/constants/vehicles";
 import { estateOf, ARCHITECTURAL_LANGUAGE } from "@/constants/spatial";
 import { IrisPanel } from "./iris";
 import { Footer } from "./atoms";
@@ -104,10 +106,16 @@ export function PropertySurface({ slug }: { slug: string }) {
         <div className="prop-hero-in">
           <span className="t-micro label">{page.eyebrow}</span>
           <h1 className="t-display-l">{page.headline}</h1>
+          {/*
+            PUBLIC.03. This read "Land acquired" for any vehicle whose
+            lifecycle was "acquired" — a word typed beside the record
+            rather than derived from it, over land whose title was
+            unverified. Both axes are now canonical values with canonical
+            labels, and the hero renders them rather than wording them.
+          */}
           <p className="t-body-l dim">
-            {v.jurisdiction} · {v.propertyLifecycle === "development"
-              ? "In development"
-              : v.propertyLifecycle === "acquired" ? "Land acquired" : "Stabilised"}
+            {v.jurisdiction} · {BUILD_LABEL[v.buildStage]}
+            {v.tenure ? ` · ${TENURE_LABEL[v.tenure]}` : ""}
           </p>
           <div className="row">
             <Link className="btn" href="#opening">Explore the property ↓</Link>
@@ -144,7 +152,8 @@ export function PropertySurface({ slug }: { slug: string }) {
             </div>
             <div>
               <span className="t-micro label">Asset stage</span>
-              <p className="t-body">{v.propertyLifecycle}</p>
+              <p className="t-body">{BUILD_LABEL[v.buildStage]}</p>
+              {v.tenure ? <p className="t-body-s dim">{TENURE_LABEL[v.tenure]}</p> : null}
             </div>
             <div>
               <span className="t-micro label">Ownership basis</span>
@@ -382,7 +391,7 @@ export function PropertySurface({ slug }: { slug: string }) {
                 <div className="kv">
                   <span className="label t-micro">To partners</span>
                   <span className="v t-mono-s">
-                    {(v.operating.waterfall!.toPartners! / 100).toFixed(2)}% of gross · forecast
+                    {(v.operating.waterfall!.toPartners! / 100).toFixed(2)}% of gross revenue · forecast
                   </span>
                 </div>
               ) : null}

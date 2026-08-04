@@ -130,6 +130,14 @@ export interface Property {
   ufr0067: string | null;
   ufr0068: string;   // commitments
   yield: { v: number; conf: Confidence };
+  /**
+   * What the yield IS, in words, beside the number.
+   *
+   * PUBLIC.02: a percentage is the most portable thing on a page. This
+   * travels with it so "~18.0%" cannot be read as a return, a share of
+   * gross or an ownership stake by three different people.
+   */
+  yieldBasis: string | null;
   availability: string;
   telemetry: { state: "live" | "stale"; at: string };
   units: number;
@@ -174,8 +182,8 @@ export interface Property {
  * defect that only appears once something imports the file for real.
  */
 const LIFECYCLE_LABEL: Record<string, string> = {
-  acquired: "Acquired",
-  development: "Pre-construction",
+  "pre-construction": "Pre-construction",
+  "under-construction": "Under construction",
   stabilised: "Stabilised",
 };
 
@@ -224,7 +232,7 @@ export const PROPERTIES: readonly Property[] = VEHICLES.map((v): Property => {
     ufr0101: v.agreementDated ?? v.incorporated ?? "not incorporated",
     ufr0061: v.registeredName,
     ufr0065: v.landArea,
-    ufr0066: LIFECYCLE_LABEL[v.propertyLifecycle],
+    ufr0066: LIFECYCLE_LABEL[v.buildStage],
     ufr0067: null,
     /* What is committed on this ground, and what is built on it. The
        ledger's ecological character is the more useful half for a reader
@@ -234,6 +242,7 @@ export const PROPERTIES: readonly Property[] = VEHICLES.map((v): Property => {
       ? `${estate.ecology} · ${estate.keys} keys · ${v.commitments}`
       : v.commitments,
     yield: yieldOf(),
+    yieldBasis: v.operating.yieldBasis,
     /* Units, not a season. "Q3 2026" on the old entries implied a date
        somebody had committed to. */
     availability: v.offering.available === 0

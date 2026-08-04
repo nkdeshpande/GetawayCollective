@@ -22,8 +22,11 @@ import {
 import {
   REMEDIATION, bySeverity, openItems, needsHuman, releaseClear,
 } from "../constants/remediation";
+import {
+  VEHICLES, BUILD_LABEL, TENURE_LABEL, waterfallState,
+} from "../constants/vehicles";
 import { ROUTE_CONTRACTS, contractFor } from "../constants/route-contracts";
-import { PROPERTIES } from "../app/_assemblies/data";
+import { PROPERTIES, propertyBySlug } from "../app/_assemblies/data";
 import { ROUTES } from "../constants/routes";
 
 const ROOT = path.join(__dirname, "..");
@@ -83,12 +86,7 @@ describe("the remediation registry", () => {
   });
 
   it("says what the human must decide, wherever one must", () => {
-    const items = needsHuman();
-    /* REM-002 (lifecycle vocabulary) and REM-003 (figure basis) are the
-       two decisions no agent may invent. If this count changes, it
-       changed on purpose. */
-    expect(items.map((r) => r.id).sort()).toEqual(["REM-002", "REM-003"]);
-    for (const r of items) expect(r.humanCanonNeeded, r.id).toBeTruthy();
+    for (const r of needsHuman()) expect(r.humanCanonNeeded, r.id).toBeTruthy();
   });
 
   it("does not claim the release is clear while blocking items stand", () => {
@@ -102,10 +100,12 @@ describe("the remediation registry", () => {
     expect(openItems().length).toBeLessThan(REMEDIATION.length);
   });
 
-  it("keeps the two human decisions open", () => {
-    /* No agent resolves these by inference. If either closes, a person
-       supplied the vocabulary or the basis. */
-    expect(needsHuman().map((r) => r.id).sort()).toEqual(["REM-002", "REM-003"]);
+  it("keeps every human decision open until a person answers it", () => {
+    /* REM-002 and REM-003 closed on 4 Aug when the founder supplied the
+       tenure position and the yield basis. REM-018 opened in the same
+       breath: the basis still says nothing about tax, and that word is
+       not an agent's to choose. */
+    expect(needsHuman().map((r) => r.id)).toEqual(["REM-018"]);
   });
 
   it("keeps the audit as evidence, not canon", () => {
@@ -149,6 +149,73 @@ describe("PUBLIC.02 — figures carry their class today", () => {
     for (const p of PROPERTIES) {
       expect(["FORECAST", "UNKNOWN"], p.assetId).toContain(p.yield.conf);
       if (p.yield.conf === "UNKNOWN") expect(p.yield.v, p.assetId).toBe(0);
+    }
+  });
+});
+
+describe("PUBLIC.03 — state is derived, never worded", () => {
+  it("gives every vehicle a canonical build stage and a labelled tenure", () => {
+    for (const v of VEHICLES) {
+      expect(BUILD_LABEL[v.buildStage], v.key).toBeTruthy();
+      /* Null is a legitimate answer. What is NOT legitimate is a tenure
+         value with no canonical label, or a label invented beside it. */
+      if (v.tenure !== null) expect(TENURE_LABEL[v.tenure], v.key).toBeTruthy();
+    }
+  });
+
+  it("never says 'acquired' about land again", () => {
+    /* The exact word that started this: it reads as settled title to
+       almost everybody, and was rendering over a record stating title
+       was unverified. It is not in the vocabulary any more, and this
+       fails if it returns to a public surface. */
+    for (const f of ["app/_assemblies/property.tsx", "app/_assemblies/data.ts"]) {
+      const src = fs.readFileSync(path.join(ROOT, f), "utf8")
+        .replace(/\/\*[\s\S]*?\*\//g, "");
+      expect(/Land acquired/i.test(src), f).toBe(false);
+    }
+  });
+
+  it("states diligence on The Creek, and infers tenure nowhere else", () => {
+    const creek = VEHICLES.find((v) => v.key === "coorgcreek")!;
+    expect(creek.tenure).toBe("diligence-complete");
+    /* The other two records state no position, so neither may acquire
+       one by inference from an adjacent sentence. */
+    for (const k of ["slowspace", "solace"]) {
+      expect(VEHICLES.find((v) => v.key === k)!.tenure, k).toBeNull();
+    }
+  });
+});
+
+describe("PUBLIC.02 — the basis travels with the number", () => {
+  it("gives every complete waterfall a stated basis", () => {
+    for (const v of VEHICLES) {
+      if (waterfallState(v.operating.waterfall).state !== "complete") continue;
+      expect(v.operating.yieldBasis, v.key).toBeTruthy();
+      /* Denominator and period, both. Either alone still lets a reader
+         pick the wrong reading. */
+      expect(v.operating.yieldBasis!, v.key).toMatch(/equity/i);
+      expect(v.operating.yieldBasis!, v.key).toMatch(/year 3|stabilis/i);
+    }
+  });
+
+  it("carries the basis onto the public card beside the figure", () => {
+    /* Identity, not existence: whatever the registry states is what the
+       card shows, including null. A card inventing a basis the registry
+       does not hold is the same defect as a card omitting one it does. */
+    for (const v of VEHICLES) {
+      expect(propertyBySlug(v.slug)!.yieldBasis, v.key).toBe(v.operating.yieldBasis);
+    }
+  });
+
+  it("claims a basis exactly where a yield renders, and nowhere else", () => {
+    /* A basis on a vehicle with no computable yield would describe a
+       figure that does not exist; a yield without one is PUBLIC.02. The
+       two must agree, and this is the assertion that keeps them agreeing
+       as waterfalls get completed. */
+    for (const v of VEHICLES) {
+      const renders = waterfallState(v.operating.waterfall).state === "complete";
+      if (renders) expect(v.operating.yieldBasis, v.key).toBeTruthy();
+      else expect(v.operating.yieldBasis, v.key).toBeNull();
     }
   });
 });

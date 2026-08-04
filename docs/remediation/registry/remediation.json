@@ -14,7 +14,7 @@
       "id": "REM-002",
       "title": "'Land acquired' overstates a possession-only record",
       "severity": "P0",
-      "status": "NEEDS_HUMAN_CANON",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.03",
         "PUBLIC.10"
@@ -24,7 +24,7 @@
       "id": "REM-003",
       "title": "Forecast yields render without their basis",
       "severity": "P0",
-      "status": "NEEDS_HUMAN_CANON",
+      "status": "RESOLVED",
       "laws": [
         "PUBLIC.02",
         "PUBLIC.10"
@@ -139,6 +139,15 @@
       "status": "OPEN",
       "laws": [
         "PUBLIC.07"
+      ]
+    },
+    {
+      "id": "REM-018",
+      "title": "The yield basis does not state tax treatment",
+      "severity": "P1",
+      "status": "NEEDS_HUMAN_CANON",
+      "laws": [
+        "PUBLIC.02"
       ]
     },
     {

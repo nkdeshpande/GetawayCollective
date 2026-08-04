@@ -52,8 +52,53 @@ export type VehicleKey = "slowspace" | "solace" | "coorgcreek";
 /** Lifecycle, from sheet 1. The vehicle's own state, not the property's. */
 export type VehicleLifecycle = "forming" | "raising" | "live" | "dissolved";
 
-/** Lifecycle, from sheet 2. What is true of the land and the building. */
-export type PropertyLifecycle = "acquired" | "development" | "stabilised";
+/**
+ * What stage the BUILDING is at. Nothing about how the land is held.
+ *
+ * The intake calls this the property lifecycle and uses it for both, and
+ * that conflation is what produced the defect: "acquired" was set because
+ * the land was secured, and the hero rendered it as "Land acquired" over
+ * a record stating title was unverified. One field answering two
+ * questions will eventually answer one of them wrongly.
+ */
+export type BuildStage = "pre-construction" | "under-construction" | "stabilised";
+
+/**
+ * How the land is HELD. A separate axis, and a legal one.
+ *
+ * Ordered weakest to strongest. Each value is a position somebody can be
+ * asked to stand behind, which is why none of them is "acquired" — that
+ * word reads as settled title to almost everybody and means nothing
+ * precise to anyone.
+ *
+ * Null where the record does not state a position. A public surface then
+ * says nothing about tenure rather than inferring one, because inferring
+ * tenure from an adjacent sentence is exactly how the last version went
+ * wrong.
+ */
+export type Tenure =
+  /** In possession. Nothing about title has been established. */
+  | "possession"
+  /** Diligence run and complete. Title work not necessarily concluded. */
+  | "diligence-complete"
+  /** Title established and verified. */
+  | "title-verified"
+  /** Conveyance executed and registered. */
+  | "conveyance-complete";
+
+/** What each tenure position may be SAID, in public, in full. */
+export const TENURE_LABEL: Record<Tenure, string> = {
+  possession: "In possession · title not yet established",
+  "diligence-complete": "Diligence complete",
+  "title-verified": "Title verified",
+  "conveyance-complete": "Conveyance complete",
+};
+
+export const BUILD_LABEL: Record<BuildStage, string> = {
+  "pre-construction": "Pre-construction",
+  "under-construction": "Under construction",
+  stabilised: "Stabilised",
+};
 
 export interface CapitalStack {
   readonly land: bigint;
@@ -157,6 +202,16 @@ export interface Operating {
   readonly waterfall: Waterfall | null;
   readonly reserveFloor: bigint | null;
   readonly yieldConfidence: string | null;
+  /**
+   * What the modelled yield IS. PUBLIC.02: a percentage is the most
+   * portable thing on a page — screenshotted and quoted without its
+   * surroundings — so the basis travels with it everywhere it renders.
+   *
+   * Founder, 4 Aug 2026: eighteen per cent from year three, stabilised.
+   * The denominator is the offering equity, which is what yieldOf()
+   * actually divides by.
+   */
+  readonly yieldBasis: string | null;
 }
 
 export interface Entitlement {
@@ -194,7 +249,9 @@ export interface Vehicle {
   readonly coordinates: string | null;
   readonly landArea: string;
   readonly keys: number;
-  readonly propertyLifecycle: PropertyLifecycle;
+  readonly buildStage: BuildStage;
+  /** Null where the record states no tenure position. Never inferred. */
+  readonly tenure: Tenure | null;
   readonly commitments: string;
   /** Plate hue. A design token index, not a colour literal (§29). */
   readonly hue: number;
@@ -230,7 +287,10 @@ const SLOWSPACE: Vehicle = {
      the conflict is registered rather than the figure quietly corrected. */
   landArea: ".3 acres · dual frontage",
   keys: 12,
-  propertyLifecycle: "development",
+  buildStage: "pre-construction",
+  /* The record states CRZ compliance and a frontage, and no tenure
+     position. Null rather than a guess — see the note on Tenure. */
+  tenure: null,
   commitments: "CRZ compliant · Blue Flag adjacent · modular assembly",
   hue: 198,
 
@@ -265,6 +325,7 @@ const SLOWSPACE: Vehicle = {
     },
     reserveFloor: 3960000_0000n,
     yieldConfidence: "modelled",
+    yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
   },
   entitlement: {
     nightPoolMin: 180, nightPoolMax: 210, reservedDays: 0,
@@ -301,7 +362,11 @@ const SOLACE: Vehicle = {
   coordinates: "13°24'40.5\"N 77°49'26.9\"E",
   landArea: "1.55 acres (0.20 owned + 1.35 leased)",
   keys: 6,
-  propertyLifecycle: "development",
+  buildStage: "pre-construction",
+  /* Part freehold, part leasehold — a description of holding rather than
+     a diligence or title position. The commitments line states it in
+     full; this axis stays null until somebody sets the position. */
+  tenure: null,
   commitments:
     "8 guntas owned (freehold) + 1 acre 14 guntas leased (leasehold). PACK_ARID_HILL climate mutation.",
   hue: 35,
@@ -340,7 +405,16 @@ const SOLACE: Vehicle = {
       sinkingFund: 250, debtService: 2308, toPartners: 1692,
     },
     reserveFloor: null,
+    /* The intake states no confidence WORD for this vehicle. That is a
+       different field from the basis: confidence says how well-sourced
+       the model is, the basis says what the number measures. */
     yieldConfidence: null,
+    /* Same basis as the other two. Not a per-vehicle claim — it is the
+       modelling convention the founder stated on 4 Aug, and yieldOf()
+       divides by offering equity for all three identically. Solace's
+       waterfall now closes, so it DOES render a yield, and a rendered
+       yield without a basis is the whole of PUBLIC.02. */
+    yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
   },
   /* Sheet 6 and sheet 7 are empty for this vehicle. */
   entitlement: null,
@@ -365,7 +439,11 @@ const COORGCREEK: Vehicle = {
   coordinates: "12°23'25.8\"N 75°49'15.2\"E",
   landArea: "10 acres (possession)",
   keys: 20,
-  propertyLifecycle: "acquired",
+  buildStage: "pre-construction",
+  /* Founder, 4 Aug 2026: diligence completed. This replaces "acquired",
+     which the hero was rendering as "Land acquired" over a record saying
+     title and conversion status were unverified. */
+  tenure: "diligence-complete",
   commitments:
     "SlowSpace brand. Land held under possession; title, Land Reforms Act and conversion status " +
     "unverified. Construction financed via a ₹5.0 Cr facility once the equity raise closes.",
@@ -406,6 +484,7 @@ const COORGCREEK: Vehicle = {
     },
     reserveFloor: 8700000_0000n,
     yieldConfidence: "estimated",
+    yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
   },
   entitlement: {
     nightPoolMin: 300, nightPoolMax: 350, reservedDays: 0,
