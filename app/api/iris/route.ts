@@ -30,7 +30,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { recordContact } from "@/lib/events/store";
-import { matchIris, IRIS_REFUSAL, IRIS_BOUNDARY } from "@/content/iris";
+import { respond, handoffPackage } from "@/lib/ai/iris";
 
 const Ask = z.object({
   question: z.string().min(1).max(500),
@@ -59,9 +59,25 @@ export async function POST(req: Request) {
   /* Leaving an address. */
   const leave = Leave.safeParse(body);
   if (leave.success) {
+    const at = new Date().toISOString();
+
+    /* AI-103. Built BEFORE the write, because it is what makes the write
+       worth anything: a stored address with no record of what was asked
+       hands somebody a name and no context, and UX-07 exists precisely so
+       the person does not have to start again. */
+    const handoff = handoffPackage({
+      email: leave.data.email,
+      asked: leave.data.question ? [leave.data.question] : [],
+      said: [],
+      vehicleSlug: leave.data.vehicleSlug,
+      at,
+    });
+
     const stored = await recordContact({
       email: leave.data.email,
-      note: leave.data.question ? `Asked: ${leave.data.question}` : undefined,
+      /* The handoff's own headline and claims, not a re-worded version.
+         Two summaries of the same exchange drift. */
+      note: handoff.assertions.map((a) => a.claim).join(" · "),
       source: "iris",
       vehicleSlug: leave.data.vehicleSlug,
       correlationId: crypto.randomUUID(),
@@ -76,6 +92,7 @@ export async function POST(req: Request) {
       say: stored
         ? "Thank you — that is recorded, and somebody who can answer properly will come back to you."
         : "I could not record that just now. The contact page carries the addresses directly.",
+      output: handoff,
     });
   }
 
@@ -85,26 +102,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
   }
 
-  const hit = matchIris(ask.data.question);
-
-  if (!hit) {
-    return NextResponse.json({
-      ok: true,
-      kind: "refusal",
-      say: IRIS_REFUSAL,
-      boundary: IRIS_BOUNDARY,
-      /* The refusal always offers the human path. An agent that declines
-         and stops is not doing UX-07, it is just unhelpful. */
-      escalate: true,
-    });
-  }
+  /* Every turn now produces AI-101's output object rather than a loose
+     reply. The wire shape is unchanged for anything already reading it —
+     `say`, `source`, `kind` are all still here — with the governed object
+     alongside, so an interaction can be audited after the fact. */
+  const reply = respond({ question: ask.data.question, at: new Date().toISOString() });
 
   return NextResponse.json({
     ok: true,
-    kind: "answer",
-    id: hit.id,
-    say: hit.answer,
-    /* AI-101: approved claims carry their source context. */
-    source: hit.source,
+    kind: reply.kind,
+    say: reply.say,
+    source: reply.source,
+    reading: reply.reading,
+    escalate: reply.escalate,
+    boundary: reply.boundary,
+    output: reply.output,
   });
 }

@@ -1,0 +1,55 @@
+/* AS-IRIS · the relationship panel.
+   Every value is a token — §29 forbids design literals, and a panel that
+   floats over every other surface is the worst place to start an
+   exception. */
+
+.iris-open{position:fixed;right:var(--gc-sp-m);bottom:var(--gc-sp-m);z-index:40}
+
+.iris{position:fixed;right:var(--gc-sp-m);bottom:var(--gc-sp-m);z-index:40;display:flex;flex-direction:column;width:min(100% - (var(--gc-sp-m) * 2),420px);max-height:min(720px,80svh);background:var(--gc-paper);color:var(--gc-ink);border:var(--gc-stroke-active) solid var(--gc-hairline);border-radius:var(--gc-radius-panel,0)}
+
+.iris-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--gc-sp-s);padding:var(--gc-sp-s);border-bottom:var(--gc-stroke-idle) solid var(--gc-hairline)}
+.iris-head p{margin-top:var(--gc-sp-3xs)}
+
+.iris-said{flex:1 1 auto;overflow-y:auto;padding:var(--gc-sp-s);display:flex;flex-direction:column;gap:var(--gc-sp-s)}
+
+.iris-turn{display:flex;flex-direction:column;gap:var(--gc-sp-3xs)}
+/* A person's own words sit inset, so a transcript reads as an exchange
+   rather than as one voice. No colour carries the distinction — colour
+   alone would not survive a monochrome or high-contrast rendering. */
+.iris-turn[data-who="person"]{padding-left:var(--gc-sp-s);border-left:var(--gc-stroke-active) solid var(--gc-hairline)}
+
+.iris-source{display:inline-block;margin-top:var(--gc-sp-3xs);color:var(--gc-electric);text-decoration:none}
+.iris-source:hover{text-decoration:underline}
+
+.iris-reading{margin-top:var(--gc-sp-2xs);padding-top:var(--gc-sp-2xs);border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}
+.iris-read{display:flex;align-items:baseline;justify-content:space-between;gap:var(--gc-sp-s);margin-top:var(--gc-sp-3xs);color:inherit;text-decoration:none}
+.iris-read:hover{text-decoration:underline}
+
+/* The refusal path. Deliberately not styled as an error — content/iris.ts
+   holds that declining and offering a person is AI-101 done correctly. */
+.iris-leave{padding:var(--gc-sp-s);border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}
+.iris-leave .row{display:flex;gap:var(--gc-sp-2xs);margin-top:var(--gc-sp-2xs)}
+.iris-leave input{flex:1 1 auto;min-width:0;padding:var(--gc-sp-2xs);border:var(--gc-stroke-idle) solid var(--gc-hairline);background:transparent;color:inherit;font:inherit}
+.iris-leave input:focus-visible{border-color:var(--gc-electric)}
+.iris-left{padding:0 var(--gc-sp-s) var(--gc-sp-s)}
+
+.iris-ask{display:flex;gap:var(--gc-sp-2xs);padding:var(--gc-sp-s);border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}
+.iris-ask input{flex:1 1 auto;min-width:0;padding:var(--gc-sp-2xs);border:var(--gc-stroke-idle) solid var(--gc-hairline);background:transparent;color:inherit;font:inherit}
+.iris-ask input:focus-visible{border-color:var(--gc-electric)}
+
+@media (max-width:520px){
+  .iris{right:0;bottom:0;width:100%;max-height:88svh;border-right:0;border-bottom:0;border-left:0}
+}
+
+/* AS-ATLAS · the findings panel. */
+.atlas-finding{padding:var(--gc-sp-s);border:var(--gc-stroke-idle) solid var(--gc-hairline)}
+/* An escalation is marked structurally, by a heavier left edge, rather
+   than by colour alone — the tone budget is finite and a panel of red
+   findings says nothing. */
+.atlas-finding[data-disposition="escalate"]{border-left:var(--gc-stroke-active) solid var(--gc-hazard)}
+.atlas-finding[data-disposition="propose"]{border-left:var(--gc-stroke-active) solid var(--gc-electric)}
+.atlas-finding[data-disposition="clear"]{border-left:var(--gc-stroke-active) solid var(--gc-confirm)}
+.atlas-ask{margin-top:var(--gc-sp-2xs);padding-left:var(--gc-sp-s);border-left:var(--gc-stroke-active) solid var(--gc-hairline)}
+.atlas-claims{margin-top:var(--gc-sp-2xs);padding-left:1.1em}
+.atlas-claims li{margin-top:var(--gc-sp-2xs)}
+.atlas-prohibited{margin-top:var(--gc-sp-s);padding-top:var(--gc-sp-2xs);border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}

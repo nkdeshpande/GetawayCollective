@@ -28,6 +28,7 @@ import { ACCESS_FOR_VANTAGE, GROUP_VANTAGE, ACCESS_RANK } from "@/constants/rout
 import type { RouteGroup } from "@/constants/layout";
 import { accessOfSubject } from "@/lib/access";
 import { currentSubject } from "@/lib/session";
+import { IrisPanel } from "@/app/_assemblies/iris";
 
 /**
  * Defence in depth, deliberately weaker than the middleware.
@@ -58,8 +59,29 @@ export async function GroupGuard({
   const subject = await currentSubject();
   const held = accessOfSubject(subject);
 
-  if (respectsOverride) return <>{children}</>;
-  if (ACCESS_RANK[held] >= ACCESS_RANK[required]) return <>{children}</>;
+  /*
+   * IRIS mounts here rather than in the Footer, and the reason is the
+   * group.
+   *
+   * AI-101's realm is "GC-*" — the public surface. The Footer renders on
+   * every screen including the Office, and an agent that answers "what is
+   * the minimum commitment" has no business floating over a governance
+   * ledger. GroupGuard is the only hand-written component that knows
+   * which realm it is in, so it is the only correct mount point.
+   *
+   * ATLAS is deliberately NOT mounted globally anywhere. It produces
+   * findings about a named vehicle for a named owner, so it belongs on
+   * that vehicle's screen and nowhere else.
+   */
+  const withIris = (
+    <>
+      {children}
+      {group === "gateway" ? <IrisPanel /> : null}
+    </>
+  );
+
+  if (respectsOverride) return withIris;
+  if (ACCESS_RANK[held] >= ACCESS_RANK[required]) return withIris;
 
   /* 403 states that the viewer may not see it. It never says whether the
      thing exists — the difference between "no" and "not for you" is the

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AtlasFindings } from "./atlasfindings";
 import { ChangeEvent, Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
@@ -198,6 +199,14 @@ function OfficeWorkspace({ path, params }: OfficeProps) {
           </> : null}
 
           {key === "collection" ? <div className="atlas-collection"><header><span>INVESTMENT VEHICLE</span><span>CURRENT STAGE</span><span>CURRENT CONTROL</span><span>NEXT REQUIRED</span></header>{collectionRows.map(([name, phase, control, next]) => <article key={name}><div><b>{name}</b><small>Vehicle record current</small></div><span>{phase}</span><span>{control}</span><Link href={base}>{next} →</Link></article>)}</div> : null}
+
+          {/* ATLAS's actual findings, computed from the event log. They
+              sit above the lifecycle table because an escalation with a
+              deadline outranks a reference grid. Not rendered in preview:
+              the preview has no vehicle, and a finding about a vehicle
+              that does not exist is the invented figure this whole layer
+              is built to avoid. */}
+          {key === "vehicle" && !preview ? <AtlasFindings vehicle={vehicle} /> : null}
 
           {key === "vehicle" ? <>
             <div className="atlas-section-head"><div><span className="eyebrow">ADMIN VEHICLE</span><h2>Ten lifecycle stages</h2></div><p>Draft capture supports work in progress. Evidence and governed execution remain separate and traceable.</p></div>
