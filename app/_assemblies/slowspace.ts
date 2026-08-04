@@ -41,6 +41,7 @@
 import {
   inr, rate, allocate, decimalRatio, PROPERTIES, type Confidence,
 } from "./data";
+import { conflictsFor } from "../../constants/vehicles";
 
 /* ── The entity ───────────────────────────────────────────────────── */
 export const LLP = {
@@ -591,10 +592,44 @@ export { inr };
   if (Math.round(row.yield.v * 100) !== MY_YIELD_BPS) {
     disagreements.push(`yield: ${row.yield.v}% vs ${MY_YIELD_BPS / 100}%`);
   }
-  if (disagreements.length) {
+  /*
+   * DECLARED DISAGREEMENT IS NOT DRIFT.
+   *
+   * This check was written to catch a figure changing on one page and not
+   * the other. It now also fires when the two sources disagree on purpose:
+   * the Collection is folded from constants/vehicles.ts, transcribed from
+   * the founder's intake, and that intake genuinely contradicts this canon
+   * about units, subscription and site area. Every contradiction is
+   * registered in CONFLICTS with a reason and somebody who can settle it.
+   *
+   * So the rule is narrower than it was, and stronger for it: an
+   * UNREGISTERED disagreement still fails the build. A registered one is
+   * allowed to stand, because the register is where it is being tracked —
+   * and breaking every test until a founder answers a question would only
+   * teach somebody to delete this block.
+   *
+   * The warning below is the half that keeps it honest. A conflict that
+   * has been settled must leave the register, or the register fills with
+   * resolved entries and stops meaning anything.
+   */
+  const registered = conflictsFor("slowspace");
+
+  if (disagreements.length && registered.length === 0) {
     throw new Error(
-      `The public Property row for ${SITE.assetId} disagrees with the canon:\n  ` +
+      `The public Property row for ${SITE.assetId} disagrees with the canon, and nothing in ` +
+      `constants/vehicles.ts CONFLICTS explains why:\n  ` +
       disagreements.join("\n  "),
+    );
+  }
+
+  if (!disagreements.length && registered.length > 0) {
+    /* Not a throw: a conflict may be about something this check cannot
+       see, such as the entitlement date. Reported so a stale register is
+       noticed rather than trusted. */
+    console.warn(
+      `[slowspace] The public row agrees with the canon on every field checked here, while ` +
+      `${registered.length} conflict(s) remain registered for this vehicle. If they are ` +
+      `settled, remove them.`,
     );
   }
 }

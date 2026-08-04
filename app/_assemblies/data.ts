@@ -93,6 +93,8 @@ export function allocate(total: bigint, weights: bigint[]): bigint[] {
  * constants/taxonomies.ts, read through the domain layer.
  */
 export type { Confidence } from "@/lib/provenance";
+import { VEHICLES, publishable } from "../../constants/vehicles";
+import { estateOf } from "../../constants/spatial";
 import type { Confidence } from "@/lib/provenance";
 
 export const CONFIDENCE_LABEL: Record<Confidence, string> = {
@@ -141,67 +143,109 @@ export interface Property {
   to?: string;
 }
 
-export const PROPERTIES: readonly Property[] = [
-  {
-    ufr0060: "Kyoto House", assetId: "KYO-01", ufr0063: "Kyoto, Japan",
-    ufr0102: 124000000_0000n,
-    ufr0103: "Independent appraisal · Nomura Real Estate",
-    ufr0101: "2026-06-30", ufr0061: "Coastal Collection SPV I",
-    ufr0065: "110 m²", ufr0066: "Stabilised", ufr0067: "2025-11-14",
-    ufr0068: "Machiya restoration · timber reuse 78%",
-    yield: { v: 8.4, conf: "INFERRED" }, availability: "Q3 2026",
-    telemetry: { state: "live", at: "2026-07-31 09:12" },
-    units: 12, held: 1, hue: 158,
-  },
-  /*
-   * THE ONE REAL ONE.
-   *
-   * Replaces an invented "Swiss Vault" that claimed an independent
-   * Swiss appraisal and a 2024 stabilisation date, neither of which
-   * existed. Every value below belongs to the vehicle modelled end to
-   * end in slowspace.ts.
-   *
-   * WHY THE FIGURES ARE TYPED HERE RATHER THAN IMPORTED.
-   * slowspace.ts imports inr/rate/allocate FROM THIS FILE, so importing
-   * it back would be a cycle — the class of defect that resolves to
-   * `undefined` at module-eval and takes an afternoon to find. Instead
-   * slowspace.ts, which already depends on this file, CHECKS these
-   * values against its own canon at load and throws if they drift.
-   * Derive where you can; where a cycle prevents it, check rather than
-   * duplicate silently.
-   */
-  {
-    ufr0060: "SlowSpace Coastal", assetId: "PDB-01", ufr0063: "Padubidri, Karnataka",
-    /* Project cost, NOT a valuation. Nothing is built, so no appraiser
-       has seen it, and the source says exactly that. */
-    ufr0102: 95000000_0000n,
+/**
+ * The Collection — derived from constants/vehicles.ts, not typed here.
+ *
+ * ── WHAT CHANGED, AND WHY IT MATTERS ─────────────────────────────────
+ * This list used to hold Kyoto House and Oslo Base beside SlowSpace.
+ * Both were invented for the prototype, and both carried the furniture of
+ * a real asset: an appraiser's name, a valuation date, a yield with a
+ * confidence class. Swiss Vault had already been removed for exactly that
+ * reason and two of the same kind were left standing.
+ *
+ * They are replaced by the two real vehicles from the intake. Nothing on
+ * this list is now imaginary.
+ *
+ * ── DERIVED, SO IT CANNOT DRIFT ──────────────────────────────────────
+ * The previous entries were typed by hand, which is how data.ts and
+ * slowspace.ts came to disagree about how many units SlowSpace has
+ * (C-06). These are folded out of the registry, so there is one place a
+ * vehicle's facts live and this is not it.
+ *
+ * The one thing NOT derived is the valuation: a project cost and an
+ * appraised value are different claims, and only the registry's own
+ * source string can say which one a number is.
+ */
+/**
+ * The intake's lifecycle words, in the platform's own vocabulary.
+ *
+ * Declared ABOVE the map that reads it. `const` is not hoisted, so with
+ * this below PROPERTIES the module threw at evaluation — the class of
+ * defect that only appears once something imports the file for real.
+ */
+const LIFECYCLE_LABEL: Record<string, string> = {
+  acquired: "Acquired",
+  development: "Pre-construction",
+  stabilised: "Stabilised",
+};
+
+export const PROPERTIES: readonly Property[] = VEHICLES.map((v): Property => {
+  /* A vehicle with no waterfall cannot state a yield, and a placeholder
+     yield on a card is the invented figure this replacement removed. */
+  const yieldOf = (): { v: number; conf: Confidence } => {
+    if (!v.operating.waterfall) return { v: 0, conf: "UNKNOWN" };
+    const toPartners = (v.operating.grossRevenue * BigInt(v.operating.waterfall.toPartners)) / 10000n;
+    const bps = Number((toPartners * 10000n) / v.offering.totalEquity);
+    return {
+      v: Math.round(bps) / 100,
+      /* FORECAST, not INFERRED. The intake calls these "modelled" and
+         "estimated"; both are a future value from a model on an asset
+         that does not exist yet. INFERRED would say it was derived from
+         something observed, and nothing here has been observed. */
+      conf: "FORECAST",
+    };
+  };
+
+  const gate = publishable(v);
+  /* The ground, where the spatial ledger and the vehicle have been
+     joined. Two of the three are joined; the estate is undefined for the
+     one that is not, and every use below tolerates that. */
+  const estate = estateOf(v.key);
+
+  return {
+    ufr0060: v.propertyName,
+    assetId: v.assetCode,
+    /* The intake's district, widened to the ledger's region where the two
+       estates are joined. "Padubidri, Karnataka" is where the site is;
+       "Mangaluru–Udupi" is the coastline it sits on, and the second is
+       the one somebody works out the drive from. */
+    ufr0063: estate ? `${v.jurisdiction} · ${estate.region}` : v.jurisdiction,
+    /* Project cost, NOT a valuation. Nothing is built on any of the three,
+       so no appraiser has seen any of them, and the source says so. */
+    ufr0102: v.stack.projectTotal,
     ufr0103: "Project cost — no appraisal exists at pre-construction",
-    ufr0101: "2026-06-19", ufr0061: "SlowSpace Coastal LLP",
-    ufr0065: "1.42 acres · dual frontage", ufr0066: "Pre-construction", ufr0067: null,
-    ufr0068: "CRZ compliant · Blue Flag adjacent · modular assembly",
-    yield: { v: 18, conf: "INFERRED" }, availability: "45% remaining",
-    /* No feed: there is nothing built to instrument. Saying "stale"
-       would imply one existed and stopped. */
+    ufr0101: v.agreementDated ?? v.incorporated ?? "not incorporated",
+    ufr0061: v.registeredName,
+    ufr0065: v.landArea,
+    ufr0066: LIFECYCLE_LABEL[v.propertyLifecycle],
+    ufr0067: null,
+    /* What is committed on this ground, and what is built on it. The
+       ledger's ecological character is the more useful half for a reader
+       and the intake's commitments are the more consequential, so both
+       run — the character first, because it says what the place is. */
+    ufr0068: estate
+      ? `${estate.ecology} · ${estate.keys} keys · ${v.commitments}`
+      : v.commitments,
+    yield: yieldOf(),
+    /* Units, not a season. "Q3 2026" on the old entries implied a date
+       somebody had committed to. */
+    availability: v.offering.available === 0
+      ? "Fully subscribed"
+      : `${v.offering.available} of ${v.offering.units} units available`,
+    /* None of the three is built, so none is instrumented. Saying "stale"
+       would imply a feed existed and stopped. */
     telemetry: { state: "stale", at: "no feed — pre-construction" },
-    units: 20, held: 11, hue: 198,
-    /* The only property with a fully built destination, so the card
-       navigates instead of merely disclosing. */
-    to: "/flow",
-  },
-  {
-    ufr0060: "Oslo Base", assetId: "NOR-03", ufr0063: "Vestland, Norway",
-    ufr0102: 98200000_0000n,
-    /* A weaker source, and it SAYS so — the prototype rendered every
-       valuation identically regardless of who produced it. */
-    ufr0103: "Management estimate",
-    ufr0101: "2026-07-15", ufr0061: "Nordic Collection SPV I",
-    ufr0065: "140 m²", ufr0066: "Lease-up", ufr0067: null,
-    ufr0068: "Mass timber · district heat",
-    yield: { v: 9.7, conf: "REPORTED" }, availability: "Q1 2027",
-    telemetry: { state: "live", at: "2026-07-31 09:08" },
-    units: 12, held: 0, hue: 24,
-  },
-];
+    units: v.offering.units,
+    held: v.offering.subscribed,
+    hue: v.hue,
+    /* A card only navigates where the destination is real AND the vehicle
+       clears its conflicts. Two of the three do not, so their cards
+       disclose in place rather than opening an offering that carries a
+       figure nobody has settled. */
+    to: gate.ok ? `/collection/${v.slug}` : undefined,
+  };
+});
+
 
 export const propertyBySlug = (slug: string): Property | undefined =>
   PROPERTIES.find((p) => toSlug(p.ufr0060) === slug || p.assetId.toLowerCase() === slug.toLowerCase());
