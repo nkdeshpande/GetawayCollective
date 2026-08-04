@@ -146,3 +146,38 @@ Executive Office, not to whoever happens to be editing the file.
 Where behaviour is ratified but surprising, pin it with a test and say why
 in the comment — several tests here exist only to stop a correct behaviour
 from being "fixed" later.
+
+---
+
+## Remediation work (the public-surface program)
+
+The canon is code, and it is in three files — read them before touching
+any public surface:
+
+| Canon | Where | Enforced by |
+|---|---|---|
+| Public UX laws | `constants/public-laws.ts` | `lint:public` in the verify chain |
+| Remediation registry | `constants/remediation.ts` | same lint — integrity, ratchet, status honesty |
+| Route contracts | `constants/route-contracts.ts` | `tests/remediation.test.ts` |
+
+The audit prose of 4 Aug 2026 is **evidence, not canon**. Resolve items
+against the law they cite, never against the paragraph that prompted them.
+
+Before implementing any remediation item:
+
+1. Read its registry entry and every law it cites.
+2. Inspect every file in `affectedSources` — they are verified, not guessed.
+3. Do not invent lifecycle states, figure bases or legal claims. Items
+   needing those carry `NEEDS_HUMAN_CANON`, which is a status, not a defect.
+4. Do not fix a route locally where the item names a shared primitive.
+5. Preserve desktop behaviour unless the item's viewport says otherwise.
+6. The ontology ratchet in `scripts/public-law-lint.js` counts identifier
+   leakage per public surface and only permits the count to FALL. When your
+   change lowers a count, tighten that baseline in the same commit.
+7. Mark an item `RESOLVED` only when its acceptance criteria pass; the lint
+   fails the build on a `RESOLVED` item whose mechanical check disagrees.
+8. `docs/remediation/` is generated (`npm run remediation:audits`). Never
+   edit it, never cite it as authority.
+
+Humans define canon. The system stores it. Components render it. Agents do
+not invent it.

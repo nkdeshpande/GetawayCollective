@@ -1,0 +1,163 @@
+{
+  "generated": "by scripts/gen-remediation-audits.js — canonical source is constants/remediation.ts",
+  "items": [
+    {
+      "id": "REM-001",
+      "title": "/about renders the internal scaffold, not an about page",
+      "severity": "P0",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.01"
+      ]
+    },
+    {
+      "id": "REM-002",
+      "title": "'Land acquired' overstates a possession-only record",
+      "severity": "P0",
+      "status": "NEEDS_HUMAN_CANON",
+      "laws": [
+        "PUBLIC.03",
+        "PUBLIC.10"
+      ]
+    },
+    {
+      "id": "REM-003",
+      "title": "Forecast yields render without their basis",
+      "severity": "P0",
+      "status": "NEEDS_HUMAN_CANON",
+      "laws": [
+        "PUBLIC.02",
+        "PUBLIC.10"
+      ]
+    },
+    {
+      "id": "REM-004",
+      "title": "The complaints policy promises /status figures that /status does not show",
+      "severity": "P0",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.10",
+        "PUBLIC.03"
+      ]
+    },
+    {
+      "id": "REM-005",
+      "title": "Sign-in is presented as live while status says it is not connected",
+      "severity": "P0",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.03",
+        "PUBLIC.09"
+      ]
+    },
+    {
+      "id": "REM-006",
+      "title": "System ontology leaks across every public surface",
+      "severity": "P1",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.01"
+      ]
+    },
+    {
+      "id": "REM-007",
+      "title": "The mobile viewport inherits the desktop rail",
+      "severity": "P1",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.04",
+        "PUBLIC.06"
+      ]
+    },
+    {
+      "id": "REM-008",
+      "title": "25 declared media absences render as 25 placeholders",
+      "severity": "P1",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.08"
+      ]
+    },
+    {
+      "id": "REM-009",
+      "title": "Public links cross into gated routes without warning",
+      "severity": "P1",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.09"
+      ]
+    },
+    {
+      "id": "REM-010",
+      "title": "The home proposition resolves too slowly",
+      "severity": "P1",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.05"
+      ]
+    },
+    {
+      "id": "REM-011",
+      "title": "The Collection defends itself before it seduces",
+      "severity": "P2",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.05"
+      ]
+    },
+    {
+      "id": "REM-012",
+      "title": "IRIS is everywhere and introduced nowhere",
+      "severity": "P2",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.01"
+      ]
+    },
+    {
+      "id": "REM-013",
+      "title": "Footer entity disclosure repeats at full weight everywhere",
+      "severity": "P2",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.06"
+      ]
+    },
+    {
+      "id": "REM-014",
+      "title": "System Status sits in primary navigation",
+      "severity": "P2",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.05"
+      ]
+    },
+    {
+      "id": "REM-015",
+      "title": "Typography and contrast floor below perceptual comfort",
+      "severity": "P1",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.07"
+      ]
+    },
+    {
+      "id": "REM-016",
+      "title": "Public ontology inventory (classification, not deletion)",
+      "severity": "P1",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.01"
+      ]
+    },
+    {
+      "id": "REM-017",
+      "title": "Border-role inventory",
+      "severity": "P3",
+      "status": "OPEN",
+      "laws": [
+        "PUBLIC.06"
+      ]
+    }
+  ]
+}
