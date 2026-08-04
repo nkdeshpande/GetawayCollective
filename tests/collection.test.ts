@@ -13,7 +13,7 @@
 
 import { describe, it, expect } from "vitest";
 import {
-  VEHICLES, CONFLICTS, vehicleBySlug, conflictsFor, blockingFor,
+  VEHICLES, CONFLICTS, conflictsFor, blockingFor,
   publishable, promoterBps,
 } from "../constants/vehicles";
 import {
@@ -150,6 +150,21 @@ describe("the estates", () => {
   it("never gives an estate a buildable envelope larger than its site", () => {
     for (const e of ESTATES) {
       expect(e.buildableEnvelope, e.id).toBeLessThanOrEqual(e.siteArea);
+    }
+  });
+
+  it("carries landscape preservation as stated, and derives nothing from it", () => {
+    /* The estates build over several levels, so site minus envelope is
+       not the landscape figure. An earlier version computed it that way
+       and reported four false breaches. */
+    for (const e of ESTATES) expect(e.landscapePreserved).toBeTruthy();
+  });
+
+  it("reports only breaches that compare two stated numbers", () => {
+    for (const e of ESTATES) {
+      for (const b of standardsBreached(e)) {
+        expect(b, e.id).not.toMatch(/landscape/i);
+      }
     }
   });
 

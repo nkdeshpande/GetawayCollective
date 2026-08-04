@@ -109,8 +109,15 @@ export interface Estate {
   readonly pack: ClimatePack;
   /** Acres, as the ledger states them. */
   readonly siteArea: number;
-  /** Acres that may be built on. The rest is held as landscape. */
+  /**
+   * Acres the building may sit within. NOT the ground it covers — the
+   * estates build over several levels, so this is a planning zone rather
+   * than a footprint, and subtracting it from the site does not give the
+   * landscape figure.
+   */
   readonly buildableEnvelope: number;
+  /** Landscape held, as the ledger states it. Never computed here. */
+  readonly landscapePreserved: string;
   readonly keys: number;
   readonly status: DevelopmentStatus;
   /** Why this estate exists in the portfolio, in the ledger's words. */
@@ -137,6 +144,7 @@ export const ESTATES: readonly Estate[] = [
     pack: "PACK_ARID_HILL",
     siteArea: 0.6,
     buildableEnvelope: 0.2,
+    landscapePreserved: "≥65%",
     keys: 6,
     status: "confirmed",
     strategicRole: "Prove the complete SGDS reference implementation at small scale",
@@ -162,6 +170,7 @@ export const ESTATES: readonly Estate[] = [
     pack: "PACK_DENSE_FOREST",
     siteArea: 3.0,
     buildableEnvelope: 2.0,
+    landscapePreserved: "≥65%",
     keys: 20,
     status: "confirmed",
     strategicRole: "Establish the flagship benchmark for ESKAPE",
@@ -189,6 +198,7 @@ export const ESTATES: readonly Estate[] = [
     pack: "PACK_COASTAL_ESTUARY",
     siteArea: 4.4,
     buildableEnvelope: 2.3,
+    landscapePreserved: "≥65%",
     keys: 12,
     status: "in-progress",
     strategicRole: "Validate coastal deployment and LLP ownership structures",
@@ -215,6 +225,7 @@ export const ESTATES: readonly Estate[] = [
     pack: "PACK_RIPARIAN_FOREST",
     siteArea: 10.0,
     buildableEnvelope: 5.0,
+    landscapePreserved: "≥65%",
     keys: 20,
     status: "in-progress",
     strategicRole: "Demonstrate premium riverine destination economics",
@@ -247,6 +258,7 @@ export const ESTATES: readonly Estate[] = [
     pack: "PACK_MOUNTAIN_RIDGE",
     siteArea: 5.0,
     buildableEnvelope: 2.0,
+    landscapePreserved: "≥65%",
     /* The registry says 12–20; the gantt commits to 16. The gantt is the
        one with a date attached, so it is the one carried. */
     keys: 16,
@@ -304,8 +316,8 @@ export const PLATFORM_CONSTITUTION: readonly ConstitutionalStandard[] = [
   { standard: "Component standardisation", rule: "Above 95%" },
 ];
 
-/** The 70:30 invariant, stated as a number so it can be checked. */
 export const MAX_KEY_SQFT = 550;
+/** The stated minimum. Reported alongside each estate, never derived. */
 export const MIN_LANDSCAPE_RATIO = 0.65;
 
 export const ROADMAP: readonly { phase: string; estates: readonly EstateId[]; objective: string }[] = [
@@ -346,47 +358,26 @@ export function standardsBreached(e: Estate): string[] {
     }
   }
 
-  const built = e.buildableEnvelope / e.siteArea;
-  if (1 - built < MIN_LANDSCAPE_RATIO) {
-    out.push(
-      `Buildable envelope is ${(built * 100).toFixed(0)}% of the site, leaving ` +
-      `${((1 - built) * 100).toFixed(0)}% as landscape against a minimum of ` +
-      `${(MIN_LANDSCAPE_RATIO * 100).toFixed(0)}%.`,
-    );
-  }
-
+  /*
+   * NO LANDSCAPE CHECK HERE, DELIBERATELY.
+   *
+   * An earlier version computed it as site minus buildable envelope and
+   * reported four of five estates in breach. That was wrong, and wrong in
+   * the way this codebase is least willing to be: it invented a formula
+   * and then published a compliance conclusion from it.
+   *
+   * The estates build vertically — the footprint sheets carry L-1, L0 and
+   * L1 levels — so built area is not ground area, and an envelope is the
+   * zone a building may sit within rather than the ground it covers.
+   * Neither number in this registry is the one that measure needs.
+   *
+   * The ledger states preservation per estate and that stated figure is
+   * carried on the estate as `landscapePreserved`. It is reported, not
+   * recomputed. Where the platform wants to verify it, the input is a
+   * survey, not a division.
+   */
   return out;
 }
-
-/**
- * THE LEDGER DISAGREES WITH ITSELF ABOUT LANDSCAPE.
- *
- * It calls 70:30 the "Fundamental Invariant" and prints "≥65%" against
- * every estate in its land and development profile. Its own buildable
- * envelopes do not leave that much on four of the five:
- *
- *   Solace          0.2 of 0.6 acres   →  67% held   passes
- *   Coffee Fields   2.0 of 3.0 acres   →  33% held   fails
- *   Confluence      2.3 of 4.4 acres   →  48% held   fails
- *   The Creek       5.0 of 10.0 acres  →  50% held   fails
- *   Nine Hills      2.0 of 5.0 acres   →  60% held   fails
- *
- * Stated as an observation rather than an error, because there is a
- * reading that reconciles it: "buildable envelope" may be the area a
- * building may sit ANYWHERE within rather than the area it covers, in
- * which case the preserved fraction is measured against actual footprint
- * and could still clear 65%.
- *
- * That reading is plausible and it is not what the column says. Until
- * somebody confirms which measure is meant, standardsBreached() reports
- * the arithmetic the ledger's own numbers produce — because a
- * "Fundamental Invariant" that nothing checks is a phrase, and this is
- * the sentence that stops it being one.
- */
-export const LANDSCAPE_NOTE =
-  "The ledger claims ≥65% landscape preservation on every estate. Its own buildable envelopes " +
-  "leave that much on Solace only. Either 'buildable envelope' means the permitted zone rather " +
-  "than the footprint, or four estates are outside the invariant.";
 
 export const SPATIAL_LAWS = {
   oneSystemManyClimates:
@@ -400,6 +391,10 @@ export const SPATIAL_LAWS = {
     "The ledger is written in operating-company language. Five of its recurring nouns are §25 " +
     "forbidden and are translated at this boundary rather than exempted with a pragma.",
   standardsAreChecked:
-    "A maximum key size nobody measures against is a paragraph. standardsBreached() measures, " +
-    "and one estate currently exceeds it.",
+    "A maximum key size nobody measures against is a paragraph. standardsBreached() compares two " +
+    "stated numbers and reports the one estate that exceeds it.",
+  statedIsNotDerived:
+    "Landscape preservation is carried as the ledger states it and never recomputed. Site minus " +
+    "buildable envelope is not that figure — the estates build over several levels — and deriving " +
+    "a compliance verdict from a formula nobody agreed to is worse than not checking at all.",
 } as const;

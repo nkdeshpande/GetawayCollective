@@ -427,7 +427,7 @@ ws = wb.create_sheet("Estate & Design")
 head(ws, "THE GROUND, AND WHAT IS BUILT ON IT",
      "From the spatial ledger. Five estates, one building system, differing only by climate pack.", 11)
 r = header_row(ws, 4, [
-    "Estate", "Brand", "Region", "Climate pack", "Site (ac)", "Buildable (ac)",
+    "Estate", "Brand", "Region", "Climate pack", "Site (ac)", "Buildable zone (ac)",
     "Landscape held", "Keys", "Status", "Vehicle", "Character",
 ], [22, 11, 18, 22, 10, 12, 13, 7, 13, 14, 40])
 
@@ -435,11 +435,9 @@ e_start = r
 for e in E:
     r = row(ws, r, [
         e["name"], e["brand"], e["region"], e["pack"], e["siteArea"], e["buildableEnvelope"],
-        None, e["keys"], e["status"], e["vehicle"] or "—", e["character"],
+        e["landscapePreserved"], e["keys"], e["status"], e["vehicle"] or "—", e["character"],
     ], font=IN)
     L = r - 1
-    c = ws.cell(row=L, column=7, value=f"=IF(E{L}=0,\"\",(E{L}-F{L})/E{L})")
-    c.font = CALC; c.number_format = PCT; c.border = BOX
     if e["breaches"]:
         for col in (1, 8):
             ws.cell(row=L, column=col).fill = STOP
@@ -465,7 +463,10 @@ if not any_breach:
     ws.cell(row=r, column=1, value="None.").font = TXT
     r += 1
 r += 1
-ws.cell(row=r, column=1, value=D["landscapeNote"]).font = DIM
+ws.cell(row=r, column=1,
+        value="Landscape preservation is carried exactly as the ledger states it. It is not recomputed "
+              "here: the estates build over several levels, so site minus buildable zone is not the "
+              "landscape figure, and verifying it needs a survey rather than a division.").font = DIM
 ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=11)
 ws.row_dimensions[r].height = 30
 r += 2
