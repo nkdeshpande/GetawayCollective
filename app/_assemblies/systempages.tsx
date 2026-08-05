@@ -78,7 +78,26 @@ function SignIn() {
     <section className="system-card identity-card"><span className="eyebrow">A private threshold</span>{/* The heading follows the capability. "Continue quietly." over a page
           with no provider invites something the deployment cannot do, and
           the reader only discovers that after everything else. */}
-      <h1>{providers !== null && !hasGoogle && !hasEmail ? "Not open yet." : "Continue quietly."}</h1>
+      {/*
+        THREE STATES, NOT TWO.
+
+        The first version branched on "no providers" and fell back to
+        "Continue quietly." for everything else — including the moment
+        BEFORE the fetch resolves, when nothing is known yet. So the
+        server-rendered HTML, and anything that reads it without running
+        JavaScript, saw the optimistic heading on a deployment with no
+        identity provider at all. The honest state arrived a beat later,
+        which is exactly the audience it needed to reach and exactly the
+        one that never sees it.
+
+        `providers === null` means UNKNOWN and now says something neutral
+        and true at every stage.
+      */}
+      <h1>{
+        providers === null ? "The private threshold."
+          : (!hasGoogle && !hasEmail) ? "Not open yet."
+          : "Continue quietly."
+      }</h1>
 
       {error ? <p className="system-note" role="alert">{error}</p> : null}
 
