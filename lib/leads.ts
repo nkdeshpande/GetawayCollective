@@ -15,6 +15,7 @@
  * place to start.
  */
 
+import { senderAddress } from "../constants/sender";
 import { z } from "zod";
 
 export const SignalLead = z.object({
@@ -33,7 +34,7 @@ export type SendResult = { ok: true } | { ok: false; reason: "not-configured" | 
 
 export async function sendLead(opts: { to: string; subject: string; text: string }): Promise<SendResult> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM ?? "Getaway Collective <onboarding@resend.dev>";
+  const from = senderAddress();
 
   if (!apiKey) {
     console.error(`[leads] RESEND_API_KEY is not set — dropped "${opts.subject}" intended for ${opts.to}`);

@@ -28,6 +28,7 @@
  * mistake this module refuses to make.
  */
 
+import { senderAddress } from "../../constants/sender";
 import { noticeById, SPECIMEN_CONTEXT } from "../../content/notifications";
 import type { Audience, SpecimenContext } from "../../content/notifications";
 import { renderNotice } from "./render";
@@ -112,7 +113,7 @@ export async function sendNotice(
   }
 
   const { subject, html, text } = renderNotice(spec.render(ctx));
-  const from = process.env.RESEND_FROM ?? "Getaway Collective <onboarding@resend.dev>";
+  const from = senderAddress();
 
   try {
     const { Resend } = await import("resend");

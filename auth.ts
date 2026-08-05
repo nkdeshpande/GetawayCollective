@@ -30,6 +30,7 @@
  * their address is worse than one that was never offered.
  */
 
+import { senderAddress } from "./constants/sender";
 import NextAuth from "next-auth";
 import Resend from "next-auth/providers/resend";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
@@ -47,7 +48,7 @@ const emailProvider =
     ? [
         Resend({
           apiKey: process.env.RESEND_API_KEY,
-          from: process.env.RESEND_FROM ?? "Getaway Collective <onboarding@resend.dev>",
+          from: senderAddress(),
         }),
       ]
     : [];

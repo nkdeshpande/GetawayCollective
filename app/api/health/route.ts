@@ -29,6 +29,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { senderAddress, isSandboxSender } from "@/constants/sender";
 
 export const runtime = "nodejs";
 /* Never cached. A cached health check reports the configuration of
@@ -58,11 +59,15 @@ export async function GET() {
 
   const mail = {
     RESEND_API_KEY: present("RESEND_API_KEY"),
-    /* The one the Vercel integration does not set. Without it both the
-       lead forms and the magic link fall back to Resend's sandbox sender,
-       which delivers only to the account owner and rejects everyone else. */
-    RESEND_FROM: present("RESEND_FROM"),
-    RESEND_FROM_is_sandbox: (process.env.RESEND_FROM ?? "").includes("resend.dev"),
+    /* Was the commonest way this deployment broke silently: the Vercel
+       integration injects the key and never this, so mail fell back to
+       Resend's sandbox sender and reached one mailbox. The address is now
+       a constant (constants/sender.ts) and this is an override. */
+    /* An OVERRIDE now, not a requirement — constants/sender.ts carries
+       the address. Reported so an operator can see whether one is in
+       force, which matters when mail goes somewhere unexpected. */
+    RESEND_FROM_override: present("RESEND_FROM"),
+    RESEND_FROM_is_sandbox: isSandboxSender(),
   };
 
   const site = {
@@ -76,7 +81,10 @@ export async function GET() {
   const canSignIn = auth.AUTH_SECRET;
   const canMagicLink = auth.AUTH_SECRET && data.DATABASE_URL && mail.RESEND_API_KEY;
   const canGoogle = auth.AUTH_SECRET && auth.GOOGLE_CLIENT_ID && auth.GOOGLE_CLIENT_SECRET;
-  const canReachRealRecipients = mail.RESEND_API_KEY && mail.RESEND_FROM && !mail.RESEND_FROM_is_sandbox;
+  /* The KEY is the requirement; the sender is now guaranteed. This read
+     `&& mail.RESEND_FROM`, so it went false whenever the variable was
+     unset — which was correct then and would be a lie now. */
+  const canReachRealRecipients = mail.RESEND_API_KEY && !mail.RESEND_FROM_is_sandbox;
 
   /**
    * Which deployment is answering, and what Vercel thinks it is.
@@ -110,8 +118,11 @@ export async function GET() {
         rateLimitIsDurable: site.UPSTASH_REDIS_REST_URL,
       },
       present: { ...auth, ...data, ...mail, ...site },
+      /* The sender is not a secret and is the single most useful thing
+         an operator can see when mail arrives from the wrong place. */
+      sender: senderAddress(),
       note:
-        "Presence only. No values, lengths or prefixes are reported. " +
+        "Presence only, except the sender address, which is public. " +
         "Environment changes require a redeploy before they reach a running deployment.",
     },
     { headers: { "Cache-Control": "no-store" } },
