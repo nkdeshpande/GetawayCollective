@@ -7,15 +7,29 @@
  * ── THE ONE PROPERTY THAT MATTERS ────────────────────────────────────
  * This layer FAILS CLOSED.
  *
- * There is no authentication in this system yet. A guard written against
- * an absent session has exactly two possible defaults, and only one of
- * them is survivable: an unimplemented session must deny, never admit.
+ * A guard written against an absent session has exactly two possible
+ * defaults, and only one of them is survivable: an absent session must
+ * deny, never admit. The temptation is to return a permissive stub so the
+ * pages render during development. That stub then ships, because it works
+ * and nothing complains.
  *
- * The temptation while nothing is wired is to return a permissive stub so
- * the pages render during development. That stub then ships, because it
- * works and nothing complains. `resolveSubject()` below therefore returns
- * the anonymous subject and is marked as the single place authentication
- * will attach — it does not pretend, and it does not open.
+ * `resolveSubject()` below therefore returns the anonymous subject — it
+ * does not pretend, and it does not open.
+ *
+ * ── AUTHENTICATION EXISTS NOW, AND IT IS NOT HERE ────────────────────
+ * Corrected 12 Aug 2026. This header used to open "there is no
+ * authentication in this system yet", which stopped being true once
+ * auth.ts, lib/auth/ and lib/session.ts landed and the platform went
+ * live. The anonymous default below is NOT a leftover stub awaiting that
+ * work — it is the permanent, deliberate default for callers that cannot
+ * await, and reading the stale comment as an invitation to "finish" it
+ * would open every guard in the system.
+ *
+ * The authoritative read is `subject()` in lib/session.ts: async,
+ * server-only, re-reads grants from the database on every render.
+ * `canReach(pathname, subject)` takes the subject as an argument, and
+ * that argument is the seam — everything that can await passes the real
+ * one in, everything that cannot keeps failing closed.
  *
  * ── ACCESS IS NOT AUTHORITY ──────────────────────────────────────────
  * Reaching a surface and being allowed to act on it are different
@@ -54,11 +68,12 @@ export const ANONYMOUS: Subject = Object.freeze({
 });
 
 /**
- * The single point where authentication will attach.
+ * The fail-closed default, for callers that cannot await.
  *
- * Until it does, everybody is anonymous. That is deliberate: an
- * unimplemented session that returned a privileged subject would make
- * every guard in the system pass, and nothing would report it.
+ * This is permanent, not provisional. Authentication attaches in
+ * lib/session.ts — see the header. A synchronous resolver that returned a
+ * privileged subject would make every guard in the system pass, and
+ * nothing would report it.
  */
 export function resolveSubject(): Subject {
   return ANONYMOUS;

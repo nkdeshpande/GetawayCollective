@@ -20,19 +20,38 @@ follows from it.
 
 ## Status
 
-**Prototype.** Nothing in this repository talks to a database, an
-authentication provider or a payment processor. Every page reads static
-TypeScript. `lib/access.ts` deliberately fails closed: `resolveSubject()`
-returns `ANONYMOUS`, so every non-public surface denies. That is correct
-for an unfinished system and **must not be "fixed" to unblock a demo.**
+**Live.** `getawaycollective.co` serves production from `main`, region
+`bom1`.
 
-Two things are genuinely live: the lead-capture endpoints at `/api/signal`
-and `/api/dossier`. Without `RESEND_API_KEY` they return 503 and the page
-says so — they never show a success screen over a dropped message.
+This section said "Prototype — nothing talks to a database, an
+authentication provider or a payment processor" until 12 Aug 2026, by
+which point all but the last of those was false. The table below was read
+off `/api/health`, which reports what a running deployment actually has
+rather than what the repository hopes:
+
+| | |
+|---|---|
+| Database | Connected, pooled. The migrations under `migrations/` are applied. |
+| Magic-link sign-in | Working — `getawaycollective.co` is verified in Resend. |
+| Google sign-in | **Not configured.** No credentials, so the button is never drawn. That is `auth.config.ts` behaving correctly, not a fault. |
+| Lead capture and contacts | Persisting. |
+| Durable rate limiting | **Not configured.** No Upstash credentials in production, so `lib/rate-limit.ts` degrades to its in-memory counter — per-instance on serverless, which is close to no limit at all. The code is finished; the deployment is not. |
+| Payment processor | None, and deliberately so. Money moves outside GC: the chain is bank fact → reconciliation, never a gateway. |
+
+Read `/api/health` as a presence check, never as a verdict on
+correctness. Re-run it before repeating any claim here.
+
+**Still true, and still the rule:** `lib/access.ts` fails closed.
+`resolveSubject()` returns `ANONYMOUS` and must keep doing so — it is the
+synchronous default for callers that cannot await. The authoritative read
+is `subject()` in `lib/session.ts`, which re-reads grants from the database
+on every server render and is passed into `canReach()` explicitly. **Never
+make the anonymous default permissive to unblock a demo.**
 
 **Not yet reviewed by a lawyer:** roughly 9,000 words of Terms and Risk
 Disclosure copy under `content/legal.ts` and `app/_assemblies/slowspace.ts`.
-It is drafted to be accurate, not to be relied on.
+Drafted to be accurate, not to be relied on — and now published, which
+raises the stakes rather than settling them.
 
 ---
 
@@ -57,8 +76,10 @@ documented at the point it is declared.
 npm run verify
 ```
 
-Eighteen checks and the test suite. It is the gate, and a pre-commit hook
-already runs it.
+A 28-step chain: 18 linters, four registry generators run with `--check`,
+two further generated artefacts checked in place, the IA map, the token
+export, the type-check, and 949 tests across 38 files. It is the gate, and
+a pre-commit hook already runs it.
 
 The checks exist because **enumerated allowlists fail silently.** Each one
 parses its canon rather than holding a copy of it, so a new value nobody

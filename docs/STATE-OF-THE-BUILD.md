@@ -9,6 +9,42 @@ the next reader can re-run it rather than trust it.
 
 ---
 
+## ⚠ Partly superseded — 12 Aug 2026 · HEAD `3a9b454`
+
+It happened again, and this document called it: ten days on, six of its
+claims are overtaken. The analysis below is left standing because most of
+it is still the best account of the shape of the problem — but **do not
+quote a figure or a status from it without checking this section first.**
+
+Re-verified 12 Aug against the live `/api/health`, a full `npm run verify`,
+and the GitHub API. Not against any report.
+
+| Claim below | Now |
+|---|---|
+| "`DATABASE_URL` is not set" · **A0 Persistence — the trunk blocker** · "migrations exist and have never been applied" | **Closed.** Production reports a connected, pooled database and persisting contacts. A0 is no longer the trunk blocker. |
+| "780 tests across 28 files" | **949 tests across 38 files**, all passing. |
+| "20 constitutional gates in a 24-step `verify` chain" | **24 gates in a 28-step chain** — 18 linters, four registry `--check` generators, two further `--check` artefacts. Chain is green. |
+| **Cross-aperture navigation · RED** — "57 of 77 links point at the retired IA; 13 are dead" | **Substantially closed, and closed the way this document demanded** — by a linter, not a sweep. `lint:links` is in the chain and passes: *every reachable link lands on a route that exists.* Residue is named rather than hidden: 25 of 63 generator entries point at a non-existent route, plus 4 dead links in 3 files no page imports. Both sit on retired surface awaiting a decision. |
+| "Rate limiting **closed** — Upstash fixed-window over REST" | **Closed in code, open in production.** The live deployment reports `rateLimitIsDurable: false` — no Upstash credentials — so it is running the in-memory fallback, which on serverless is per-instance. The original serverless concern is therefore live again. Shipping the mitigation and configuring it are two events, and only the first happened. |
+| Auth "not wired" (implied throughout) | Magic-link sign-in works; the sending domain is verified in Resend. Google is deliberately absent — no credentials, so `auth.config.ts` declines to draw the button. |
+
+**Still true, re-checked and unchanged:**
+
+- **Branch protection on `main` is off.** The GitHub API returns
+  `Branch not protected`. CI (`.github/workflows/verify.yml`) is green and
+  still enforcing nothing.
+- **`/signal` is dead.** It is absent from `constants/routes.ts`;
+  `app/api/signal/route.ts` still exists and is still orphaned.
+- **No external fact can enter the system.** Persistence landing does not
+  change this — the projection layer is sound, the ingestion layer is
+  still the gap, and it is now the trunk blocker A0 used to be.
+- **The next milestone**, unchanged and still right: *GC CAN EXECUTE ONE
+  VEHICLE END-TO-END.*
+- The dependency-advisory analysis below, in full. `npm audit fix --force`
+  still proposes `next@9.3.3`. Do not run it.
+
+---
+
 ## The headline is unchanged, and it is good
 
 You are **much closer than the raw module count suggests**. The
@@ -127,13 +163,22 @@ is the dependency graph instead. Each item states how you will know it is
 done, because "what closes it" and "how you prove it closed" are different
 questions.
 
-### A0 · Persistence — the trunk blocker
+### A0 · Persistence — ~~the trunk blocker~~ CLOSED 12 Aug 2026
 
 Everything below waits on it. Migrations exist and have never been applied.
 
 **Proof it is done:** migrations applied to a provisioned instance; a
 restore from backup tested and timed; one integration test that writes,
 reads back and survives a redeploy.
+
+> **Closed on the first clause only.** The database is provisioned,
+> pooled, connected and persisting — so nothing below is blocked any
+> longer. But two of the three proofs above were never produced: **no
+> restore from backup has been tested or timed, and there is no
+> integration test that writes, reads back and survives a redeploy.**
+> A database that has never been restored is a backup nobody has, so
+> carry both forward as their own item rather than letting them close
+> with the blocker.
 
 ### A1 · Canon reconciliation — smaller than it looked
 
@@ -300,14 +345,14 @@ happen again if nobody is looking for it.
 | Architecture / Constitution | **GREEN** | Exceptionally mature for the stage |
 | IA / Design System | **GREEN** | Generated, gated, 107 pages from one table |
 | **Cross-aperture data truth** | **GREEN** | *New row.* One canon, zero hardcoded figures, load-time drift check |
-| **Cross-aperture navigation** | **RED** | *New row.* 57 of 77 links point at the retired IA; 13 are dead |
+| **Cross-aperture navigation** | ~~RED~~ → **GREEN** (12 Aug) | Closed by `lint:links` in the verify chain: every reachable link resolves. Named residue on retired surface — see the superseded section |
 | Domain Model | GREEN/AMBER | Unchanged — needs the lifecycle reconciliation |
 | Investor Experience | GREEN/AMBER | Unchanged — persistence prevents it becoming real |
 | Operational System | AMBER | Unchanged |
 | Financial Digital Twin | **AMBER, narrower** | Projection is sound; *ingestion* is the gap |
 | Governance Execution | AMBER | Unchanged |
 | AI | AMBER/BLUE | Contracts now declared; engine correctly deferred |
-| Infrastructure | **AMBER** | *Was RED/AMBER.* Rate limiting closed, work committed, CI green. Database and credentials remain |
+| Infrastructure | **AMBER** | *Was RED/AMBER.* Database landed 12 Aug. Now amber for a different reason: durable rate limiting is unconfigured in production, no backup restore has been tested, and branch protection is still off |
 
 Still open and unglamorous: **branch protection on `main` is off**, so the
 green CI check is not yet enforcing anything.

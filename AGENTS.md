@@ -14,20 +14,43 @@ appear to disagree, the constitution wins and this file is the bug.
 npm run verify
 ```
 
-Nine checks. They also run on every commit via `.githooks/pre-commit`
-(`git config core.hooksPath .githooks` if hooks are not firing).
+A 28-step chain — 24 gates, then the IA map, the token export, the
+type-check and the suite. It also runs on every commit via
+`.githooks/pre-commit` (`git config core.hooksPath .githooks` if hooks are
+not firing).
+
+*Counts below are from a green run on 12 Aug 2026. They are load-bearing:
+a linter that suddenly reports fewer objects than this has stopped reading
+something, which is the failure mode every one of them was written against.*
 
 | Check | Enforces |
 |---|---|
-| `lint:vocab` | Forbidden terminology (L1-01 §25) |
+| `lint:vocab` | Forbidden terminology — 16 terms (L1-01 §25) |
+| `lint:voice` | 338 member-facing strings · 17 prohibitions (L1-02 Part VII) |
 | `lint:ufr` | No field without a registry id (E-06) |
 | `lint:rel` | No orphan object, no undeclared edge (E-05) |
 | `lint:cap` | Every capability publishes events (E-01) |
-| `schemas:check` | Zod contracts match the registry |
+| `lint:sm` | 6 machines · 30 transitions · every state reachable, every terminal state terminal |
+| `lint:enum` | 26 enums · 135 values · no label outlives its value |
+| `lint:organism` | 10 organisms · every card has hierarchy and survives compact |
+| `lint:aperture` | 7 apertures · less, not different; nothing deferred from the accountable |
+| `lint:assembly` | 35 assemblies · no assembly widens an aperture |
+| `lint:route` | 112 routes · access derives from vantage; every override states its reason |
+| `lint:eligibility` | 14 principals · 8 roles · 23 profiles |
+| `lint:taxonomy` | 8 taxonomies · 47 values |
+| `lint:journal` | Every entry declares its axes; the distribution holds |
+| `lint:links` | Every **reachable** internal link lands on a route that exists |
+| `lint:ai` | 11 contracts accounted for; neither agent can reach a write path |
+| `lint:public` | Public UX laws, remediation registry, ontology ratchet (may only fall) |
+| `lint:token` | No design literals; WCAG AA computed on the rendered colour |
+| `schemas:check` | Zod contracts match the registry (27 objects, 127 fields) |
 | `db:check` | Database schema matches the registry |
 | `fixtures:check` | Fixtures match the registry |
-| `tokens` | Design tokens present in both JSON and CSS (§29) |
-| `type-check` + `test:run` | 139 tests |
+| `app:check` | `app/` matches the route table — a hand-added page is not a route |
+| `assembly-css --check` | `assemblies.css` in step with `GC-ASSEMBLIES.html` |
+| `communication-reference --check` | 55 event contracts in step |
+| `tokens` | 44 design tokens present in both JSON and CSS (§29) |
+| `type-check` + `test:run` | **949 tests across 38 files** |
 
 A failing check is a finding, not an obstacle. Do not add a pragma, loosen a
 rule, or edit a generated file to make one pass.

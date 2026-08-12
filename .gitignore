@@ -29,3 +29,9 @@ Thumbs.db
 # deleted — nothing is lost, and it can be tracked later if the
 # generation scripts turn out to be worth versioning.
 .codex-sheet-work/
+
+# Scratch output from tooling runs (rendered pages, intermediate files).
+# Also declared in vocab-lint's NOT_PROSE: that linter walks the
+# filesystem rather than the index, so gitignoring alone leaves it
+# refusing to report a PASS over a directory nobody decided about.
+tmp/

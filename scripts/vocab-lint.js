@@ -52,6 +52,7 @@ const NOT_PROSE = {
   assets: "Binary design references and raster imagery; published prose remains in application and content source.",
   public: "Static binary assets referenced by the application; member-facing prose remains in application and content source.",
   outputs: "Generated workbook and review artifacts. They are architecture inputs, not prose rendered by the application.",
+  tmp: "Scratch output from tooling runs — rendered pages and intermediate files. Gitignored, never authored, never published.",
 };
 const SCAN_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".json"]);
 const SKIP_DIRS = new Set(["node_modules", ".next", "dist", "build", ".git", "scripts", ".turbo"]);
