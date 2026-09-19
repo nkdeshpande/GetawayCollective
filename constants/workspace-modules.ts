@@ -40,7 +40,10 @@ export const ADMIN_GENERAL_IA = [
   /* OFF-095 (The Desk) is general, not vehicle-scoped, and deliberately
      so: it is the one Office surface about people who do not yet have a
      vehicle. Everything from OFF-110 onward is scoped to one. */
-  "OFF-090", "OFF-095", "OFF-100", "NET-100", "NET-110", "SYS-100", "SYS-110", "SYS-120",
+  /* OFF-093 (Property Register) is general for the same reason: the act
+     names its vehicle in the form rather than in the URL, so the route
+     is not scoped to one. */
+  "OFF-090", "OFF-093", "OFF-095", "OFF-100", "NET-100", "NET-110", "SYS-100", "SYS-110", "SYS-120",
 ] as const;
 
 const MEMBER_GENERAL = new Set<string>(MEMBER_GENERAL_IA);

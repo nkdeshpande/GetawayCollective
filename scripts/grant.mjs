@@ -71,6 +71,27 @@ if (!roleBlock) {
   process.exit(2);
 }
 const ROLES = [...roleBlock[1].matchAll(/"([a-z_]+)"/g)].map((m) => m[1]);
+
+/* The three-admin surface, parsed from constants/admins.ts for the same
+   reason the roles are parsed rather than restated — one copy. A bundle
+   naming a role that does not exist would grant nothing and look like it
+   worked, so it is refused here rather than discovered at the INSERT. */
+const adminSrc = fs.readFileSync(path.join(ROOT, "constants", "admins.ts"), "utf8").replace(/\r\n/g, "\n");
+const ADMINS = {};
+for (const m of adminSrc.matchAll(/id:\s*"([a-z]+)",[\s\S]{0,120}?roles:\s*\[([^\]]*)\]/g)) {
+  ADMINS[m[1]] = [...m[2].matchAll(/"([a-z_]+)"/g)].map((r) => r[1]);
+}
+if (Object.keys(ADMINS).length === 0) {
+  console.error("Parsed zero admins from constants/admins.ts. That is a broken parse, not an empty list.");
+  process.exit(2);
+}
+for (const [id, rs] of Object.entries(ADMINS)) {
+  const unknown = rs.filter((r) => !ROLES.includes(r));
+  if (unknown.length) {
+    console.error(`Admin "${id}" names ${unknown.join(", ")}, which ${unknown.length === 1 ? "is not a Role" : "are not Roles"}.`);
+    process.exit(2);
+  }
+}
 if (ROLES.length === 0) {
   console.error("Parsed zero roles from lib/authority.ts. That is a broken parse, not an empty list.");
   process.exit(2);
@@ -129,14 +150,24 @@ try {
       }
     }
   } else if (cmd === "add") {
-    const [, email, role] = argv;
+    const [, email, what] = argv;
     const reason = flag("reason");
-    if (!email || !role || !reason) {
-      console.error('Usage: add <email> <role> --reason "..." [--expires YYYY-MM-DD] [--vehicle slug]');
+    if (!email || !what || !reason) {
+      console.error('Usage: add <email> <admin|role> --reason "..." [--expires YYYY-MM-DD] [--vehicle slug]');
+      console.error(`Admins: ${Object.keys(ADMINS).join(", ")}`);
       process.exit(2);
     }
-    if (!ROLES.includes(role)) {
-      console.error(`"${role}" is not a Role in lib/authority.ts.\nValid: ${ROLES.join(", ")}`);
+
+    /* An admin is a bundle of roles, and granting one mints all of them in
+       a single act with a single reason. Naming a bare role still works —
+       the admins are a surface over the roles, not a replacement for them,
+       and there are cases (a vehicle-scoped committee seat) the three
+       bundles deliberately do not cover. */
+    const roles = ADMINS[what] ?? (ROLES.includes(what) ? [what] : null);
+    if (!roles) {
+      console.error(`"${what}" is neither an admin nor a Role.`);
+      console.error(`  Admins: ${Object.keys(ADMINS).join(", ")}`);
+      console.error(`  Roles:  ${ROLES.join(", ")}`);
       process.exit(2);
     }
     const user = await sql`SELECT id FROM auth_user WHERE lower(email) = ${email.toLowerCase()} LIMIT 1`;
@@ -153,23 +184,35 @@ try {
       SELECT role FROM auth_office_grant
       WHERE identity_id = ${user[0].id} AND revoked_at IS NULL
         AND (expires_at IS NULL OR expires_at > now())`;
-    const after = new Set([...heldRows.map((r) => r.role), role].flatMap((r) => ROLE_RIGHTS[r] ?? []));
+    /* Checked against the WHOLE bundle at once, not role by role. Adding
+       three roles one at a time would pass each individual check and could
+       still land a triad — the law is about what the identity ends up
+       holding, so that is what is tested. */
+    const after = new Set([...heldRows.map((r) => r.role), ...roles].flatMap((r) => ROLE_RIGHTS[r] ?? []));
     const triad = TRIADS.find((t) => t.every((r) => after.has(r)));
     if (triad) {
-      console.error(`Refused: granting ${role} to ${email} would complete the separation triad`);
+      console.error(`Refused: granting ${what} to ${email} would complete the separation triad`);
       console.error(`  ${triad.join(" + ")}`);
       console.error("GP-06 forbids one identity holding all three. Split the authority or revoke first.");
       process.exit(1);
     }
 
     const vehicle = flag("vehicle");
-    const [row] = await sql`
-      INSERT INTO auth_office_grant
-        (identity_id, role, scope_kind, scope_vehicle_id, granted_by, expires_at, reason)
-      VALUES (${user[0].id}, ${role}, ${vehicle ? "vehicle" : "enterprise"}, ${vehicle ?? null},
-              ${actor}, ${flag("expires") ?? null}, ${reason})
-      RETURNING grant_id`;
-    console.log(`Granted ${role} to ${email} — ${row.grant_id}`);
+    const already = new Set(heldRows.map((r) => r.role));
+    for (const role of roles) {
+      if (already.has(role)) {
+        console.log(`Skipped ${role} — already held. A second grant would double-count in every audit.`);
+        continue;
+      }
+      const [row] = await sql`
+        INSERT INTO auth_office_grant
+          (identity_id, role, scope_kind, scope_vehicle_id, granted_by, expires_at, reason)
+        VALUES (${user[0].id}, ${role}, ${vehicle ? "vehicle" : "enterprise"}, ${vehicle ?? null},
+                ${actor}, ${flag("expires") ?? null}, ${reason})
+        RETURNING grant_id`;
+      console.log(`Granted ${role} to ${email} — ${row.grant_id}`);
+    }
+    if (ADMINS[what]) console.log(`\n${what} admin: ${roles.length} role grant(s), one reason.`);
     console.log("They must sign out and in again, or wait up to 30 minutes, for the token to carry it.");
   } else if (cmd === "revoke") {
     const id = argv[1];
@@ -189,8 +232,9 @@ try {
     }
     console.log(`Revoked ${id}. Effective on their next server render — lib/session.ts re-reads grants every time.`);
   } else {
-    console.log("Commands: list [email] · add <email> <role> --reason … · revoke <grantId> --reason …");
-    console.log(`Roles: ${ROLES.join(", ")}`);
+    console.log("Commands: list [email] · add <email> <admin|role> --reason … · revoke <grantId> --reason …");
+    console.log(`Admins: ${Object.entries(ADMINS).map(([k, v]) => k + " (" + v.length + ")").join(", ")}`);
+    console.log(`Roles:  ${ROLES.join(", ")}`);
   }
 } finally {
   await sql.end();

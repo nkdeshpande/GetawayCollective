@@ -1,0 +1,182 @@
+/* THE WIRED SLICE — /office/register
+   Hand-written, so it lives outside assemblies.css (which is generated
+   from GC-ASSEMBLIES.html and must not be edited). Every value below is a
+   token from dist/tokens.css; token-lint refuses a literal here. */
+
+.slice {
+  min-height: 100vh;
+  background: var(--gc-void);
+  color: var(--gc-ink-inverse);
+  padding-bottom: var(--gc-sp-3xl);
+}
+
+.slice .sysbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gc-sp-m);
+  padding: var(--gc-sp-m) var(--gc-sp-l);
+  border-bottom: var(--gc-hairline) solid var(--gc-hairline-inv);
+  font: var(--gc-t-micro-weight) var(--gc-t-micro-size) / var(--gc-t-micro-lh) var(--gc-f-mono);
+  letter-spacing: var(--gc-t-micro-ls);
+  text-transform: uppercase;
+  color: var(--gc-steel-dim);
+}
+.slice .sysmark { color: var(--gc-ink-inverse); text-decoration: none; }
+
+.slice-head,
+.slice-card,
+.slice-events,
+.slice-grid {
+  width: min(var(--gc-max-width), 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--gc-sp-l);
+  padding-right: var(--gc-sp-l);
+}
+
+.slice-head { padding-top: var(--gc-sp-2xl); padding-bottom: var(--gc-sp-xl); }
+.slice-head h1 {
+  margin: var(--gc-sp-s) 0;
+  font: var(--gc-t-display-m-weight) var(--gc-t-display-m-size) / var(--gc-t-display-m-lh) var(--gc-f-display);
+  letter-spacing: var(--gc-t-display-m-ls);
+}
+.slice-head p { max-width: var(--gc-measure); color: var(--gc-steel-dim); }
+
+.slice .eyebrow,
+.slice .micro {
+  display: block;
+  font: var(--gc-t-micro-weight) var(--gc-t-micro-size) / var(--gc-t-micro-lh) var(--gc-f-mono);
+  letter-spacing: var(--gc-t-micro-ls);
+  text-transform: uppercase;
+}
+.slice .eyebrow { color: var(--gc-copper); }
+.slice .micro { margin-bottom: var(--gc-sp-m); color: var(--gc-steel-dim); }
+
+.slice code {
+  font-family: var(--gc-f-mono);
+  font-size: var(--gc-t-mono-s-size);
+  color: var(--gc-copper);
+}
+
+/* ── Authority + admins ── */
+.slice-grid {
+  margin-bottom: var(--gc-sp-xl);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--gc-sp-l);
+}
+.slice-panel { padding: var(--gc-sp-l); border: var(--gc-hairline) solid var(--gc-hairline-inv); }
+
+.slice-list, .slice-admins { list-style: none; }
+.slice-list li, .slice-admins li {
+  display: grid;
+  gap: var(--gc-sp-3xs);
+  padding: var(--gc-sp-s) 0;
+  border-bottom: var(--gc-hairline) solid var(--gc-hairline-inv);
+}
+.slice-list li:last-child, .slice-admins li:last-child { border-bottom: 0; }
+.slice-list b { text-transform: capitalize; }
+.slice-list span, .slice-admins span {
+  color: var(--gc-steel-dim);
+  font-size: var(--gc-t-body-s-size);
+}
+
+.slice-admins li { grid-template-columns: 1fr auto; align-items: baseline; }
+.slice-admins span { grid-column: 1 / -1; }
+.slice-admins i {
+  font-style: normal;
+  font: var(--gc-t-micro-weight) var(--gc-t-micro-size) / var(--gc-t-micro-lh) var(--gc-f-mono);
+  letter-spacing: var(--gc-t-micro-ls);
+  text-transform: uppercase;
+  color: var(--gc-steel-dim);
+}
+.slice-admins li.on b, .slice-admins li.on i { color: var(--gc-copper); }
+
+.slice-foot,
+.slice-none {
+  color: var(--gc-steel-dim);
+  font-size: var(--gc-t-body-s-size);
+}
+.slice-foot { margin-top: var(--gc-sp-m); }
+
+/* ── The act ── */
+.slice-card {
+  padding-top: var(--gc-sp-l);
+  padding-bottom: var(--gc-sp-l);
+  margin-bottom: var(--gc-sp-xl);
+}
+.slice-card h1, .slice-card h2 {
+  margin: var(--gc-sp-s) 0;
+  font: var(--gc-t-heading-weight) var(--gc-t-heading-size) / var(--gc-t-heading-lh) var(--gc-f-display);
+  letter-spacing: var(--gc-t-heading-ls);
+}
+.slice-card > p { max-width: var(--gc-measure); color: var(--gc-steel-dim); }
+.slice-card.denied { border-left: var(--gc-hairline) solid var(--gc-hazard); }
+
+.slice-form { display: grid; gap: var(--gc-sp-m); max-width: 520px; margin-top: var(--gc-sp-l); }
+.slice-form label {
+  display: block;
+  margin-bottom: var(--gc-sp-2xs);
+  font: var(--gc-t-micro-weight) var(--gc-t-micro-size) / var(--gc-t-micro-lh) var(--gc-f-mono);
+  letter-spacing: var(--gc-t-micro-ls);
+  text-transform: uppercase;
+  color: var(--gc-steel-dim);
+}
+.slice-form input, .slice-form select {
+  width: 100%;
+  padding: var(--gc-sp-s);
+  background: transparent;
+  border: var(--gc-hairline) solid var(--gc-hairline-inv);
+  color: var(--gc-ink-inverse);
+  font: inherit;
+}
+.slice-form input:focus-visible, .slice-form select:focus-visible,
+.slice a:focus-visible, .slice button:focus-visible {
+  outline: var(--gc-hairline) solid var(--gc-electric);
+  outline-offset: var(--gc-sp-3xs);
+}
+
+.slice-refused, .slice-done {
+  margin-top: var(--gc-sp-m);
+  padding: var(--gc-sp-m);
+  border-left: var(--gc-hairline) solid var(--gc-critical);
+  color: var(--gc-steel-dim);
+  font-size: var(--gc-t-body-s-size);
+  max-width: var(--gc-measure);
+}
+.slice-done { border-left-color: var(--gc-confirm); }
+
+/* ── The log ── */
+.slice-events {
+  padding-top: var(--gc-sp-l);
+  border-top: var(--gc-hairline) solid var(--gc-hairline-inv);
+}
+.slice-log { list-style: none; }
+.slice-log li {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 2fr 1fr;
+  gap: var(--gc-sp-m);
+  align-items: baseline;
+  padding: var(--gc-sp-s) 0;
+  border-bottom: var(--gc-hairline) solid var(--gc-hairline-inv);
+  font-size: var(--gc-t-body-s-size);
+}
+.slice-log span, .slice-log time { color: var(--gc-steel-dim); }
+.slice-log code { grid-column: 1 / -1; color: var(--gc-steel-dim); }
+
+.slice-back {
+  display: block;
+  width: min(var(--gc-max-width), 100%);
+  margin: var(--gc-sp-xl) auto 0;
+  padding: 0 var(--gc-sp-l);
+  color: var(--gc-steel-dim);
+  font: var(--gc-t-micro-weight) var(--gc-t-micro-size) / var(--gc-t-micro-lh) var(--gc-f-mono);
+  letter-spacing: var(--gc-t-micro-ls);
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px) {
+  .slice-log li { grid-template-columns: 1fr; gap: var(--gc-sp-3xs); }
+  .slice-head { padding-top: var(--gc-sp-xl); }
+}

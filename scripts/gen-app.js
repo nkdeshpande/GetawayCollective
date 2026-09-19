@@ -206,6 +206,10 @@ const BY_PATH = {
   /* OFF-095. Live data, so it is a component rather than a composition —
      compositions are static content read at build time. */
   "/office/contacts": { component: "ContactDesk", from: "@/app/_assemblies/contactdesk" },
+  /* OFF-093. Must be listed here rather than falling through to the
+     generic /office/* → OfficeSurface rule below, which renders the
+     workspace mockup. This route reads live grants and a live event log. */
+  "/office/register": { component: "PropertyRegister", from: "@/app/_assemblies/propertyregister" },
   "/sign-in": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/sign-in" },
   "/verify": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/verify" },
   "/status": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/status" },

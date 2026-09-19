@@ -377,6 +377,21 @@ export const OFFICE_ROUTES: readonly Route[] = [
      `compliance.record` rather than `accreditation.grant`: reading who
      has arrived is not the power to qualify them, and a junior desk needs
      the first without the second. */
+  /* OFF-093 — the first capability reachable from a page.
+
+     The command layer has been complete and tested for a long time and no
+     route invoked it, which made every document about its governance a
+     description of something unreachable. This is one capability wired to
+     a form: authenticate, authorise, execute, publish, store.
+
+     `property.register` rather than a broader right, because the route's
+     requirement should be the exact right the act needs — anything wider
+     lets somebody onto a page they cannot use, and anything narrower
+     hides one they can. */
+  R("OFF-093", "/office/register", "Property Register", "admin", "AS-13",
+    { rights: ["property.register"],
+      notes: "Register a property against a vehicle. The first capability reachable from a page — " +
+             "the full envelope, not a form that writes a row." }),
   R("OFF-095", "/office/contacts", "The Desk", "admin", "AS-13",
     { rights: ["compliance.record"],
       notes: "Who has reached us and has not yet been answered. Inbound only — a contact is not " +

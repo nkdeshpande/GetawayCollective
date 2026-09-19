@@ -48,7 +48,9 @@
     "app": "node scripts/gen-app.js",
     "app:check": "node scripts/gen-app.js --check",
     "assembly:css": "node scripts/gen-assembly-css.js",
-    "communications": "node scripts/gen-communication-reference.js"
+    "communications": "node scripts/gen-communication-reference.js",
+    "framework": "node scripts/gen-operating-framework.js --register",
+    "visual": "node scripts/gen-framework-visual.js"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.3",
