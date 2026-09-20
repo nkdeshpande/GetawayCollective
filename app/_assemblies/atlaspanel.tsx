@@ -104,7 +104,7 @@ export function AtlasPanel({
     <section data-sec="AS-ATLAS.a" className="atlas">
       <div className="wrap">
         <span className="sec-ref">ATLAS · Institutional Intelligence</span>
-        <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+        <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-2xs)" }}>
           Findings for {subject}
         </h2>
         <p className="t-body dim measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>

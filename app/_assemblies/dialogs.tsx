@@ -57,7 +57,7 @@ function Shell({
         <div className="modal-head">
           <div>
             <span className="t-mono-s dim">{kicker}</span>
-            <h2 className="t-display-s">{title}</h2>
+            <h2 className="t-heading">{title}</h2>
           </div>
           <button className="btn" type="button" onClick={onClose}>Close</button>
         </div>

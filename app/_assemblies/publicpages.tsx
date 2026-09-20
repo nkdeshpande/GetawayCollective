@@ -317,7 +317,7 @@ function AssetRow() {
           {PROPERTIES.map((prop) => (
             <div key={prop.assetId} className="panel on-panel" style={{ flex: "1 1 300px" }}>
               <span className="t-mono-s dim">{prop.assetId} · {prop.ufr0063}</span>
-              <h3 className="t-display-s" style={{ marginTop: "var(--gc-sp-3xs)" }}>
+              <h3 className="t-heading" style={{ marginTop: "var(--gc-sp-3xs)" }}>
                 {prop.ufr0060}
               </h3>
               <div className="kv" style={{ marginTop: "var(--gc-sp-s)" }}>
@@ -386,7 +386,7 @@ function SignalForm() {
       <div className="wrap">
         <div className="panel on-paper" style={{ maxWidth: "560px" }}>
           <span className="t-micro label">The Signal</span>
-          <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-3xs)" }}>
+          <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-3xs)" }}>
             One transmission a week
           </h2>
 
@@ -644,7 +644,7 @@ function ScenarioCalculator({ open, onClose }: { open: boolean; onClose: () => v
   if (!open) return null;
   return <div className="invest-modal-back" role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
     <section className="invest-modal" role="dialog" aria-modal="true" aria-labelledby="calculator-title">
-      <header className="invest-modal-head"><div><span className="t-micro label">Illustrative scenario</span><h2 id="calculator-title" className="t-display-s">Shape your point of view</h2></div><button className="btn" onClick={onClose} autoFocus>Close</button></header>
+      <header className="invest-modal-head"><div><span className="t-micro label">Illustrative scenario</span><h2 id="calculator-title" className="t-heading">Shape your point of view</h2></div><button className="btn" onClick={onClose} autoFocus>Close</button></header>
       <div className="invest-calculator-grid">
         <div className="invest-controls">
           <label htmlFor={shareId}>Interest selected <output>{share}%</output></label>

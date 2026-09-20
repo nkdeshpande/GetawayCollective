@@ -379,7 +379,7 @@ export function Roles() {
                 <span className="t-mono-s dim">{r.code}</span>
                 <span className="t-mono-s dim">{r.open ? "Open" : "Filled"}</span>
               </div>
-              <h3 className="t-display-s" style={{ marginTop: "var(--gc-sp-2xs)" }}>{r.title}</h3>
+              <h3 className="t-heading" style={{ marginTop: "var(--gc-sp-2xs)" }}>{r.title}</h3>
               <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-3xs)" }}>Owns: {r.owns}</p>
               {r.detail.map((d, i) => (
                 <p key={i} className="t-body measure" style={{ marginTop: "var(--gc-sp-s)" }}>{d}</p>
@@ -401,7 +401,7 @@ export function Roles() {
       <section data-sec="AS-18.c">
         <div className="wrap">
           <span className="t-micro label">Applying</span>
-          <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-3xs)" }}>
+          <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-3xs)" }}>
             One route: {APPLYING.where}
           </h2>
           <ul className="t-body measure" style={{ marginTop: "var(--gc-sp-s)", paddingLeft: "1.1em" }}>
@@ -467,7 +467,7 @@ export function RoleDetail({ code }: { code: string }) {
       <section data-sec="AS-18.c" className="on-paper">
         <div className="wrap">
           <span className="t-micro label">Applying</span>
-          <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-3xs)" }}>{APPLYING.where}</h2>
+          <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-3xs)" }}>{APPLYING.where}</h2>
           <p className="t-body measure" style={{ marginTop: "var(--gc-sp-s)" }}>{APPLYING.next}</p>
           <div className="row" style={{ marginTop: "var(--gc-sp-m)", gap: "var(--gc-sp-2xs)" }}>
             <Link className="btn" href="/roles">Every role</Link>

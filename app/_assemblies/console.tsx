@@ -349,7 +349,7 @@ export function VehicleConsole({
       <div className="console-head">
         <div>
           <span className="t-micro label">Vehicle console</span>
-          <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-3xs)" }}>{LLP.name}</h2>
+          <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-3xs)" }}>{LLP.name}</h2>
           <span className="t-mono-s dim">
             LLPIN {LLP.llpin} · {SITE.name} · {SITE.lifecycle}
           </span>

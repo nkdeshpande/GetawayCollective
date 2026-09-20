@@ -107,7 +107,7 @@ export function StandingDoc({ path }: { path: string }) {
           <div className="wrap">
             <div className="sec-head">
               <span className="sec-ref">Part {part.ref}</span>
-              <h2 className="t-display-s">{part.title}</h2>
+              <h2 className="t-heading">{part.title}</h2>
             </div>
             {part.intro ? (
               <p className="t-body-l dim measure" style={{ marginBottom: "var(--gc-sp-l)" }}>
@@ -218,7 +218,7 @@ function JournalBlock({ b }: { b: Block }) {
   switch (b.t) {
     case "h":
       return (
-        <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-xl)" }}>{b.x}</h2>
+        <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-xl)" }}>{b.x}</h2>
       );
     case "p":
       return <p className="t-body measure" style={{ marginTop: "var(--gc-sp-s)" }}>{b.x}</p>;
@@ -368,7 +368,7 @@ export function JournalIndex() {
                   </span>
                   <span className="t-mono-s dim">{e.published} · {e.minutes} min</span>
                 </div>
-                <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-2xs)" }}>{e.title}</h2>
+                <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-2xs)" }}>{e.title}</h2>
                 <p className="t-body dim measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
                   {e.standfirst}
                 </p>

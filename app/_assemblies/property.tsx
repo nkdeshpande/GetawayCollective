@@ -174,7 +174,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       {/* ── THE PEOPLE BEHIND IT ───────────────────────────────── */}
       <section className="prop-sec on-panel" data-sec="AS-PROP.authors">
         <div className="wrap">
-          <h2 className="t-display-s">
+          <h2 className="t-heading">
             A property is a series of decisions.<br />
             <em>The authors of those decisions should be visible.</em>
           </h2>
@@ -199,7 +199,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       <section id="site" className="prop-sec" data-sec="AS-PROP.site">
         <div className="wrap">
           <Frame m={page.siteImage} />
-          <h2 className="t-display-s" style={{ marginTop: "var(--gc-sp-l)" }}>
+          <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-l)" }}>
             The landscape sets the terms.
           </h2>
           <p className="t-body-l measure" style={{ marginTop: "var(--gc-sp-s)" }}>{page.siteNote}</p>
@@ -262,7 +262,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       {/* ── THE SPACES ─────────────────────────────────────────── */}
       <section id="spaces" className="prop-sec" data-sec="AS-PROP.spaces">
         <div className="wrap">
-          <h2 className="t-display-s">
+          <h2 className="t-heading">
             Each space has a job.<br />
             <em>Each job has a relationship to the landscape.</em>
           </h2>
@@ -292,7 +292,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       {/* ── MATERIAL PALETTE ───────────────────────────────────── */}
       <section id="materials" className="prop-sec on-panel" data-sec="AS-PROP.materials">
         <div className="wrap">
-          <h2 className="t-display-s">The house is composed, not decorated.</h2>
+          <h2 className="t-heading">The house is composed, not decorated.</h2>
           <div className="prop-palette">
             {page.palette.map((m) => (
               <article key={m.material}>
@@ -322,7 +322,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       {/* ── THE VEHICLE ────────────────────────────────────────── */}
       <section id="vehicle" className="prop-sec" data-sec="AS-PROP.vehicle">
         <div className="wrap">
-          <h2 className="t-display-s">
+          <h2 className="t-heading">
             Beauty is not the whole proposition.<br />
             <em>The property must also have a clear legal and financial home.</em>
           </h2>
@@ -423,7 +423,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       {/* ── EVIDENCE ───────────────────────────────────────────── */}
       <section id="evidence" className="prop-sec on-panel" data-sec="AS-PROP.evidence">
         <div className="wrap">
-          <h2 className="t-display-s">What can be read now?</h2>
+          <h2 className="t-heading">What can be read now?</h2>
           <div className="stack" style={{ marginTop: "var(--gc-sp-m)" }}>
             {EVIDENCE_TIERS.map((t) => (
               <div key={t.tier} className="panel on-paper prop-tier">

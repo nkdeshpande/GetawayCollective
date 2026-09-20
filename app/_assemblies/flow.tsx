@@ -588,7 +588,7 @@ export function Accreditation() {
                 <span className="t-mono-s dim">
                   {terms.id} · Version {terms.version} · In force from {terms.effective}
                 </span>
-                <h2 id="termsTitle" className="t-display-s">{terms.title}</h2>
+                <h2 id="termsTitle" className="t-heading">{terms.title}</h2>
               </div>
               <button className="btn" type="button" onClick={() => setTerms(false)} autoFocus>
                 Close

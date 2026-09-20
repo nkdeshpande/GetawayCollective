@@ -101,7 +101,7 @@ export function About() {
 
       <section className="about-sec" data-sec="AS-32.about.why">
         <div className="wrap">
-          <h2 className="t-display-s">Why it exists</h2>
+          <h2 className="t-heading">Why it exists</h2>
           <div className="about-cols">
             <p className="t-body-l measure">
               A second home is bought on one number and held on several nobody discusses. It is
@@ -126,7 +126,7 @@ export function About() {
 
       <section className="about-sec on-panel" data-sec="AS-32.about.what">
         <div className="wrap">
-          <h2 className="t-display-s">What it is</h2>
+          <h2 className="t-heading">What it is</h2>
           <p className="t-body-l measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
             Three companies, kept deliberately apart. The separation is the product — everything
             else follows from it.
@@ -149,7 +149,7 @@ export function About() {
 
       <section className="about-sec" data-sec="AS-32.about.different">
         <div className="wrap">
-          <h2 className="t-display-s">How it is different</h2>
+          <h2 className="t-heading">How it is different</h2>
           <p className="t-body-l measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
             Four things we will not do. Each one is a thing the standard version of this business
             does, and each is written into the constitution rather than into a promise.
@@ -165,7 +165,7 @@ export function About() {
 
       <section className="about-sec on-panel" data-sec="AS-32.about.who">
         <div className="wrap">
-          <h2 className="t-display-s">Who is responsible</h2>
+          <h2 className="t-heading">Who is responsible</h2>
           <p className="t-body-l measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
             Every vehicle has a designated partner who answers for it, named in its own
             constitution and on its property record. Getaway Collective is the general partner
