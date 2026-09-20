@@ -1,0 +1,66 @@
+/* THE MARK — GC-MARK-01 / 02 / 03
+ *
+ * Geometry comes from constants/brand-system.ts via inline sizes; this file
+ * carries only what CSS owns: face, weight, case, tracking and colour.
+ *
+ * GROUND IS NOT HANDLED HERE. `.on-paper` already re-points --gc-copper to
+ * copperDeep (2.18:1 -> 4.61:1), so the device asks for --gc-copper and is
+ * legible on whichever ground it lands on. Naming copperDeep here would be a
+ * second place that decides, and the second place is the one that goes stale.
+ */
+
+.gc-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--gc-font-display);
+  /* BR-01: weight 200. Not 500, which is what .sysmark shipped. */
+  font-weight: 200;
+  line-height: 1;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* BR-01 says uppercase. Done in CSS rather than in the string so the DOM
+   keeps "Getaway Collective" — a screen reader says the name instead of
+   spelling it, and a copied link carries readable text. */
+.gc-wordmark-type {
+  text-transform: uppercase;
+  /* BR-01 does not state tracking. Taken from the type scale's only other
+     uppercase role (`micro`, 0.08em) rather than invented: extra-light caps
+     set tight close up, and the system already answered this question. */
+  letter-spacing: 0.08em;
+}
+
+/* GC-MARK-03 · THE DEVICE. Square, because RADIUS.none is invariant. */
+.gc-device {
+  display: inline-block;
+  flex: none;
+  background: var(--gc-copper);
+  border-radius: var(--gc-radius);
+}
+
+/* GC-MARK-02 · THE MONOGRAM. BR-03 geometry: 1px stroke, square, no fill. */
+.gc-monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gc-sp-3xs);
+  border: var(--gc-stroke-idle) solid currentColor;
+  border-radius: var(--gc-radius);
+  font-family: var(--gc-font-display);
+  font-weight: 200;
+  line-height: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+.gc-monogram-type {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Explicit grounds, for surfaces that are not inside an .on-paper scope
+   (share cards, standalone previews). */
+.gc-mark-on-void { color: var(--gc-ink-inverse); }
+.gc-mark-on-paper { color: var(--gc-ink); }

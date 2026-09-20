@@ -3,7 +3,11 @@
 .system-page-paper{background:var(--gc-paper);color:var(--gc-ink)}
 .sysbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 var(--gc-sp-xl);border-bottom:var(--gc-stroke-idle) solid var(--gc-hairline-inv);color:var(--gc-steel-dim);font:400 10px/1 var(--gc-font-mono);letter-spacing:.12em}
 .system-page-paper .sysbar{border-color:var(--gc-hairline)}
-.sysmark{color:inherit;font:500 14px/1 var(--gc-font-display);letter-spacing:-.03em;text-decoration:none}
+/* The mark is drawn by app/_assemblies/brandmark.tsx (GC-MARK-01). This
+   rule keeps only what the LINK owns; face, weight, case and tracking
+   moved to .gc-wordmark, so there is one place the mark is specified.
+   It shipped `font:500` here, three weights above the ratified 200. */
+.sysmark{color:inherit;text-decoration:none;display:inline-flex;align-items:center}
 .system-atmosphere{position:absolute;inset:64px 0 0;background:linear-gradient(135deg,var(--gc-forest) 0%,var(--gc-void) 48%,var(--gc-void) 100%);opacity:.55}
 .system-card{position:relative;z-index:1;width:min(100% - (var(--gc-sp-m) * 2),456px);margin:clamp(var(--gc-sp-2xl),13vh,var(--gc-sp-4xl)) auto 0}
 .identity-card h1,.denial-surface h1,.status-surface h1{margin-top:var(--gc-sp-s);font:400 clamp(44px,5vw,64px)/.88 var(--gc-font-display);letter-spacing:-.06em;text-transform:uppercase}

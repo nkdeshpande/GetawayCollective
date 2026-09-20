@@ -6,6 +6,7 @@ import { ChangeEvent, Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
 import { VEHICLE_STAGES, stagesForOfficeRoute, workspaceModuleOf, type VehicleStageId } from "@/constants/workspace-modules";
+import { Wordmark } from "./brandmark";
 
 type OfficeProps = { path: string; params?: Record<string, string> };
 type WorkRow = readonly [string, string, string, string];
@@ -157,7 +158,7 @@ function OfficeWorkspace({ path, params }: OfficeProps) {
   return (
     <main className="atlas p-hero-own">
       <header className="atlas-topbar">
-        <Link href="/" className="sysmark">GETAWAY COLLECTIVE</Link>
+        <Link href="/" className="sysmark" aria-label="Getaway Collective"><Wordmark size={14} /></Link>
         <div><span>{preview ? "ATLAS / DESIGN PREVIEW" : `ATLAS / ${adminGeneral ? "ADMIN GENERAL" : "ADMIN VEHICLE"}`}</span><b>● SYSTEM NOMINAL</b></div>
       </header>
 

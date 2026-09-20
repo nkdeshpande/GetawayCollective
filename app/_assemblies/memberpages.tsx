@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
+import { Wordmark } from "./brandmark";
 
 type MemberProps = { path: string; param?: string };
 type MemberView = "home" | "portfolio" | "vehicle" | "space" | "capital" | "time" | "project" | "partners" | "governance" | "documents" | "activity" | "profile";
@@ -139,7 +140,7 @@ function MemberWorkspace({ path, param }: MemberProps) {
   return (
     <main className="member-workspace p-hero-own">
       <header className="member-topbar">
-        <Link href="/" className="sysmark">GETAWAY COLLECTIVE</Link>
+        <Link href="/" className="sysmark" aria-label="Getaway Collective"><Wordmark size={14} /></Link>
         <div><span>{preview ? "DESIGN PREVIEW / PLACEHOLDER MATERIAL" : "MEMBER-RESTRICTED"}</span><b>RECORD CURRENT</b></div>
       </header>
 

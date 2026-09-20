@@ -33,7 +33,7 @@ import {
 } from "@/constants/vehicles";
 import { estateOf } from "@/constants/spatial";
 import { pageFor } from "@/constants/property-page";
-import { COLOUR, SPACE } from "@/constants/tokens";
+import { COLOUR, FONT, SPACE } from "@/constants/tokens";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -90,8 +90,14 @@ export async function GET(
      app's CSS variables — but it can use the same scale they are built
      from, which is the part that matters. A brief laid out on its own
      numbers would drift from the platform one revision at a time. */
-  body{font:14px/1.55 Georgia,serif;color:${COLOUR.ink};max-width:760px;margin:0 auto;padding:${SPACE.xl} ${SPACE.m}}
-  h1{font-size:30px;line-height:1.1;margin:0 0 ${SPACE["3xs"]}}
+  /* The face was the one value in this block that WAS typed, as
+     Georgia — a serif the design system does not contain — in the
+     document an investor is most likely to print and keep. Read from
+     FONT now, like everything else here. This page loads no webfont,
+     so the stack resolves to its own fallbacks; those fallbacks are
+     the system's, and none of them is a serif. */
+  body{font:14px/1.55 ${FONT.body};color:${COLOUR.ink};max-width:760px;margin:0 auto;padding:${SPACE.xl} ${SPACE.m}}
+  h1{font:200 30px/1.1 ${FONT.display};margin:0 0 ${SPACE["3xs"]}}
   h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin:${SPACE.l} 0 ${SPACE["2xs"]};color:${COLOUR.steel}}
   .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${COLOUR.steel};margin:0}
   .lede{font-size:16px;color:${COLOUR.steel}}

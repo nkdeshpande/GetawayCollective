@@ -26,6 +26,7 @@ import { ADMINS } from "@/constants/admins";
 import { ROLE_RIGHTS } from "@/lib/authority";
 import { VEHICLES } from "@/constants/vehicles";
 import { RegisterPropertyForm } from "./propertyform";
+import { Wordmark } from "./brandmark";
 
 const REQUIRED = "property.register" as const;
 
@@ -36,7 +37,7 @@ const adminCarrying = (right: string) =>
 function Mark() {
   return (
     <header className="sysbar">
-      <Link href="/" className="sysmark">GETAWAY COLLECTIVE</Link>
+      <Link href="/" className="sysmark" aria-label="Getaway Collective"><Wordmark size={14} /></Link>
       <span>OFFICE / PROPERTY REGISTER</span>
     </header>
   );

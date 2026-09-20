@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en-IN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GC.SYSTEM — Brand &amp; Logo System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Inter:wght@400;500&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0A0A0A; --void-panel:#121212; --paper:#F2F2F2;
+    --ink:#0A0A0A; --ink-inv:#F2F2F2;
+    --steel:#6B6B6B; --steel-dim:#9A9A9A;
+    --copper:#C79F6B; --copper-deep:#8C6635;
+    --hazard:#E8672E; --confirm:#1FAA59; --critical:#FF3B30;
+    --hair:rgba(242,242,242,0.14);
+    --display:'Outfit',sans-serif; --body:'Inter',sans-serif; --mono:'Space Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--void);color:var(--ink-inv);font:400 15px/1.6 var(--body);
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:64px 32px 120px}
+  .eyebrow{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--steel-dim);
+           margin:0 0 12px}
+  h1{font:200 44px/1.05 var(--display);letter-spacing:-.01em;margin:0 0 16px;text-transform:uppercase}
+  h2{font:300 28px/1.15 var(--display);margin:96px 0 8px;letter-spacing:-.01em}
+  h3{font:400 17px/1.3 var(--display);margin:40px 0 8px}
+  p{max-width:68ch;color:#d4d4d2}
+  .lede{font-size:17px;color:var(--steel-dim);max-width:68ch}
+  section{border-top:1px solid var(--hair);padding-top:4px}
+  code{font:400 12px/1.4 var(--mono);color:var(--copper)}
+  .mono{font:400 12px/1.4 var(--mono);color:var(--steel-dim);white-space:nowrap}
+  .rule{border-left:1px solid var(--copper);padding:2px 0 2px 16px;margin:24px 0;color:var(--steel-dim);
+        font-size:14px;max-width:64ch}
+  .rule b{color:var(--ink-inv);font-weight:400}
+
+  .stage{background:var(--void-panel);border:1px solid var(--hair);padding:56px 40px;margin:24px 0 8px;
+         display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:40px;
+         overflow:hidden;max-width:100%}
+  .stage.on-paper{background:var(--paper)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair);border:1px solid var(--hair);margin:24px 0}
+  .grid2>div{background:var(--void-panel);padding:44px 24px;display:flex;align-items:center;justify-content:center}
+  .grid2>div.paper{background:var(--paper)}
+
+  .markcard{border:1px solid var(--hair);margin:24px 0;background:var(--void-panel)}
+  .markcard>header{display:flex;gap:16px;align-items:baseline;padding:16px 24px;border-bottom:1px solid var(--hair)}
+  .markcard>header b{font:400 11px/1 var(--mono);color:var(--copper);letter-spacing:.08em}
+  .markcard>header span{font:400 17px/1 var(--display)}
+  .markcard>header em{margin-left:auto;font:400 10px/1 var(--mono);font-style:normal;color:var(--steel-dim);
+                      letter-spacing:.08em;text-transform:uppercase}
+  .markcard .body{padding:24px}
+  .markcard .form{color:var(--steel-dim);font-size:14px;margin:0 0 20px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .cols h4{font:400 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;margin:0 0 10px}
+  .cols .use h4{color:var(--confirm)}
+  .cols .never h4{color:var(--critical)}
+  ul{margin:0;padding-left:18px}
+  li{font-size:13.5px;line-height:1.55;color:#cfcfcd;margin-bottom:6px}
+  .floor{margin:20px 0 0;padding-top:14px;border-top:1px solid var(--hair);
+         font:400 11px/1.5 var(--mono);color:var(--steel-dim)}
+
+  .diagram{display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center;
+           background:var(--void-panel);border:1px solid var(--hair);padding:40px;margin:24px 0}
+  .clear-outer{outline:1px dashed var(--copper);outline-offset:0}
+  .clear-inner{outline:1px solid var(--hair)}
+  ul.dim{padding-left:0;list-style:none}
+  ul.dim li{border-bottom:1px solid var(--hair);padding:9px 0;font-size:13px}
+  ul.dim b{color:var(--copper);font-family:var(--mono);font-weight:400;font-size:12px}
+
+  table{width:100%;border-collapse:collapse;margin:24px 0}
+  /* The size table carries the mark at its real px, so it is legitimately
+     wider than a narrow viewport. It scrolls itself rather than making the
+     whole document scroll sideways. */
+  .scroll-x{overflow-x:auto;max-width:100%}
+  .scroll-x table{min-width:560px}
+  th{text-align:left;font:400 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+     color:var(--steel-dim);padding:0 16px 10px 0;border-bottom:1px solid var(--hair);font-weight:400}
+  td{padding:14px 16px 14px 0;border-bottom:1px solid var(--hair);vertical-align:middle}
+  .bad{font:400 11px/1 var(--mono);color:var(--critical);letter-spacing:.06em}
+
+  .mis{border:1px solid var(--hair);margin:24px 0;background:var(--void-panel)}
+  .mis>header{display:flex;gap:14px;align-items:baseline;padding:14px 20px;border-bottom:1px solid var(--hair)}
+  .mis>header b{font:400 11px/1 var(--mono);color:var(--critical);letter-spacing:.08em}
+  .mis>header span{font:400 15px/1.2 var(--display)}
+  .mis-pair{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair)}
+  .mis-cell{background:var(--void);padding:32px 20px;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;gap:16px;min-height:132px}
+  .mis-cell .tag{font:400 9px/1 var(--mono);letter-spacing:.14em}
+  .mis-cell.wrong .tag{color:var(--critical)}
+  .mis-cell.right .tag{color:var(--confirm)}
+  .mis p{margin:0;padding:16px 20px;border-top:1px solid var(--hair);font-size:13.5px;color:var(--steel-dim);max-width:none}
+
+  .open{border:1px solid var(--hazard);padding:24px;margin:24px 0}
+  .open h3{margin-top:0;color:var(--hazard)}
+  footer{margin-top:96px;padding-top:24px;border-top:1px solid var(--hair);
+         font:400 11px/1.7 var(--mono);color:var(--steel-dim)}
+  @media (max-width:820px){.cols,.mis-pair,.grid2{grid-template-columns:1fr}.diagram{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+
+<p class="eyebrow">GC.SYSTEM · Addendum A · BR-01 … BR-04</p>
+<h1>Brand &amp; Logo System</h1>
+<p class="lede">Three marks, one specification, one renderer. Every number on this page is read from
+<code>constants/brand-system.ts</code> at generation time, and every rule traces to a ratified BR clause.</p>
+
+<div class="rule"><b>Generated.</b> Do not edit this file. <code>npm run brandbook</code> rewrites it;
+<code>npm run lint:brand</code> is the gate that keeps the build in step with it.</div>
+
+<section>
+<h2>The mark</h2>
+<p>There is no drawn logotype, and this document does not pretend there is. BR-01 specifies the mark as the
+type system set to a particular weight and case, with a copper full stop — so that is what it is, and the
+square is real geometry rather than a glyph. When a designed logotype exists it replaces the type; the
+clearspace, the floor and the device survive unchanged.</p>
+
+<div class="stage"><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 56px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+<div class="grid2">
+  <div><span style="display:inline-flex;align-items:baseline;gap:11px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:32px;line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:5px;height:5px;background:#C79F6B;flex:none"></i></span></div>
+  <div class="paper"><span style="display:inline-flex;align-items:baseline;gap:11px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:32px;line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#0A0A0A;white-space:nowrap">Getaway Collective<i style="width:5px;height:5px;background:#8C6635;flex:none"></i></span></div>
+</div>
+<p class="mono">On void, and on paper — where <code>copperDeep</code> replaces copper. 2.18:1 becomes 4.61:1;
+the same hue and saturation, moved in lightness only, which is why the square is still the same square.</p>
+
+<div class="rule"><b>Why the full stop is square.</b> <code>RADIUS.none</code> is invariant in this system.
+A round dot would be the only curve in it, on the one element that appears on every page. Nobody ratified
+that exception, so the period is a square.</div>
+
+
+<div class="markcard">
+  <header><b>GC-MARK-01</b><span>The Wordmark</span><em>BR-01 · BR-02</em></header>
+  <div class="body">
+    <p class="form">GETAWAY COLLECTIVE followed by the copper square. Outfit 200, uppercase.</p>
+    <div class="stage" style="margin:0 0 24px;padding:40px 24px"><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 36px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+    <div class="cols">
+      <div class="use"><h4>Use</h4><ul><li>The primary mark. Anywhere it fits.</li><li>Signed-in chrome — the sysbar, the office spine, the investor header.</li><li>The full-bleed hero strip (FB-01), where it is the only chrome permitted beside one wayfinding label.</li><li>Documents, share cards and correspondence.</li></ul></div>
+      <div class="never"><h4>Never</h4><ul><li>Below 20px cap-height. Use THE DEVICE.</li><li>In any weight but 200. Bolding the wordmark makes it a heading.</li><li>Without the copper square. The square is the mark, not decoration.</li><li>On photography without a solid or 70%-dim scrim (BR-02).</li><li>Letterspaced to fill a container. The tracking is part of the mark.</li></ul></div>
+    </div>
+    <p class="floor">FLOOR · 20px cap-height</p>
+  </div>
+</div>
+<div class="markcard">
+  <header><b>GC-MARK-02</b><span>The Monogram</span><em>BR-01 · BR-03</em></header>
+  <div class="body">
+    <p class="form">GC followed by the copper square, inside a 1px square frame. Outfit 200, uppercase.</p>
+    <div class="stage" style="margin:0 0 24px;padding:40px 24px"><span style="display:inline-flex;align-items:center;justify-content:center;gap:4px;
+    width:96px;height:96px;border:1px solid #F2F2F2;border-radius:0px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:40px;line-height:1;
+    letter-spacing:.02em;color:#F2F2F2">GC<i style="width:7px;height:7px;background:#C79F6B;flex:none"></i></span><span style="display:inline-flex;align-items:center;justify-content:center;gap:4px;
+    width:56px;height:56px;border:1px solid #F2F2F2;border-radius:0px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:24px;line-height:1;
+    letter-spacing:.02em;color:#F2F2F2">GC<i style="width:4px;height:4px;background:#C79F6B;flex:none"></i></span><span style="display:inline-flex;align-items:center;justify-content:center;gap:4px;
+    width:32px;height:32px;border:1px solid #F2F2F2;border-radius:0px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:13px;line-height:1;
+    letter-spacing:.02em;color:#F2F2F2">GC<i style="width:2px;height:2px;background:#C79F6B;flex:none"></i></span></div>
+    <div class="cols">
+      <div class="use"><h4>Use</h4><ul><li>Where the wordmark cannot fit but an identity is still required: favicon, iOS icon, avatar.</li><li>The frame is BR-03 icon geometry — 1px stroke, square, no fill, no second colour.</li></ul></div>
+      <div class="never"><h4>Never</h4><ul><li>As the primary mark on a page where the wordmark fits.</li><li>With a filled frame, a rounded frame, or a second colour in the frame.</li><li>In any face other than Outfit. It was Georgia until 20 Sep 2026.</li></ul></div>
+    </div>
+    <p class="floor">FLOOR · 16px frame — below that the frame and the square collide</p>
+  </div>
+</div>
+<div class="markcard">
+  <header><b>GC-MARK-03</b><span>The Device</span><em>BR-01 · BR-02</em></header>
+  <div class="body">
+    <p class="form">The copper square alone.</p>
+    <div class="stage" style="margin:0 0 24px;padding:40px 24px"><i style="width:24px;height:24px;background:#C79F6B;display:inline-block"></i>
+           <i style="width:12px;height:12px;background:#C79F6B;display:inline-block"></i>
+           <i style="width:6px;height:6px;background:#C79F6B;display:inline-block"></i></div>
+    <div class="cols">
+      <div class="use"><h4>Use</h4><ul><li>Only where BR-02 bars the wordmark: below 20px cap-height.</li><li>As a list bullet, a state dot, or the mark on a surface too small for type.</li></ul></div>
+      <div class="never"><h4>Never</h4><ul><li>Beside the wordmark or the monogram — they already contain it.</li><li>In any colour but copper. A green or red square is a status indicator, not the brand.</li><li>As a decorative motif repeated across a surface. One device, one place.</li></ul></div>
+    </div>
+    <p class="floor">FLOOR · 2px edge</p>
+  </div>
+</div>
+</section>
+
+<section>
+<h2>Clearspace and the floor</h2>
+<p>BR-02 defines clearspace as the cap-height of the G. That is only a rule if the cap-height is a number,
+so it was measured from the font binary this application ships rather than estimated from the drawing.</p>
+
+  <div class="diagram">
+    <div class="clear-outer" style="padding:30px">
+      <div class="clear-inner"><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 44px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+    </div>
+    <ul class="dim">
+      <li><b>0.676</b> cap-height as a fraction of font-size — Outfit <code>OS/2.sCapHeight 676</code> / <code>head.unitsPerEm 1000</code>, read from the shipped woff2</li>
+      <li><b>30px</b> clearspace at 44px font-size — the cap-height of the G, per BR-02</li>
+      <li><b>20px</b> minimum cap-height, which is <b>29.6px</b> font-size. Below it the wordmark is barred and the device is the only mark</li>
+      <li><b>0.25</b> device edge as a fraction of cap-height — 7px here</li>
+    </ul>
+  </div>
+<h3>Every size, with its geometry</h3>
+<div class="scroll-x"><table>
+  <thead><tr><th>Font-size</th><th>Clearspace</th><th>Device</th><th>Renders as</th></tr></thead>
+  <tbody>
+  <tr>
+    <td class="mono">14px</td>
+    <td class="mono">9px</td>
+    <td class="mono">2px</td>
+    <td><span class="bad">barred — use the device</span></td>
+  </tr>
+  <tr>
+    <td class="mono">20px</td>
+    <td class="mono">14px</td>
+    <td class="mono">3px</td>
+    <td><span class="bad">barred — use the device</span></td>
+  </tr>
+  <tr>
+    <td class="mono">29.6px</td>
+    <td class="mono">20px</td>
+    <td class="mono">5px</td>
+    <td><span style="display:inline-flex;align-items:baseline;gap:10px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:29.6px;line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:5px;height:5px;background:#C79F6B;flex:none"></i></span></td>
+  </tr>
+  <tr>
+    <td class="mono">36px</td>
+    <td class="mono">24px</td>
+    <td class="mono">6px</td>
+    <td><span style="display:inline-flex;align-items:baseline;gap:12px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:36px;line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:6px;height:6px;background:#C79F6B;flex:none"></i></span></td>
+  </tr>
+  <tr>
+    <td class="mono">56px</td>
+    <td class="mono">38px</td>
+    <td class="mono">9px</td>
+    <td><span style="display:inline-flex;align-items:baseline;gap:19px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:56px;line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:9px;height:9px;background:#C79F6B;flex:none"></i></span></td>
+  </tr></tbody>
+</table></div>
+<p class="mono">14px and 20px are below the BR-02 floor and are shown barred, not shown small.</p>
+</section>
+
+<section>
+<h2>Misuse</h2>
+<p>Each panel renders the wrong mark beside the right one. Eight of them, and the first three are not
+hypothetical — they were live on this platform until 20 September 2026.</p>
+
+  <article class="mis">
+    <header><b>MIS-01</b><span>The wordmark in a serif.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Georgia',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+    </div>
+    <p>Georgia shipped on the favicon, the iOS icon and every share card until 20 Sep 2026. Outfit is the face.</p>
+  </article>
+  <article class="mis">
+    <header><b>MIS-02</b><span>The wordmark without its square.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective</span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+    </div>
+    <p>BR-01 makes the trailing period the mark. Dropping it leaves set type, not a logo.</p>
+  </article>
+  <article class="mis">
+    <header><b>MIS-03</b><span>The wordmark at weight 500, 600 or 700.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:600;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+    </div>
+    <p>.sysmark rendered at 500. At 600 the wordmark is indistinguishable from a page heading.</p>
+  </article>
+  <article class="mis">
+    <header><b>MIS-04</b><span>A round device.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-flex;align-items:center;justify-content:center;gap:4px;
+    width:56px;height:56px;border:1px solid #F2F2F2;border-radius:12px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:24px;line-height:1;
+    letter-spacing:.02em;color:#F2F2F2">GC<i style="width:4px;height:4px;background:#C79F6B;flex:none"></i></span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><span style="display:inline-flex;align-items:center;justify-content:center;gap:4px;
+    width:56px;height:56px;border:1px solid #F2F2F2;border-radius:0px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:24px;line-height:1;
+    letter-spacing:.02em;color:#F2F2F2">GC<i style="width:4px;height:4px;background:#C79F6B;flex:none"></i></span></div>
+    </div>
+    <p>RADIUS.none is invariant. A circle in this system is an exception nobody ratified.</p>
+  </article>
+  <article class="mis">
+    <header><b>MIS-05</b><span>The device in a signal colour.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-flex;align-items:baseline;gap:9px;font-family:'Outfit',sans-serif;
+      font-weight:200;font-size:28px;text-transform:uppercase;letter-spacing:.08em;
+      color:#F2F2F2">Getaway Collective<i style="width:5px;height:5px;background:#1FAA59"></i></span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+    </div>
+    <p>A green square is settlement and a red square is critical. Only copper is the brand.</p>
+  </article>
+  <article class="mis">
+    <header><b>MIS-06</b><span>The mark on photography without a scrim.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-flex;align-items:center;justify-content:center;width:100%;height:64px;
+      background:linear-gradient(115deg,#6b7f6a,#c9c0a8 40%,#8a8f76 70%,#e8e4d6)"><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 24px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><span style="display:inline-flex;align-items:center;justify-content:center;width:100%;height:64px;background:linear-gradient(115deg,#6b7f6a,#c9c0a8 40%,#8a8f76 70%,#e8e4d6)"><span style="display:inline-flex;padding:12px 16px;background:rgba(10,10,10,.7)"><span style="display:inline-flex;align-items:baseline;gap:8px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:24px;line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:4px;height:4px;background:#C79F6B;flex:none"></i></span></span></span></div>
+    </div>
+    <p>BR-02 requires a solid or 70%-dim scrim. Contrast over a photograph is not predictable.</p>
+  </article>
+  <article class="mis">
+    <header><b>MIS-07</b><span>The wordmark below 20px cap-height.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-flex;align-items:baseline;gap:5px;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:14px;line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:2px;height:2px;background:#C79F6B;flex:none"></i></span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><i style="width:10px;height:10px;background:#C79F6B;display:inline-block"></i></div>
+    </div>
+    <p>BR-02 floor. Below it the mark is illegible, and THE DEVICE is what exists for that case.</p>
+  </article>
+  <article class="mis">
+    <header><b>MIS-08</b><span>Clearspace smaller than the cap-height of the G.</span></header>
+    <div class="mis-pair">
+      <div class="mis-cell wrong"><span class="tag">NEVER</span><span style="display:inline-block;padding:1px;outline:1px dashed #E8672E"><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></span></div>
+      <div class="mis-cell right"><span class="tag">ALWAYS</span><span style="display:inline-flex;align-items:baseline;gap:0.338em;
+    font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(18px, 6.2vw, 28px);line-height:1;
+    text-transform:uppercase;letter-spacing:0.08em;color:#F2F2F2;white-space:nowrap">Getaway Collective<i style="width:0.169em;height:0.169em;background:#C79F6B;flex:none"></i></span></div>
+    </div>
+    <p>BR-02. Measured, now computable: 0.676 x font-size.</p>
+  </article>
+</section>
+
+<section>
+<h2>Iconography and imagery</h2>
+
+  <h3>Iconography</h3>
+  <p><span class="mono">SPEC</span> &nbsp;1px stroke, square frame, no fills, no two-tone.</p><p><span class="mono">RULE</span> &nbsp;Glyphs come from the mono type set wherever possible, rather than a separate icon font.</p>
+
+  <h3>Imagery</h3>
+  <p><span class="mono">SPEC</span> &nbsp;Architectural. Desaturated 20-30%. Contrast pushed slightly high.</p><p><span class="mono">RULE</span> &nbsp;No lifestyle-stock cliches — no toasting glasses, no staged laughter. Imagery reads like documentation of a place, not an advertisement for one.</p>
+
+<div class="stage" style="gap:28px">
+  <span style="display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border:1px solid rgba(242,242,242,0.14);font:400 18px var(--mono);color:#F2F2F2">₹</span><span style="display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border:1px solid rgba(242,242,242,0.14);font:400 18px var(--mono);color:#F2F2F2">%</span><span style="display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border:1px solid rgba(242,242,242,0.14);font:400 18px var(--mono);color:#F2F2F2">↗</span><span style="display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border:1px solid rgba(242,242,242,0.14);font:400 18px var(--mono);color:#F2F2F2">⌘</span>
+</div>
+<p class="mono">BR-03: 1px stroke, square frame, no fills, no two-tone. Glyphs come from the mono set rather
+than an icon font, which is why these are characters and not drawings.</p>
+</section>
+
+<section>
+<h2>Voice</h2>
+<div class="rule"><b>Warm is not soft. Assertive is not cold. Confident is not loud.</b></div>
+<table>
+  <thead><tr><th>Principle</th><th>What it means in practice</th></tr></thead>
+  <tbody><tr><td class="mono">WARM</td><td>We speak to a person, not to a form. Peers with shared values, not a counterparty.</td></tr><tr><td class="mono">CONFIDENT</td><td>We state what is true without hedging. No 'may', no 'might', no 'we believe'.</td></tr><tr><td class="mono">ASSERTIVE</td><td>Every sentence says what happens next. We direct, we do not suggest.</td></tr><tr><td class="mono">PLEASANT</td><td>Courtesy without softeners. Never curt, never apologetic.</td></tr></tbody>
+</table>
+</section>
+
+<section>
+<h2>The laws</h2>
+<table><tbody>
+  <tr><td class="mono" style="width:180px;vertical-align:top">oneMarkPerSurface</td><td>One mark per surface. A page carries the wordmark or the monogram, never both — two marks read as two organisations.</td></tr>
+  <tr><td class="mono" style="width:180px;vertical-align:top">theSquareIsTheMark</td><td>The copper square is not punctuation and not decoration. BR-01 makes it the brand device, and it is the only full stop permitted as one anywhere in the system.</td></tr>
+</tbody></table>
+</section>
+
+<section>
+<h2>What is still open</h2>
+<div class="open">
+  <h3>The mark is type, not a logotype</h3>
+  <p>A designed logotype has never been commissioned. The system is complete and enforceable without one —
+  and if one arrives, the clearspace, the floor, the device and every misuse rule here still apply.</p>
+  <h3>Satori has no Outfit binary</h3>
+  <p>The favicon, the iOS icon and the share card are generated by Satori, which cannot load Outfit unless a
+  font file is shipped and passed to <code>ImageResponse</code>. None is, so their letterforms are Satori's
+  default sans while the geometry and the copper are exact. They were set in Georgia — a serif this system
+  does not contain — until 20 September 2026. Shipping the Outfit binary closes it.</p>
+  <h3>The display scale and the stylesheet disagree</h3>
+  <p><code>constants/typography.ts</code> sets <code>display-xl</code> and <code>display-l</code> at weight
+  200 and <code>display-m</code> and <code>heading</code> at 300.
+  <code>app/_assemblies/assemblies.css</code> renders all four at 600. That file is generated from
+  <code>GC-ASSEMBLIES.html</code>, so the drift is in the source document, and correcting it restyles every
+  heading on a live platform. Reported, not swept.</p>
+</div>
+</section>
+
+<footer>
+GENERATED — scripts/gen-brand-book.js<br>
+Sources: constants/brand-system.ts · constants/tokens.ts · constants/tokens-addendum.ts<br>
+3 marks · 8 recorded misuses · cap-height ratio 0.676 · floor 29.6px<br>
+Gate: npm run lint:brand
+</footer>
+
+</div></body></html>

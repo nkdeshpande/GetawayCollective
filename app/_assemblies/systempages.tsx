@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { Wordmark } from "./brandmark";
 
 /**
  * When this record was last verified.
@@ -19,7 +20,7 @@ const STAMPED = new Date().toLocaleDateString("en-GB", {
 });
 
 function SystemMark({ section }: { section: string }) {
-  return <header className="sysbar"><Link href="/" className="sysmark">GETAWAY COLLECTIVE</Link><span>{section}</span></header>;
+  return <header className="sysbar"><Link href="/" className="sysmark" aria-label="Getaway Collective"><Wordmark size={14} /></Link><span>{section}</span></header>;
 }
 
 /**

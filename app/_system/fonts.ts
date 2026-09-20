@@ -16,9 +16,17 @@
 
 import { Outfit, Inter, Space_Mono, Playfair_Display } from "next/font/google";
 
+/**
+ * 200 is here for the wordmark and nothing else.
+ *
+ * BR-01 sets the mark at Outfit 200. The face was loaded at 300-700, so a
+ * wordmark asking for 200 silently fell to 300 and the ratified weight
+ * could not render at all. The type scale also asks for 200 at display-xl
+ * and display-l (constants/typography.ts), which had the same problem.
+ */
 export const display = Outfit({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["200", "300", "400", "500", "600", "700"],
   variable: "--font-display",
   display: "swap",
 });
