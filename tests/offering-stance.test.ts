@@ -70,9 +70,18 @@ describe("a closed vehicle's numbers reconcile, or it is not closed", () => {
 });
 
 describe("the register is settled", () => {
-  it("has no blocking conflict left on any vehicle", () => {
-    expect(CONFLICTS.filter((c) => c.severity === "blocking")).toHaveLength(0);
-    for (const v of VEHICLES) expect(blockingFor(v.key)).toHaveLength(0);
+  it("has no blocking conflict left on the three settled vehicles", () => {
+    for (const k of ["slowspace", "solace", "coorgcreek"] as const) {
+      expect(blockingFor(k)).toHaveLength(0);
+    }
+  });
+
+  it("keeps Wildwood blocked, because its own model says do not close equity", () => {
+    const blocking = blockingFor("wildwood");
+    expect(blocking.length).toBeGreaterThanOrEqual(6);
+    expect(publishable(vehicleByKey("wildwood")!).ok).toBe(false);
+    expect(JSON.stringify(blocking)).toContain("Do not close equity");
+    for (const c of blocking) expect(c.settledBy.length).toBeGreaterThan(10);
   });
 
   it("stamps each settled conflict with the date it was settled", () => {

@@ -1,5 +1,5 @@
 /**
- * THE COLLECTION — the three vehicles and the ground they sit on
+ * THE COLLECTION — the four vehicles and the ground they sit on
  *
  * Two registries meet here: constants/vehicles.ts (the LLP, from the
  * intake) and constants/spatial.ts (the estate, from the spatial ledger).
@@ -22,9 +22,9 @@ import {
 } from "../constants/spatial";
 import { PROPERTIES, propertyBySlug, toSlug } from "../app/_assemblies/data";
 
-describe("the three vehicles", () => {
+describe("the four vehicles", () => {
   it("is exactly three, and none of them is invented", () => {
-    expect(VEHICLES.length).toBe(3);
+    expect(VEHICLES.length).toBe(4);
     const names = VEHICLES.map((v) => v.propertyName);
     /* The prototype's three. If any comes back, this fails. */
     for (const ghost of ["Kyoto House", "Oslo Base", "Swiss Vault"]) {
@@ -33,9 +33,9 @@ describe("the three vehicles", () => {
   });
 
   it("has a unique key, slug and asset code", () => {
-    expect(new Set(VEHICLES.map((v) => v.key)).size).toBe(3);
-    expect(new Set(VEHICLES.map((v) => v.slug)).size).toBe(3);
-    expect(new Set(VEHICLES.map((v) => v.assetCode)).size).toBe(3);
+    expect(new Set(VEHICLES.map((v) => v.key)).size).toBe(4);
+    expect(new Set(VEHICLES.map((v) => v.slug)).size).toBe(4);
+    expect(new Set(VEHICLES.map((v) => v.assetCode)).size).toBe(4);
   });
 
   it("derives every slug from the property name", () => {

@@ -109,7 +109,7 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
               { label: "Offered to partners", value: inr(o.offered), basis: `${o.units} units × ${inr(o.unitPrice)} · ${SOURCE}` },
               { label: "Units available", value: o.available === 0 ? `None · ${o.subscribed} of ${o.units} subscribed` : `${o.available} of ${o.units}`, basis: `${o.subscribed} subscribed · ${SOURCE}` },
               { label: "Sponsor stake", value: inr(o.promoter), basis: "Offered + sponsor = whole equity layer" },
-              { label: "Deposit", value: inr(o.deposit), basis: "Its purpose and whether it is refundable are not stated in the record" },
+              { label: "Deposit", value: o.deposit === null ? NOT_STATED : inr(o.deposit), basis: o.deposit === null ? "No holding deposit is stated for this structure." : "Its purpose and whether it is refundable are not stated in the record" },
             ],
           },
           {
@@ -340,7 +340,9 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
         title: "A commitment is prepared, never improvised.",
         lead:
           `${o.available} of ${o.units} units are available at ${inr(o.unitPrice)}. ` +
-          `The record states a ${inr(o.deposit)} deposit; what it secures and whether it is refundable are not stated, so ask before paying anything.`,
+          (o.deposit === null
+            ? "No holding deposit is stated for this structure, so do not send one."
+            : `The record states a ${inr(o.deposit)} deposit; what it secures and whether it is refundable are not stated, so ask before paying anything.`),
         sections: [
           {
             heading: "What must be true first",

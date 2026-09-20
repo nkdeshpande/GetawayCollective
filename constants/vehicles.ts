@@ -47,7 +47,7 @@ export type IntakeState =
   /** The intake left it blank. Not zero — absent. */
   | "absent";
 
-export type VehicleKey = "slowspace" | "solace" | "coorgcreek";
+export type VehicleKey = "slowspace" | "solace" | "coorgcreek" | "wildwood";
 
 /** Lifecycle, from sheet 1. The vehicle's own state, not the property's. */
 /**
@@ -140,8 +140,56 @@ export interface Offering {
   readonly unitPrice: bigint;
   readonly subscribed: number;
   readonly available: number;
-  readonly deposit: bigint;
+  /**
+   * What is taken to hold a unit, on the platform.
+   *
+   * Nullable since 20 Sep 2026. Wildwood is raised as two 24% portions
+   * against a valuation rather than as priced units off a ladder, and no
+   * holding deposit is stated for that structure. The folder's
+   * ₹2,25,000 belongs to a ₹22.50 L unit that this raise does not use, and
+   * carrying it across would put a number on a page that no document
+   * supports.
+   */
+  readonly deposit: bigint | null;
   readonly lockIn: string;
+}
+
+/**
+ * The LLP's own capital, where it is not the same thing as the offering.
+ *
+ * ── WHY THIS EXISTS ──────────────────────────────────────────────────
+ * The first three vehicles raise priced units off a ladder, and for them
+ * "what an investor pays" and "what the LLP registers as capital" are the
+ * same number. Wildwood is not built that way, and flattening it into the
+ * same shape would misstate the instrument rather than simplify it.
+ *
+ * An LLP that registers ₹1.15 Cr as contribution pays MCA fees on ₹1.15 Cr
+ * and triggers audit thresholds early. So the nominal capital on the filing
+ * is kept deliberately small — ₹10,000 — and the rest of the money arrives
+ * as premium credited to each partner's contribution account. The profit
+ * share follows the nominal split, not the cash.
+ *
+ * That distinction is legal, not presentational: the MCA filing and the
+ * supplementary agreement say different numbers ON PURPOSE, and a reader
+ * who sees only one of them has been told half of what they are joining.
+ */
+export interface LlpCapital {
+  /** What the MCA filing registers, in total. Small on purpose. */
+  readonly nominalTotal: bigint;
+  readonly nominalSponsor: bigint;
+  readonly nominalPerInvestor: bigint;
+  /** Credited to each investor's contribution account, above the nominal. */
+  readonly premiumPerInvestor: bigint;
+  /** Cash each investor actually sends: nominal + premium. */
+  readonly cashPerInvestor: bigint;
+  readonly preMoney: bigint;
+  readonly postMoney: bigint;
+  /** Profit- and loss-sharing ratio, in basis points. Follows the nominal. */
+  readonly sponsorBps: number;
+  readonly investorBps: number;
+  readonly investors: number;
+  /** Why the nominal is not the raise. Rendered, never assumed. */
+  readonly why: string;
 }
 
 export interface Ladder {
@@ -251,6 +299,7 @@ export interface Governance {
 
 export interface Vehicle {
   readonly key: VehicleKey;
+  /* llpCapital sits with the other optional blocks below. */
   /** Derived nowhere else: the URL segment every route resolves on. */
   readonly slug: string;
   readonly registeredName: string;
@@ -279,6 +328,7 @@ export interface Vehicle {
   readonly ladder: Ladder;
   readonly offering: Offering;
   readonly operating: Operating;
+  readonly llpCapital: LlpCapital | null;
   readonly entitlement: Entitlement | null;
   readonly governance: Governance | null;
 }
@@ -346,6 +396,9 @@ const SLOWSPACE: Vehicle = {
     yieldConfidence: "modelled",
     yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
   },
+
+  /* No nominal/premium split is stated for this vehicle. */
+  llpCapital: null,
   entitlement: {
     nightPoolMin: 180, nightPoolMax: 210, reservedDays: 0,
     begins: "Handover, Jan 2028",
@@ -443,6 +496,9 @@ const SOLACE: Vehicle = {
     yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
   },
   /* Sheet 6 and sheet 7 are empty for this vehicle. */
+
+  /* No nominal/premium split is stated for this vehicle. */
+  llpCapital: null,
   entitlement: null,
   governance: null,
 };
@@ -512,6 +568,9 @@ const COORGCREEK: Vehicle = {
     yieldConfidence: "estimated",
     yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
   },
+
+  /* No nominal/premium split is stated for this vehicle. */
+  llpCapital: null,
   entitlement: {
     nightPoolMin: 300, nightPoolMax: 350, reservedDays: 0,
     begins: "Pending programme lock — construction has not started",
@@ -524,7 +583,157 @@ const COORGCREEK: Vehicle = {
   },
 };
 
-export const VEHICLES: readonly Vehicle[] = [SLOWSPACE, SOLACE, COORGCREEK];
+
+/**
+ * WILDWOOD · PV01 Aranthodu Water Estate
+ *
+ * Sources: the LLP intake (PV01_Aranthodu_Investor_Pitch_LLP, 11 Aug 2026,
+ * row 8), the ratified financial model (WLD-09-CA-001 R0) and the design
+ * canon (WLD-01-CN-001 R0, 18 Aug 2026). The capital structure is the
+ * founder's, stated 20 Sep 2026, and it SUPERSEDES the 20-unit ₹22.50 L
+ * ladder those documents carry: this is two portions of 24%, not a ladder.
+ *
+ * ⚠ THE SOURCE DOCUMENTS SAY DO NOT CLOSE EQUITY. The risk register reads
+ * "OPEN — CP-1 / CP-2 · Do not close equity": the land is retained outside
+ * the LLP and the registered long-term lease that gives the vehicle its
+ * site control is not executed. Six conflicts are registered below and
+ * every one of them is blocking, so `publishable()` refuses this vehicle a
+ * public surface. That is the register doing its job, not a defect.
+ */
+const WILDWOOD: Vehicle = {
+  key: "wildwood",
+  slug: "wildwood",
+  /* Proposed. Name approval has not been granted, so there is no LLPIN and
+     no incorporation date to state. */
+  registeredName: "PV01 Aranthodu Water Estate LLP",
+  llpin: null,
+  incorporated: null,
+  agreementDated: null,
+  registeredOffice: null,
+  registrar: "RoC Bangalore",
+  lifecycle: "forming",
+  audited: false,
+
+  propertyName: "Wildwood",
+  assetCode: "ARA-01",
+  jurisdiction: "Aranthodu, Dakshina Kannada, Karnataka",
+  coordinates: "12.556617°N · 75.472709°E",
+  landArea: "12 acres (sponsor's contribution)",
+  keys: 12,
+  buildStage: "pre-construction",
+  /* Not a tenure position at all. The land is the sponsor's and is being
+     deployed into the vehicle; what perfects that is a registered lease
+     that does not yet exist. None of the four tenure words says that, and
+     the nearest one would overstate it. */
+  tenure: null,
+  commitments:
+    "The sponsor's stake is the land itself, deployed at ₹1.50 Cr rather than subscribed in " +
+    "cash, which leaves the sponsor at 60% and in majority after the raise. That deployment is " +
+    "perfected by a registered long-term lease (CP-1) and a clean title opinion (CP-2), both " +
+    "pending. Six keys on water, six in the grove.",
+  hue: 190,
+
+  stack: {
+    /* The sponsor's land, at the value its 60% is struck on. A contribution,
+       not a purchase: no cash leaves the vehicle for it, which is why the
+       same figure is `offering.promoter` rather than a stake on top of it.
+       The financial model's ₹38 L/acre indicative figure values these same
+       12 acres far higher — registered as C-16. */
+    land: 15000000_0000n,
+    formation: 20250000_0000n,
+    facility: 39750000_0000n,
+    equityLayer: 25000000_0000n,
+    projectTotal: 64750000_0000n,
+    moratorium: "Principal moratorium through construction plus a six-month operating ramp",
+    covenant: "DSCR 1.50x minimum · debt ceiling ₹5.0 Cr",
+  },
+
+  /* Two portions of 20%. There is no ladder: the minimum, the step and the
+     unit are the same 20%, and the ceiling is both portions together —
+     which is the point, because 40% is what keeps the sponsor in majority. */
+  ladder: { minimumInvestmentBps: 2000, minUnitBps: 2000, stepBps: 2000, ceilingBps: 4000 },
+
+  offering: {
+    totalEquity: 25000000_0000n,
+    promoter: 15000000_0000n,
+    offered: 10000000_0000n,
+    units: 2,
+    unitPrice: 5000000_0000n,
+    subscribed: 0,
+    available: 2,
+    /* No holding deposit is stated for this structure. The folder's
+       ₹2,25,000 belongs to a ₹22.50 L ladder unit this raise does not use,
+       and carrying it across would put a figure on a page nothing supports. */
+    deposit: null,
+    lockIn: "36 months from full launch",
+  },
+
+  /**
+   * THE NOMINAL IS NOT THE RAISE.
+   *
+   * Founder, 20 Sep 2026. ₹50,00,000 buys 20%, which fixes the post-money
+   * at ₹2.50 Cr and the sponsor's land at ₹1.50 Cr, or 60%. Both portions
+   * together are 40%, so the sponsor keeps majority however the raise lands
+   * — that is a structural property of the ceiling, not a hope about who
+   * subscribes.
+   *
+   * The ₹10,000 nominal is an MCA filing mechanic, not a different
+   * instrument: it is the same land-plus-cash equity the other three
+   * vehicles use, filed so the vehicle is not charged on ₹1 Cr of
+   * contribution and pulled into mandatory audit before it trades.
+   */
+  llpCapital: {
+    nominalTotal: 10000_0000n,
+    nominalSponsor: 6000_0000n,
+    nominalPerInvestor: 2000_0000n,
+    premiumPerInvestor: 4998000_0000n,
+    cashPerInvestor: 5000000_0000n,
+    preMoney: 15000000_0000n,
+    postMoney: 25000000_0000n,
+    sponsorBps: 6000,
+    investorBps: 2000,
+    investors: 2,
+    why:
+      "Registering ₹1 Cr as LLP contribution would be charged as such by the MCA and would pull " +
+      "the vehicle into mandatory audit early. The filing registers ₹10,000 — ₹6,000 to the " +
+      "sponsor, ₹2,000 to each investor — and the balance arrives as premium credited to each " +
+      "partner's contribution account. Profit, loss and votes follow the nominal split, not the cash.",
+  },
+
+  operating: {
+    adr: 22000_0000n,
+    occupancyBps: 5000,
+    /* Rooms only. The financial model builds a larger base that includes the
+       café, estate experiences and buyouts, on 350 operating days rather
+       than 365. Registered as C-15 — the two bases are not comparable. */
+    grossRevenue: 48180000_0000n,
+    waterfall: {
+      operator: 5000, brand: 500, adminReserve: 300,
+      sinkingFund: 300, debtService: 1500, toPartners: 2400,
+    },
+    reserveFloor: 4000000_0000n,
+    yieldConfidence: "modelled",
+    yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
+  },
+
+  entitlement: {
+    nightPoolMin: 40, nightPoolMax: 60, reservedDays: 0,
+    begins: "After the full twelve-key launch and the reserve-floor test",
+  },
+
+  governance: {
+    ordinaryBps: 5001, specialBps: 7600, quorumBps: 6000,
+    reservedMatters:
+      "Amending the lease or site control, borrowing beyond ₹5.0 Cr, spending beyond the ₹6.0 Cr " +
+      "development cap, admitting a partner, selling substantially all project assets, or changing " +
+      "the waterfall, the operator or the brand",
+    transferRule: "Sponsor right of first refusal; investor tag-along; transferee subject to KYC",
+    designatedPartners: "Two sponsor-side, at least one resident in India — not yet named",
+  },
+};
+
+
+export const VEHICLES: readonly Vehicle[] = [SLOWSPACE, SOLACE, COORGCREEK, WILDWOOD];
 
 /* ── The conflict register ───────────────────────────────────────── */
 
@@ -555,6 +764,105 @@ export interface Conflict {
  * side of it.
  */
 export const CONFLICTS: readonly Conflict[] = [
+  /* ── Wildwood · registered 20 Sep 2026 ──────────────────────────────
+     Six of these are blocking, which is why this vehicle has no public
+     surface. Its own financial model says so first: the risk register
+     reads "OPEN — CP-1 / CP-2 · Do not close equity". None of them is
+     mine to settle and none should be settled quickly. */
+  {
+    id: "C-11", vehicle: "wildwood", severity: "blocking",
+    what: "The estate costs half again what the cap allows.",
+    sides: [
+      "LLP intake, capital stack: development cap ₹6.00 Cr",
+      "WLD-09-CA-001 R0 and the design canon: derived cost ₹9.89 Cr ex-land, +65%",
+      "This stack, from the founder's structure: ₹2.50 Cr equity + ₹3.975 Cr facility = ₹6.475 Cr",
+    ],
+    why:
+      "The model and the canon both call the overrun the governing finding, and spending beyond " +
+      "the cap is a reserved matter. A partner subscribing today would be funding a scheme whose " +
+      "own documents say it cannot be built for the money.",
+    settledBy: "A scheme that fits ₹6 Cr, a raised cap, or a written decision to fund the gap",
+  },
+  {
+    id: "C-12", vehicle: "wildwood", severity: "blocking",
+    what: "The vehicle does not yet control the land it is being funded to build on.",
+    sides: [
+      "CP-1: registered long-term lease, mortgageable, ≥30 years, lender-consented — PENDING",
+      "CP-2: title opinion and encumbrance certificate from counsel — PENDING",
+      "WLD-09-CA-001 risk register: \"OPEN — CP-1 / CP-2 · Do not close equity\"",
+    ],
+    why:
+      "The sponsor's 60% IS the land. Until the lease is registered the vehicle holds an " +
+      "intention, and the one document that models this raise says in terms not to close equity " +
+      "against it.",
+    settledBy: "The registered lease and the title opinion, in that order",
+  },
+  {
+    id: "C-13", vehicle: "wildwood", severity: "blocking",
+    what: "The facility is two figures.",
+    sides: [
+      "LLP intake, capital stack: ₹3.975 Cr, noted as the planned initial draw",
+      "WLD-09-CA-001: ₹5.0 Cr, the ratified sanction ceiling, drawn in full",
+    ],
+    why:
+      "Debt service is stage 5 of the waterfall and it is senior to the partners. A ₹1.025 Cr " +
+      "difference in the facility is a difference in what reaches stage 6, and no sanction letter " +
+      "exists for either number.",
+    settledBy: "The sanction letter",
+  },
+  {
+    id: "C-14", vehicle: "wildwood", severity: "blocking",
+    what: "Cost per key is over its own ratified cap on both key types.",
+    sides: [
+      "Ratified caps: ₹40.00 L per Water key, ₹35.00 L per Grove key",
+      "Derived: ₹44.81 L and ₹38.87 L — the model marks this risk TRIGGERED",
+    ],
+    why:
+      "The package reconciliation that produces the ₹6.00 Cr cap is built from the capped " +
+      "figures. If the derived costs are right the cap cannot hold, which is C-11 arriving from " +
+      "the other direction.",
+    settledBy: "A priced tender against the frozen scheme",
+  },
+  {
+    id: "C-15", vehicle: "wildwood", severity: "blocking",
+    what: "The revenue this vehicle states and the revenue it was modelled on are different measurements.",
+    sides: [
+      "LLP intake: ₹4.818 Cr, rooms only, 365 operating days",
+      "WLD-09-CA-001: rooms plus café, estate experiences and buyouts, on 350 days — the model " +
+        "flags the 365-to-350 change as a correction to the pitch",
+    ],
+    why:
+      "The waterfall runs on gross revenue, so the basis decides every stage below it. The two " +
+      "bases are not comparable and the stated yield inherits whichever one is used.",
+    settledBy: "Which base the waterfall runs on, and on how many operating days",
+  },
+  {
+    id: "C-16", vehicle: "wildwood", severity: "blocking",
+    what: "The land is deployed at a third of what the model values it at.",
+    sides: [
+      "Founder, 20 Sep 2026: ₹1.50 Cr, which is what the sponsor's 60% is struck on",
+      "WLD-09-CA-001: ₹38 L per acre indicative, which is ₹4.56 Cr for the 12 acres",
+    ],
+    why:
+      "The deployed value sets the sponsor's share and therefore every partner's. The model calls " +
+      "its own figure indicative and not an appraisal, so this is not a contradiction of fact so " +
+      "much as an unpriced asset — and the price is the whole cap table.",
+    settledBy: "An independent valuation, which the model already lists as a formation cost",
+  },
+  {
+    id: "C-17", vehicle: "wildwood", severity: "advisory",
+    what: "Neither the brand nor the property code is ratified.",
+    sides: [
+      "Draft property canon cover: ESKAPE",
+      "LLP intake: no brand recorded for this property",
+      "The code WLD is on five filenames; the canon holds it open and asks for a ruling",
+    ],
+    why:
+      "Advisory rather than blocking because no figure moves with it, and because changing the " +
+      "operator or brand is already a reserved matter. It decides the design pack and the price " +
+      "position, so it should not remain open long.",
+    settledBy: "A ruling on the brand, and on whether WLD is the code",
+  },
   {
     id: "C-01", vehicle: "solace", severity: "advisory",
     what: "Site area disagrees with the portfolio registry.",
