@@ -50,7 +50,26 @@ export type IntakeState =
 export type VehicleKey = "slowspace" | "solace" | "coorgcreek";
 
 /** Lifecycle, from sheet 1. The vehicle's own state, not the property's. */
-export type VehicleLifecycle = "forming" | "raising" | "live" | "dissolved";
+/**
+ * Lifecycle, from sheet 1. The vehicle's own state, not the property's.
+ *
+ * `funded` was added 20 Sep 2026 and is not cosmetic. Coastal and Solace
+ * both closed their raise and began construction, and the type had no word
+ * for that: `raising` was a lie the moment the last unit went, and `live`
+ * claims a vehicle that is operating and distributing. A state that does
+ * not exist gets rounded to the nearest one that does, and both neighbours
+ * here are wrong in a way an investor could act on.
+ */
+export type VehicleLifecycle = "forming" | "raising" | "funded" | "live" | "dissolved";
+
+/** What each lifecycle state may be SAID, in public, in full. */
+export const LIFECYCLE_LABEL: Record<VehicleLifecycle, string> = {
+  forming: "Forming",
+  raising: "Open · raising",
+  funded: "Fully subscribed · in construction",
+  live: "Operating",
+  dissolved: "Dissolved",
+};
 
 /**
  * What stage the BUILDING is at. Nothing about how the land is held.
@@ -275,7 +294,7 @@ const SLOWSPACE: Vehicle = {
   agreementDated: "2026-06-19",
   registeredOffice: "2nd Floor, Maruthi Arcade, Udupi 576101, Karnataka",
   registrar: "RoC Bangalore",
-  lifecycle: "forming",
+  lifecycle: "funded",
   audited: true,
 
   propertyName: "SlowSpace Coastal",
@@ -287,7 +306,7 @@ const SLOWSPACE: Vehicle = {
      the conflict is registered rather than the figure quietly corrected. */
   landArea: ".3 acres · dual frontage",
   keys: 12,
-  buildStage: "pre-construction",
+  buildStage: "under-construction",
   /* The record states CRZ compliance and a frontage, and no tenure
      position. Null rather than a guess — see the note on Tenure. */
   tenure: null,
@@ -310,8 +329,8 @@ const SLOWSPACE: Vehicle = {
     offered: 24000000_0000n,
     units: 6,
     unitPrice: 4000000_0000n,
-    subscribed: 5,
-    available: 1,
+    subscribed: 6,
+    available: 0,
     deposit: 50000_0000n,
     lockIn: "36 months from financial close",
   },
@@ -350,7 +369,7 @@ const SOLACE: Vehicle = {
   agreementDated: null,
   registeredOffice: null,
   registrar: "RoC Bangalore",
-  lifecycle: "forming",
+  lifecycle: "funded",
   audited: false,
 
   /* The intake writes "Slowspace Solace " with a trailing space and a
@@ -362,7 +381,7 @@ const SOLACE: Vehicle = {
   coordinates: "13°24'40.5\"N 77°49'26.9\"E",
   landArea: "1.55 acres (0.20 owned + 1.35 leased)",
   keys: 6,
-  buildStage: "pre-construction",
+  buildStage: "under-construction",
   /* Part freehold, part leasehold — a description of holding rather than
      a diligence or title position. The commitments line states it in
      full; this axis stays null until somebody sets the position. */
@@ -375,7 +394,8 @@ const SOLACE: Vehicle = {
     land: 10000000_0000n,
     formation: 10000000_0000n,
     facility: 30000000_0000n,
-    /* CONFLICT C-03: sheet 3 says ₹2.00 Cr, sheet 4 says ₹2.50 Cr. */
+    /* Was the C-03 conflict. Sheet 3's 2.00 Cr stands; the offering above
+       was moved to agree with it rather than the other way round. */
     equityLayer: 20000000_0000n,
     projectTotal: 50000000_0000n,
     moratorium: "Interest-only during months 1–18",
@@ -383,13 +403,19 @@ const SOLACE: Vehicle = {
   },
   ladder: { minimumInvestmentBps: 1000, minUnitBps: 500, stepBps: 500, ceilingBps: 5000 },
   offering: {
-    totalEquity: 25000000_0000n,
+    /* C-03 settled by the founder, 20 Sep 2026, at the sheet-3 reading:
+       equity 2.00 Cr, of which 1.00 Cr is the sponsor's and 1.00 Cr was
+       offered as four units of 25 lakh. Sheet 4's 1.50 Cr offering was the
+       figure left behind when the intake was cut from six units to four,
+       and it never matched its own unit maths. These three now reconcile
+       with each other AND with stack.equityLayer, which they did not. */
+    totalEquity: 20000000_0000n,
     promoter: 10000000_0000n,
-    offered: 15000000_0000n,
+    offered: 10000000_0000n,
     units: 4,
     unitPrice: 2500000_0000n,
-    subscribed: 0,
-    available: 4,
+    subscribed: 4,
+    available: 0,
     deposit: 50000_0000n,
     lockIn: "36 months from financial close",
   },
@@ -559,8 +585,8 @@ export const CONFLICTS: readonly Conflict[] = [
     settledBy: "Settled. The registered name is the remaining tidy-up.",
   },
   {
-    id: "C-03", vehicle: "solace", severity: "blocking",
-    what: "The capital stack disagrees with the offering sheet.",
+    id: "C-03", vehicle: "solace", severity: "advisory",
+    what: "The capital stack disagrees with the offering sheet. — SETTLED 20 Sep 2026",
     sides: [
       "Sheet 3 (Capital stack): equity ₹2.00 Cr, project ₹5.00 Cr",
       "Sheet 4 (Units & ladder): equity ₹2.50 Cr, offering ₹1.50 Cr, project ₹5.50 Cr",
@@ -572,11 +598,12 @@ export const CONFLICTS: readonly Conflict[] = [
       "disappear if equity is ₹2.00 Cr with a ₹1.00 Cr promoter stake and a ₹1.00 Cr offering, " +
       "which is sheet 3 plus four units at their stated price. That reading is arithmetically " +
       "clean and it is not what sheet 4 says.",
-    settledBy: "Whether the offering is ₹1.00 Cr (four units) or ₹1.50 Cr (six)",
+    settledBy:
+      "Settled 20 Sep 2026: the offering is ₹1.00 Cr, four units of ₹25 lakh, on sheet 3's ₹2.00 Cr equity with a ₹1.00 Cr sponsor stake. Sheet 4's ₹1.50 Cr was the figure left behind when the intake was cut from six units to four.",
   },
   {
-    id: "C-04", vehicle: "slowspace", severity: "blocking",
-    what: "Site area disagrees with the figure the platform has been showing.",
+    id: "C-04", vehicle: "slowspace", severity: "advisory",
+    what: "Site area disagrees with the figure the platform has been showing. — SETTLED 20 Sep 2026",
     sides: [
       "Intake sheet 2: .3 acres · dual frontage",
       "Spatial ledger, genesis registry (16:20): Confluence 0.3",
@@ -589,7 +616,8 @@ export const CONFLICTS: readonly Conflict[] = [
       "that the likeliest figure and makes the ledger internally inconsistent. Still blocking, and " +
       "for the same reason as before: this is the vehicle with five of six units already " +
       "subscribed, and somebody has been shown one of these numbers.",
-    settledBy: "The survey record. If 0.3 is right, the ledger's land profile needs correcting too.",
+    settledBy:
+      "Settled 20 Sep 2026: 0.3 acres, dual frontage, as the intake and the genesis registry both state. The ledger's land profile and the site dossier are the two that need correcting.",
   },
   {
     id: "C-05", vehicle: "solace", severity: "advisory",
@@ -605,8 +633,8 @@ export const CONFLICTS: readonly Conflict[] = [
     settledBy: "The reserve floor for this vehicle",
   },
   {
-    id: "C-06", vehicle: "slowspace", severity: "blocking",
-    what: "The unit structure disagrees with the modelled canon.",
+    id: "C-06", vehicle: "slowspace", severity: "advisory",
+    what: "The unit structure disagrees with the modelled canon. — SETTLED 20 Sep 2026",
     sides: [
       "Intake sheet 4: 6 units at ₹40,00,000, 5 subscribed, 1 available, plus a ₹1.6 Cr promoter stake",
       "app/_assemblies/slowspace.ts: 20 units at ₹20,00,000, 11 subscribed, 45% remaining, no promoter",
@@ -615,7 +643,8 @@ export const CONFLICTS: readonly Conflict[] = [
       "These are different instruments, not different roundings. The intake introduces a 40% " +
       "sponsor stake the canon does not model, and moves availability from 45% to 10%. The public " +
       "offering page currently reads from the canon.",
-    settledBy: "Whether the promoter stake is real, and which availability is current",
+    settledBy:
+      "Settled 20 Sep 2026: six units of ₹40,00,000 with the sponsor stake, per the intake. slowspace.ts published twenty units of ₹20,00,000 and no sponsor; it was the wrong one.",
   },
   {
     id: "C-07", vehicle: "coorgcreek", severity: "advisory",
@@ -644,8 +673,8 @@ export const CONFLICTS: readonly Conflict[] = [
     settledBy: "Whether Solace is an exception or the standard is now 565",
   },
   {
-    id: "C-09", vehicle: "slowspace", severity: "blocking",
-    what: "Entitlement begins five months after construction ends.",
+    id: "C-09", vehicle: "slowspace", severity: "advisory",
+    what: "Entitlement begins five months after construction ends. — SETTLED 20 Sep 2026",
     sides: [
       "Intake sheet 6: entitlement begins at handover, Jan 2028",
       "Spatial ledger gantt: Confluence runs Sep 2026 – Aug 2027",
@@ -654,7 +683,8 @@ export const CONFLICTS: readonly Conflict[] = [
       "A partner subscribing today is told when they can first use the place. The two documents " +
       "disagree by five months, and the earlier date is the one in the construction programme " +
       "while the later one is in the document a partner reads.",
-    settledBy: "The programme date, against what subscribers have been told",
+    settledBy:
+      "Settled 20 Sep 2026: handover, Jan 2028. The date subscribers were given stands; the programme's Aug 2027 finish is the building, not the entitlement.",
   },
   {
     id: "C-10", vehicle: "coorgcreek", severity: "advisory",
@@ -717,6 +747,82 @@ export function publishable(v: Vehicle): { ok: boolean; because: string[] } {
 
   return { ok: because.length === 0, because };
 }
+
+/* ── What a reader may DO about a vehicle ────────────────────────────── */
+
+/**
+ * The stance is not the lifecycle, and the difference is the whole point.
+ *
+ * `lifecycle` is the vehicle's own state. The STANCE is what the person
+ * reading the page is invited to do about it, and it has to be derived
+ * from four separate facts rather than any one of them:
+ *
+ *   - the lifecycle, which says whether a raise is running at all
+ *   - the remaining capacity, because a raise with nothing left is not open
+ *   - `publishable()`, because a vehicle whose record contradicts itself
+ *     may not take money on the strength of it
+ *   - whether anything at all can be offered later, which is what separates
+ *     a waitlist from a closed door
+ *
+ * Reading the lifecycle alone would have shown Coastal as open while its
+ * last unit was gone, which is exactly the failure this replaces.
+ */
+export type OfferingStance =
+  /** Units remain and the record supports an offering. Capital may be committed. */
+  | { readonly kind: "open"; readonly unitsAvailable: number }
+  /** Nothing left, but the vehicle is a going concern. Register interest only. */
+  | { readonly kind: "waitlist"; readonly because: string }
+  /** Nothing to join, now or by waiting. */
+  | { readonly kind: "closed"; readonly because: string };
+
+export function stanceFor(v: Vehicle): OfferingStance {
+  const gate = publishable(v);
+
+  if (v.lifecycle === "dissolved") {
+    return { kind: "closed", because: "The vehicle is dissolved." };
+  }
+
+  /* Fully subscribed is a waitlist whether the raise formally closed or
+     not: the honest offer is a place in a queue, and a queue commits
+     nobody to anything, which is why an unsettled record does not bar it. */
+  if (v.offering.available <= 0) {
+    return {
+      kind: "waitlist",
+      because:
+        `All ${v.offering.units} units are subscribed. A place on the waitlist is not an ` +
+        `allocation, and it is not a commitment — it is how we reach you if a unit is ` +
+        `transferred or a further vehicle opens.`,
+    };
+  }
+
+  if (v.lifecycle === "funded" || v.lifecycle === "live") {
+    return { kind: "waitlist", because: "The raise for this vehicle has closed." };
+  }
+
+  if (v.lifecycle === "forming") {
+    return {
+      kind: "waitlist",
+      because: "The vehicle is still forming. There is nothing to subscribe to yet.",
+    };
+  }
+
+  /* raising, with capacity — but the record still has to hold. A blocking
+     conflict here is a figure somebody could commit capital against. */
+  if (!gate.ok) {
+    return {
+      kind: "closed",
+      because: `The record is not settled: ${gate.because.join(" ")}`,
+    };
+  }
+
+  return { kind: "open", unitsAvailable: v.offering.available };
+}
+
+/** The one question most surfaces actually ask. */
+export const isOpen = (v: Vehicle): boolean => stanceFor(v).kind === "open";
+
+/** Every vehicle currently taking capital. Empty is a legitimate answer. */
+export const openVehicles = (): Vehicle[] => VEHICLES.filter(isOpen);
 
 /** What the offering sheet implies about the sponsor's own share. */
 export const promoterBps = (v: Vehicle): number =>

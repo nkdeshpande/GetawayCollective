@@ -15,7 +15,8 @@
  *    keep the generic page, because a dossier is a claim.
  */
 import {
-  BUILD_LABEL, TENURE_LABEL, WATERFALL_STAGES, publishable, waterfallState,
+  BUILD_LABEL, LIFECYCLE_LABEL, TENURE_LABEL, WATERFALL_STAGES,
+  publishable, stanceFor, waterfallState,
   type Vehicle,
 } from "../../constants/vehicles";
 
@@ -39,6 +40,16 @@ export interface Dossier {
   readonly sections: readonly Section[];
   readonly note: string;
   readonly action: string;
+  /**
+   * Where the action goes, when it is not the next tab.
+   *
+   * The dossier's default action walks the reader one step further through
+   * diligence, and for every tab but one that is right. "Join the waitlist"
+   * is not a step in diligence — it is the only thing a reader of a closed
+   * vehicle can actually do — so it names its own destination rather than
+   * being quietly routed to the next page along.
+   */
+  readonly actionHref?: string;
 }
 
 /* ── Formatting. Money is bigint at SCALE 4 (lib/money.ts). ─────────── */
@@ -94,8 +105,9 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
           {
             heading: "The offering",
             rows: [
+              { label: "Status", value: LIFECYCLE_LABEL[v.lifecycle], basis: stanceFor(v).kind === "open" ? "Units remain; capital may be committed." : stanceFor(v).kind === "waitlist" ? (stanceFor(v) as { because: string }).because : "Not open." },
               { label: "Offered to partners", value: inr(o.offered), basis: `${o.units} units × ${inr(o.unitPrice)} · ${SOURCE}` },
-              { label: "Units available", value: `${o.available} of ${o.units}`, basis: `${o.subscribed} subscribed · ${SOURCE}` },
+              { label: "Units available", value: o.available === 0 ? `None · ${o.subscribed} of ${o.units} subscribed` : `${o.available} of ${o.units}`, basis: `${o.subscribed} subscribed · ${SOURCE}` },
               { label: "Sponsor stake", value: inr(o.promoter), basis: "Offered + sponsor = whole equity layer" },
               { label: "Deposit", value: inr(o.deposit), basis: "Its purpose and whether it is refundable are not stated in the record" },
             ],
@@ -283,7 +295,47 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
         action: "Prepare a commitment",
       };
 
-    case "commit":
+    case "commit": {
+      const stance = stanceFor(v);
+
+      /* A closed vehicle does not get the commitment page with the numbers
+         greyed out. It gets a different page, because the reader's question
+         is different: not "should I commit" but "is there any way in". */
+      if (stance.kind !== "open") {
+        const waiting = stance.kind === "waitlist";
+        return {
+          title: waiting ? "This vehicle is fully subscribed." : "This vehicle is not open.",
+          lead: stance.because,
+          sections: [
+            {
+              heading: "Where it stands",
+              rows: [
+                { label: "Status", value: LIFECYCLE_LABEL[v.lifecycle], basis: SOURCE },
+                { label: "Subscription", value: `${o.subscribed} of ${o.units} units`, basis: `${inr(o.offered)} offered · ${SOURCE}` },
+                { label: "Build stage", value: BUILD_LABEL[v.buildStage], basis: "Construction is funded; the programme governs the dates." },
+                { label: "Entitlement begins", value: v.entitlement?.begins ?? NOT_STATED, basis: v.entitlement ? "Per the intake, unchanged by the raise closing." : "No entitlement record for this vehicle." },
+              ],
+            },
+            ...(waiting
+              ? [{
+                  heading: "What a waitlist place is, and is not",
+                  rows: [
+                    { label: "It is", value: "A record of interest", basis: "We hold your name against this vehicle and reach you if a unit is transferred or a further vehicle opens." },
+                    { label: "It is not", value: "An allocation", basis: "No unit is reserved, no priority is promised, and no capital is taken." },
+                    { label: "Cost", value: "Nothing", basis: "There is no deposit on a waitlist. The deposit exists only against a unit that is actually available." },
+                    { label: "Eligibility", value: "Assessed if a unit opens", basis: "Joining the list is not qualification, and qualification is not an allocation either." },
+                  ],
+                }]
+              : []),
+          ],
+          note: waiting
+            ? "Joining the waitlist creates no commitment on either side, and no unit is held by it."
+            : "Nothing on this page creates a commitment.",
+          action: waiting ? "Join the waitlist" : "Speak with Investor Relations",
+          actionHref: waiting ? `/collection/${v.slug}/enquire` : undefined,
+        };
+      }
+
       return {
         title: "A commitment is prepared, never improvised.",
         lead:
@@ -293,7 +345,7 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
           {
             heading: "What must be true first",
             rows: [
-              { label: "Offering open", value: v.lifecycle === "raising" ? "Yes" : "No", basis: "The vehicle's lifecycle" },
+              { label: "Offering open", value: "Yes", basis: `${LIFECYCLE_LABEL[v.lifecycle]} · the vehicle's own state` },
               { label: "Capacity", value: `${o.available} of ${o.units} units`, basis: SOURCE },
               { label: "Your eligibility", value: "Checked in qualification", basis: "Identity, suitability and source of funds" },
               { label: "Instrument and funds", value: "Agree before admission", basis: "The executed instrument and verified funds govern. A payment alone admits no one." },
@@ -303,5 +355,6 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
         note: "Nothing on this page creates a commitment or holds a unit.",
         action: "Speak with Investor Relations",
       };
+    }
   }
 }

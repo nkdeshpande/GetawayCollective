@@ -41,7 +41,11 @@
 import {
   inr, rate, allocate, decimalRatio, PROPERTIES, type Confidence,
 } from "./data";
-import { conflictsFor } from "../../constants/vehicles";
+import { conflictsFor, vehicleByKey } from "../../constants/vehicles";
+
+/* The register entry this file is the public face of. Imported so the
+   subscription below can be READ from it rather than retyped here. */
+const COASTAL = vehicleByKey("slowspace")!;
 
 /* ── The entity ───────────────────────────────────────────────────── */
 export const LLP = {
@@ -60,7 +64,11 @@ export const SITE = {
   jurisdiction: "Padubidri, Karnataka",
   coords: "13.117416°N · 74.765988°E",
   keys: 12,
-  landArea: "1.42 acres · dual frontage",
+  /* C-04, settled 20 Sep 2026: 0.3 acres, which is what the intake and the
+     spatial ledger's genesis registry both state. 1.42 came from the site
+     dossier and was the figure this page published against a register that
+     said something else. */
+  landArea: ".3 acres · dual frontage",
   lifecycle: "Pre-construction",
   commitments: "CRZ compliant · Blue Flag adjacent · modular assembly",
   /* Two waters: Arabian Sea west, Shambhavi Estuary east. */
@@ -167,9 +175,27 @@ const nightsFor = (bps: number) => ({
  * and the two reasons are shown separately because they are not the same
  * fact.
  */
-export const SUBSCRIBED_UNITS = 11;                            // of 20
+/*
+ * DERIVED, 20 Sep 2026. This was `= 11`, typed, directly beneath a comment
+ * saying it was read from the vehicle register. It was not, and it went
+ * stale: the register closed the raise while this page went on offering 45%
+ * of a vehicle that had nothing left.
+ *
+ * The two denominators are not a contradiction, which is why C-06 settled
+ * the way it did. The register counts the six units of ₹40,00,000 that were
+ * OFFERED; this file counts the twenty minimum units of ₹20,00,000 that make
+ * up the whole equity layer, and the sponsor holds the difference. Both land
+ * on ₹4.00 Cr, and converting between them is division, not judgement.
+ */
+export const SUBSCRIBED_UNITS = Number(
+  (COASTAL.offering.promoter
+    + COASTAL.offering.unitPrice * BigInt(COASTAL.offering.subscribed)) / MIN_UNIT,
+);
 export const SUBSCRIBED_BPS = SUBSCRIBED_UNITS * ALLOCATION.minBps;
-export const REMAINING_BPS = 10000 - SUBSCRIBED_BPS;           // 45.00%
+export const REMAINING_BPS = 10000 - SUBSCRIBED_BPS;
+
+/** Nothing left. The ladder still renders; every rung is taken. */
+export const IS_FULLY_SUBSCRIBED = REMAINING_BPS === 0;
 
 /* ── The unit ─────────────────────────────────────────────────────── */
 /*

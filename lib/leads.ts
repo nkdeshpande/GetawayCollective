@@ -27,6 +27,18 @@ export const DossierLead = z.object({
   name: z.string().trim().min(1).max(200),
   email: z.string().trim().min(1).email(),
   city: z.string().trim().max(120).optional(),
+  /**
+   * Which vehicle this is about. Optional because the request can also
+   * arrive from /communique/request, which is about the collection rather
+   * than any one vehicle.
+   *
+   * It matters for more than filing: a vehicle with nothing left takes a
+   * WAITLIST, not an enquiry, and Investor Relations has to be able to tell
+   * the two apart before they reply. The route derives that from the
+   * register rather than trusting a flag on the request, because a caller
+   * can send any flag they like.
+   */
+  vehicle: z.string().trim().max(64).optional(),
 });
 export type DossierLeadInput = z.infer<typeof DossierLead>;
 
