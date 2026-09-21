@@ -1,0 +1,108 @@
+/* ONE PROPERTY, NINE SURFACES — the chapter nav and chapter page.
+ *
+ * Tokens only. The nav is the one element here that has to work at every
+ * width with ten items in it, so it scrolls horizontally on its own rather
+ * than wrapping into a block that pushes the content off the first screen.
+ */
+
+.chapter { background: var(--gc-bg); color: var(--gc-fg); }
+
+.chapter-head { padding: var(--gc-sp-xl) 0 var(--gc-sp-m); }
+.chapter-crumb { color: var(--gc-steel-dim); margin: 0 0 var(--gc-sp-xs); }
+.chapter-crumb a { color: inherit; text-decoration: none; }
+.chapter-crumb a:hover { color: var(--gc-fg); }
+.chapter-property { margin: 0; color: var(--gc-fg); }
+
+.chapter-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gc-sp-s);
+  margin: var(--gc-sp-xs) 0 0;
+  color: var(--gc-steel-dim);
+}
+/* The one vehicle taking capital says so in the brand's own currency
+   colour. Never colour alone: the word is there too. */
+.chapter-open { color: var(--gc-copper); }
+
+/* ── The nav ─────────────────────────────────────────────────────── */
+
+.chapter-nav {
+  border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.chapter-nav ul {
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: max-content;
+}
+.chapter-nav a {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gc-sp-3xs);
+  padding: var(--gc-sp-s) var(--gc-sp-m) var(--gc-sp-s) 0;
+  color: var(--gc-steel-dim);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: var(--gc-stroke-active) solid transparent;
+  transition: color var(--gc-dur-fast) var(--gc-ease-shutter);
+}
+.chapter-nav a:hover { color: var(--gc-fg); }
+.chapter-nav a.active {
+  color: var(--gc-fg);
+  border-bottom-color: var(--gc-copper);
+}
+.chapter-nav b {
+  font: 400 10px/1 var(--gc-font-mono);
+  letter-spacing: 0.08em;
+  color: var(--gc-copper);
+}
+.chapter-nav span {
+  font: 400 13px/1 var(--gc-font-display);
+}
+
+/* ── The body ────────────────────────────────────────────────────── */
+
+.chapter-body { padding: var(--gc-sp-xl) 0 var(--gc-sp-3xl); }
+.chapter-body .eyebrow { color: var(--gc-steel-dim); margin: 0 0 var(--gc-sp-xs); }
+.chapter-body h2 { margin: 0 0 var(--gc-sp-s); max-width: 22ch; }
+.chapter-lead {
+  margin: 0 0 var(--gc-sp-xl);
+  max-width: var(--gc-measure, 65ch);
+  color: var(--gc-fg-dim);
+}
+
+.chapter-rows { margin: 0; border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv); }
+.chapter-rows > div {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(140px, 1fr) 2fr;
+  gap: var(--gc-sp-s);
+  align-items: baseline;
+  padding: var(--gc-sp-m) 0;
+  border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+}
+.chapter-rows dt { color: var(--gc-steel-dim); letter-spacing: 0.06em; }
+.chapter-rows dd { margin: 0; }
+.chapter-value { color: var(--gc-fg); }
+.chapter-basis { color: var(--gc-steel-dim); }
+
+/* Withheld figures are a statement, not an error, so they take the
+   hazard stroke rather than the critical one. */
+.chapter-withheld {
+  margin-top: var(--gc-sp-xl);
+  padding: var(--gc-sp-m);
+  border-left: var(--gc-stroke-active) solid var(--gc-hazard);
+}
+.chapter-withheld p { margin: 0 0 var(--gc-sp-2xs); color: var(--gc-hazard); }
+.chapter-withheld ul { margin: 0; padding-left: var(--gc-sp-s); }
+.chapter-withheld li { color: var(--gc-fg-dim); }
+
+.chapter-onward { margin-top: var(--gc-sp-2xl); }
+
+@media (max-width: 720px) {
+  .chapter-rows > div { grid-template-columns: 1fr; gap: var(--gc-sp-3xs); }
+}

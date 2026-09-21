@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Surface } from "@/app/_system/surface";
+import { ChapterSurface } from "@/app/_assemblies/propertychapters";
 
 export const metadata: Metadata = {
   title: "Progress · Getaway Collective",
@@ -20,11 +20,5 @@ export const metadata: Metadata = {
 
 export default async function Pcollection_vehicle_progress(props: { params: Promise<{ vehicle: string }> }) {
   const params = await props.params;
-  return (
-    <Surface
-      path="/collection/[vehicle]/progress"
-      assembly={"AS-11"}
-      params={params}
-    />
-  );
+  return <ChapterSurface path="/collection/[vehicle]/progress" param={params.vehicle} />;
 }

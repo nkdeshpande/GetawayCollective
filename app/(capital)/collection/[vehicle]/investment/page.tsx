@@ -11,13 +11,14 @@
  */
 
 import type { Metadata } from "next";
-import { CapitalExplainer } from "@/app/_assemblies/gateway";
+import { ChapterSurface } from "@/app/_assemblies/propertychapters";
 
 export const metadata: Metadata = {
   title: "The Investment · Getaway Collective",
   robots: { index: true, follow: true },
 };
 
-export default async function Pcollection_vehicle_investment() {
-  return <CapitalExplainer />;
+export default async function Pcollection_vehicle_investment(props: { params: Promise<{ vehicle: string }> }) {
+  const params = await props.params;
+  return <ChapterSurface path="/collection/[vehicle]/investment" param={params.vehicle} />;
 }

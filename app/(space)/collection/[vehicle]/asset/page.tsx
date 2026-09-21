@@ -11,21 +11,14 @@
  */
 
 import type { Metadata } from "next";
-import { PropertySurface } from "@/app/_assemblies/property";
-import { propertyTitle } from "@/constants/property-page";
+import { ChapterSurface } from "@/app/_assemblies/propertychapters";
 
-export async function generateMetadata(
-  props: { params: Promise<{ vehicle: string }> },
-): Promise<Metadata> {
-  const params = await props.params;
-  const name = propertyTitle(params.vehicle);
-  return {
-    title: name ?? "The Asset · Getaway Collective",
-    robots: { index: true, follow: true },
-  };
-}
+export const metadata: Metadata = {
+  title: "The Asset · Getaway Collective",
+  robots: { index: true, follow: true },
+};
 
 export default async function Pcollection_vehicle_asset(props: { params: Promise<{ vehicle: string }> }) {
   const params = await props.params;
-  return <PropertySurface slug={params.vehicle} />;
+  return <ChapterSurface path="/collection/[vehicle]/asset" param={params.vehicle} />;
 }

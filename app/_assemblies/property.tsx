@@ -33,6 +33,7 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ChapterNav } from "./propertychapters";
 import {
   PROPERTY_PAGES, SPINE, EVIDENCE_TIERS, mediaGap,
   type MediaSlot, type PropertyPage,
@@ -131,6 +132,12 @@ export function PropertySurface({ slug }: { slug: string }) {
           </div>
         </div>
       </section>
+
+      {/* ── THE EIGHT CHAPTERS ─────────────────────────────────────
+          Between the properties' nine surfaces. The spine below is a
+          table of contents for THIS page; this is the way off it, and
+          until now there was not one. */}
+      <ChapterNav slug={v.slug} current="opportunity" />
 
       {/* ── SPINE ──────────────────────────────────────────────── */}
       <nav className="prop-spine" aria-label="This property">

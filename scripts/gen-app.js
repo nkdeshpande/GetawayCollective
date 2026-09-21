@@ -231,6 +231,24 @@ const BY_PATH = {
   "/portfolio/[vehicle]/activity": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/portfolio/[vehicle]/activity", param: "vehicle" },
   "/activity": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/activity" },
   "/profile": { component: "MemberSurface", from: "@/app/_assemblies/memberpages", prop: "/profile" },
+  /* THE EIGHT CHAPTERS, §8. These routes existed and led nowhere: /idea,
+     /asset and /ownership each rendered the whole property page, so three
+     URLs showed one page, and /place, /life and /progress rendered the
+     registry scaffold. One renderer now serves all of them, choosing its
+     chapter from the path exactly as InvestorSurface does.
+
+     /collection/[vehicle] itself is NOT here: it keeps its built property
+     wireframe (AS-03) and takes only the nav. Making the tabs uniform by
+     discarding that page would be the wrong trade. */
+  "/collection/[vehicle]/place": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/place", param: "vehicle" },
+  "/collection/[vehicle]/life": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/life", param: "vehicle" },
+  "/collection/[vehicle]/idea": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/idea", param: "vehicle" },
+  "/collection/[vehicle]/asset": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/asset", param: "vehicle" },
+  "/collection/[vehicle]/ownership": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/ownership", param: "vehicle" },
+  "/collection/[vehicle]/investment": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/investment", param: "vehicle" },
+  "/collection/[vehicle]/risk": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/risk", param: "vehicle" },
+  "/collection/[vehicle]/progress": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/progress", param: "vehicle" },
+  "/collection/[vehicle]/enquire": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/enquire", param: "vehicle" },
   "/invest/[vehicle]": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]", param: "vehicle" },
   "/invest/[vehicle]/asset": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/asset", param: "vehicle" },
   "/invest/[vehicle]/financials": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/financials", param: "vehicle" },
