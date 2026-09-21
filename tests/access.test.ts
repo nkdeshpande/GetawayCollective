@@ -82,9 +82,14 @@ describe("required access agrees with the registry", () => {
   });
 
   it("honours route-level overrides", () => {
-    const progress = ROUTES.find((route) => route.path === "/collection/[vehicle]/progress")!;
-    expect(requiredAccess(progress)).toBe("public");
-    expect(canReach("/collection/slowspace-coastal/progress", ANONYMOUS).ok).toBe(true);
+    /* Was /collection/[vehicle]/progress, retired 21 Sep 2026. /risk carries
+       the same override for the same reason: it sits in the capital group,
+       whose vantage is office, and is published anyway because a reader is
+       owed the risk before they are asked for anything. */
+    const risk = ROUTES.find((route) => route.path === "/collection/[vehicle]/risk")!;
+    expect(risk.accessOverride?.access).toBe("public");
+    expect(requiredAccess(risk)).toBe("public");
+    expect(canReach("/collection/slowspace-coastal/risk", ANONYMOUS).ok).toBe(true);
   });
 });
 

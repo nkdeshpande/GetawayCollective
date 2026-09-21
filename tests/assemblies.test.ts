@@ -666,8 +666,14 @@ describe("assembly scope", () => {
     // header appears on every screen and had no stated rule about what
     // it may show.
     expect(CHROME.map((a) => a.id)).toEqual(["AS-20", "AS-21", "AS-22"]);
+    /* AS-10 and AS-12 joined the regions on 21 Sep 2026. They had routes of
+       their own — /collection/[vehicle]/life and /place — until those
+       chapters were retired for repeating the property page. They render
+       inside THE SPACES and THE SITE now, which is where their content had
+       already been living. */
     expect(REGIONS.map((a) => a.id)).toEqual([
-      "AS-07", "AS-08", "AS-09", "AS-17", "AS-18", "AS-23", "AS-24", "AS-31",
+      "AS-07", "AS-08", "AS-09", "AS-10", "AS-12",
+      "AS-17", "AS-18", "AS-23", "AS-24", "AS-31",
     ]);
     expect(SCREENS.length + CHROME.length + REGIONS.length).toBe(ASSEMBLIES.length);
   });

@@ -14,12 +14,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  CHAPTERS, PARTS, chapterHref, nextChapter, partHead, partSpan,
+  CHAPTERS, chapterHref, nextChapter,
   type Chapter, type ChapterId,
 } from "@/constants/property-chapters";
 import { LIFECYCLE_LABEL, stanceFor, vehicleBySlug } from "@/constants/vehicles";
 import { chapterContent } from "./propertychapter";
-import { UnitSet } from "./unitplate";
+
 
 /**
  * The chapters that assert rather than narrate, and therefore take paper.
@@ -32,7 +32,7 @@ import { UnitSet } from "./unitplate";
  * Enquire stays void deliberately. It is the one surface where nothing is
  * being asserted at all.
  */
-const ASSERTION = new Set<ChapterId>(["ownership", "investment", "risk"]);
+const ASSERTION = new Set<ChapterId>(["investment", "risk"]);
 
 /** Which chapter a generated page is, from the path it was generated for. */
 function chapterForPath(path: string): Chapter | undefined {
@@ -54,26 +54,17 @@ export function ChapterNav({ slug, current }: { slug: string; current: ChapterId
   return (
     <nav className="chapter-nav" aria-label="This property">
       <ul>
-        {PARTS.map((p) => {
-          const head = partHead(p);
-          const inPart = p.chapters.includes(current);
-          const span = partSpan(p);
+        {CHAPTERS.map((c) => {
+          const active = c.id === current;
           return (
-            <li key={head.id}>
+            <li key={c.id}>
               <Link
-                href={chapterHref(slug, head)}
-                className={inPart ? "active" : undefined}
-                /* "page" only when the tab IS this page. Inside a part, on
-                   one of its later chapters, the tab is the current ITEM in
-                   the set and not a link to the current page. */
-                aria-current={head.id === current ? "page" : inPart ? "true" : undefined}
+                href={chapterHref(slug, c)}
+                className={active ? "active" : undefined}
+                aria-current={active ? "page" : undefined}
               >
-                {/* The number carries the order, so it is shown rather than
-                    implied by position — a reader who lands on 06 from a
-                    search result should see there are five before it. A
-                    part shows the span it covers: 02 lives under 00–02. */}
-                {span && <b>{span}</b>}
-                <span>{head.label}</span>
+                {c.n && <b>{c.n}</b>}
+                <span>{c.label}</span>
               </Link>
             </li>
           );
@@ -129,38 +120,6 @@ export function ChapterSurface({ path, param }: { path: string; param: string })
           <h2 className="t-display-m">{c.title}</h2>
           <p className="chapter-lead t-body-l">{c.lead}</p>
 
-          {/* The keys come BEFORE the ledger rows. On a chapter about what
-              is being built, the thing being built leads and the table
-              supports it — the other way round is a spreadsheet with a
-              picture attached. */}
-          {c.units && c.units.length > 0 && <UnitSet units={c.units} />}
-
-          {c.intent && c.intent.length > 0 && (
-            <div className="intent">
-              {c.intent.map((i) => (
-                <div className="intent-block" key={i.label}>
-                  <p className="t-micro">{i.label}</p>
-                  <p className="t-body-l">{i.text}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {c.palette && c.palette.length > 0 && (
-            <div className="intent">
-              <div className="intent-block">
-                <p className="t-micro">MATERIAL</p>
-                <div className="palette">
-                  {c.palette.map((m) => (
-                    <article key={m.material}>
-                      <h4>{m.material}</h4>
-                      <p className="t-body-s">{m.role}</p>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
 
           <dl className="chapter-rows">
             {c.rows.map((r) => (

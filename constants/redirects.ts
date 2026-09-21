@@ -45,15 +45,33 @@ export const REDIRECTS: readonly Redirect[] = [
   go("/passport", "/invest/qualify"),
   go("/passport/:stage", "/invest/qualify"),
 
-  // ── Property chapters: [property] → [vehicle], renamed segments ───
-  go("/collection/:vehicle/location", "/collection/:vehicle/place"),
-  go("/collection/:vehicle/gallery", "/collection/:vehicle/life"),
-  go("/collection/:vehicle/space", "/collection/:vehicle/asset"),
+  /* ── Property chapters ────────────────────────────────────────────
+     Six chapters were retired on 21 Sep 2026 (see constants/routes.ts)
+     because they repeated what /collection/[vehicle] already holds. Each
+     retired path lands on the section that now carries it, so an address
+     that has been live, linked or indexed still arrives somewhere true.
+
+     THE OLDER REDIRECTS ABOVE HAD TO MOVE WITH THEM. /location pointed at
+     /place, /space at /asset, /time at /ownership, and /gallery at /life —
+     four hops into routes that no longer exist. A redirect into a retired
+     route is worse than no redirect: it promises the reader a destination
+     and then 404s them one step later. */
+  go("/collection/:vehicle/place", "/collection/:vehicle#site"),
+  go("/collection/:vehicle/life", "/collection/:vehicle#spaces"),
+  go("/collection/:vehicle/idea", "/collection/:vehicle#opening"),
+  go("/collection/:vehicle/asset", "/collection/:vehicle#architecture"),
+  go("/collection/:vehicle/ownership", "/collection/:vehicle#vehicle"),
+  go("/collection/:vehicle/progress", "/collection/:vehicle#evidence"),
+
+  // The renamed segments, now pointed past the retired chapters.
+  go("/collection/:vehicle/location", "/collection/:vehicle#site"),
+  go("/collection/:vehicle/gallery", "/collection/:vehicle#spaces"),
+  go("/collection/:vehicle/space", "/collection/:vehicle#architecture"),
   go("/collection/:vehicle/capital", "/collection/:vehicle/investment"),
-  go("/collection/:vehicle/time", "/collection/:vehicle/ownership"),
+  go("/collection/:vehicle/time", "/collection/:vehicle#vehicle"),
 
   // ── Public folds ──────────────────────────────────────────────────
-  go("/gallery", "/collection/slowspace-coastal/life"),
+  go("/gallery", "/collection/slowspace-coastal#spaces"),
   go("/portfolio-narrative", "/collection"),
   go("/story", "/about"),
   go("/voices", "/about"),
@@ -62,7 +80,7 @@ export const REDIRECTS: readonly Redirect[] = [
   go("/collective/partners", "/about"),
   go("/collective/operators", "/about"),
   go("/collective/press", "/about"),
-  go("/collective/gallery", "/collection/slowspace-coastal/life"),
+  go("/collective/gallery", "/collection/slowspace-coastal#spaces"),
   go("/answers", "/how-it-works"),
   go("/structure", "/how-it-works"),
   go("/space", "/how-it-works"),
@@ -164,7 +182,13 @@ export const REDIRECTS: readonly Redirect[] = [
       .replace(/:year/g, "[year]");
 
   for (const r of REDIRECTS) {
-    const d = normalise(r.destination);
+    /* A FRAGMENT IS NOT PART OF A ROUTE. /collection/[vehicle]#site is the
+       route /collection/[vehicle], arriving at one of its sections, and the
+       check read the whole string as a path — so a redirect to a section
+       was reported as a redirect into a 404. Added 21 Sep 2026, when six
+       chapters were retired onto the sections that now carry them and every
+       one of those redirects was refused. */
+    const d = normalise(r.destination).split("#")[0];
     const ok =
       live.has(d) ||
       live.has(d.replace("/[vehicle]", "")) ||

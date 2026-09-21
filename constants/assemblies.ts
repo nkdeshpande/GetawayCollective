@@ -886,6 +886,11 @@ export const GALLERY_FRAME: Assembly = {
 export const GALLERY_STRIP: Assembly = {
   id: "AS-10",
   name: "The Gallery Strip",
+  /* Composed, not routed, since 21 Sep 2026. It had a route of its own
+     until the six duplicate chapters were retired; it renders inside
+     THE SPACES section of the property page now, which is
+     where its content had already been living. */
+  scope: "region",
   route: "space",
   vantage: "space",
   intent: "Let someone compare several properties, or several views of one, side by side.",
@@ -1040,6 +1045,11 @@ export const STAGE_PROGRESSION: Assembly = {
 export const LOCATION_INTELLIGENCE: Assembly = {
   id: "AS-12",
   name: "Location Intelligence",
+  /* Composed, not routed, since 21 Sep 2026. It had a route of its own
+     until the six duplicate chapters were retired; it renders inside
+     THE SITE section of the property page now, which is
+     where its content had already been living. */
+  scope: "region",
   route: "space",
   vantage: "space",
   intent: "Show what is around a site, who can reach it, and what that is worth.",

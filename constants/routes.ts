@@ -199,16 +199,23 @@ export const PUBLIC_ROUTES: readonly Route[] = [
   // ── The vehicle, publicly: eight chapters (§8) ────────────────────
   R("GC-110", "/collection/[vehicle]", "Opportunity", "space", "AS-03", { params: ["vehicle"],
     notes: "Chapter 00. Why this investment, why this place. The public aperture onto the vehicle." }),
-  R("GC-112", "/collection/[vehicle]/place", "The Place", "space", "AS-12", { params: ["vehicle"],
-    notes: "Chapter 01. Land, water, light, approach — the place before the proposition." }),
-  R("GC-114", "/collection/[vehicle]/life", "The Life", "space", "AS-10", { params: ["vehicle"],
-    notes: "Chapter 02. What it is to return here. Imagery, each plate labelled for what it is." }),
-  R("GC-116", "/collection/[vehicle]/idea", "The Idea", "space", "AS-03", { params: ["vehicle"],
-    notes: "Chapter 03. The investment thesis, in plain words, before any figure." }),
-  R("GC-120", "/collection/[vehicle]/asset", "The Asset", "space", "AS-03", { params: ["vehicle"],
-    notes: "Chapter 04. What is owned: land, build, fittings — the Space quadrant, publicly." }),
-  R("GC-130", "/collection/[vehicle]/ownership", "Ownership", "space", "AS-03", { params: ["vehicle"],
-    notes: "Chapter 05. How participation works: the LLP, the unit, the ladder, the ceiling." }),
+  /* ── RETIRED 21 Sep 2026 ──────────────────────────────────────────
+     GC-112 The Place · GC-114 The Life · GC-116 The Idea ·
+     GC-120 The Asset · GC-130 Ownership · GC-150 Progress
+
+     Six chapters, retired by founder instruction because they said again
+     what /collection/[vehicle] already says: The Place against the Place
+     section, The Asset against Architecture, Ownership against Vehicle.
+     Ten URLs per property, and six of them were a second telling.
+
+     What remains is the property itself and the three surfaces that are
+     NOT on it - the economics, the risk and the way in.
+
+     THE IDS ARE SPENT, NOT FREED. This table's own rule is that an IA id
+     is never recycled even when a page is retired, because requirements,
+     analytics, permissions, tests and documentation bind to it. A future
+     route takes a new number. constants/redirects.ts sends each retired
+     path to the section that now carries it. */
   R("GC-140", "/collection/[vehicle]/investment", "The Investment", "capital", "AS-04",
     { params: ["vehicle"],
       accessOverride: { access: "public", because: PUBLIC_DOCTRINE_REASON },
@@ -217,9 +224,6 @@ export const PUBLIC_ROUTES: readonly Route[] = [
   R("GC-145", "/collection/[vehicle]/risk", "Risk", "capital", "AS-14", { params: ["vehicle"],
     accessOverride: { access: "public", because: PUBLIC_DOCTRINE_REASON },
     notes: "Chapter 07. How this loses money, stated before anyone is asked for anything." }),
-  R("GC-150", "/collection/[vehicle]/progress", "Progress", "space", "AS-11", { params: ["vehicle"],
-    accessOverride: { access: "public", because: PUBLIC_DOCTRINE_REASON },
-    notes: "What exists TODAY. Evidence, not a render of the finished thing." }),
   R("GC-160", "/collection/[vehicle]/enquire", "Enquire", "gateway", "AS-32", { params: ["vehicle"],
     notes: "Chapter 08 — Consider. Vehicle-scoped, and it states what an enquiry creates before " +
            "it asks for anything." }),

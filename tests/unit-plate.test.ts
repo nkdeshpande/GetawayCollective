@@ -8,10 +8,8 @@
  * chosen to look good. These assert that it stays computed.
  */
 import { describe, it, expect } from "vitest";
-import { ESTATES, estateOf } from "../constants/spatial";
+import { ESTATES } from "../constants/spatial";
 import { scaleFor } from "../app/_assemblies/unitplate";
-import { VEHICLES } from "../constants/vehicles";
-import { chapterContent } from "../app/_assemblies/propertychapter";
 
 /** The drawn side, exactly as UnitPlate computes it. */
 const side = (area: number, max: number) => Math.sqrt(area / max) * 88;
@@ -56,20 +54,9 @@ describe("the plates compare by area, not by edge", () => {
 });
 
 describe("the keys reach the page", () => {
-  it("gives every estate-backed vehicle its key types on The Asset", () => {
-    for (const v of VEHICLES) {
-      const estate = estateOf(v.key);
-      const asset = chapterContent(v, "asset");
-      if (!estate?.keyTypes.length) {
-        expect(asset.units ?? [], v.key).toHaveLength(0);
-        continue;
-      }
-      expect(asset.units, v.key).toHaveLength(estate.keyTypes.length);
-      const drawn = (asset.units ?? []).reduce((n, u) => n + u.count, 0);
-      expect(drawn, `${v.key} keys drawn vs ledger`).toBe(estate.keys);
-    }
-  });
-
+  /* They render on the property page (THE SPACES), not on a chapter of
+     their own. The Asset chapter carried them until 21 Sep 2026, when it
+     was retired for saying again what the property page already said. */
   it("carries a note on every key type, because the note is the desirable part", () => {
     for (const e of ESTATES) {
       for (const u of e.keyTypes) {
@@ -80,8 +67,10 @@ describe("the keys reach the page", () => {
     }
   });
 
-  it("says the frames are drawings and not photographs", () => {
-    const creek = VEHICLES.find((v) => v.key === "coorgcreek")!;
-    expect(chapterContent(creek, "asset").lead).toContain("drawn");
+  it("draws every key the ledger commits to", () => {
+    for (const e of ESTATES) {
+      if (!e.keyTypes.length) continue;
+      expect(e.keyTypes.reduce((n, u) => n + u.count, 0), e.id).toBe(e.keys);
+    }
   });
 });

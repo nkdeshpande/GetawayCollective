@@ -726,7 +726,7 @@ const J11: Entry = {
       "the first year predicts it." },
   ],
   onward: [
-    { path: "/collection/slowspace-coastal/place", title: "The place",
+    { path: "/collection/slowspace-coastal#site", title: "The place",
       why: "One stretch of this coastline, described at length." },
   ],
 };

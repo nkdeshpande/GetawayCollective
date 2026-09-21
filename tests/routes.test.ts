@@ -29,17 +29,20 @@ const vantageOf = (route: (typeof ROUTES)[number]) =>
   route.assembly ? assemblyById(route.assembly)?.vantage ?? GROUP_VANTAGE[route.group] : GROUP_VANTAGE[route.group];
 
 describe("canonical IA v5", () => {
-  /* 110 = 104 canonical URLs + three design-review aliases + the two
-     framework conventions (/404, /500) + GC-440 /contact.
+  /* 106 canonical URLs, and 107 records once the two co-located ids are
+     counted. It was 112 and 113 until 21 Sep 2026, when six property
+     chapters were retired for repeating /collection/[vehicle] under other
+     names. Their ids are spent, not freed — see constants/routes.ts.
 
      GC-440 rather than GC-410: the Numbering Law never recycles an id,
      and 410/420/430 were spent on the v4 About sub-pages before they
      were consolidated into GC-400. */
   it("wires the canon plus the aliases, conventions, contact and the desk", () => {
-    expect(ROUTES).toHaveLength(112);
-    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(112);
+    // 112 until six duplicate property chapters were retired, 21 Sep 2026.
+    expect(ROUTES).toHaveLength(106);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(106);
     const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
-    expect(records).toHaveLength(113);
+    expect(records).toHaveLength(107);   // 113 before the retirement
     expect(new Set(records).size).toBe(records.length);
   });
 

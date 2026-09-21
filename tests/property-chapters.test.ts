@@ -9,10 +9,8 @@
  */
 import { describe, it, expect } from "vitest";
 import {
-  CHAPTERS, NUMBERED, chapterById, chapterHref, nextChapter,
-  PARTS, MAX_TABS, partOf, partHead, partSpan,
+  CHAPTERS, MAX_TABS, chapterById, chapterHref, nextChapter,
 } from "../constants/property-chapters";
-import { SPINE, SPINE_TABS } from "../constants/property-page";
 import { ROUTES } from "../constants/routes";
 import { VEHICLES, publishable, vehicleByKey } from "../constants/vehicles";
 import { chapterContent } from "../app/_assemblies/propertychapter";
@@ -27,23 +25,27 @@ describe("the chapters are the route table", () => {
     }
   });
 
-  it("numbers the argument 00 to 08, and leaves Progress out of it", () => {
-    expect(NUMBERED.map((c) => c.n)).toEqual(["00", "01", "02", "03", "04", "05", "06", "07", "08"]);
-    expect(chapterById("progress").n).toBeNull();
+  it("is four chapters, under the five-tab ceiling", () => {
+    // Ten until 21 Sep 2026. Six repeated /collection/[vehicle] under other
+    // names and were retired; what is left is the property and the three
+    // surfaces that are NOT on it.
+    expect(CHAPTERS).toHaveLength(4);
+    expect(CHAPTERS.length).toBeLessThanOrEqual(MAX_TABS);
+    expect(CHAPTERS.map((c) => c.n)).toEqual(["00", "01", "02", "03"]);
   });
 
   it("puts Risk before Enquire, which is the whole point of the order", () => {
     const ids = CHAPTERS.map((c) => c.id);
     expect(ids.indexOf("risk")).toBeLessThan(ids.indexOf("enquire"));
-    expect(ids.indexOf("place")).toBeLessThan(ids.indexOf("idea"));
-    expect(ids.indexOf("idea")).toBeLessThan(ids.indexOf("investment"));
+    expect(ids.indexOf("opportunity")).toBeLessThan(ids.indexOf("investment"));
+    expect(ids.indexOf("investment")).toBeLessThan(ids.indexOf("risk"));
   });
 
   it("builds one href per property, and stops at the end rather than wrapping", () => {
     expect(chapterHref("wildwood", chapterById("risk"))).toBe("/collection/wildwood/risk");
     expect(chapterHref("wildwood", chapterById("opportunity"))).toBe("/collection/wildwood");
     expect(nextChapter("enquire")).toBeNull();
-    expect(nextChapter("opportunity")!.id).toBe("place");
+    expect(nextChapter("opportunity")!.id).toBe("investment");
   });
 });
 
@@ -63,14 +65,13 @@ describe("every chapter says something real about every property", () => {
     }
   });
 
-  it("differs between properties — it is not one page at nine URLs", () => {
-    const creek = chapterContent(vehicleByKey("coorgcreek")!, "place");
-    const wld = chapterContent(vehicleByKey("wildwood")!, "place");
-    expect(creek.lead).not.toBe(wld.lead);
-
-    const v = vehicleByKey("coorgcreek")!;
-    expect(chapterContent(v, "place").lead).not.toBe(chapterContent(v, "asset").lead);
-    expect(chapterContent(v, "risk").title).not.toBe(chapterContent(v, "idea").title);
+  it("differs between properties, and between chapters", () => {
+    const creek = vehicleByKey("coorgcreek")!;
+    const wld = vehicleByKey("wildwood")!;
+    expect(chapterContent(creek, "opportunity").lead)
+      .not.toBe(chapterContent(wld, "opportunity").lead);
+    expect(chapterContent(creek, "risk").title)
+      .not.toBe(chapterContent(creek, "investment").title);
   });
 });
 
@@ -93,9 +94,9 @@ describe("the public gate still governs the figures", () => {
     expect(JSON.stringify(investment)).toContain("FORECAST");
   });
 
-  it("still gives a gated vehicle its Place, Life and Asset", () => {
+  it("still gives a gated vehicle its property page and its way in", () => {
     const wld = vehicleByKey("wildwood")!;
-    for (const id of ["place", "life", "asset"] as const) {
+    for (const id of ["opportunity", "enquire"] as const) {
       expect(chapterContent(wld, id).withheld).toHaveLength(0);
       expect(chapterContent(wld, id).rows.length).toBeGreaterThan(2);
     }
@@ -148,44 +149,29 @@ describe("no property in the register is a 404, and none publishes a figure the 
  * reader is asked for something before they have met how it loses money.
  * These pin the three things that must survive the compression.
  */
-describe("the tabs are five parts, and the argument did not move", () => {
-  it("shows no more than five tabs, in either row", () => {
-    expect(MAX_TABS).toBe(5);
-    expect(PARTS.length).toBeLessThanOrEqual(MAX_TABS);
-    expect(SPINE_TABS.length).toBeLessThanOrEqual(MAX_TABS);
+describe("the ceiling is met by there being less, not by grouping", () => {
+  it("shows four tabs, under the five the instruction allows", () => {
+    /* It was met once by grouping ten chapters into five parts, each
+       showing the span it covered — "00–02 Opportunity". That worked and
+       solved the wrong problem: the tabs were crowded because six chapters
+       repeated the property page, and grouping hid that instead of
+       removing it. */
+    expect(CHAPTERS.length).toBeLessThanOrEqual(MAX_TABS);
+    expect(CHAPTERS.map((c) => c.label)).toEqual([
+      "The Property", "The Investment", "Risk", "Enquire",
+    ]);
   });
 
-  it("holds every chapter exactly once, as contiguous runs in chapter order", () => {
-    expect(PARTS.flatMap((p) => p.chapters)).toEqual(CHAPTERS.map((c) => c.id));
+  it("keeps Risk its own tab, before Enquire", () => {
+    const ids = CHAPTERS.map((c) => c.id);
+    expect(ids).toContain("risk");
+    expect(ids.indexOf("risk")).toBeLessThan(ids.indexOf("enquire"));
   });
 
-  it("names a part by its first chapter, and invents no label", () => {
-    const labels = new Set(CHAPTERS.map((c) => c.label));
-    for (const p of PARTS) {
-      expect(partHead(p).id).toBe(p.chapters[0]);
-      expect(labels.has(partHead(p).label)).toBe(true);
-    }
-    expect(partSpan(partOf("life"))).toBe("00–02");
-    expect(partSpan(partOf("investment"))).toBe("06");
-  });
-
-  it("keeps Risk a tab of its own, before Enquire", () => {
-    expect(partHead(partOf("risk")).id).toBe("risk");
-    const heads = PARTS.map((p) => partHead(p).id);
-    expect(heads.indexOf("risk")).toBeLessThan(heads.indexOf("enquire"));
-  });
-
-  it("still reaches all ten chapters by walking onward from the first", () => {
-    const seen: string[] = ["opportunity"];
-    let next = nextChapter("opportunity");
-    while (next) { seen.push(next.id); next = nextChapter(next.id); }
-    expect(seen).toEqual(CHAPTERS.map((c) => c.id));
-  });
-
-  it("offers spine tabs that are real sections, in page order", () => {
-    const order = SPINE.map((s) => s.id);
-    for (const id of SPINE_TABS) expect(order).toContain(id);
-    const positions = SPINE_TABS.map((id) => order.indexOf(id));
-    expect([...positions].sort((a, b) => a - b)).toEqual(positions);
+  it("gives every tab a destination a reader cannot already be on", () => {
+    // The whole reason six went: they were a second telling of the first.
+    const suffixes = CHAPTERS.map((c) => c.suffix);
+    expect(new Set(suffixes).size).toBe(suffixes.length);
+    expect(suffixes).toEqual(["", "/investment", "/risk", "/enquire"]);
   });
 });
