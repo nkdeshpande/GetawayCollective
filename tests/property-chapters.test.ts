@@ -99,3 +99,39 @@ describe("the public gate still governs the figures", () => {
     }
   });
 });
+
+describe("no property in the register is a 404, and none publishes a figure the gate refuses", () => {
+  it("serves an opening chapter for every vehicle, authored page or not", async () => {
+    const { PROPERTY_PAGES } = await import("../constants/property-page");
+    const authored = new Set(PROPERTY_PAGES.map((p) => p.vehicle));
+    // Wildwood joined the register without authored copy. That is not a 404:
+    // /collection/wildwood used to 404 while /collection/wildwood/place rendered,
+    // and the chapter nav pointed every Wildwood chapter at the dead one.
+    expect(authored.has("wildwood" as never)).toBe(false);
+    for (const v of VEHICLES) {
+      expect(chapterContent(v, "opportunity").rows.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("publishes no yield for a vehicle that fails publishable()", async () => {
+    const { PROPERTIES } = await import("../app/_assemblies/data");
+    for (const p of PROPERTIES) {
+      const v = VEHICLES.find((x) => x.assetCode === p.assetId)!;
+      if (publishable(v).ok) continue;
+      // The card was about to read "PARTNER YIELD ~46.3%" for Wildwood,
+      // whose own financial model says "Do not close equity".
+      expect(p.yield.conf, `${v.key} yield confidence`).toBe("UNKNOWN");
+      expect(p.availability, `${v.key} availability`).not.toContain("available");
+    }
+  });
+
+  it("never offers units on a vehicle that is not open", async () => {
+    const { PROPERTIES } = await import("../app/_assemblies/data");
+    const { stanceFor } = await import("../constants/vehicles");
+    for (const p of PROPERTIES) {
+      const v = VEHICLES.find((x) => x.assetCode === p.assetId)!;
+      if (stanceFor(v).kind === "open") continue;
+      expect(p.availability).not.toMatch(/\d+ of \d+ units available/);
+    }
+  });
+});

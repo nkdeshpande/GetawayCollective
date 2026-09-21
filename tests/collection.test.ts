@@ -242,12 +242,20 @@ describe("the public Collection", () => {
     }
   });
 
-  it("classes every stated yield as a forecast", () => {
+  it("classes every stated yield as a forecast, and states one only where the record holds", () => {
     /* Nothing is built. A yield here is a model's output about a future,
-       and FORECAST is the only class that says so. */
+       and FORECAST is the only class that says so.
+
+       The guard gained its second half on 21 Sep 2026. A complete
+       waterfall used to be the whole test of whether a yield could be
+       stated, and Wildwood has one — against a revenue base modelled for
+       a different equity structure. The card was about to publish
+       "~46.3%" for a vehicle whose own model says "Do not close equity".
+       publishable() now governs the figure as well as the link. */
     for (const v of VEHICLES) {
       if (waterfallState(v.operating.waterfall).state !== "complete") continue;
-      expect(propertyBySlug(v.slug)!.yield.conf).toBe("FORECAST");
+      const stated = propertyBySlug(v.slug)!.yield.conf;
+      expect(stated, v.key).toBe(publishable(v).ok ? "FORECAST" : "UNKNOWN");
     }
   });
 

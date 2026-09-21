@@ -33,13 +33,13 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChapterNav } from "./propertychapters";
+import { ChapterNav, ChapterSurface } from "./propertychapters";
 import {
   PROPERTY_PAGES, SPINE, EVIDENCE_TIERS, mediaGap,
   type MediaSlot, type PropertyPage,
 } from "@/constants/property-page";
 import {
-  vehicleByKey, publishable, waterfallState, BUILD_LABEL, TENURE_LABEL,
+  vehicleByKey, vehicleBySlug, publishable, waterfallState, BUILD_LABEL, TENURE_LABEL,
 } from "@/constants/vehicles";
 import { estateOf, ARCHITECTURAL_LANGUAGE } from "@/constants/spatial";
 import { IrisPanel } from "./iris";
@@ -88,7 +88,24 @@ export function PropertySurface({ slug }: { slug: string }) {
   const page: PropertyPage | undefined = PROPERTY_PAGES.find(
     (p) => vehicleByKey(p.vehicle)?.slug === slug,
   );
-  if (!page) notFound();
+
+  /* A VEHICLE IN THE REGISTER IS NOT A 404 — corrected 21 Sep 2026.
+     This returned notFound() whenever constants/property-page.ts held no
+     authored page, which was right when the only way here was an authored
+     page. Wildwood joined the register without one, so /collection/wildwood
+     404'd while /collection/wildwood/place rendered perfectly — and the
+     chapter nav on every one of its chapters pointed at the 404.
+
+     The register says the property exists. Refusing to show it because
+     nobody has written its long-form copy is the platform contradicting
+     its own source of truth, so the opening chapter is rendered from the
+     record instead. An authored page still wins where there is one. */
+  if (!page) {
+    if (vehicleBySlug(slug)) {
+      return <ChapterSurface path="/collection/[vehicle]" param={slug} />;
+    }
+    notFound();
+  }
 
   const v = vehicleByKey(page.vehicle)!;
   const estate = estateOf(page.vehicle);

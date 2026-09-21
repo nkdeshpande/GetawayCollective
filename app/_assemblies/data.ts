@@ -93,7 +93,7 @@ export function allocate(total: bigint, weights: bigint[]): bigint[] {
  * constants/taxonomies.ts, read through the domain layer.
  */
 export type { Confidence } from "@/lib/provenance";
-import { VEHICLES, publishable, waterfallState } from "../../constants/vehicles";
+import { VEHICLES, publishable, stanceFor, waterfallState } from "../../constants/vehicles";
 import { estateOf } from "../../constants/spatial";
 import type { Confidence } from "@/lib/provenance";
 
@@ -195,6 +195,20 @@ export const PROPERTIES: readonly Property[] = VEHICLES.map((v): Property => {
        of six stages and the partner share is one of the two missing, so
        there is nothing to compute a yield from — and a partial waterfall
        is exactly the case where a plausible number would slip through. */
+    /* THE GATE, ADDED 21 Sep 2026 AFTER IT NEARLY SHIPPED WITHOUT ONE.
+       This function checked the waterfall and nothing else, so a vehicle
+       whose waterfall happens to close published a yield on the open web
+       however unsettled the rest of its record was. Wildwood renders a
+       COMPLETE waterfall against a revenue base modelled for a different
+       equity structure, and the public Collection card was about to read
+       "PARTNER YIELD ~46.3%" for a vehicle whose own financial model says
+       in terms "Do not close equity".
+
+       publishable() already refuses that vehicle a dossier and refuses
+       the card its onward link. It did not refuse the FIGURE, which is
+       the one part of a card a reader acts on. */
+    if (!publishable(v).ok) return { v: 0, conf: "UNKNOWN" };
+
     const wf = waterfallState(v.operating.waterfall);
     if (wf.state !== "complete" || v.operating.waterfall?.toPartners == null) {
       return { v: 0, conf: "UNKNOWN" };
@@ -245,9 +259,16 @@ export const PROPERTIES: readonly Property[] = VEHICLES.map((v): Property => {
     yieldBasis: v.operating.yieldBasis,
     /* Units, not a season. "Q3 2026" on the old entries implied a date
        somebody had committed to. */
-    availability: v.offering.available === 0
-      ? "Fully subscribed"
-      : `${v.offering.available} of ${v.offering.units} units available`,
+    /* Availability is a claim about what a reader may do, so it comes
+       from the stance rather than from the unit count alone. "2 of 2
+       units available" on a vehicle that is still forming, and blocked,
+       invited a commitment that could not be made. */
+    availability: (() => {
+      const st = stanceFor(v);
+      if (st.kind === "open") return `${v.offering.available} of ${v.offering.units} units available`;
+      if (v.offering.available === 0) return "Fully subscribed";
+      return "Not open";
+    })(),
     /* None of the three is built, so none is instrumented. Saying "stale"
        would imply a feed existed and stopped. */
     telemetry: { state: "stale", at: "no feed — pre-construction" },

@@ -38,7 +38,7 @@ import {
   type PublicPage, type Pane, type LedgerRow, type SequenceStep, type Question, type Plate,
 } from "@/content/public";
 import { PROPERTIES, inr } from "./data";
-import { ConfidenceTag, Footer } from "./atoms";
+import { ConfidenceTag, Footer, Pct} from "./atoms";
 import { SystemSurface } from "./systempages";
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -335,7 +335,12 @@ function AssetRow() {
               <div className="kv">
                 <span className="label t-micro">Indicative yield</span>
                 <span className="v">
-                  {prop.yield.v}% <ConfidenceTag c={prop.yield.conf} />
+                  {/* Through Pct, not printed raw: this site rendered
+                      `{v}%` directly and would have published "0%" for an
+                      unknown yield. One atom decides how a figure with no
+                      confidence behind it appears. */}
+                  <Pct v={prop.yield.v} conf={prop.yield.conf} />{" "}
+                  <ConfidenceTag c={prop.yield.conf} />
                 </span>
               </div>
               <Link className="btn" href="/collection" style={{ marginTop: "var(--gc-sp-s)" }}>

@@ -24,6 +24,15 @@ export function ConfidenceTag({ c }: { c: Confidence }) {
 
 /** A provisional percentage carries the mark. Trust it the same amount. */
 export function Pct({ v, conf }: { v: number; conf: Confidence }) {
+  /* UNKNOWN PRINTS NO FIGURE AT ALL — added 21 Sep 2026.
+     This rendered `0.0%` for an unknown yield, which is the defect this
+     file warns about everywhere else: zero is a number somebody can act
+     on, and "0.0% Unknown" reads as a vehicle that returns nothing
+     rather than one nobody has published a figure for. It nearly went
+     to the live Collection on a vehicle whose record is unsettled. */
+  if (conf === "UNKNOWN") {
+    return <span className="pct unknown">Not stated</span>;
+  }
   return (
     <span className="pct">
       {PROVISIONAL.has(conf) ? <span className="prov">~</span> : null}
