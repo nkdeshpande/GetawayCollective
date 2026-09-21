@@ -82,7 +82,7 @@
    With a picture: the full viewport. Without one the plate is only as tall
    as its title needs (PUBLIC.08: an unproduced frame takes no space). */
 .prop-plate{position:relative;display:flex;align-items:flex-end;overflow:hidden;
-  min-height:clamp(320px,56svh,560px);background:var(--gc-void);color:var(--gc-ink-inverse)}
+  min-height:clamp(280px,44svh,440px);background:var(--gc-void);color:var(--gc-ink-inverse)}
 .prop-plate[data-filled="1"]{min-height:100svh}
 .prop-plate-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .prop-plate-in{position:relative;display:flex;flex-direction:column;gap:var(--gc-sp-s);
@@ -221,6 +221,10 @@
   .prop-spine .wrap::-webkit-scrollbar{display:none}
   .prop-spine ul{flex-wrap:nowrap;flex:0 0 auto}
   .prop-spine a,.prop-spine .btn{white-space:nowrap;flex:0 0 auto}
+  /* The spine is the navigator here and nothing else. Its button was clipped
+     at the edge of the row; the same request is one screen up, under the
+     hero, and again at the close. */
+  .prop-spine .btn{display:none}
 
   /* An action takes the full row and may wrap its own label. A gated link
      carries its requirement beside it ("Sign-in required"), and on one line

@@ -31,7 +31,11 @@
   border-bottom: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  /* Five tabs still overflow a narrow screen, and the native scrollbar drew a
+     white track across a black page. The row scrolls; it does not show one. */
+  scrollbar-width: none;
 }
+.chapter-nav::-webkit-scrollbar { display: none; }
 .chapter-nav ul {
   display: flex;
   gap: 0;
