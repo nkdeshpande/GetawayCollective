@@ -24,6 +24,8 @@ import {
   type Vehicle,
 } from "../../constants/vehicles";
 import type { ChapterId } from "../../constants/property-chapters";
+import { estateOf, type KeyType } from "../../constants/spatial";
+import { PROPERTY_PAGES } from "../../constants/property-page";
 import { inr, modelledYield, type Row } from "./investordossier";
 
 export interface ChapterContent {
@@ -33,6 +35,18 @@ export interface ChapterContent {
   readonly rows: readonly Row[];
   /** Why figures are absent, when they are. Empty when nothing is withheld. */
   readonly withheld: readonly string[];
+  /**
+   * The keys themselves, where the spatial ledger states them.
+   *
+   * Drawn rather than listed. These carry a name, a count, an area and a
+   * note, and every one of those was authored and rendered nowhere — a
+   * chapter called The Asset that said "Keys: 6" and stopped.
+   */
+  readonly units?: readonly KeyType[];
+  /** Mass, light, protection, access — the architectural intent. */
+  readonly intent?: readonly { readonly label: string; readonly text: string }[];
+  /** Four materials, each one word and one clause. */
+  readonly palette?: readonly { readonly material: string; readonly role: string }[];
 }
 
 const NOT_STATED = "Not yet stated";
@@ -52,6 +66,13 @@ const gatedRows = (v: Vehicle): Row[] => [
 
 export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
   const gate = publishable(v);
+  /* The ledger and the authored page, where the vehicle has been joined to
+     them. Both are optional and both are tolerated as absent — Wildwood has
+     neither yet, and a chapter that needed them would have nothing to say
+     about the newest property in the Collection. */
+  const estate = estateOf(v.key);
+  const units = estate?.keyTypes ?? [];
+  const page = PROPERTY_PAGES.find((x) => x.vehicle === v.key);
   const o = v.offering;
   const s = v.stack;
   const stance = stanceFor(v);
@@ -84,8 +105,15 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
           { label: "Jurisdiction", value: v.jurisdiction, basis: SOURCE },
           { label: "Coordinates", value: v.coordinates ?? NOT_STATED, basis: v.coordinates ? `Asset ${v.assetCode}` : "No site position on record." },
           { label: "Land", value: v.landArea, basis: SOURCE },
+          ...(estate
+            ? [
+                { label: "Ground", value: estate.ecology, basis: `${estate.region} · ${estate.pack.replace(/_/g, " ").toLowerCase()}` },
+                { label: "Kept", value: estate.landscapePreserved, basis: `Of ${estate.siteArea} acres, ${estate.buildableEnvelope} is the buildable envelope.` },
+              ]
+            : []),
           { label: "Asset code", value: v.assetCode, basis: "The identifier every document uses" },
         ],
+        intent: page ? [{ label: "ACCESS", text: page.access }, { label: "PROTECTION", text: page.protection }] : [],
         withheld: [],
       };
 
@@ -102,9 +130,11 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
               { label: "Night pool", value: `${v.entitlement.nightPoolMin}–${v.entitlement.nightPoolMax} nights a year`, basis: "Shared across the vehicle, not per key" },
               { label: "Reserved days", value: String(v.entitlement.reservedDays), basis: v.entitlement.reservedDays === 0 ? "None held back from the pool" : SOURCE },
               { label: "Begins", value: v.entitlement.begins, basis: "Programme-dependent, and the programme is not locked" },
-              { label: "Keys", value: String(v.keys), basis: SOURCE },
+              { label: "Keys", value: String(v.keys), basis: units.length ? `${units.map((u) => u.name).join(" · ")}` : SOURCE },
             ]
           : [{ label: "Entitlement", value: NOT_STATED, basis: "No night pool, reserved days or start is on record for this vehicle." }],
+        units,
+        intent: page ? [{ label: "LIGHT", text: page.light }] : [],
         withheld: [],
       };
 
@@ -126,13 +156,26 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
       return {
         eyebrow: "CHAPTER 04 · THE ASSET",
         title: "What the capital stands on.",
-        lead:
-          `${v.landArea} at ${v.jurisdiction}, carrying ${v.keys} keys. ` +
-          `${v.tenure ? TENURE_LABEL[v.tenure] : "How the land is held is not stated as a tenure position."}`,
+        lead: units.length
+          ? `${v.keys} keys in ${units.length} types on ${v.landArea}. Each is drawn below at its ` +
+            `true relative area, because nothing is built yet and a drawing with a dimension on it ` +
+            `cannot flatter the way a render can.`
+          : `${v.landArea} at ${v.jurisdiction}, carrying ${v.keys} keys. ` +
+            `${v.tenure ? TENURE_LABEL[v.tenure] : "How the land is held is not stated as a tenure position."}`,
+        units,
+        intent: [
+          ...(page ? [{ label: "MASS", text: page.mass }, { label: "LIGHT", text: page.light }] : []),
+          ...(page ? [{ label: "PROTECTION", text: page.protection }] : []),
+          ...(estate ? [{ label: "GROUND", text: `${estate.ecology}. ${estate.landscapePreserved} preserved.` }] : []),
+        ],
+        palette: page?.palette.map((x) => ({ material: x.material, role: x.role })),
         rows: [
           { label: "Land", value: v.landArea, basis: SOURCE },
           { label: "How it is held", value: v.tenure ? TENURE_LABEL[v.tenure] : NOT_STATED, basis: v.commitments },
-          { label: "Keys", value: String(v.keys), basis: SOURCE },
+          { label: "Keys", value: String(v.keys), basis: units.length ? `${units.length} types, drawn above` : SOURCE },
+          ...(estate?.footprint
+            ? [{ label: "Built area", value: `${estate.footprint.lodgingBuilt.toLocaleString("en-IN")} sq ft`, basis: `Lodging only. Working areas add ${estate.footprint.workingBuilt.toLocaleString("en-IN")} sq ft.` }]
+            : []),
           { label: "Build stage", value: BUILD_LABEL[v.buildStage], basis: SOURCE },
           { label: "Audited", value: v.audited ? "Yes" : "No", basis: v.audited ? SOURCE : "No audited accounts exist for a vehicle that has not yet traded." },
         ],

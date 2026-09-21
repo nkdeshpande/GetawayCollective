@@ -1,59 +1,238 @@
 /* AS-PROP · the property page.
-   Every value a token — §29 forbids design literals. */
+   Every value a token — §29 forbids design literals.
 
-.prop{background:var(--gc-paper);color:var(--gc-ink)}
+   REBUILT 21 SEP 2026 — the picture leads. See the note in property.tsx.
+   Canon: Addendum A § E. FB-01 the full-bleed hero · FB-02 the gallery
+   scroll · FB-1 no full-bleed where a figure is read · FB-2 never more than
+   three viewport-heights before a bounded layout returns.
+
+   Two laws this file keeps that are easy to break by accident:
+     · NOTHING IS LAID OVER A PICTURE. No gradient, no veil, no shadow, no
+       caption across it. The words on the hero are few and sit low-left;
+       everything else is on the ground.
+     · GROUND IS SET BY .on-paper, NEVER BY HAND. Void carries the narrative,
+       paper carries the financial assertion, and the atoms (.dim .label .btn
+       .money .panel) only resolve correctly when the scope says which. */
+
+/* The ground, and the two values that differ by ground. */
+.prop{background:var(--gc-void);color:var(--gc-ink-inverse);
+  --prop-line:var(--gc-hairline-inv);--prop-quiet:var(--gc-steel-dim);
+  /* How far the shell insets this page from the left edge. A full-bleed
+     element pulls back by exactly this much, so it runs under the rail —
+     which the shell keeps transparent while a hero is in view. The three
+     values mirror .rail-main's own padding at the shell's three widths. */
+  --prop-inset:calc(var(--rail,240px) + var(--gc-sp-l))}
+.prop .on-paper{--prop-line:var(--gc-hairline);--prop-quiet:var(--gc-steel)}
 .prop .wrap{max-width:1160px;margin:0 auto;padding:0 var(--gc-sp-m)}
+/* Two classes on purpose: .pf{margin:0} comes later and would win a tie. */
+.prop .prop-bleed{margin-left:calc(var(--prop-inset) * -1)}
+/* PUBLIC.07: a touch target is at least 44px. The shared .btn atom is 37. */
+.prop .btn{min-height:44px}
 
-/* ── Declared frames ─────────────────────────────────────────── */
-.pf{position:relative;margin:0;overflow:hidden}
-.pf img{display:block;width:100%;height:100%;object-fit:cover}
-.pf figcaption{position:absolute;right:var(--gc-sp-2xs);bottom:var(--gc-sp-2xs)}
-/* A placeholder that stays uncomfortable. See the note in property.tsx. */
-.pf-empty{display:flex;flex-direction:column;justify-content:flex-end;gap:var(--gc-sp-3xs);padding:var(--gc-sp-s);border:var(--gc-stroke-idle) dashed var(--gc-hairline);background:var(--gc-panel,transparent);color:var(--gc-steel)}
-.pf[data-aspect="full-bleed"]{aspect-ratio:21/9}
-.pf[data-aspect="wide"]{aspect-ratio:16/9}
-.pf[data-aspect="square"]{aspect-ratio:1/1}
-.pf[data-aspect="portrait"]{aspect-ratio:3/4}
+/* Rhythm. Spacing is a class, so the component carries no inline style. */
+.prop-gap-3xs{margin-top:var(--gc-sp-3xs)}
+.prop-gap-2xs{margin-top:var(--gc-sp-2xs)}
+.prop-gap-s{margin-top:var(--gc-sp-s)}
+.prop-gap-m{margin-top:var(--gc-sp-m)}
+.prop-gap-l{margin-top:var(--gc-sp-l)}
+.prop-gap-xl{margin-top:var(--gc-sp-2xl)}
+.prop-list{margin-top:var(--gc-sp-2xs);padding-left:var(--gc-sp-s)}
 
-/* ── Hero ────────────────────────────────────────────────────── */
-.prop-hero{position:relative}
-.prop-hero .prop-hero-img{aspect-ratio:21/9;min-height:60svh}
-.prop-hero-in{padding:var(--gc-sp-xl) var(--gc-sp-m);max-width:1160px;margin:0 auto}
-.prop-hero-in h1{margin-top:var(--gc-sp-2xs)}
-.prop-hero-in .row{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs);margin-top:var(--gc-sp-m)}
+/* ── Type: two monument sizes — KEPT BY THE FOUNDER, 21 SEP 2026 ─────
+   constants/typography.ts ratifies the display scale up to display-xl at
+   56px ("Full-bleed hero only"). These two go past it, on purpose: the
+   instruction was a page led by a monumental name, and 56px is not one.
+   The question was put to the founder the same day and the answer was to
+   keep them.
 
-/* ── Spine ───────────────────────────────────────────────────── */
-.prop-spine{position:sticky;top:0;z-index:20;border-top:var(--gc-stroke-idle) solid var(--gc-hairline);border-bottom:var(--gc-stroke-idle) solid var(--gc-hairline);background:var(--gc-paper)}
+   They are not invented. Both are the GC design canon's own —
+   GC-DesignSystem-Canonical.html, .hero-title ("Titan — headlines,
+   authority statements") and .tier-title — at the ratified display weights
+   200 and 300, never bold.
+
+   STILL OPEN, and deliberately not done here: the registry itself. TYPE is
+   pinned at thirteen roles by tests/design-system.test.ts and feeds the
+   token export, the brand book and the design reference, so adding a
+   `titan` role is an amendment to the scale and not a page edit. Until it
+   is made, type-lint cannot see these two sizes and this comment is what
+   keeps the exception visible. */
+.prop-titan{font:200 clamp(3rem,8vw,7.5rem)/0.88 var(--gc-font-display);letter-spacing:-0.03em;text-transform:uppercase;text-wrap:balance;margin:0}
+.prop-titan-m{font:300 clamp(2.2rem,4vw,3.6rem)/1 var(--gc-font-display);letter-spacing:-0.02em;text-transform:uppercase;text-wrap:balance;margin:0}
+/* One authored line, said once, at display size. */
+.prop-say{font:300 clamp(22px,2.2vw,30px)/1.3 var(--gc-font-display);letter-spacing:-0.02em;max-width:34ch;text-wrap:balance;margin:var(--gc-sp-m) 0 0}
+/* A chapter's statement: two sentences, so it is set to be read. */
+.prop-note{font:300 clamp(18px,1.5vw,21px)/1.55 var(--gc-font-display);max-width:58ch;text-wrap:pretty;margin:var(--gc-sp-m) 0 0}
+.prop-sec em,.prop-say em{font-style:normal;color:var(--prop-quiet)}
+
+/* ── Declared frames ─────────────────────────────────────────────────
+   The ratio sits on the IMAGE, so the caption can sit under it and the
+   figure stays a plain block. Kind and date stay attached to every frame —
+   beneath it, never across it. */
+.pf{margin:0}
+.pf img{display:block;width:100%;object-fit:cover}
+.pf figcaption{padding:var(--gc-sp-2xs) var(--gc-sp-m) 0;text-align:right}
+.pf[data-aspect="full-bleed"] img{aspect-ratio:21/9}
+.pf[data-aspect="wide"] img{aspect-ratio:16/9}
+.pf[data-aspect="square"] img{aspect-ratio:1/1}
+.pf[data-aspect="portrait"] img{aspect-ratio:3/4}
+/* FB-2: one picture never exceeds one viewport. */
+.pf.prop-bleed img{max-height:100svh}
+
+/* ── Hero · FB-01 ────────────────────────────────────────────────────
+   With a picture: the full viewport. Without one the plate is only as tall
+   as its title needs (PUBLIC.08: an unproduced frame takes no space). */
+.prop-plate{position:relative;display:flex;align-items:flex-end;overflow:hidden;
+  min-height:clamp(280px,44svh,440px);background:var(--gc-void);color:var(--gc-ink-inverse)}
+.prop-plate[data-filled="1"]{min-height:100svh}
+.prop-plate-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.prop-plate-in{position:relative;display:flex;flex-direction:column;gap:var(--gc-sp-s);
+  padding:var(--gc-sp-4xl) var(--gc-sp-m) var(--gc-sp-xl) calc(var(--prop-inset) + var(--gc-sp-m))}
+.prop-hero-foot{padding-top:var(--gc-sp-l);padding-bottom:var(--gc-sp-2xl)}
+.prop-hero-foot .prop-say{margin-top:0}
+.prop-hero-foot .row{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs);margin-top:var(--gc-sp-m)}
+.prop-hero-foot>.t-micro{margin-top:var(--gc-sp-m)}
+
+/* ── Spine ───────────────────────────────────────────────────────────
+   Sticks beneath the shell's 56px header rather than under it. */
+.prop-spine{position:sticky;top:56px;z-index:20;border-top:var(--gc-stroke-idle) solid var(--prop-line);border-bottom:var(--gc-stroke-idle) solid var(--prop-line);background:var(--gc-void)}
 .prop-spine .wrap{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-s);padding-top:var(--gc-sp-2xs);padding-bottom:var(--gc-sp-2xs)}
 .prop-spine ul{display:flex;flex-wrap:wrap;gap:var(--gc-sp-s);margin:0;padding:0;list-style:none}
-.prop-spine a{color:inherit;text-decoration:none;text-transform:uppercase;letter-spacing:.1em}
+.prop-spine a{display:inline-flex;align-items:center;min-height:44px;color:inherit;text-decoration:none;text-transform:uppercase;letter-spacing:.1em}
 .prop-spine a:hover{text-decoration:underline}
 
-/* ── Sections ────────────────────────────────────────────────── */
-.prop-sec{padding:var(--gc-sp-3xl) 0}
-.prop-sec.on-panel{background:var(--gc-panel,var(--gc-paper))}
-.prop-sec em{font-style:normal;color:var(--gc-steel)}
+/* ── Sections ────────────────────────────────────────────────────── */
+.prop-sec{padding:var(--gc-sp-4xl) 0}
+.prop-sec-ruled{border-top:var(--gc-stroke-idle) solid var(--prop-line)}
+.prop-sec[id]{scroll-margin-top:calc(56px + var(--gc-sp-3xl))}
 
-.prop-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-l);padding-top:var(--gc-sp-m);border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}
-.prop-authors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-m);margin-top:var(--gc-sp-l)}
-.prop-intent{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--gc-sp-l);align-items:start}
-.prop-pair{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-m)}
-.prop-triad{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gc-sp-s);margin-top:var(--gc-sp-s)}
-.prop-palette{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-l)}
+/* A chapter: heading, the picture edge to edge, then words, bounded. */
+.prop-ch>.pf.prop-bleed{margin-top:var(--gc-sp-l)}
+.prop-chapter{margin-top:var(--gc-sp-4xl)}
+.prop-chapter-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--gc-sp-m)}
+
+/* ── FB-02 · the gallery scroll ──────────────────────────────────────
+   Edge to edge, no gutters, pictures only. The first frame starts where
+   the text column starts, so the strip reads as belonging to the chapter. */
+.prop-reel{display:flex;gap:var(--gc-sp-3xs);margin-top:var(--gc-sp-xl);overflow-x:auto;
+  scroll-snap-type:x mandatory;scrollbar-width:none;
+  padding-left:calc(var(--prop-inset) + var(--gc-sp-m));
+  scroll-padding-left:calc(var(--prop-inset) + var(--gc-sp-m))}
+.prop-reel::-webkit-scrollbar{display:none}
+.prop-reel .pf{flex:0 0 min(78vw,420px);scroll-snap-align:start}
+
+.prop-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-xl);padding-top:var(--gc-sp-m);border-top:var(--gc-stroke-idle) solid var(--prop-line)}
+.prop-authors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-xl);margin-top:var(--gc-sp-xl)}
+.prop-author{display:flex;flex-direction:column;gap:var(--gc-sp-2xs);padding-top:var(--gc-sp-s);border-top:var(--gc-stroke-active) solid var(--prop-line)}
+.prop-intent{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-xl);margin-top:var(--gc-sp-xl)}
+.prop-intent>div{display:flex;flex-direction:column;gap:var(--gc-sp-2xs)}
+.prop-palette{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gc-sp-m);margin-top:var(--gc-sp-xl)}
+.prop-palette>article{display:flex;flex-direction:column;gap:var(--gc-sp-2xs);padding-top:var(--gc-sp-s);border-top:var(--gc-stroke-idle) solid var(--prop-line)}
 .prop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-m)}
-.prop-grid>div{padding:var(--gc-sp-s);border:var(--gc-stroke-idle) solid var(--gc-hairline)}
-
-.prop-chapter{margin-top:var(--gc-sp-2xl)}
-.prop-chapter-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--gc-sp-m);margin-top:var(--gc-sp-s)}
+.prop-grid>div{padding:var(--gc-sp-s);border:var(--gc-stroke-idle) solid var(--prop-line)}
 
 .prop-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 var(--gc-sp-l);margin-top:var(--gc-sp-m)}
 /* A held figure set is marked structurally, not by colour alone. */
 .prop-hold{border-left:var(--gc-stroke-active) solid var(--gc-hazard)}
-.prop-tier{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-m)}
+.prop-tiers{border-top:var(--gc-stroke-idle) solid var(--prop-line)}
+.prop-tier{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-m);padding:var(--gc-sp-m) 0;border-bottom:var(--gc-stroke-idle) solid var(--prop-line)}
 .prop-tier .t-micro.label{text-transform:uppercase}
 
+/* ── SOMETHING TO LOOK AT ────────────────────────────────────────────
+   Second pass, 21 Sep 2026. No photograph exists, so the visual blocks are
+   drawings and figures, each computed from a registry value. No gradient,
+   no texture, no ornament: a block that is not derived from a number is
+   decoration, and there is none here. */
+
+/* THE BAND. A full-bleed change of ground — void to void-panel — so a long
+   page has a rhythm even before it has a picture. Its contents clear the
+   rail exactly as a .wrap does. */
+.prop-band{background:var(--gc-void-panel);border-top:var(--gc-stroke-idle) solid var(--prop-line);border-bottom:var(--gc-stroke-idle) solid var(--prop-line);
+  margin-top:var(--gc-sp-2xl);padding:var(--gc-sp-2xl) var(--gc-sp-m) var(--gc-sp-2xl) calc(var(--prop-inset) + var(--gc-sp-m))}
+.prop-band-in{max-width:1112px}
+.prop-band .unit-set{margin-top:0}
+.prop-band .unit-set-head{border-top:0;padding-top:0}
+/* auto-fit stretched two plates to 500px squares and the band to a full
+   screen. A plate is a drawing to read, not a wall: cap the column. */
+.prop-band .unit-grid{grid-template-columns:repeat(auto-fit,minmax(200px,300px))}
+
+/* THE NUMERALS. Three facts at the size a figure is read from a distance.
+   Mono, tabular, and allowed to wrap: a coordinate pair is long. */
+.prop-numerals{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,2fr);gap:var(--gc-sp-xl);margin:0;max-width:1112px}
+.prop-numerals>div{display:flex;flex-direction:column;gap:var(--gc-sp-s);min-width:0}
+.prop-numerals dd{margin:0}
+.prop-numeral{font:400 clamp(24px,2.6vw,40px)/1.15 var(--gc-font-mono);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;overflow-wrap:anywhere}
+.prop-numerals>div:first-child .prop-numeral{font-size:clamp(3rem,8vw,7.5rem);line-height:0.88}
+
+/* THE INDEX. A chapter's number at title size, quiet, ahead of its name. */
+.prop-chapter-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:baseline;gap:var(--gc-sp-m)}
+.prop-index{font:200 clamp(2.2rem,4vw,3.6rem)/1 var(--gc-font-display);letter-spacing:-0.02em;color:var(--prop-quiet)}
+
+/* A FIGURE SET — the footprint. Plates share one scale, so they compare. */
+.prop-fig-set{margin-top:var(--gc-sp-2xl);padding-top:var(--gc-sp-s);border-top:var(--gc-stroke-idle) solid var(--prop-line)}
+.prop-fig-head{display:flex;flex-direction:column;gap:var(--gc-sp-3xs);margin-bottom:var(--gc-sp-xl)}
+.prop-fig-head p{margin:0}
+.prop-fig-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gc-sp-xl);max-width:760px}
+.prop-fig{display:flex;flex-direction:column;gap:var(--gc-sp-2xs)}
+
+/* THE THREE VEHICLE FIGURES. They sit on paper, so they are drawn in the
+   ink of their ground (currentColor) and ruled in its hairline. */
+.prop-draw{display:block;width:100%;height:72px;margin-bottom:var(--gc-sp-s)}
+.pd-solid{fill:currentColor}
+.pd-track{fill:none;stroke:var(--prop-line);stroke-width:1}
+.pd-range{fill:none;stroke:currentColor;stroke-width:1}
+.pd-rule{stroke:var(--prop-line);stroke-width:1}
+.pd-mark{stroke:currentColor;stroke-width:2}
+
+/* The close: the page ends the way it began — a few words and room. */
+.prop-close{padding-top:var(--gc-sp-4xl);padding-bottom:var(--gc-sp-4xl);border-top:var(--gc-stroke-idle) solid var(--prop-line)}
+.prop-close .row{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs)}
+
 @media (max-width:900px){
-  .prop-strip,.prop-palette,.prop-triad,.prop-grid,.prop-pair,.prop-authors,.prop-intent,.prop-figures{grid-template-columns:1fr}
+  .prop{--prop-inset:calc(60px + var(--gc-sp-m))}
+  .prop-strip,.prop-palette,.prop-grid,.prop-authors,.prop-intent,.prop-figures{grid-template-columns:1fr}
+  .prop-numerals{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+  .prop-numerals>div:last-child{grid-column:1 / -1}
   .prop-tier{flex-direction:column;align-items:flex-start}
-  .prop-hero .prop-hero-img{aspect-ratio:4/5}
+  .prop-sec{padding:var(--gc-sp-3xl) 0}
+  .prop-chapter{margin-top:var(--gc-sp-3xl)}
+}
+/* The shell drops its rail to the bottom edge here, so nothing is inset. */
+@media (max-width:768px){
+  .prop{--prop-inset:0px}
+  .prop .wrap{padding:0 var(--gc-sp-s)}
+  .prop-plate-in{padding-left:var(--gc-sp-s);padding-right:var(--gc-sp-s)}
+  .prop-reel{padding-left:var(--gc-sp-s);scroll-padding-left:var(--gc-sp-s)}
+  .prop-band{padding:var(--gc-sp-xl) var(--gc-sp-s)}
+  /* Two plates side by side: stacked at full width they made a band taller
+     than the screen. */
+  .prop-band .unit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-m)}
+  .prop-fig-row{gap:var(--gc-sp-m)}
+  .prop-numerals{grid-template-columns:minmax(0,1fr);gap:var(--gc-sp-l)}
+  .prop-chapter-head{grid-template-columns:auto minmax(0,1fr)}
+  .prop-chapter-head>.t-mono-s{display:none}
+  .pf figcaption{padding-left:var(--gc-sp-s);padding-right:var(--gc-sp-s)}
+  .pf[data-aspect="full-bleed"] img{aspect-ratio:4/5}
+
+  /* PUBLIC.06 — content owns a narrow viewport.
+     The spine is the ONE local navigator here (route contract), so it stays,
+     but as a single 44px row that scrolls sideways. Wrapped, it was a 226px
+     sticky slab across the top of a phone. */
+  .prop-spine .wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .prop-spine .wrap::-webkit-scrollbar{display:none}
+  .prop-spine ul{flex-wrap:nowrap;flex:0 0 auto}
+  .prop-spine a,.prop-spine .btn{white-space:nowrap;flex:0 0 auto}
+  /* The spine is the navigator here and nothing else. Its button was clipped
+     at the edge of the row; the same request is one screen up, under the
+     hero, and again at the close. */
+  .prop-spine .btn{display:none}
+
+  /* An action takes the full row and may wrap its own label. A gated link
+     carries its requirement beside it ("Sign-in required"), and on one line
+     that pair was wider than the screen. */
+  .prop .row>.btn,.prop .row>.gated-link{flex:1 1 100%;max-width:100%}
+  .prop .gated-link{flex-wrap:wrap;justify-content:center}
+
+  /* PUBLIC.07 — no informational text below 16px at phone width. The shared
+     atoms are 15 and 13; on this page a risk note is set in one of them. */
+  .prop .t-body,.prop .t-body-s{font-size:16px}
 }

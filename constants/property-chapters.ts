@@ -78,6 +78,44 @@ export const CHAPTERS: readonly Chapter[] = [
 /** The numbered argument, in order. Progress is deliberately not in it. */
 export const NUMBERED = CHAPTERS.filter((c) => c.n !== null);
 
+/* ── THE TABS: FIVE PARTS, NOT TEN CHAPTERS ──────────────────────────
+ * Founder instruction, 21 Sep 2026: no more than five tabs.
+ *
+ * Ten tabs in a row is a filing system, and on a phone it is a row that
+ * scrolls off the screen before a reader has seen where it ends. So the
+ * TABS are five parts. The CHAPTERS are still ten, in the same order, at
+ * the same URLs, with the same numbers — nothing about the argument moved.
+ *
+ * Three rules, each one asserted below and again in the tests:
+ *
+ *   1. A part is a CONTIGUOUS run of chapters, so reading the tabs left to
+ *      right is still reading the argument in order.
+ *   2. A part is named by its FIRST chapter and links to it. No label was
+ *      invented for a group; every word on a tab is a chapter's own.
+ *   3. RISK OPENS ITS OWN PART. The whole point of the order is that a
+ *      reader meets how this loses money before they are asked for
+ *      anything, and a Risk folded inside "The Investment" is a Risk
+ *      nobody is shown. It stays a tab, and it stays before Enquire.
+ *
+ * The chapters inside a part are reached the way they always were: by the
+ * onward control at the foot of each one. Nothing is orphaned — nextChapter
+ * still walks all ten.
+ */
+export const MAX_TABS = 5;
+
+export interface Part {
+  /** The chapters it holds, in order. The first one names and opens it. */
+  readonly chapters: readonly ChapterId[];
+}
+
+export const PARTS: readonly Part[] = [
+  { chapters: ["opportunity", "place", "life"] },
+  { chapters: ["idea", "asset", "ownership"] },
+  { chapters: ["investment"] },
+  { chapters: ["risk", "progress"] },
+  { chapters: ["enquire"] },
+];
+
 export const chapterById = (id: ChapterId): Chapter =>
   CHAPTERS.find((c) => c.id === id)!;
 
@@ -93,6 +131,46 @@ export const chapterHref = (slug: string, c: Chapter): string =>
 export function nextChapter(id: ChapterId): Chapter | null {
   const i = CHAPTERS.findIndex((c) => c.id === id);
   return i >= 0 && i + 1 < CHAPTERS.length ? CHAPTERS[i + 1] : null;
+}
+
+/** The part a chapter belongs to. Every chapter has exactly one. */
+export const partOf = (id: ChapterId): Part =>
+  PARTS.find((p) => p.chapters.includes(id))!;
+
+/** The chapter that names a part and that its tab links to. */
+export const partHead = (p: Part): Chapter => chapterById(p.chapters[0]);
+
+/**
+ * The number a tab shows: the first chapter's, or the numbered span the
+ * part covers. A reader landing on 02 should still be able to see that the
+ * first tab is where 02 lives.
+ */
+export function partSpan(p: Part): string {
+  const ns = p.chapters.map((id) => chapterById(id).n).filter((n): n is string => n !== null);
+  if (ns.length === 0) return "";
+  return ns.length === 1 ? ns[0] : `${ns[0]}–${ns[ns.length - 1]}`;
+}
+
+/*
+ * The three rules, asserted at module load for the same reason the route
+ * check below is: a tab bar that is wrong still renders, is still
+ * clickable, and nothing else notices.
+ */
+{
+  if (PARTS.length > MAX_TABS) {
+    throw new Error(`${PARTS.length} parts, and the instruction is no more than ${MAX_TABS} tabs.`);
+  }
+  const flat = PARTS.flatMap((p) => p.chapters);
+  const order = CHAPTERS.map((c) => c.id);
+  if (flat.length !== order.length || flat.some((id, i) => id !== order[i])) {
+    throw new Error(
+      "PARTS must hold every chapter exactly once, as contiguous runs in chapter order. " +
+      "Anything else reorders the argument without saying so.",
+    );
+  }
+  if (partOf("risk").chapters[0] !== "risk") {
+    throw new Error("Risk must open its own part. Folded inside another tab, it is a Risk nobody is shown.");
+  }
 }
 
 /**

@@ -10,7 +10,9 @@
 import { describe, it, expect } from "vitest";
 import {
   CHAPTERS, NUMBERED, chapterById, chapterHref, nextChapter,
+  PARTS, MAX_TABS, partOf, partHead, partSpan,
 } from "../constants/property-chapters";
+import { SPINE, SPINE_TABS } from "../constants/property-page";
 import { ROUTES } from "../constants/routes";
 import { VEHICLES, publishable, vehicleByKey } from "../constants/vehicles";
 import { chapterContent } from "../app/_assemblies/propertychapter";
@@ -133,5 +135,57 @@ describe("no property in the register is a 404, and none publishes a figure the 
       if (stanceFor(v).kind === "open") continue;
       expect(p.availability).not.toMatch(/\d+ of \d+ units available/);
     }
+  });
+});
+
+/**
+ * No more than five tabs — founder instruction, 21 Sep 2026.
+ *
+ * Ten chapter tabs and seven spine anchors sat in two rows at the top of
+ * every property page. Compressing them is easy to do wrongly: drop a
+ * chapter from the bar and it is orphaned; group them out of order and the
+ * argument is quietly rearranged; fold Risk into "The Investment" and a
+ * reader is asked for something before they have met how it loses money.
+ * These pin the three things that must survive the compression.
+ */
+describe("the tabs are five parts, and the argument did not move", () => {
+  it("shows no more than five tabs, in either row", () => {
+    expect(MAX_TABS).toBe(5);
+    expect(PARTS.length).toBeLessThanOrEqual(MAX_TABS);
+    expect(SPINE_TABS.length).toBeLessThanOrEqual(MAX_TABS);
+  });
+
+  it("holds every chapter exactly once, as contiguous runs in chapter order", () => {
+    expect(PARTS.flatMap((p) => p.chapters)).toEqual(CHAPTERS.map((c) => c.id));
+  });
+
+  it("names a part by its first chapter, and invents no label", () => {
+    const labels = new Set(CHAPTERS.map((c) => c.label));
+    for (const p of PARTS) {
+      expect(partHead(p).id).toBe(p.chapters[0]);
+      expect(labels.has(partHead(p).label)).toBe(true);
+    }
+    expect(partSpan(partOf("life"))).toBe("00–02");
+    expect(partSpan(partOf("investment"))).toBe("06");
+  });
+
+  it("keeps Risk a tab of its own, before Enquire", () => {
+    expect(partHead(partOf("risk")).id).toBe("risk");
+    const heads = PARTS.map((p) => partHead(p).id);
+    expect(heads.indexOf("risk")).toBeLessThan(heads.indexOf("enquire"));
+  });
+
+  it("still reaches all ten chapters by walking onward from the first", () => {
+    const seen: string[] = ["opportunity"];
+    let next = nextChapter("opportunity");
+    while (next) { seen.push(next.id); next = nextChapter(next.id); }
+    expect(seen).toEqual(CHAPTERS.map((c) => c.id));
+  });
+
+  it("offers spine tabs that are real sections, in page order", () => {
+    const order = SPINE.map((s) => s.id);
+    for (const id of SPINE_TABS) expect(order).toContain(id);
+    const positions = SPINE_TABS.map((id) => order.indexOf(id));
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions);
   });
 });
