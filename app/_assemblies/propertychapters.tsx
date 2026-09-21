@@ -18,6 +18,7 @@ import {
 } from "@/constants/property-chapters";
 import { LIFECYCLE_LABEL, stanceFor, vehicleBySlug } from "@/constants/vehicles";
 import { chapterContent } from "./propertychapter";
+import { UnitSet } from "./unitplate";
 
 /** Which chapter a generated page is, from the path it was generated for. */
 function chapterForPath(path: string): Chapter | undefined {
@@ -94,6 +95,39 @@ export function ChapterSurface({ path, param }: { path: string; param: string })
           <p className="eyebrow t-micro">{c.eyebrow}</p>
           <h2 className="t-display-m">{c.title}</h2>
           <p className="chapter-lead t-body-l">{c.lead}</p>
+
+          {/* The keys come BEFORE the ledger rows. On a chapter about what
+              is being built, the thing being built leads and the table
+              supports it — the other way round is a spreadsheet with a
+              picture attached. */}
+          {c.units && c.units.length > 0 && <UnitSet units={c.units} />}
+
+          {c.intent && c.intent.length > 0 && (
+            <div className="intent">
+              {c.intent.map((i) => (
+                <div className="intent-block" key={i.label}>
+                  <p className="t-micro">{i.label}</p>
+                  <p className="t-body-l">{i.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {c.palette && c.palette.length > 0 && (
+            <div className="intent">
+              <div className="intent-block">
+                <p className="t-micro">MATERIAL</p>
+                <div className="palette">
+                  {c.palette.map((m) => (
+                    <article key={m.material}>
+                      <h4>{m.material}</h4>
+                      <p className="t-body-s">{m.role}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           <dl className="chapter-rows">
             {c.rows.map((r) => (

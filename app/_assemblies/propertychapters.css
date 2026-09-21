@@ -124,3 +124,91 @@
 }
 .gated-note::before { content: "· "; }
 .gated-link.stacked .gated-note::before { content: none; }
+
+/* ── The keys, drawn ─────────────────────────────────────────────────
+ * Restraint is the register here. Nothing is built, so nothing is
+ * photographed, and a scaled plan with a real dimension on it is the
+ * honest artefact — it cannot flatter, because the geometry is computed
+ * from the area rather than chosen.
+ */
+
+.unit-set { margin-top: var(--gc-sp-2xl); }
+.unit-set-head {
+  border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  padding-top: var(--gc-sp-s);
+  margin-bottom: var(--gc-sp-xl);
+}
+.unit-set-head p { margin: 0; }
+.unit-set-head p:first-child { color: var(--gc-steel-dim); letter-spacing: 0.12em; }
+.unit-set-sum { color: var(--gc-fg-dim); margin-top: var(--gc-sp-3xs) !important; }
+
+.unit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--gc-sp-xl);
+}
+
+.unit-card { display: grid; gap: var(--gc-sp-s); }
+
+.unit-plate { margin: 0; }
+.unit-plate svg { display: block; width: 100%; height: auto; aspect-ratio: 100 / 108; }
+/* The envelope: the largest key in the set. Faint, because it is a
+   reference and not a claim. */
+.up-field { fill: none; stroke: var(--gc-hairline-inv); stroke-width: 1; }
+.up-key {
+  fill: var(--gc-bg-panel);
+  stroke: var(--gc-fg);
+  stroke-width: 1;
+}
+.up-dim { stroke: var(--gc-steel-dim); stroke-width: 1; }
+
+.unit-plate figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gc-sp-3xs);
+  margin-top: var(--gc-sp-2xs);
+}
+.up-area {
+  font: 400 20px/1 var(--gc-font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--gc-fg);
+}
+.up-unit { color: var(--gc-steel-dim); }
+
+.unit-name {
+  margin: 0;
+  font: 200 20px/1.2 var(--gc-font-display);
+  color: var(--gc-fg);
+}
+
+/* Multiplicity, drawn before it is read. */
+.unit-count { display: flex; align-items: center; gap: var(--gc-sp-3xs); flex-wrap: wrap; }
+.unit-count i {
+  width: 6px;
+  height: 6px;
+  background: var(--gc-steel);
+  border-radius: var(--gc-radius);
+  display: inline-block;
+}
+.unit-count span { color: var(--gc-steel-dim); margin-left: var(--gc-sp-3xs); }
+
+.unit-note { color: var(--gc-fg-dim); margin: 0; max-width: 42ch; }
+
+/* ── Architectural intent ────────────────────────────────────────── */
+.intent { margin-top: var(--gc-sp-2xl); display: grid; gap: var(--gc-sp-xl); }
+.intent-block {
+  border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  padding-top: var(--gc-sp-s);
+}
+.intent-block p:first-child { margin: 0 0 var(--gc-sp-2xs); color: var(--gc-steel-dim); letter-spacing: 0.12em; }
+.intent-block p:last-child { margin: 0; color: var(--gc-fg); max-width: var(--gc-measure, 65ch); }
+
+.palette { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--gc-sp-m); }
+.palette article { border-top: var(--gc-stroke-idle) solid var(--gc-hairline-inv); padding-top: var(--gc-sp-2xs); }
+.palette h4 { margin: 0 0 var(--gc-sp-3xs); font: 200 17px/1.2 var(--gc-font-display); color: var(--gc-fg); }
+.palette p { margin: 0; color: var(--gc-steel-dim); }
+
+@media (max-width: 560px) {
+  .unit-grid { grid-template-columns: 1fr 1fr; gap: var(--gc-sp-m); }
+  .unit-name { font-size: 17px; }
+}
