@@ -14,7 +14,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  CHAPTERS, chapterHref, nextChapter, type Chapter, type ChapterId,
+  CHAPTERS, PARTS, chapterHref, nextChapter, partHead, partSpan,
+  type Chapter, type ChapterId,
 } from "@/constants/property-chapters";
 import { LIFECYCLE_LABEL, stanceFor, vehicleBySlug } from "@/constants/vehicles";
 import { chapterContent } from "./propertychapter";
@@ -27,23 +28,39 @@ function chapterForPath(path: string): Chapter | undefined {
 }
 
 export function ChapterNav({ slug, current }: { slug: string; current: ChapterId }) {
+  /*
+   * FIVE TABS, NOT TEN — founder instruction, 21 Sep 2026.
+   *
+   * Each tab is a PART: a contiguous run of chapters, named by its first
+   * chapter and linking to it (constants/property-chapters.ts holds the
+   * grouping and the three rules it keeps). The chapters inside a part are
+   * reached by the onward control at the foot of each page, as they always
+   * were — so the argument is still read in order, and Risk is still a tab
+   * of its own that sits before Enquire.
+   */
   return (
     <nav className="chapter-nav" aria-label="This property">
       <ul>
-        {CHAPTERS.map((c) => {
-          const active = c.id === current;
+        {PARTS.map((p) => {
+          const head = partHead(p);
+          const inPart = p.chapters.includes(current);
+          const span = partSpan(p);
           return (
-            <li key={c.id}>
+            <li key={head.id}>
               <Link
-                href={chapterHref(slug, c)}
-                className={active ? "active" : undefined}
-                aria-current={active ? "page" : undefined}
+                href={chapterHref(slug, head)}
+                className={inPart ? "active" : undefined}
+                /* "page" only when the tab IS this page. Inside a part, on
+                   one of its later chapters, the tab is the current ITEM in
+                   the set and not a link to the current page. */
+                aria-current={head.id === current ? "page" : inPart ? "true" : undefined}
               >
                 {/* The number carries the order, so it is shown rather than
                     implied by position — a reader who lands on 06 from a
-                    search result should see there are five before it. */}
-                {c.n && <b>{c.n}</b>}
-                <span>{c.label}</span>
+                    search result should see there are five before it. A
+                    part shows the span it covers: 02 lives under 00–02. */}
+                {span && <b>{span}</b>}
+                <span>{head.label}</span>
               </Link>
             </li>
           );

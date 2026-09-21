@@ -85,6 +85,21 @@ export const SPINE: readonly { id: SectionId; label: string }[] = [
   { id: "evidence", label: "Evidence" },
 ];
 
+/**
+ * THE SPINE SHOWS FIVE. Founder instruction, 21 Sep 2026: no more than
+ * five tabs. The page still has seven sections and SPINE still names all
+ * of them, because a section's heading is read from it. What the reader is
+ * offered as a tab is this subset.
+ *
+ * Spaces and Materials fold under Architecture: they follow it on the page
+ * without a break, and a reader who jumps to Architecture scrolls straight
+ * into both. Nothing else could be dropped — Vehicle and Evidence are the
+ * inspection half of the page and Overview and Place are the desire half.
+ */
+export const SPINE_TABS: readonly SectionId[] = [
+  "opening", "site", "architecture", "vehicle", "evidence",
+];
+
 /** One visual chapter under THE SPACES. */
 export interface Chapter {
   readonly name: string;

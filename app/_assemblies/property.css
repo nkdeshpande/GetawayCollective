@@ -35,6 +35,7 @@
 .prop-gap-s{margin-top:var(--gc-sp-s)}
 .prop-gap-m{margin-top:var(--gc-sp-m)}
 .prop-gap-l{margin-top:var(--gc-sp-l)}
+.prop-gap-xl{margin-top:var(--gc-sp-2xl)}
 .prop-list{margin-top:var(--gc-sp-2xs);padding-left:var(--gc-sp-s)}
 
 /* ── Type: two monument sizes — KEPT BY THE FOUNDER, 21 SEP 2026 ─────
@@ -136,6 +137,52 @@
 .prop-tier{display:flex;align-items:center;justify-content:space-between;gap:var(--gc-sp-m);padding:var(--gc-sp-m) 0;border-bottom:var(--gc-stroke-idle) solid var(--prop-line)}
 .prop-tier .t-micro.label{text-transform:uppercase}
 
+/* ── SOMETHING TO LOOK AT ────────────────────────────────────────────
+   Second pass, 21 Sep 2026. No photograph exists, so the visual blocks are
+   drawings and figures, each computed from a registry value. No gradient,
+   no texture, no ornament: a block that is not derived from a number is
+   decoration, and there is none here. */
+
+/* THE BAND. A full-bleed change of ground — void to void-panel — so a long
+   page has a rhythm even before it has a picture. Its contents clear the
+   rail exactly as a .wrap does. */
+.prop-band{background:var(--gc-void-panel);border-top:var(--gc-stroke-idle) solid var(--prop-line);border-bottom:var(--gc-stroke-idle) solid var(--prop-line);
+  margin-top:var(--gc-sp-2xl);padding:var(--gc-sp-2xl) var(--gc-sp-m) var(--gc-sp-2xl) calc(var(--prop-inset) + var(--gc-sp-m))}
+.prop-band-in{max-width:1112px}
+.prop-band .unit-set{margin-top:0}
+.prop-band .unit-set-head{border-top:0;padding-top:0}
+/* auto-fit stretched two plates to 500px squares and the band to a full
+   screen. A plate is a drawing to read, not a wall: cap the column. */
+.prop-band .unit-grid{grid-template-columns:repeat(auto-fit,minmax(200px,300px))}
+
+/* THE NUMERALS. Three facts at the size a figure is read from a distance.
+   Mono, tabular, and allowed to wrap: a coordinate pair is long. */
+.prop-numerals{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,2fr);gap:var(--gc-sp-xl);margin:0;max-width:1112px}
+.prop-numerals>div{display:flex;flex-direction:column;gap:var(--gc-sp-s);min-width:0}
+.prop-numerals dd{margin:0}
+.prop-numeral{font:400 clamp(24px,2.6vw,40px)/1.15 var(--gc-font-mono);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;overflow-wrap:anywhere}
+.prop-numerals>div:first-child .prop-numeral{font-size:clamp(3rem,8vw,7.5rem);line-height:0.88}
+
+/* THE INDEX. A chapter's number at title size, quiet, ahead of its name. */
+.prop-chapter-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:baseline;gap:var(--gc-sp-m)}
+.prop-index{font:200 clamp(2.2rem,4vw,3.6rem)/1 var(--gc-font-display);letter-spacing:-0.02em;color:var(--prop-quiet)}
+
+/* A FIGURE SET — the footprint. Plates share one scale, so they compare. */
+.prop-fig-set{margin-top:var(--gc-sp-2xl);padding-top:var(--gc-sp-s);border-top:var(--gc-stroke-idle) solid var(--prop-line)}
+.prop-fig-head{display:flex;flex-direction:column;gap:var(--gc-sp-3xs);margin-bottom:var(--gc-sp-xl)}
+.prop-fig-head p{margin:0}
+.prop-fig-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gc-sp-xl);max-width:760px}
+.prop-fig{display:flex;flex-direction:column;gap:var(--gc-sp-2xs)}
+
+/* THE THREE VEHICLE FIGURES. They sit on paper, so they are drawn in the
+   ink of their ground (currentColor) and ruled in its hairline. */
+.prop-draw{display:block;width:100%;height:72px;margin-bottom:var(--gc-sp-s)}
+.pd-solid{fill:currentColor}
+.pd-track{fill:none;stroke:var(--prop-line);stroke-width:1}
+.pd-range{fill:none;stroke:currentColor;stroke-width:1}
+.pd-rule{stroke:var(--prop-line);stroke-width:1}
+.pd-mark{stroke:currentColor;stroke-width:2}
+
 /* The close: the page ends the way it began — a few words and room. */
 .prop-close{padding-top:var(--gc-sp-4xl);padding-bottom:var(--gc-sp-4xl);border-top:var(--gc-stroke-idle) solid var(--prop-line)}
 .prop-close .row{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs)}
@@ -143,6 +190,8 @@
 @media (max-width:900px){
   .prop{--prop-inset:calc(60px + var(--gc-sp-m))}
   .prop-strip,.prop-palette,.prop-grid,.prop-authors,.prop-intent,.prop-figures{grid-template-columns:1fr}
+  .prop-numerals{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+  .prop-numerals>div:last-child{grid-column:1 / -1}
   .prop-tier{flex-direction:column;align-items:flex-start}
   .prop-sec{padding:var(--gc-sp-3xl) 0}
   .prop-chapter{margin-top:var(--gc-sp-3xl)}
@@ -153,6 +202,14 @@
   .prop .wrap{padding:0 var(--gc-sp-s)}
   .prop-plate-in{padding-left:var(--gc-sp-s);padding-right:var(--gc-sp-s)}
   .prop-reel{padding-left:var(--gc-sp-s);scroll-padding-left:var(--gc-sp-s)}
+  .prop-band{padding:var(--gc-sp-xl) var(--gc-sp-s)}
+  /* Two plates side by side: stacked at full width they made a band taller
+     than the screen. */
+  .prop-band .unit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-m)}
+  .prop-fig-row{gap:var(--gc-sp-m)}
+  .prop-numerals{grid-template-columns:minmax(0,1fr);gap:var(--gc-sp-l)}
+  .prop-chapter-head{grid-template-columns:auto minmax(0,1fr)}
+  .prop-chapter-head>.t-mono-s{display:none}
   .pf figcaption{padding-left:var(--gc-sp-s);padding-right:var(--gc-sp-s)}
   .pf[data-aspect="full-bleed"] img{aspect-ratio:4/5}
 

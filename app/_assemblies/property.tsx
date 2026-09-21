@@ -69,19 +69,47 @@
  *   the page is typographic, and takes no space for what it cannot show.
  *   Each frame that is registered drops into a full-bleed slot that is
  *   already built for it.
+ *
+ * ── SECOND PASS, SAME DAY: SOMETHING TO LOOK AT ──────────────────────
+ * With no photograph the rebuilt page was eleven screens of words.
+ * Founder: add visual blocks as the page scrolls, and no more than five
+ * tabs.
+ *
+ * There is still nothing to photograph, so the blocks are DRAWINGS, and
+ * they follow the rule unitplate.tsx set: geometry computed from the
+ * number, never chosen to look good. A drawing that is not derived from a
+ * registry value is decoration, and none was added. Five blocks:
+ *
+ *   the numerals      Place         keys · land · coordinates, at figure size
+ *   the footprint     Architecture  lodging · working · hardscape, to scale
+ *   the keys          Spaces        the existing UnitSet, drawn to scale
+ *   three figures     Vehicle       the ladder · the night pool · the threshold
+ *   the index         every space   01, 02 … at title size
+ *
+ * Every value drawn is one a public chapter already publishes, in the same
+ * words (PUBLIC.10), and none is forward-looking. The construction
+ * programme is NOT drawn, though the registry has it: the evidence ladder
+ * on this very page lists "the projected programme" as private material.
+ *
+ * The tabs: the chapter nav shows five parts and the spine shows five
+ * sections (constants/property-chapters.ts · SPINE_TABS). Both still reach
+ * everything they reached before, and this page gained the onward control
+ * every other chapter already had, because tab one now points here.
  */
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChapterNav, ChapterSurface } from "./propertychapters";
 import {
-  PROPERTY_PAGES, SPINE, EVIDENCE_TIERS, mediaGap,
+  PROPERTY_PAGES, SPINE, SPINE_TABS, EVIDENCE_TIERS, mediaGap,
   type MediaSlot, type PropertyPage, type SectionId,
 } from "@/constants/property-page";
+import { chapterHref, nextChapter } from "@/constants/property-chapters";
 import {
   vehicleByKey, vehicleBySlug, publishable, waterfallState, BUILD_LABEL, TENURE_LABEL,
 } from "@/constants/vehicles";
-import { estateOf, ARCHITECTURAL_LANGUAGE } from "@/constants/spatial";
+import { estateOf, ARCHITECTURAL_LANGUAGE, type KeyType } from "@/constants/spatial";
+import { UnitPlate, UnitSet, scaleFor } from "./unitplate";
 import { IrisPanel } from "./iris";
 import { Footer } from "./atoms";
 import { GatedLink } from "./gatedlink";
@@ -136,6 +164,87 @@ function Reel({ frames, label }: { frames: readonly MediaSlot[]; label: string }
   );
 }
 
+/* ── Drawn figures ────────────────────────────────────────────────────
+   One rule for all of them, inherited from the unit plate: the geometry is
+   computed from the number. Nothing here has a shape that was chosen. */
+
+/**
+ * THE FOOTPRINT — what is built, in three areas, drawn to one scale.
+ *
+ * It reuses the unit plate, so a side is the square root of its area and
+ * the three compare by AREA. Lodging and working are kept apart for the
+ * reason the ledger keeps them separate: the working half is meant to be
+ * invisible, and one "built area" figure would hide whether that held.
+ */
+function Footprint({ areas }: { areas: readonly { name: string; area: number }[] }) {
+  const plates: KeyType[] = areas.map((a) => ({ name: a.name, count: 1, area: a.area, note: "" }));
+  const max = scaleFor(plates);
+  return (
+    <section className="prop-fig-set" aria-label="The footprint">
+      <header className="prop-fig-head">
+        <p className="t-micro label">The footprint</p>
+        <p className="t-body-s dim">Built area in square feet · drawn to scale, not photographed</p>
+      </header>
+      <div className="prop-fig-row">
+        {plates.map((u) => (
+          <div key={u.name} className="prop-fig">
+            <UnitPlate unit={u} max={max} />
+            <span className="t-micro label">{u.name}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** THE LADDER — every rung from the minimum to the ceiling, height = share. */
+function Ladder({ min, step, ceiling }: { min: number; step: number; ceiling: number }) {
+  const rungs: number[] = [];
+  for (let b = min; b <= ceiling; b += step) rungs.push(b);
+  const w = 100 / rungs.length;
+  return (
+    <svg className="prop-draw" viewBox="0 0 100 40" preserveAspectRatio="none" role="img"
+         aria-label={`Ownership rungs from ${min / 100}% to ${ceiling / 100}% in ${step / 100}% steps`}>
+      {rungs.map((b, i) => {
+        const h = (b / ceiling) * 38;
+        return <rect key={b} className="pd-solid" x={i * w + 0.6} y={39 - h} width={w - 1.2} height={h} />;
+      })}
+      <line className="pd-rule" x1="0" y1="39.5" x2="100" y2="39.5" vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
+/**
+ * THE NIGHT POOL — a year as linear inventory (Rule 10: a tape, never a
+ * calendar grid). Solid to the minimum, outlined from there to the maximum:
+ * the outline is the part that is a range and not a promise.
+ */
+function NightPool({ min, max }: { min: number; max: number }) {
+  const x = (n: number) => (n / 365) * 100;
+  return (
+    <svg className="prop-draw" viewBox="0 0 100 40" preserveAspectRatio="none" role="img"
+         aria-label={`${min} to ${max} nights of 365`}>
+      <rect className="pd-track" x="0.3" y="14" width="99.4" height="12" vectorEffect="non-scaling-stroke" />
+      <rect className="pd-solid" x="0" y="14" width={x(min)} height="12" />
+      <rect className="pd-range" x={x(min)} y="14" width={x(max) - x(min)} height="12"
+            vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
+/** THE THRESHOLD — where an ordinary resolution passes, on a line of 100%. */
+function Threshold({ bps }: { bps: number }) {
+  const x = bps / 100;
+  return (
+    <svg className="prop-draw" viewBox="0 0 100 40" preserveAspectRatio="none" role="img"
+         aria-label={`An ordinary resolution passes above ${x}%`}>
+      <rect className="pd-track" x="0.3" y="14" width="99.4" height="12" vectorEffect="non-scaling-stroke" />
+      <rect className="pd-solid" x={x} y="14" width={100 - x} height="12" />
+      <line className="pd-mark" x1={x} y1="6" x2={x} y2="34" vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
 /** A chapter takes its heading from the spine, so the two cannot disagree. */
 const spineLabel = (id: SectionId) => SPINE.find((s) => s.id === id)?.label ?? "";
 
@@ -167,6 +276,14 @@ export function PropertySurface({ slug }: { slug: string }) {
   const gate = publishable(v);
   const wf = waterfallState(v.operating.waterfall);
   const gap = mediaGap(page);
+  const onward = nextChapter("opportunity");
+  const built = estate?.footprint
+    ? [
+        { name: "Lodging", area: estate.footprint.lodgingBuilt },
+        { name: "Working", area: estate.footprint.workingBuilt },
+        { name: "Hardscape", area: estate.footprint.hardscape },
+      ]
+    : [];
 
   const inr = (n: bigint) => `₹${(Number(n) / 10000).toLocaleString("en-IN")}`;
 
@@ -234,7 +351,9 @@ export function PropertySurface({ slug }: { slug: string }) {
       <nav className="prop-spine" aria-label="This property">
         <div className="wrap">
           <ul>
-            {SPINE.map((s) => (
+            {/* Five of the seven. The other two are still sections, still
+                headed from SPINE, and still one scroll below Architecture. */}
+            {SPINE.filter((s) => SPINE_TABS.includes(s.id)).map((s) => (
               <li key={s.id}><a href={`#${s.id}`} className="t-micro">{s.label}</a></li>
             ))}
           </ul>
@@ -318,22 +437,28 @@ export function PropertySurface({ slug }: { slug: string }) {
             </div>
           </div>
 
-          <div className="prop-gap-m">
-            <div className="kv">
-              <span className="label t-micro">Land</span>
-              <span className="v t-mono-s">{v.landArea}</span>
+        </div>
+
+        {/* THE NUMERALS. The same three facts that were three small rows,
+            at the size a figure is read from a distance. Mono, because
+            a measurable is always mono (Rule 05). */}
+        <div className="prop-band prop-bleed">
+          <dl className="prop-numerals">
+            <div>
+              <dt className="t-micro label">Keys</dt>
+              <dd className="prop-numeral">{v.keys}</dd>
+            </div>
+            <div>
+              <dt className="t-micro label">Land</dt>
+              <dd className="prop-numeral">{v.landArea}</dd>
             </div>
             {v.coordinates ? (
-              <div className="kv">
-                <span className="label t-micro">Coordinates</span>
-                <span className="v t-mono-s">{v.coordinates}</span>
+              <div>
+                <dt className="t-micro label">Coordinates</dt>
+                <dd className="prop-numeral">{v.coordinates}</dd>
               </div>
             ) : null}
-            <div className="kv">
-              <span className="label t-micro">Keys</span>
-              <span className="v t-mono-s">{v.keys}</span>
-            </div>
-          </div>
+          </dl>
         </div>
       </section>
 
@@ -357,7 +482,8 @@ export function PropertySurface({ slug }: { slug: string }) {
         </div>
         <Reel frames={page.architectureFrames} label={spineLabel("architecture")} />
         <div className="wrap">
-          <p className="t-body-s dim prop-gap-s">
+          {built.length > 0 ? <Footprint areas={built} /> : null}
+          <p className="t-body-s dim prop-gap-m">
             Image kind and date remain attached to every frame.
           </p>
         </div>
@@ -378,6 +504,9 @@ export function PropertySurface({ slug }: { slug: string }) {
         {page.chapters.map((c, i) => (
           <article key={c.name} className="prop-chapter prop-ch">
             <div className="wrap prop-chapter-head">
+              {/* THE INDEX, at title size. It was an 11px footnote; a run of
+                  four chapters reads as a run when the numbers are seen. */}
+              <span className="prop-index" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="prop-titan-m">{c.name}</h3>
               <span className="t-mono-s dim">
                 {String(i + 1).padStart(2, "0")} / {String(page.chapters.length).padStart(2, "0")}
@@ -390,6 +519,14 @@ export function PropertySurface({ slug }: { slug: string }) {
             <Reel frames={c.supporting} label={c.name} />
           </article>
         ))}
+
+        {/* THE KEYS, DRAWN. The same figure the chapters use, from the same
+            registry, so the two cannot disagree (PUBLIC.10). */}
+        {estate && estate.keyTypes.length > 0 ? (
+          <div className="prop-band prop-bleed prop-gap-xl">
+            <div className="prop-band-in"><UnitSet units={estate.keyTypes} /></div>
+          </div>
+        ) : null}
       </section>
 
       {/* ── MATERIAL PALETTE ───────────────────────────────────── */}
@@ -448,6 +585,7 @@ export function PropertySurface({ slug }: { slug: string }) {
               </p>
             </div>
             <div>
+              <Ladder min={v.ladder.minimumInvestmentBps} step={v.ladder.stepBps} ceiling={v.ladder.ceilingBps} />
               <span className="t-micro label">Ownership interest</span>
               <p className="t-body">
                 Contribution-weighted, from {v.ladder.minimumInvestmentBps / 100}% in{" "}
@@ -455,6 +593,7 @@ export function PropertySurface({ slug }: { slug: string }) {
               </p>
             </div>
             <div>
+              {v.entitlement ? <NightPool min={v.entitlement.nightPoolMin} max={v.entitlement.nightPoolMax} /> : null}
               <span className="t-micro label">Time entitlement</span>
               <p className="t-body">
                 {v.entitlement
@@ -463,6 +602,7 @@ export function PropertySurface({ slug }: { slug: string }) {
               </p>
             </div>
             <div>
+              {v.governance ? <Threshold bps={v.governance.ordinaryBps} /> : null}
               <span className="t-micro label">Decision rights</span>
               <p className="t-body">
                 {v.governance
@@ -583,6 +723,17 @@ export function PropertySurface({ slug }: { slug: string }) {
             Twenty-five placeholders said the same thing twenty-five times
             and made the absence the loudest thing on the page.
           */}
+          {/* ONWARD. Every other chapter ends with the way to the next one;
+              this one had the tab bar instead. The first tab now points
+              here, so the way on is said here. */}
+          {onward ? (
+            <p className="chapter-onward">
+              <Link className="btn" href={chapterHref(v.slug, onward)}>
+                {onward.n ? `${onward.n} · ` : ""}{onward.label} &rarr;
+              </Link>
+            </p>
+          ) : null}
+
           {gap.filled < gap.declared ? (
             <p className="t-body-s dim measure prop-gap-l">
               Photography and drawings for this property are being produced. {gap.declared} frames
