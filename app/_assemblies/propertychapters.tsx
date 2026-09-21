@@ -21,6 +21,19 @@ import { LIFECYCLE_LABEL, stanceFor, vehicleBySlug } from "@/constants/vehicles"
 import { chapterContent } from "./propertychapter";
 import { UnitSet } from "./unitplate";
 
+/**
+ * The chapters that assert rather than narrate, and therefore take paper.
+ *
+ * The system's own rule, from the note beside `.on-paper`: void for
+ * narrative, paper for financial assertion. Ownership, The Investment and
+ * Risk are where a reader stops reading and starts checking, and the
+ * ground says so before the content does.
+ *
+ * Enquire stays void deliberately. It is the one surface where nothing is
+ * being asserted at all.
+ */
+const ASSERTION = new Set<ChapterId>(["ownership", "investment", "risk"]);
+
 /** Which chapter a generated page is, from the path it was generated for. */
 function chapterForPath(path: string): Chapter | undefined {
   const suffix = path.replace("/collection/[vehicle]", "");
@@ -80,7 +93,10 @@ export function ChapterSurface({ path, param }: { path: string; param: string })
   const stance = stanceFor(v);
 
   return (
-    <main className="chapter" data-chapter={chapter.id}>
+    <main
+      className={`chapter${ASSERTION.has(chapter.id) ? " on-paper" : ""}`}
+      data-chapter={chapter.id}
+    >
       <header className="chapter-head">
         <div className="wrap">
           <p className="chapter-crumb t-micro">

@@ -99,7 +99,7 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChapterNav, ChapterSurface } from "./propertychapters";
+import { ChapterSurface } from "./propertychapters";
 import {
   PROPERTY_PAGES, SPINE, SPINE_TABS, EVIDENCE_TIERS, mediaGap,
   type MediaSlot, type PropertyPage, type SectionId,
@@ -341,13 +341,28 @@ export function PropertySurface({ slug }: { slug: string }) {
         </div>
       </section>
 
-      {/* ── THE EIGHT CHAPTERS ─────────────────────────────────────
-          Between the properties' nine surfaces. The spine below is a
-          table of contents for THIS page; this is the way off it, and
-          until now there was not one. */}
-      <ChapterNav slug={v.slug} current="opportunity" />
+      {/* TWO TAB BARS STOOD HERE. The chapter nav and the spine below it
+          were the same width, the same weight and one above the other, and
+          they named the same content differently — "The Place" over
+          "Place", "Ownership" over "Vehicle". One navigated and one
+          scrolled, which a reader cannot tell by looking.
 
-      {/* ── SPINE ──────────────────────────────────────────────── */}
+          The spine wins on this page because this page is the thing it
+          indexes. The chapters are reached from the foot of the page and
+          from the chapter pages themselves, where the nav is the only bar
+          on screen and means one thing. */}
+
+      {/* ── SPINE ──────────────────────────────────────────────────
+          THE GROUND CHANGES ONCE, AND IT CHANGES HERE-ish. Measured before
+          it was touched: the page ran 11.9 screens and the first thing
+          that was not void began 7.8 screens down, so a reader met nearly
+          eight unbroken screens of one ground. The system has two and was
+          using one of them for three quarters of its longest page.
+
+          Spaces and Materials now take paper with Vehicle and Evidence, so
+          the page turns once — out of the place and its architecture, into
+          the specification and the vehicle. That is the argument the page
+          is already making, and the ground now makes it too. */}
       <nav className="prop-spine" aria-label="This property">
         <div className="wrap">
           <ul>
@@ -493,7 +508,7 @@ export function PropertySurface({ slug }: { slug: string }) {
           One chapter per space: its name, one enormous picture, one
           statement, then the gallery. FB-2 holds because every full-bleed
           picture is followed at once by a bounded block of words. */}
-      <section id="spaces" className="prop-sec" data-sec="AS-PROP.spaces">
+      <section id="spaces" className="prop-sec on-paper" data-sec="AS-PROP.spaces">
         <div className="wrap">
           <h2 className="t-heading">
             Each space has a job.<br />
@@ -530,7 +545,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       </section>
 
       {/* ── MATERIAL PALETTE ───────────────────────────────────── */}
-      <section id="materials" className="prop-sec prop-ch prop-sec-ruled" data-sec="AS-PROP.materials">
+      <section id="materials" className="prop-sec on-paper prop-ch prop-sec-ruled" data-sec="AS-PROP.materials">
         <div className="wrap">
           <h2 className="prop-titan-m">{spineLabel("materials")}</h2>
           <p className="prop-say">The house is composed, not decorated.</p>
