@@ -44,6 +44,7 @@ import {
 import { estateOf, ARCHITECTURAL_LANGUAGE } from "@/constants/spatial";
 import { IrisPanel } from "./iris";
 import { Footer } from "./atoms";
+import { GatedLink } from "./gatedlink";
 
 /* ── A declared frame ─────────────────────────────────────────────── */
 /**
@@ -469,7 +470,7 @@ export function PropertySurface({ slug }: { slug: string }) {
           </h2>
           <div className="row" style={{ marginTop: "var(--gc-sp-m)" }}>
             <Link className="btn primary" href="/contact">Request private materials</Link>
-            <Link className="btn" href="/invest/qualify">Speak with the Collective</Link>
+            <GatedLink className="btn" href="/invest/qualify">Speak with the Collective</GatedLink>
           </div>
           <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-m)" }}>
             Capital is at risk. Any specific opportunity is governed by its applicable private

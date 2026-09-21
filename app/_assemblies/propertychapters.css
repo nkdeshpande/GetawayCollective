@@ -106,3 +106,21 @@
 @media (max-width: 720px) {
   .chapter-rows > div { grid-template-columns: 1fr; gap: var(--gc-sp-3xs); }
 }
+
+/* ── Gated links — REM-009 ───────────────────────────────────────── */
+/* The requirement sits beside the label, quieter than it but never
+   hidden. Colour is not the carrier: the words say it. */
+.gated-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--gc-sp-2xs);
+  flex-wrap: wrap;
+}
+.gated-link.stacked { flex-direction: column; gap: var(--gc-sp-3xs); }
+.gated-note {
+  color: var(--gc-steel-dim);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.gated-note::before { content: "· "; }
+.gated-link.stacked .gated-note::before { content: none; }

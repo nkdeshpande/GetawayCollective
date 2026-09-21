@@ -20,6 +20,7 @@ import {
   inr, rate, fractionPrice, toSlug, plate, type Property,
 } from "./data";
 import { ConfidenceTag, Pct, Hero, Footer } from "./atoms";
+import { GatedLink } from "./gatedlink";
 
 /* ═══════════════════════════════════════════════════════════════════
    AS-01 · THE GATEWAY GRID
@@ -278,9 +279,9 @@ export function PropertyMasthead({ p }: { p: Property }) {
                 qualifying (INV-090), not by following a link. Pointing at
                 the gate is the honest destination; pointing at a vehicle's
                 accredited pages would 403 whoever clicked it. */}
-            <Link className="btn" href="/invest/qualify" style={{ marginTop: "var(--gc-sp-s)" }}>
+            <GatedLink className="btn" href="/invest/qualify">
               Open the console →
-            </Link>
+            </GatedLink>
           </div>
 
           <div role="tabpanel" id="lp-time" aria-labelledby="lt-time" hidden={lens !== "time"}>

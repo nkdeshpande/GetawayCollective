@@ -385,7 +385,13 @@ export const REMEDIATION: readonly RemediationItem[] = [
     ],
     reviewType: "code",
     dependencies: [],
-    status: "OPEN",
+    /* Closed 21 Sep 2026. app/_assemblies/gatedlink.tsx reads the
+       requirement from requiredAccess() and states it at the link;
+       scripts/gate-lint.js fails the build on a public surface that
+       links into a gated route without it. Four crossings were found
+       and fixed: /invest/qualify three times, /portfolio once, which is
+       exactly what the audit named. */
+    status: "RESOLVED",
   }),
 
   R({

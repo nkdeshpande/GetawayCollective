@@ -161,3 +161,80 @@ function parseRoutesSource(source) {
 }
 
 module.exports = { parseRoutesSource, scanCalls, splitTopLevel };
+
+/* ── Access derivation, shared ─────────────────────────────────────────
+ *
+ * Added 21 Sep 2026 for REM-009. The vantage → access derivation was
+ * written out longhand in gen-app.js, gen-ia-map.js, public-law-lint.js
+ * and route-lint.js — four copies of a rule this repo keeps saying should
+ * live in one place. This is a fifth implementation only until those four
+ * adopt it; it is deliberately identical to route-lint.js, which is the
+ * one that checks the derivation against lib/access.ts.
+ */
+
+const ACCESS_FOR_VANTAGE = {
+  gateway: "public", space: "public", time: "member",
+  member: "member", capital: "office", admin: "office",
+};
+const GROUP_VANTAGE = {
+  gateway: "gateway", space: "space", capital: "capital",
+  time: "time", member: "member", admin: "admin",
+};
+const ACCESS_RANK = { public: 0, identified: 1, accredited: 2, member: 3, office: 4 };
+
+/** Assembly id → vantage, read from constants/assemblies.ts source. */
+function assemblyVantages(assembliesSource) {
+  const out = new Map();
+  for (const m of assembliesSource.matchAll(/export const \w+: Assembly = \{([\s\S]*?)\n\};/g)) {
+    const id = (m[1].match(/\bid:\s*"([^"]+)"/) || [])[1];
+    const v = (m[1].match(/\bvantage:\s*"([^"]+)"/) || [])[1];
+    if (id && v) out.set(id, v);
+  }
+  return out;
+}
+
+/** The access one route requires. Mirrors requiredAccess() in lib/access.ts. */
+function accessOf(route, vantages) {
+  if (route.override) return route.override;
+  const v = (route.assembly && vantages.get(route.assembly)) || GROUP_VANTAGE[route.group];
+  return ACCESS_FOR_VANTAGE[v];
+}
+
+/**
+ * path → access, with dynamic segments matched.
+ *
+ * `/collection/slowspace-coastal/enquire` has to resolve to the route
+ * `/collection/[vehicle]/enquire`, or every link carrying a real slug
+ * reads as an unknown path — which would render a gated link as an open
+ * one, silently, which is the exact defect REM-009 is about.
+ */
+function accessResolver(routesSource, assembliesSource) {
+  const vantages = assemblyVantages(assembliesSource);
+  const table = parseRoutesSource(routesSource).map((r) => ({
+    path: r.path,
+    access: accessOf(r, vantages),
+    re: new RegExp(`^${r.path.replace(/\[[^\]]+\]/g, "[^/]+").replace(/\//g, "\/")}$`),
+    segments: r.path.split("/").length,
+    literal: !r.path.includes("["),
+  }));
+  return (pathname) => {
+    const clean = pathname.split("?")[0].split("#")[0].replace(/\/$/, "") || "/";
+    const exact = table.find((t) => t.literal && t.path === clean);
+    if (exact) return exact.access;
+    /* A literal route always beats a dynamic one, and among dynamic ones
+       the longest wins — otherwise /collection/[vehicle] would swallow
+       /collection/[vehicle]/risk. */
+    const hit = table
+      .filter((t) => t.segments === clean.split("/").length && t.re.test(clean))
+      .sort((a, b) => Number(a.literal) - Number(b.literal))
+      .pop();
+    return hit ? hit.access : null;
+  };
+}
+
+module.exports.ACCESS_FOR_VANTAGE = ACCESS_FOR_VANTAGE;
+module.exports.GROUP_VANTAGE = GROUP_VANTAGE;
+module.exports.ACCESS_RANK = ACCESS_RANK;
+module.exports.assemblyVantages = assemblyVantages;
+module.exports.accessOf = accessOf;
+module.exports.accessResolver = accessResolver;

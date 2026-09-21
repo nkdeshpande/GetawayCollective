@@ -12,6 +12,7 @@ import Link from "next/link";
 import {
   CONFIDENCE_LABEL, PROVISIONAL, type Confidence, plate,
 } from "./data";
+import { GatedLink } from "./gatedlink";
 
 /**
  * A forward-looking figure rendered identically to a settled one is the
@@ -152,7 +153,7 @@ export function Footer() {
             <h4>Capital</h4>
             <Link href="/how-it-works">How it works</Link>
             <Link href="/legal/risk-disclosure">Risk disclosure</Link>
-            <Link href="/invest/qualify">Qualification</Link>
+            <GatedLink href="/invest/qualify">Qualification</GatedLink>
           </div>
           <div>
             <h4>Legal</h4>
@@ -167,7 +168,7 @@ export function Footer() {
             {/* States the gate at the link. Following this used to end in
                 a bare refusal — correct behaviour, discovered the wrong
                 way round. */}
-            <Link href="/portfolio">Portfolio · private</Link>
+            <GatedLink href="/portfolio">Portfolio</GatedLink>
           </div>
         </div>
       </div>
