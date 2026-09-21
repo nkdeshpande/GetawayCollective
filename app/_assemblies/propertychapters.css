@@ -117,6 +117,13 @@
   flex-wrap: wrap;
 }
 .gated-link.stacked { flex-direction: column; gap: var(--gc-sp-3xs); }
+/* In the footer map every link is `display:block` (.foot-map a), which beat
+   the inline-flex above and left a nowrap note on the same line as its label
+   with no break between them: at phone width "Qualification · SIGN-IN
+   REQUIRED" ran 33px past the screen and gave the whole page a sideways
+   scroll (PUBLIC.06). Found 21 Sep 2026 while rebuilding the property page.
+   Restoring flex lets the note wrap under the label, as REM-009 intended. */
+.foot-map a.gated-link { display: flex; }
 .gated-note {
   color: var(--gc-steel-dim);
   letter-spacing: 0.06em;

@@ -19,16 +19,56 @@
  * ── THE PAGE STATES WHAT IT CANNOT SHOW ──────────────────────────────
  * Two things are missing and both are declared rather than hidden.
  *
- * Media: every frame is a declared slot with a subject and a kind, and
- * renders as a labelled placeholder until an asset is registered. The
- * page footer counts them, so "we need photography" is a numbered brief
- * rather than an intention.
+ * Media: every frame is a declared slot with a subject and a kind. An
+ * unproduced one renders nothing (PUBLIC.08) and the page footer counts
+ * them, so "we need photography" is a numbered brief rather than an
+ * intention.
  *
  * Publication: two of the three vehicles carry blocking conflicts, and a
  * page for one of those does not show a yield, a unit price or a
  * subscription state. It shows what is settled and says the rest is being
  * reconciled. That is `publishable()` reaching the surface, which is the
  * only place a gate of that kind is worth anything.
+ *
+ * ── REBUILT 21 SEP 2026: THE PICTURE LEADS ───────────────────────────
+ * Founder instruction: rebuild this page on the pattern of a NOT A HOTEL
+ * property page. Measured, that pattern is: a full-viewport opening that
+ * carries a NAME and one line; then a run of chapters, each a short
+ * heading, one enormous untreated picture, a few sentences and a
+ * horizontal gallery; then the inspection material, bounded.
+ *
+ * GC canon already has a lawful home for every part of it (Addendum A,
+ * § E): FB-01 the full-bleed hero, FB-02 the edge-to-edge gallery scroll,
+ * FB-1 "full-bleed only where no figure is being read" and FB-2 "never
+ * more than three viewport-heights before a bounded layout returns". So
+ * this is that structure in GC's own voice — Outfit at weight 200, zero
+ * radius, hairlines, low and left — and not an imitation of theirs.
+ *
+ * Three things changed, and one deliberately did not:
+ *
+ *   1. GROUND. The whole page was paper. It is now void for the
+ *      narrative and paper for the financial assertion, which is what the
+ *      token file has always said the two grounds are for. The ground is
+ *      set with .on-paper rather than by hand, so .dim, .label, .btn and
+ *      .money resolve for the ground they are actually on. (They did
+ *      not: .dim on the hand-set paper ground was 2.5:1.)
+ *
+ *   2. THE NAME IS THE TITLE. The h1 was the nine-word headline. On a
+ *      picture that is too many words, and the registry's own note says
+ *      six. The h1 is now the property's registered name, read from
+ *      constants/vehicles.ts; the headline follows it on the ground,
+ *      unchanged, as the first thing the page says.
+ *
+ *   3. NOTHING RIDES ON A PICTURE but that name and its one line. The
+ *      actions moved under the hero. The kind-and-date caption moved from
+ *      over each frame to beneath it: still attached to every frame, as
+ *      the wireframe requires, and no longer printed across it.
+ *
+ *   NOT CHANGED: a word of the authored copy, a figure, a link, a gate,
+ *   the order of the argument, or PUBLIC.08. With no frame produced yet
+ *   the page is typographic, and takes no space for what it cannot show.
+ *   Each frame that is registered drops into a full-bleed slot that is
+ *   already built for it.
  */
 
 import Link from "next/link";
@@ -36,7 +76,7 @@ import { notFound } from "next/navigation";
 import { ChapterNav, ChapterSurface } from "./propertychapters";
 import {
   PROPERTY_PAGES, SPINE, EVIDENCE_TIERS, mediaGap,
-  type MediaSlot, type PropertyPage,
+  type MediaSlot, type PropertyPage, type SectionId,
 } from "@/constants/property-page";
 import {
   vehicleByKey, vehicleBySlug, publishable, waterfallState, BUILD_LABEL, TENURE_LABEL,
@@ -46,15 +86,10 @@ import { IrisPanel } from "./iris";
 import { Footer } from "./atoms";
 import { GatedLink } from "./gatedlink";
 
+/** What a frame is, and when. The wireframe's instruction: on every frame. */
+const provenance = (m: MediaSlot) => `${m.kind}${m.taken ? ` · ${m.taken}` : ""}`;
+
 /* ── A declared frame ─────────────────────────────────────────────── */
-/**
- * The placeholder is deliberately plain and deliberately labelled.
- *
- * A blurred stock image or a gradient would read as a design choice and
- * quietly become permanent. A box that says what belongs there, what kind
- * of image it is and that it has not been made yet stays uncomfortable,
- * which is the correct amount of comfortable.
- */
 function Frame({ m, className = "" }: { m: MediaSlot; className?: string }) {
   /*
    * PUBLIC.08. An unproduced frame renders NOTHING.
@@ -76,13 +111,33 @@ function Frame({ m, className = "" }: { m: MediaSlot; className?: string }) {
     <figure className={`pf ${className}`} data-aspect={m.aspect}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={m.asset} alt={m.subject} />
-      {/* The wireframe's own instruction: kind and date on every frame. */}
-      <figcaption className="t-micro dim">
-        {m.kind}{m.taken ? ` · ${m.taken}` : ""}
-      </figcaption>
+      {/* Kind and date on every frame — under it, never across it. */}
+      <figcaption className="t-micro dim">{provenance(m)}</figcaption>
     </figure>
   );
 }
+
+/* ── FB-02 · the gallery scroll ───────────────────────────────────── */
+/**
+ * Horizontal, edge to edge, no gutters, and only ever pictures — canon
+ * forbids it for a list of financial objects. It renders the frames that
+ * exist and nothing for the ones that do not, so an empty reel is no reel.
+ *
+ * It is a labelled, focusable region: a scrolling strip that cannot take
+ * focus is unreachable from a keyboard.
+ */
+function Reel({ frames, label }: { frames: readonly MediaSlot[]; label: string }) {
+  const made = frames.filter((m) => m.asset);
+  if (made.length === 0) return null;
+  return (
+    <div className="prop-reel prop-bleed" role="group" aria-label={label} tabIndex={0}>
+      {made.map((m) => <Frame key={m.id} m={m} />)}
+    </div>
+  );
+}
+
+/** A chapter takes its heading from the spine, so the two cannot disagree. */
+const spineLabel = (id: SectionId) => SPINE.find((s) => s.id === id)?.label ?? "";
 
 export function PropertySurface({ slug }: { slug: string }) {
   const page: PropertyPage | undefined = PROPERTY_PAGES.find(
@@ -127,27 +182,45 @@ export function PropertySurface({ slug }: { slug: string }) {
      * double-title defect assemblies.css was written to stop.
      */
     <div className="prop">
-      {/* ── HERO ───────────────────────────────────────────────── */}
+      {/* ── HERO · FB-01 ────────────────────────────────────────── */}
       <section className="prop-hero p-hero-own" data-sec="AS-PROP.hero">
-        <Frame m={page.hero} className="prop-hero-img" />
-        <div className="prop-hero-in">
-          <span className="t-micro label">{page.eyebrow}</span>
-          <h1 className="t-display-l">{page.headline}</h1>
-          {/*
-            PUBLIC.03. This read "Land acquired" for any vehicle whose
-            lifecycle was "acquired" — a word typed beside the record
-            rather than derived from it, over land whose title was
-            unverified. Both axes are now canonical values with canonical
-            labels, and the hero renders them rather than wording them.
-          */}
-          <p className="t-body-l dim">
-            {v.jurisdiction} · {BUILD_LABEL[v.buildStage]}
-            {v.tenure ? ` · ${TENURE_LABEL[v.tenure]}` : ""}
-          </p>
+        {/*
+          THE PLATE. Full viewport, and it runs under the header and the
+          rail, which the shell keeps transparent while a hero is in view.
+          On it: the eyebrow, the name, one line. Nothing else — no
+          action, no paragraph, and nothing laid over the picture to make
+          the words readable.
+        */}
+        <div className="prop-plate prop-bleed" data-filled={page.hero.asset ? "1" : "0"}>
+          {page.hero.asset ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img className="prop-plate-img" src={page.hero.asset} alt={page.hero.subject} />
+          ) : null}
+          <div className="prop-plate-in">
+            <span className="t-micro">{page.eyebrow}</span>
+            <h1 className="prop-titan">{v.propertyName}</h1>
+            {/*
+              PUBLIC.03. This read "Land acquired" for any vehicle whose
+              lifecycle was "acquired" — a word typed beside the record
+              rather than derived from it, over land whose title was
+              unverified. Both axes are now canonical values with canonical
+              labels, and the hero renders them rather than wording them.
+            */}
+            <p className="t-body-l">
+              {v.jurisdiction} · {BUILD_LABEL[v.buildStage]}
+              {v.tenure ? ` · ${TENURE_LABEL[v.tenure]}` : ""}
+            </p>
+          </div>
+        </div>
+
+        {/* THE FOOT. What the hero has to say beyond a name, on the ground. */}
+        <div className="wrap prop-hero-foot">
+          <p className="prop-say">{page.headline}</p>
           <div className="row">
             <Link className="btn" href="#opening">Explore the property ↓</Link>
             <Link className="btn primary" href="/contact">Request materials</Link>
           </div>
+          {page.hero.asset ? <p className="t-micro dim">{provenance(page.hero)}</p> : null}
         </div>
       </section>
 
@@ -172,11 +245,11 @@ export function PropertySurface({ slug }: { slug: string }) {
       {/* ── OPENING NOTE ───────────────────────────────────────── */}
       <section id="opening" className="prop-sec" data-sec="AS-PROP.opening">
         <div className="wrap">
-          <h2 className="t-display-m">
+          <h2 className="t-display-xl">
             {page.openingTitle[0]}<br />
             <em>{page.openingTitle[1]}</em>
           </h2>
-          <p className="t-body-l measure" style={{ marginTop: "var(--gc-sp-m)" }}>{page.opening}</p>
+          <p className="t-body-l measure prop-gap-m">{page.opening}</p>
 
           <div className="prop-strip">
             <div>
@@ -197,7 +270,7 @@ export function PropertySurface({ slug }: { slug: string }) {
       </section>
 
       {/* ── THE PEOPLE BEHIND IT ───────────────────────────────── */}
-      <section className="prop-sec on-panel" data-sec="AS-PROP.authors">
+      <section className="prop-sec prop-sec-ruled" data-sec="AS-PROP.authors">
         <div className="wrap">
           <h2 className="t-heading">
             A property is a series of decisions.<br />
@@ -205,7 +278,7 @@ export function PropertySurface({ slug }: { slug: string }) {
           </h2>
           <div className="prop-authors">
             {["Architectural author", "Land and delivery author"].map((role) => (
-              <article key={role} className="panel on-paper">
+              <article key={role} className="prop-author">
                 <span className="t-micro label">{role}</span>
                 {/* Withheld rather than invented. An appointment is a
                     recorded act, and naming somebody before it exists
@@ -214,20 +287,21 @@ export function PropertySurface({ slug }: { slug: string }) {
               </article>
             ))}
           </div>
-          <p className="t-body dim measure" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <p className="t-body dim measure prop-gap-m">
             Authorship is not branding. It is accountability for the brief.
           </p>
         </div>
       </section>
 
       {/* ── THE SITE ───────────────────────────────────────────── */}
-      <section id="site" className="prop-sec" data-sec="AS-PROP.site">
+      <section id="site" className="prop-sec prop-ch" data-sec="AS-PROP.site">
         <div className="wrap">
-          <Frame m={page.siteImage} />
-          <h2 className="t-heading" style={{ marginTop: "var(--gc-sp-l)" }}>
-            The landscape sets the terms.
-          </h2>
-          <p className="t-body-l measure" style={{ marginTop: "var(--gc-sp-s)" }}>{page.siteNote}</p>
+          <h2 className="prop-titan-m">{spineLabel("site")}</h2>
+        </div>
+        <Frame m={page.siteImage} className="prop-bleed" />
+        <div className="wrap">
+          <p className="prop-say">The landscape sets the terms.</p>
+          <p className="t-body-l measure prop-gap-s">{page.siteNote}</p>
 
           <div className="prop-strip">
             <div>
@@ -244,47 +318,55 @@ export function PropertySurface({ slug }: { slug: string }) {
             </div>
           </div>
 
-          <div className="kv" style={{ marginTop: "var(--gc-sp-m)" }}>
-            <span className="label t-micro">Land</span>
-            <span className="v t-mono-s">{v.landArea}</span>
-          </div>
-          {v.coordinates ? (
+          <div className="prop-gap-m">
             <div className="kv">
-              <span className="label t-micro">Coordinates</span>
-              <span className="v t-mono-s">{v.coordinates}</span>
+              <span className="label t-micro">Land</span>
+              <span className="v t-mono-s">{v.landArea}</span>
             </div>
-          ) : null}
-          <div className="kv">
-            <span className="label t-micro">Keys</span>
-            <span className="v t-mono-s">{v.keys}</span>
+            {v.coordinates ? (
+              <div className="kv">
+                <span className="label t-micro">Coordinates</span>
+                <span className="v t-mono-s">{v.coordinates}</span>
+              </div>
+            ) : null}
+            <div className="kv">
+              <span className="label t-micro">Keys</span>
+              <span className="v t-mono-s">{v.keys}</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── ARCHITECTURAL INTENT ───────────────────────────────── */}
-      <section id="architecture" className="prop-sec on-panel" data-sec="AS-PROP.architecture">
+      <section id="architecture" className="prop-sec prop-ch" data-sec="AS-PROP.architecture">
+        <div className="wrap">
+          <h2 className="prop-titan-m">{spineLabel("architecture")}</h2>
+        </div>
+        <Frame m={page.exterior} className="prop-bleed" />
         <div className="wrap">
           <div className="prop-intent">
-            <Frame m={page.exterior} />
             <div>
               <span className="t-micro label">Mass</span>
-              <p className="t-body measure">{page.mass}</p>
-              <span className="t-micro label" style={{ marginTop: "var(--gc-sp-m)", display: "block" }}>
-                Light
-              </span>
-              <p className="t-body measure">{page.light}</p>
+              <p className="t-body-l measure">{page.mass}</p>
+            </div>
+            <div>
+              <span className="t-micro label">Light</span>
+              <p className="t-body-l measure">{page.light}</p>
             </div>
           </div>
-          <div className="prop-pair">
-            {page.architectureFrames.map((m) => <Frame key={m.id} m={m} />)}
-          </div>
-          <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-s)" }}>
+        </div>
+        <Reel frames={page.architectureFrames} label={spineLabel("architecture")} />
+        <div className="wrap">
+          <p className="t-body-s dim prop-gap-s">
             Image kind and date remain attached to every frame.
           </p>
         </div>
       </section>
 
-      {/* ── THE SPACES ─────────────────────────────────────────── */}
+      {/* ── THE SPACES ─────────────────────────────────────────────
+          One chapter per space: its name, one enormous picture, one
+          statement, then the gallery. FB-2 holds because every full-bleed
+          picture is followed at once by a bounded block of words. */}
       <section id="spaces" className="prop-sec" data-sec="AS-PROP.spaces">
         <div className="wrap">
           <h2 className="t-heading">
@@ -294,65 +376,66 @@ export function PropertySurface({ slug }: { slug: string }) {
         </div>
 
         {page.chapters.map((c, i) => (
-          <article key={c.name} className="prop-chapter">
-            <div className="wrap">
-              <Frame m={c.dominant} />
-              <div className="prop-chapter-head">
-                <div>
-                  <span className="t-micro label">{c.name}</span>
-                  <p className="t-body-l measure">{c.statement}</p>
-                </div>
-                <span className="t-mono-s dim">
-                  {String(i + 1).padStart(2, "0")} / {String(page.chapters.length).padStart(2, "0")}
-                </span>
-              </div>
-              <div className="prop-triad">
-                {c.supporting.map((m) => <Frame key={m.id} m={m} />)}
-              </div>
+          <article key={c.name} className="prop-chapter prop-ch">
+            <div className="wrap prop-chapter-head">
+              <h3 className="prop-titan-m">{c.name}</h3>
+              <span className="t-mono-s dim">
+                {String(i + 1).padStart(2, "0")} / {String(page.chapters.length).padStart(2, "0")}
+              </span>
             </div>
+            <Frame m={c.dominant} className="prop-bleed" />
+            <div className="wrap">
+              <p className="prop-note">{c.statement}</p>
+            </div>
+            <Reel frames={c.supporting} label={c.name} />
           </article>
         ))}
       </section>
 
       {/* ── MATERIAL PALETTE ───────────────────────────────────── */}
-      <section id="materials" className="prop-sec on-panel" data-sec="AS-PROP.materials">
+      <section id="materials" className="prop-sec prop-ch prop-sec-ruled" data-sec="AS-PROP.materials">
         <div className="wrap">
-          <h2 className="t-heading">The house is composed, not decorated.</h2>
+          <h2 className="prop-titan-m">{spineLabel("materials")}</h2>
+          <p className="prop-say">The house is composed, not decorated.</p>
+        </div>
+        <Reel frames={page.palette.map((m) => m.slot)} label={spineLabel("materials")} />
+        <div className="wrap">
           <div className="prop-palette">
             {page.palette.map((m) => (
               <article key={m.material}>
-                <Frame m={m.slot} />
-                <span className="t-micro label" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                  {m.material}
-                </span>
+                <span className="t-heading">{m.material}</span>
                 <p className="t-body-s dim">{m.role}</p>
               </article>
             ))}
           </div>
 
-          <div className="panel on-paper" style={{ marginTop: "var(--gc-sp-l)" }}>
+          <div className="panel prop-gap-l">
             <span className="t-micro label">One system, three climates</span>
-            <ul className="t-body-s" style={{ marginTop: "var(--gc-sp-2xs)", paddingLeft: "1.1em" }}>
+            <ul className="t-body-s prop-list">
               {ARCHITECTURAL_LANGUAGE.map((a) => <li key={a}>{a}</li>)}
             </ul>
           </div>
 
-          <p className="t-body dim" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <p className="t-body dim prop-gap-m">
             Material specification is released with the private materials.
           </p>
-          <Link className="btn" href="/contact">Request the design materials →</Link>
+          <Link className="btn prop-gap-s" href="/contact">Request the design materials →</Link>
         </div>
       </section>
 
-      {/* ── THE VEHICLE ────────────────────────────────────────── */}
-      <section id="vehicle" className="prop-sec" data-sec="AS-PROP.vehicle">
+      {/* ── THE VEHICLE ────────────────────────────────────────────
+          FB-1. A figure is about to be read, so the layout returns to a
+          bounded one and the ground turns to paper: void is for the
+          narrative, paper is for the financial assertion. */}
+      <section id="vehicle" className="prop-sec on-paper" data-sec="AS-PROP.vehicle">
         <div className="wrap">
-          <h2 className="t-heading">
+          <h2 className="prop-titan-m">{spineLabel("vehicle")}</h2>
+          <p className="prop-say">
             Beauty is not the whole proposition.<br />
             <em>The property must also have a clear legal and financial home.</em>
-          </h2>
+          </p>
 
-          <div className="prop-grid" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <div className="prop-grid prop-gap-m">
             <div>
               <span className="t-micro label">One property</span>
               <p className="t-body">{v.propertyName} · {v.assetCode}</p>
@@ -426,35 +509,36 @@ export function PropertySurface({ slug }: { slug: string }) {
               ) : null}
             </div>
           ) : (
-            <div className="panel on-panel prop-hold" style={{ marginTop: "var(--gc-sp-m)" }}>
+            <div className="panel on-paper prop-hold prop-gap-m">
               <span className="t-micro label">Figures are being reconciled</span>
-              <p className="t-body measure" style={{ marginTop: "var(--gc-sp-2xs)" }}>
+              <p className="t-body measure prop-gap-2xs">
                 This vehicle&rsquo;s source documents disagree on the points below. Nothing
                 financial is shown here until they agree, because a figure that renders cleanly
                 is the hardest kind to doubt.
               </p>
-              <ul className="t-body-s" style={{ marginTop: "var(--gc-sp-2xs)", paddingLeft: "1.1em" }}>
+              <ul className="t-body-s prop-list">
                 {gate.because.map((b) => <li key={b}>{b}</li>)}
               </ul>
             </div>
           )}
 
-          <Link className="btn" href="/how-it-works" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <Link className="btn prop-gap-m" href="/how-it-works">
             Understand space, time, capital and governance →
           </Link>
         </div>
       </section>
 
       {/* ── EVIDENCE ───────────────────────────────────────────── */}
-      <section id="evidence" className="prop-sec on-panel" data-sec="AS-PROP.evidence">
+      <section id="evidence" className="prop-sec on-paper prop-sec-ruled" data-sec="AS-PROP.evidence">
         <div className="wrap">
-          <h2 className="t-heading">What can be read now?</h2>
-          <div className="stack" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <h2 className="prop-titan-m">{spineLabel("evidence")}</h2>
+          <p className="prop-say">What can be read now?</p>
+          <div className="prop-tiers prop-gap-m">
             {EVIDENCE_TIERS.map((t) => (
-              <div key={t.tier} className="panel on-paper prop-tier">
+              <div key={t.tier} className="prop-tier">
                 <div>
                   <span className="t-micro label">{t.tier}</span>
-                  <p className="t-body">{t.holds}</p>
+                  <p className="t-body-l">{t.holds}</p>
                 </div>
                 {t.to ? (
                   <Link className="btn" href={t.to}>{t.action} →</Link>
@@ -467,29 +551,29 @@ export function PropertySurface({ slug }: { slug: string }) {
 
           {/* The brochure. Generated from the same registries as this page,
               so a downloaded document and the page cannot disagree. */}
-          <div className="panel on-paper" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <div className="panel on-paper prop-gap-m">
             <span className="t-micro label">Take it with you</span>
-            <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-3xs)" }}>
+            <p className="t-body-s dim prop-gap-3xs">
               A one-page summary, generated from the same records this page reads. It carries the
               same reconciliation notes.
             </p>
-            <a className="btn" href={`/api/brochure/${v.slug}`}>Download the brief</a>
+            <a className="btn prop-gap-s" href={`/api/brochure/${v.slug}`}>Download the brief</a>
           </div>
         </div>
       </section>
 
       {/* ── INVITATION ─────────────────────────────────────────── */}
-      <section className="prop-sec" data-sec="AS-PROP.invitation">
+      <section className="prop-sec prop-close" data-sec="AS-PROP.invitation">
         <div className="wrap">
-          <h2 className="t-display-m">
+          <h2 className="t-display-xl">
             If the place holds your attention,<br />
             <em>the material should hold up.</em>
           </h2>
-          <div className="row" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <div className="row prop-gap-m">
             <Link className="btn primary" href="/contact">Request private materials</Link>
             <GatedLink className="btn" href="/invest/qualify">Speak with the Collective</GatedLink>
           </div>
-          <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <p className="t-body-s dim measure prop-gap-m">
             Capital is at risk. Any specific opportunity is governed by its applicable private
             materials, not by this public property page.
           </p>
@@ -500,7 +584,7 @@ export function PropertySurface({ slug }: { slug: string }) {
             and made the absence the loudest thing on the page.
           */}
           {gap.filled < gap.declared ? (
-            <p className="t-body-s dim measure" style={{ marginTop: "var(--gc-sp-l)" }}>
+            <p className="t-body-s dim measure prop-gap-l">
               Photography and drawings for this property are being produced. {gap.declared} frames
               are commissioned and {gap.filled} are finished; the rest will appear here as they
               are made, each carrying what it is and when it was taken.
