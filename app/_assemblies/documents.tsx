@@ -24,11 +24,27 @@ import { Footer } from "./atoms";
 
 /* ── Shared ───────────────────────────────────────────────────────── */
 
+/**
+ * "2026-07-31" is how a database stores a date, not how a person reads one.
+ * On a legal document the in-force date is the single most consequential
+ * fact in the header, so it is written the way it would be in a contract.
+ */
+function readableDate(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  return Number.isNaN(d.getTime())
+    ? iso
+    : d.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+}
+
 function DocHead({ d }: { d: StandingDocument }) {
   return (
     <div className="sec-head" style={{ flexDirection: "column", alignItems: "flex-start", gap: "var(--gc-sp-2xs)" }}>
+      {/* REM-006: the identifier led the header, above the title. The
+          version and the in-force date are what a reader actually relies
+          on, so they lead; the document id stays — REM-016 is right that on
+          a legal page a citable reference earns its place — but last. */}
       <span className="sec-ref">
-        {d.id} · Version {d.version} · In force from {d.effective}
+        Version {d.version} · In force from {readableDate(d.effective)} · Ref. {d.id}
       </span>
       <h1 className="t-display-l">{d.title}</h1>
       <p className="t-body-l dim measure">{d.purpose}</p>

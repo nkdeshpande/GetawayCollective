@@ -521,7 +521,7 @@ const RISK_FACTORS: StandingDocument = {
               "financial returns are generated, and the principal risks that may affect your " +
               "investment.",
               "Every hospitality asset is different. Property-specific matters are disclosed " +
-              "within the individual Asset Record and the governing Vehicle Agreement."] },
+              "on that property's own page and in the governing Vehicle Agreement."] },
         { n: "A.2",
           p: ["Nothing contained within this platform constitutes personalised investment advice. " +
               "Investors should obtain independent legal, taxation and financial advice before " +

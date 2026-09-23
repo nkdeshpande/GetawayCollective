@@ -104,9 +104,29 @@ export function Footer() {
             <h3>Getaway Collective</h3>
             <p className="t-body-s dim">Governs the vehicles. Holds no equity in them.</p>
           </div>
+          {/* WAS "Coastal Collection I LLP · Holds the land title", on every
+              page that renders this footer. Corrected 23 Sep 2026, and it was
+              wrong twice over:
+
+              - No such entity exists. The register holds four LLPs — SlowSpace
+                Coastal, Solace Retreats, Coorg Coffee Creek and PV01
+                Aranthodu Water Estate — and none of them is called this. It
+                read like a real registered name because it was formatted as
+                one.
+              - "Holds the land title" is not true of any of them. Coastal and
+                Solace state no tenure at all, The Creek is in possession with
+                title unverified, and Wildwood's land is the sponsor's until a
+                lease is registered. A public statement about land title on a
+                capital-raising platform is exactly the claim that must come
+                from the record, and this one came from nowhere.
+
+              The triad itself is right and stays: it is how Governance Without
+              Ownership reaches every page. What the middle entity can truthfully
+              say, for all four, is that each property has its own LLP and that
+              the LLP belongs to its partners rather than to us. */}
           <div>
-            <h3>Coastal Collection I LLP</h3>
-            <p className="t-body-s dim">Holds the land title. Owned by its partners.</p>
+            <h3>One LLP per property</h3>
+            <p className="t-body-s dim">Owned by its partners, not by Getaway Collective.</p>
           </div>
           <div>
             <h3>Sensory Getaways</h3>
