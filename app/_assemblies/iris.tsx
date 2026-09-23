@@ -37,8 +37,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { IRIS_GREETING, IRIS_BOUNDARY } from "@/content/iris";
-import { CORPUS_SIZE } from "@/lib/ai/iris";
+import { IRIS_GREETING, IRIS_BOUNDARY, IRIS_STARTERS } from "@/content/iris";
 
 interface Reading {
   title: string;
@@ -73,9 +72,14 @@ export function IrisPanel({ vehicleSlug }: { vehicleSlug?: string }) {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [said, left]);
 
-  async function ask(e: React.FormEvent) {
+  function ask(e: React.FormEvent) {
     e.preventDefault();
-    const question = q.trim();
+    void send(q.trim());
+  }
+
+  /* One path for a typed question and a tapped one, so a starter is asked
+     exactly the way a person would have asked it. */
+  async function send(question: string) {
     if (!question || busy) return;
     setQ("");
     setSaid((s) => [...s, { who: "person", text: question }]);
@@ -147,10 +151,12 @@ export function IrisPanel({ vehicleSlug }: { vehicleSlug?: string }) {
     <aside className="iris" role="complementary" aria-label="IRIS">
       <div className="iris-head">
         <div>
-          <span className="t-micro label">IRIS · Relationship Intelligence</span>
-          <p className="t-body-s dim">
-            {CORPUS_SIZE.answers} approved answers · {CORPUS_SIZE.entries} Journal entries
-          </p>
+          {/* Was "IRIS · Relationship Intelligence" over "9 approved answers ·
+              13 Journal entries" — a product name, a category nobody uses,
+              and the size of a database. What a person needs from the top of
+              the panel is what they are talking to, in words. */}
+          <span className="t-micro label">IRIS</span>
+          <p className="t-body-s dim">Questions, answered from what we publish.</p>
         </div>
         <button className="btn" onClick={() => setOpen(false)} aria-label="Close IRIS">
           Close
@@ -161,10 +167,19 @@ export function IrisPanel({ vehicleSlug }: { vehicleSlug?: string }) {
         {said.length === 0 ? (
           <>
             <p className="t-body">{IRIS_GREETING}</p>
-            {/* Stated on open, not on refusal — see the header. */}
-            <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-              {IRIS_BOUNDARY}
-            </p>
+            {/* Something to tap before anything to read. Each is a question
+                the corpus answers, so the first tap is never a refusal. */}
+            <div className="iris-starters" role="group" aria-label="Questions to start with">
+              {IRIS_STARTERS.map((question) => (
+                <button key={question} type="button" className="iris-starter"
+                        onClick={() => void send(question)} disabled={busy}>
+                  {question}
+                </button>
+              ))}
+            </div>
+            {/* Still stated on open, not on refusal (UX-12) — one line now,
+                after the starters rather than ahead of them. */}
+            <p className="t-body-s dim iris-bound">{IRIS_BOUNDARY}</p>
           </>
         ) : null}
 
@@ -224,7 +239,7 @@ export function IrisPanel({ vehicleSlug }: { vehicleSlug?: string }) {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Ask about the model, the Collection or how ownership works"
+          placeholder="Ask about the properties, ownership or returns"
           aria-label="Ask IRIS a question"
           maxLength={500}
         />

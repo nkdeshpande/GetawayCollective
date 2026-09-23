@@ -53,3 +53,30 @@
 .atlas-claims{margin-top:var(--gc-sp-2xs);padding-left:1.1em}
 .atlas-claims li{margin-top:var(--gc-sp-2xs)}
 .atlas-prohibited{margin-top:var(--gc-sp-s);padding-top:var(--gc-sp-2xs);border-top:var(--gc-stroke-idle) solid var(--gc-hairline)}
+
+/* ── Starters — 23 Sep 2026 ──────────────────────────────────────────
+   Something to tap before anything to read. Hairline and zero-radius like
+   every other control here, so they read as the system's own questions
+   rather than as marketing chips. */
+.iris-starters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gc-sp-3xs);
+  margin-top: var(--gc-sp-s);
+}
+.iris-starter {
+  appearance: none;
+  text-align: left;
+  font: 400 14px/1.4 var(--gc-font-body);
+  color: var(--gc-fg);
+  background: transparent;
+  border: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  border-radius: var(--gc-radius);
+  padding: var(--gc-sp-2xs) var(--gc-sp-s);
+  cursor: pointer;
+  transition: border-color var(--gc-dur-fast) var(--gc-ease-shutter);
+}
+.iris-starter:hover,
+.iris-starter:focus-visible { border-color: var(--gc-fg); outline: none; }
+.iris-starter:disabled { opacity: 0.5; cursor: default; }
+.iris-bound { margin-top: var(--gc-sp-s); }

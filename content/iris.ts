@@ -44,15 +44,56 @@ export interface IrisAnswer {
   readonly source: { readonly label: string; readonly to: string };
 }
 
+/*
+ * REWRITTEN 23 Sep 2026, reported as "not good at all" — and it was not.
+ * The panel opened on two paragraphs about itself: what it could explain,
+ * where it answered from, what it would do when it could not, and four
+ * things it would never do "under a named authority". Everything a person
+ * came for sat below all of that.
+ *
+ * The principle underneath was right and is kept: UX-12 says the limits
+ * are stated on OPEN, not discovered on refusal. What changed is the order
+ * and the weight. The greeting is one sentence, the questions IRIS can
+ * actually answer come next as things to tap, and the boundary follows in
+ * one line — still visible before anyone asks anything, no longer the
+ * first thing they have to read.
+ */
 export const IRIS_GREETING =
-  "I can explain how Getaway Collective works, what the Collection holds, and how ownership and " +
-  "returns are structured. I answer from published material only — where I do not hold something, " +
-  "I will say so and take your details for a person to follow up.";
+  "Ask how Getaway Collective works — the properties, the ownership, the returns and the risks.";
 
 /** Stated before anything else, because AI-101 turns on it. */
 export const IRIS_BOUNDARY =
-  "I cannot give advice, recommend an investment, confirm eligibility or accept a commitment. " +
-  "Those are decisions a person takes, under a named authority.";
+  /* All four limits kept; "under a named authority" dropped. It was true
+     and it was the platform's governance vocabulary, which a visitor asking
+     their first question has no use for. */
+  "I answer from what we publish. I don't give advice, recommend an investment, confirm " +
+  "eligibility or accept a commitment — a person does those.";
+
+/**
+ * Four questions to start from, in the order a reader should meet them.
+ *
+ * Each is a phrase IRIS's own corpus answers, so a tap can never land on a
+ * refusal — tests/iris-panel.test.ts matches every one against
+ * `matchIris`. That is what replaced "9 approved answers · 13 Journal
+ * entries": the stat was there to set an honest expectation of scope, and
+ * four real questions set it better than a count of rows.
+ *
+ * Risk is on the list, and not last. A platform whose pages put how you
+ * lose money before they ask for anything should not hide the question in
+ * its assistant.
+ */
+export const IRIS_STARTERS: readonly string[] = [
+  /* NOT "What can I invest in?", which was the first draft and the wrong
+     one. The how-to-invest entry also carries "can i invest", out-scored
+     the Collection entry, and a person tapping for the list of properties
+     was told how qualification works. Caught by tapping it, not by the
+     tests — which checked the four starters reached four DIFFERENT answers,
+     not the RIGHT ones. They check the right ones now. */
+  "What properties are in the Collection?",
+  "How does ownership work?",
+  "What are the risks?",
+  "How do returns work?",
+];
 
 export const IRIS_REFUSAL =
   "I do not hold a published answer to that, and I will not guess at one. Leave an address and " +
