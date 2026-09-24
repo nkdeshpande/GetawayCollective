@@ -138,6 +138,12 @@ export const UFR: FieldDefinition[] = [
   F({ ufr: "UFR-0027", name: "lifecycle_state", object: BusinessObjectType.InvestmentVehicle, type: "enum", required: true,
       values: ["forming", "raising", "deployed", "stabilised", "winding_down", "dissolved"],
       description: "Vehicle lifecycle. Reserve funding obligations become mandatory at 'stabilised' (L1-16 §2.8).", sensitivity: "member" }),
+  /* 24 Sep 2026. The key of this vehicle in constants/vehicles.ts
+     (slowspace, solace, coorgcreek, wildwood). Without it a position held
+     in the database could not be matched to the estate it is in, and a
+     partner could not be limited to the estates they actually hold. */
+  F({ ufr: "UFR-0028", name: "register_key", object: BusinessObjectType.InvestmentVehicle, type: "string", required: false,
+      description: "The vehicle's key in the platform register (constants/vehicles.ts), linking this record to the estate it holds.", sensitivity: "internal" }),
 
   // ── Portfolio ─────────────────────────────────────────────────────
   F({ ufr: "UFR-0040", name: "portfolio_name", object: BusinessObjectType.Portfolio, type: "string", required: true,
@@ -257,6 +263,42 @@ export const UFR: FieldDefinition[] = [
   F({ ufr: "UFR-0165", name: "became_member_on", object: BusinessObjectType.Investor, type: "timestamp", required: false, immutable: true,
       description: "When the first capital commitment settled and the identity became a Member. Set once, never cleared.", sensitivity: "internal",
       invariants: ["I-08"] }),
+  /* ── Identity link, KYC and the distribution account — added 24 Sep 2026 ──
+     Founder ruling of the same date: the investor's own view carries their
+     KYC and the bank account distributions are paid to. Numbers that could
+     move money or identify a person (the bank account, the PAN) are held
+     ONLY as AES-256-GCM ciphertext (lib/pii.ts) beside their last four
+     digits; no field holds them in the clear, and no screen shows them in
+     full. Nothing here is written to an event payload. */
+  F({ ufr: "UFR-0166", name: "email", object: BusinessObjectType.Investor, type: "string", required: false,
+      description: "The verified sign-in address that links an identity to this record. Matched case-insensitively, and only against an address the identity provider has verified.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0167", name: "kyc_state", object: BusinessObjectType.Investor, type: "enum", required: false,
+      values: ["not_started", "in_progress", "verified", "needs_update"],
+      description: "Where the KYC checks, the identity checks the law requires, stand as a whole. Separate from accreditation: KYC establishes who the person is; accreditation, what they may be offered.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0168", name: "kyc_stages", object: BusinessObjectType.Investor, type: "json", required: false,
+      description: "The state of each KYC stage (identity, address, tax residency, source of funds, suitability, screening), keyed by stage. States and dates only; never a document or a number.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0169", name: "kyc_verified_on", object: BusinessObjectType.Investor, type: "timestamp", required: false,
+      description: "When the KYC checks were last completed and verified.", sensitivity: "internal" }),
+  F({ ufr: "UFR-0170", name: "kyc_review_due_on", object: BusinessObjectType.Investor, type: "timestamp", required: false,
+      description: "When the KYC record next needs review.", sensitivity: "internal" }),
+  F({ ufr: "UFR-0171", name: "pan_last4", object: BusinessObjectType.Investor, type: "string", required: false,
+      description: "The last four characters of the PAN, for recognition. The whole PAN is held only as ciphertext.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0172", name: "pan_ciphertext", object: BusinessObjectType.Investor, type: "text", required: false,
+      description: "The PAN, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Never decrypted for display.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0173", name: "bank_account_holder", object: BusinessObjectType.Investor, type: "string", required: false,
+      description: "The name on the account distributions are paid to, as the bank holds it.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0174", name: "bank_name", object: BusinessObjectType.Investor, type: "string", required: false,
+      description: "The bank the distribution account is held with.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0175", name: "bank_ifsc", object: BusinessObjectType.Investor, type: "string", required: false,
+      description: "The IFSC of the branch holding the distribution account.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0176", name: "bank_account_last4", object: BusinessObjectType.Investor, type: "string", required: false,
+      description: "The last four digits of the distribution account, for recognition. The whole number is held only as ciphertext.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0177", name: "bank_account_ciphertext", object: BusinessObjectType.Investor, type: "text", required: false,
+      description: "The distribution account number, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Decrypted only to make a payment, never for display.", sensitivity: "restricted" }),
+  F({ ufr: "UFR-0178", name: "bank_verified_on", object: BusinessObjectType.Investor, type: "timestamp", required: false,
+      description: "When the distribution account was last verified as belonging to the investor.", sensitivity: "internal" }),
+  F({ ufr: "UFR-0179", name: "bank_verification_method", object: BusinessObjectType.Investor, type: "string", required: false,
+      description: "How the account was verified: a penny drop, a cancelled cheque or a bank statement.", sensitivity: "internal" }),
 
   // ── Commitment ────────────────────────────────────────────────────
   F({ ufr: "UFR-0180", name: "investor_id", object: BusinessObjectType.Commitment, type: "reference", required: true,

@@ -20,6 +20,7 @@ import {
 // ─── Enumerated types ───────────────────────────────────────────
 export const investor_member_state_enum = pgEnum("investor_member_state_enum", ["investor", "member"]);
 export const investor_accreditation_state_enum = pgEnum("investor_accreditation_state_enum", ["none", "in_review", "accredited", "expired"]);
+export const investor_kyc_state_enum = pgEnum("investor_kyc_state_enum", ["not_started", "in_progress", "verified", "needs_update"]);
 export const organization_entity_type_enum = pgEnum("organization_entity_type_enum", ["llp", "private_limited", "trust", "partnership", "sole_proprietor", "foreign_entity"]);
 export const organization_role_in_enterprise_enum = pgEnum("organization_role_in_enterprise_enum", ["asset_platform", "operating_partner", "brand_partner", "investment_vehicle", "external_counterparty"]);
 export const research_research_topic_enum = pgEnum("research_research_topic_enum", ["esg", "geographic", "asset_class", "economic", "regulatory"]);
@@ -66,6 +67,34 @@ export const investor = pgTable("investor", {
   tax_jurisdiction: varchar("tax_jurisdiction", { length: 512 }).notNull(),
   /** UFR-0165 */
   became_member_on: timestamp("became_member_on", { withTimezone: true }),
+  /** UFR-0166 */
+  email: varchar("email", { length: 512 }),
+  /** UFR-0167 */
+  kyc_state: investor_kyc_state_enum("kyc_state"),
+  /** UFR-0168 */
+  kyc_stages: jsonb("kyc_stages"),
+  /** UFR-0169 */
+  kyc_verified_on: timestamp("kyc_verified_on", { withTimezone: true }),
+  /** UFR-0170 */
+  kyc_review_due_on: timestamp("kyc_review_due_on", { withTimezone: true }),
+  /** UFR-0171 */
+  pan_last4: varchar("pan_last4", { length: 512 }),
+  /** UFR-0172 */
+  pan_ciphertext: text("pan_ciphertext"),
+  /** UFR-0173 */
+  bank_account_holder: varchar("bank_account_holder", { length: 512 }),
+  /** UFR-0174 */
+  bank_name: varchar("bank_name", { length: 512 }),
+  /** UFR-0175 */
+  bank_ifsc: varchar("bank_ifsc", { length: 512 }),
+  /** UFR-0176 */
+  bank_account_last4: varchar("bank_account_last4", { length: 512 }),
+  /** UFR-0177 */
+  bank_account_ciphertext: text("bank_account_ciphertext"),
+  /** UFR-0178 */
+  bank_verified_on: timestamp("bank_verified_on", { withTimezone: true }),
+  /** UFR-0179 */
+  bank_verification_method: varchar("bank_verification_method", { length: 512 }),
 });
 
 // ─── MarketIntelligence ──────────────────────────────────────
@@ -184,6 +213,8 @@ export const investment_vehicle = pgTable("investment_vehicle", {
   approved_leverage_limit: numeric("approved_leverage_limit", { precision: 9, scale: 6 }),
   /** UFR-0027 */
   lifecycle_state: investment_vehicle_lifecycle_state_enum("lifecycle_state").notNull(),
+  /** UFR-0028 */
+  register_key: varchar("register_key", { length: 512 }),
 });
 
 // ─── Portfolio ───────────────────────────────────────────────

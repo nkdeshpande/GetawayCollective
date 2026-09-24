@@ -23,8 +23,8 @@ import { CONFIDENCE_ORDER } from "../lib/provenance";
 
 // ─────────────────────────────────────────────────────────────────────
 describe("enum display", () => {
-  it("covers 26 enum sets", () => {
-    expect(Object.keys(ENUM_DISPLAY).length).toBe(26);
+  it("covers 27 enum sets (Investor.kyc_state added 24 Sep 2026)", () => {
+    expect(Object.keys(ENUM_DISPLAY).length).toBe(27);
   });
 
   it("falls back to the raw value rather than rendering blank", () => {

@@ -539,6 +539,8 @@ export const InvestmentVehicleSchema = SystemFields.extend({
   approved_leverage_limit: z.number().min(0).optional(),
   /** UFR-0027 — Vehicle lifecycle. Reserve funding obligations become mandatory at 'stabilised' (L1-16 §2.8). */
   lifecycle_state: z.enum(["forming", "raising", "deployed", "stabilised", "winding_down", "dissolved"]),
+  /** UFR-0028 — The vehicle's key in the platform register (constants/vehicles.ts), linking this record to the estate it holds. */
+  register_key: z.string().min(1).optional(),
 });
 export type InvestmentVehicle = z.infer<typeof InvestmentVehicleSchema>;
 
@@ -555,6 +557,8 @@ export const InvestmentVehicleCreateSchema = z.object({
   approved_leverage_limit: z.number().min(0).optional(),
   /** UFR-0027 — Vehicle lifecycle. Reserve funding obligations become mandatory at 'stabilised' (L1-16 §2.8). */
   lifecycle_state: z.enum(["forming", "raising", "deployed", "stabilised", "winding_down", "dissolved"]),
+  /** UFR-0028 — The vehicle's key in the platform register (constants/vehicles.ts), linking this record to the estate it holds. */
+  register_key: z.string().min(1).optional(),
 });
 
 /**
@@ -572,6 +576,8 @@ export const InvestmentVehicleUpdateSchema = z.object({
   approved_leverage_limit: z.number().min(0).optional(),
   /** UFR-0027 — Vehicle lifecycle. Reserve funding obligations become mandatory at 'stabilised' (L1-16 §2.8). */
   lifecycle_state: z.enum(["forming", "raising", "deployed", "stabilised", "winding_down", "dissolved"]).optional(),
+  /** UFR-0028 — The vehicle's key in the platform register (constants/vehicles.ts), linking this record to the estate it holds. */
+  register_key: z.string().min(1).optional(),
 }).partial().strict();
 
 // ─── Investor ──────────────────────────────────────────────────
@@ -588,6 +594,34 @@ export const InvestorSchema = SystemFields.extend({
   tax_jurisdiction: z.string().min(1),
   /** UFR-0165 — When the first capital commitment settled and the identity became a Member. Set once, never cleared. */
   became_member_on: z.string().datetime().optional(),
+  /** UFR-0166 — The verified sign-in address that links an identity to this record. Matched case-insensitively, and only against an address the identity provider has  */
+  email: z.string().min(1).optional(),
+  /** UFR-0167 — Where the KYC checks, the identity checks the law requires, stand as a whole. Separate from accreditation: KYC establishes who the person is; accredit */
+  kyc_state: z.enum(["not_started", "in_progress", "verified", "needs_update"]).optional(),
+  /** UFR-0168 — The state of each KYC stage (identity, address, tax residency, source of funds, suitability, screening), keyed by stage. States and dates only; never  */
+  kyc_stages: z.unknown().optional(),
+  /** UFR-0169 — When the KYC checks were last completed and verified. */
+  kyc_verified_on: z.string().datetime().optional(),
+  /** UFR-0170 — When the KYC record next needs review. */
+  kyc_review_due_on: z.string().datetime().optional(),
+  /** UFR-0171 — The last four characters of the PAN, for recognition. The whole PAN is held only as ciphertext. */
+  pan_last4: z.string().min(1).optional(),
+  /** UFR-0172 — The PAN, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Never decrypted for display. */
+  pan_ciphertext: z.string().optional(),
+  /** UFR-0173 — The name on the account distributions are paid to, as the bank holds it. */
+  bank_account_holder: z.string().min(1).optional(),
+  /** UFR-0174 — The bank the distribution account is held with. */
+  bank_name: z.string().min(1).optional(),
+  /** UFR-0175 — The IFSC of the branch holding the distribution account. */
+  bank_ifsc: z.string().min(1).optional(),
+  /** UFR-0176 — The last four digits of the distribution account, for recognition. The whole number is held only as ciphertext. */
+  bank_account_last4: z.string().min(1).optional(),
+  /** UFR-0177 — The distribution account number, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Decrypted only to make a payme */
+  bank_account_ciphertext: z.string().optional(),
+  /** UFR-0178 — When the distribution account was last verified as belonging to the investor. */
+  bank_verified_on: z.string().datetime().optional(),
+  /** UFR-0179 — How the account was verified: a penny drop, a cancelled cheque or a bank statement. */
+  bank_verification_method: z.string().min(1).optional(),
 });
 export type Investor = z.infer<typeof InvestorSchema>;
 
@@ -604,6 +638,34 @@ export const InvestorCreateSchema = z.object({
   tax_jurisdiction: z.string().min(1),
   /** UFR-0165 — When the first capital commitment settled and the identity became a Member. Set once, never cleared. */
   became_member_on: z.string().datetime().optional(),
+  /** UFR-0166 — The verified sign-in address that links an identity to this record. Matched case-insensitively, and only against an address the identity provider has  */
+  email: z.string().min(1).optional(),
+  /** UFR-0167 — Where the KYC checks, the identity checks the law requires, stand as a whole. Separate from accreditation: KYC establishes who the person is; accredit */
+  kyc_state: z.enum(["not_started", "in_progress", "verified", "needs_update"]).optional(),
+  /** UFR-0168 — The state of each KYC stage (identity, address, tax residency, source of funds, suitability, screening), keyed by stage. States and dates only; never  */
+  kyc_stages: z.unknown().optional(),
+  /** UFR-0169 — When the KYC checks were last completed and verified. */
+  kyc_verified_on: z.string().datetime().optional(),
+  /** UFR-0170 — When the KYC record next needs review. */
+  kyc_review_due_on: z.string().datetime().optional(),
+  /** UFR-0171 — The last four characters of the PAN, for recognition. The whole PAN is held only as ciphertext. */
+  pan_last4: z.string().min(1).optional(),
+  /** UFR-0172 — The PAN, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Never decrypted for display. */
+  pan_ciphertext: z.string().optional(),
+  /** UFR-0173 — The name on the account distributions are paid to, as the bank holds it. */
+  bank_account_holder: z.string().min(1).optional(),
+  /** UFR-0174 — The bank the distribution account is held with. */
+  bank_name: z.string().min(1).optional(),
+  /** UFR-0175 — The IFSC of the branch holding the distribution account. */
+  bank_ifsc: z.string().min(1).optional(),
+  /** UFR-0176 — The last four digits of the distribution account, for recognition. The whole number is held only as ciphertext. */
+  bank_account_last4: z.string().min(1).optional(),
+  /** UFR-0177 — The distribution account number, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Decrypted only to make a payme */
+  bank_account_ciphertext: z.string().optional(),
+  /** UFR-0178 — When the distribution account was last verified as belonging to the investor. */
+  bank_verified_on: z.string().datetime().optional(),
+  /** UFR-0179 — How the account was verified: a penny drop, a cancelled cheque or a bank statement. */
+  bank_verification_method: z.string().min(1).optional(),
 });
 
 /**
@@ -623,6 +685,34 @@ export const InvestorUpdateSchema = z.object({
   accreditation_expires_on: z.string().datetime().optional(),
   /** UFR-0164 — ISO 3166-2 code of tax residence. Drives withholding and reporting obligations. */
   tax_jurisdiction: z.string().min(1).optional(),
+  /** UFR-0166 — The verified sign-in address that links an identity to this record. Matched case-insensitively, and only against an address the identity provider has  */
+  email: z.string().min(1).optional(),
+  /** UFR-0167 — Where the KYC checks, the identity checks the law requires, stand as a whole. Separate from accreditation: KYC establishes who the person is; accredit */
+  kyc_state: z.enum(["not_started", "in_progress", "verified", "needs_update"]).optional(),
+  /** UFR-0168 — The state of each KYC stage (identity, address, tax residency, source of funds, suitability, screening), keyed by stage. States and dates only; never  */
+  kyc_stages: z.unknown().optional(),
+  /** UFR-0169 — When the KYC checks were last completed and verified. */
+  kyc_verified_on: z.string().datetime().optional(),
+  /** UFR-0170 — When the KYC record next needs review. */
+  kyc_review_due_on: z.string().datetime().optional(),
+  /** UFR-0171 — The last four characters of the PAN, for recognition. The whole PAN is held only as ciphertext. */
+  pan_last4: z.string().min(1).optional(),
+  /** UFR-0172 — The PAN, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Never decrypted for display. */
+  pan_ciphertext: z.string().optional(),
+  /** UFR-0173 — The name on the account distributions are paid to, as the bank holds it. */
+  bank_account_holder: z.string().min(1).optional(),
+  /** UFR-0174 — The bank the distribution account is held with. */
+  bank_name: z.string().min(1).optional(),
+  /** UFR-0175 — The IFSC of the branch holding the distribution account. */
+  bank_ifsc: z.string().min(1).optional(),
+  /** UFR-0176 — The last four digits of the distribution account, for recognition. The whole number is held only as ciphertext. */
+  bank_account_last4: z.string().min(1).optional(),
+  /** UFR-0177 — The distribution account number, encrypted with AES-256-GCM under PII_ENCRYPTION_KEY and prefixed with its key version. Decrypted only to make a payme */
+  bank_account_ciphertext: z.string().optional(),
+  /** UFR-0178 — When the distribution account was last verified as belonging to the investor. */
+  bank_verified_on: z.string().datetime().optional(),
+  /** UFR-0179 — How the account was verified: a penny drop, a cancelled cheque or a bank statement. */
+  bank_verification_method: z.string().min(1).optional(),
 }).partial().strict();
 
 // ─── MarketIntelligence ────────────────────────────────────────

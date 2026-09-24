@@ -32,6 +32,7 @@ import { auth } from "../auth";
 import { ANONYMOUS } from "./access";
 import type { Subject } from "./access";
 import { grantsFor, rightsFrom } from "./auth/grants";
+import { holdingsOf, investorRowByEmail, profileOf, standingByEmail, type Holding, type InvestorProfile } from "./investors";
 
 /**
  * Who is asking, according to the session and the grant table.
@@ -49,11 +50,14 @@ export async function currentSubject(): Promise<Subject> {
   if (!id) return ANONYMOUS;
 
   const rights = rightsFrom(await grantsFor(id));
+  /* The investor record, read on every call like the grants, so a change
+     on the record takes effect without waiting for a token to rotate. */
+  const standing = await standingByEmail(session?.user?.email); // vocab-lint-ignore — Auth.js field name
 
   return Object.freeze({
     identified: true,
-    accredited: false,
-    member: false,
+    accredited: standing?.accredited ?? false,
+    member: standing?.member ?? false,
     rights: Object.freeze(rights) as readonly Subject["rights"][number][],
   });
 }
@@ -62,4 +66,15 @@ export async function currentSubject(): Promise<Subject> {
 export async function currentIdentityId(): Promise<string | null> {
   const session = await auth().catch(() => null);
   return session?.user?.id ?? null; // vocab-lint-ignore — Auth.js field name
+}
+
+/**
+ * The signed-in investor's own record, for their own surfaces: standing,
+ * holdings and the masked profile. Null for anyone not linked to one.
+ */
+export async function currentInvestor(): Promise<{ holdings: readonly Holding[]; profile: InvestorProfile } | null> {
+  const session = await auth().catch(() => null);
+  const row = await investorRowByEmail(session?.user?.email); // vocab-lint-ignore — Auth.js field name
+  if (!row) return null;
+  return { holdings: await holdingsOf(row.id), profile: profileOf(row) };
 }

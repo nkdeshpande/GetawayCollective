@@ -40,6 +40,7 @@ import type { TokenAccess } from "./auth.config";
 import { authDb } from "./lib/auth/db";
 import { users, accounts, sessions, verificationTokens } from "./lib/auth/schema";
 import { grantsFor, accessFromGrants, rightsFrom, ensureBootstrapGrant } from "./lib/auth/grants";
+import { standingByEmail } from "./lib/investors";
 
 const db = authDb();
 
@@ -102,6 +103,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user || trigger === "update" || token.access === undefined) {
         const grants = await grantsFor(id);
         token.access = accessFromGrants(grants);
+        /* 24 Sep 2026: the investor record has landed. Without an office
+           right, the class comes from the Investor linked to this verified
+           address (lib/investors.ts): member after settlement, accredited
+           while accreditation is current, identified otherwise. Still never
+           inferred from the session itself. */
+        if (token.access !== "office") {
+          const st = await standingByEmail(token.email);
+          token.access = st?.member ? "member" : st?.accredited ? "accredited" : "identified";
+        }
         /* The rights ride on the token so middleware reaches the SAME
            verdict the server will. Without them the edge would deny every
            office route for want of a right it cannot look up, and the

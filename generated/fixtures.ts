@@ -141,6 +141,7 @@ export const InvestmentVehicleFixture = {
   reserve_balance: "1000.0000",
   approved_leverage_limit: 0.1,
   lifecycle_state: "forming",
+  register_key: "Sample register key",
 };
 
 export const InvestorFixture = {
@@ -151,6 +152,20 @@ export const InvestorFixture = {
   accreditation_expires_on: "2026-01-15T10:00:00.000Z",
   tax_jurisdiction: "Sample tax jurisdiction",
   became_member_on: "2026-01-15T10:00:00.000Z",
+  email: "Sample email",
+  kyc_state: "not_started",
+  kyc_stages: {},
+  kyc_verified_on: "2026-01-15T10:00:00.000Z",
+  kyc_review_due_on: "2026-01-15T10:00:00.000Z",
+  pan_last4: "Sample pan last4",
+  pan_ciphertext: "Sample pan ciphertext content for fixture purposes.",
+  bank_account_holder: "Sample bank account holder",
+  bank_name: "Sample bank name",
+  bank_ifsc: "Sample bank ifsc",
+  bank_account_last4: "Sample bank account last4",
+  bank_account_ciphertext: "Sample bank account ciphertext content for fixture purposes.",
+  bank_verified_on: "2026-01-15T10:00:00.000Z",
+  bank_verification_method: "Sample bank verification method",
 };
 
 export const MarketIntelligenceFixture = {
