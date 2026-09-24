@@ -233,6 +233,11 @@ export const PUBLIC_ROUTES: readonly Route[] = [
     { notes: "What GC is thinking about. Distinct from testimonials: an explanation of a " +
              "mechanism is not regulated speech; a claim about returns is." }),
   R("GC-210", "/journal/[story]", "Story", "gateway", "AS-30", { params: ["story"] }),
+  /* GC-220 · the Journal by email. It existed as copy (content/public.ts
+     SIGNAL) and an endpoint (/api/signal) with no route between them, so
+     the form was unreachable. Added 24 Sep 2026 with the site skin. */
+  R("GC-220", "/signal", "The Signal", "gateway", "AS-32",
+    { notes: "The weekly note. Subscribe by address alone; nothing else is asked." }),
   // ── Doctrine ──────────────────────────────────────────────────────
   R("GC-300", "/how-it-works", "How It Works", "gateway", "AS-32",
     { notes: "The model: three entities, governance without ownership, the waterfall, the " +
@@ -253,6 +258,22 @@ export const PUBLIC_ROUTES: readonly Route[] = [
   R("GC-440", "/contact", "Contact", "gateway", "AS-32",
     { notes: "The general channel. Investment enquiries belong to a vehicle (GC-160) and a " +
              "qualified investor reaches a person through INV-170; this is for everything else." }),
+  /* ── Credibility, added 24 Sep 2026 with the site skin (§29-0b) ────
+     Who draws, builds and governs the estates, how they are built, how a
+     writer should describe the platform, and the words it uses. Each
+     states its sources, and each leaves a named slot where a fact has not
+     been supplied rather than filling it. New numbers: the Numbering Law
+     never recycles an id. */
+  R("GC-450", "/team", "The Team", "gateway", "AS-32",
+    { notes: "The founder, the architect, and the structural, MEP and modelling practices. Unsupplied facts are slots, never guesses." }),
+  R("GC-460", "/how-we-build", "How We Build", "gateway", "AS-32",
+    { notes: "From a confirmed site record to one coordinated model, with the register of holds each estate carries." }),
+  R("GC-470", "/press", "Press Kit", "gateway", "AS-32",
+    { notes: "Boilerplates, the fact sheet, attributable lines, usage and the brand assets." }),
+  R("GC-480", "/answers", "Answers", "gateway", "AS-32",
+    { notes: "The questions asked most often, answered in a sentence or two, each with its source." }),
+  R("GC-490", "/glossary", "Glossary", "gateway", "AS-32",
+    { notes: "Every term the site uses, defined once." }),
   // ── The legal corpus ──────────────────────────────────────────────
   R("GC-500", "/legal", "Legal", "gateway", "AS-29",
     { notes: "Seven standing documents, versioned, with effective dates. Nothing on this " +

@@ -13,6 +13,11 @@
  *   paper = #F4F4F0                              (void; paper is #F2F2F2)
  *
  * Immutable. Change requires constitutional amendment.
+ *
+ * AMENDED 24 Sep 2026 — L1-01 §29-0b, the site skin. FONT was re-pointed
+ * (Inter Tight · Satoshi · Space Mono), and SITE and FILM were ADDED. No
+ * COLOUR value changed: the seventeen core colours are the same hex they
+ * were. Visual source: _DESIGN/gc/GC-Site.html, the founder's prototype.
  */
 
 // ── Colour Ontology ──────────────────────────────────────────────────
@@ -159,11 +164,81 @@ export const NEUTRAL_ROLE = {
 } as const;
 
 // ── Typography ──────────────────────────────────────────────────────
+/* §29-0b, 24 Sep 2026: Inter Tight carries display and the wordmark,
+   Satoshi carries text. Editorial is Inter Tight at its thinnest weight —
+   the prototype's second voice is the same family at 100, not a serif. */
 export const FONT = {
-  display: "'Outfit', 'Segoe UI Variable Display', -apple-system, sans-serif",
-  body: "'Inter', 'Segoe UI Variable', -apple-system, sans-serif",
+  display: "'Inter Tight', 'Segoe UI Variable Display', -apple-system, sans-serif",
+  body: "'Satoshi', 'Segoe UI Variable', -apple-system, sans-serif",
   mono: "'Space Mono', ui-monospace, 'Consolas', 'SFMono-Regular', monospace",
-  editorial: "'Playfair Display', Georgia, serif",
+  editorial: "'Inter Tight', 'Segoe UI Variable Display', -apple-system, sans-serif",
+} as const;
+
+// ── The site skin — ADDITIVE, §29-0b, 24 Sep 2026 ───────────────────
+/*
+ * The public site's own ramp. It sits BESIDE COLOUR, never inside it, so
+ * nothing here can shadow a core value: void stays #0A0A0A for every
+ * signed-in surface while the site stands on true black.
+ *
+ * Warm greys, each biased a few degrees toward the copper, taken from the
+ * prototype and consolidated — nine near-duplicates there became one step
+ * each here.
+ */
+export const SITE = {
+  night: "#000000",       // the site ground
+  veil: "rgba(0,0,0,0.94)", // the sticky bar over a film
+  coal: "#0E0E0E",        // film placeholder, trio, map ground
+  rim: "#161616",         // hairlines on night, the lead card
+  panel: "#1C1C1E",       // panels and grey buttons on night
+  line: "#2A2A2A",        // rules on night
+  line2: "#3A3A38",       // form rules on night, the idle pager
+  stone: "#4A4A47",       // body text on light
+  land: "#4A4740",        // land-in-kind units on the unit bar
+  ash: "#5A5A57",         // secondary text on light
+  ash2: "#6B6B66",        // labels on light
+  mute: "#8E8D88",        // eyebrows and meta on either ground
+  fog: "#B5B4AE",         // secondary text on night
+  mist: "#CFCEC9",        // captions on night
+  rule: "#D9D8D3",        // rules on light; body text on night
+  chip: "#E6E5E0",        // chips and filters on light
+  hair: "#EAE9E4",        // hairlines on white, drawing strokes
+  light: "#F4F4F1",       // the light ground
+  copperMid: "#A8834F",   // the middle price tier
+  moss: "#5E7A3E",        // Ridge
+  slate: "#5D6E7E",       // Expanse
+  ember: "#A2472A",       // Voyager, laterite
+} as const;
+
+/*
+ * THE FILMS. Each estate is drawn as ridgelines in square dots and relit by
+ * the hour; these are the grounds, skies, suns and ridge inks it draws with.
+ * Read by app/_assemblies/site/film.ts, never restated there. `ink` holds
+ * the few illustration colours the estate drawings use (zones, materials,
+ * plan strokes), keyed so content names a colour rather than typing one.
+ */
+export const FILM = {
+  coast:  { bg: "#101C22", sky: "#E7E1D5", sun: "#F0B48A", r: ["#3B5560", "#A2472A", "#6A2A18"], water: "#8FB3B8", wet: 0.72 },
+  creek:  { bg: "#0B1F18", sky: "#9FB7B0", sun: "#DDE8E2", r: ["#1E4A35", "#3F6B3A", "#6E8F4A"], water: "#9FB7B0", wet: 0.85 },
+  solace: { bg: "#14130F", sky: "#CFC8BC", sun: "#EDE3CF", r: ["#4A4740", "#8C857A", "#CFC8BC"], boulders: 1 },
+  cff:    { bg: "#1A1210", sky: "#E8DCC4", sun: "#F2E2C0", r: ["#2F4A2A", "#4E6B33", "#8E3A2C"] },
+  nine:   { bg: "#DAD9D2", sky: "#3A4A5A", sun: null, r: ["#9AA6B0", "#6D7D8C", "#3A4A5A"], mist: 1 },
+  wild:   { bg: "#0E1A14", sky: "#D3C9A8", sun: "#D3C9A8", r: ["#183026", "#2D4A36", "#57744F"], water: "#D3C9A8", wet: 0.86 },
+  light: {
+    night: "#070B14", day: "#F4F1E8", rain: "#5E6B6E", warm: "#F08A5D",
+    blueprint: "#0D2436", grid: "rgba(160,200,230,0.12)", line: "225,238,248",
+    star: "rgba(242,242,242,0.85)", drop: "rgba(220,235,230,0.5)",
+  },
+  ink: {
+    ink: "#0A0A0A", paper: "#F2F2F2", copper: "#C79F6B", copperDeep: "#8C6635", copperMid: "#A8834F",
+    forest: "#0C3024", steel: "#6B6B6B", land: "#4A4740",
+    moss: "#5E7A3E", slate: "#5D6E7E", ember: "#A2472A", laterite: "#8E5A3A", rust: "#8E4A2C",
+    granite: "#8C857A", granite2: "#A39C8F", granite3: "#CFC8BC", granite4: "#6E6A62", sand: "#C9B28E",
+    sea: "#5D8C95", sea2: "#8FB3B8", sea3: "#3B5560", ember2: "#6A2A18", canopy: "#3F6B3A", canopy2: "#6E8F4A",
+    river: "#9FB7B0", steelGrey: "#8C8F92", steelGrey2: "#B8BCBF", steelGrey3: "#CFD2D4", slateGrey: "#6E7A86",
+    stone: "#3A3A38", stone2: "#9A9994", stone3: "#3A3F3C", sage: "#8E9A94", oat: "#B7AE9C", bone: "#D8D2C4",
+    coal: "#1E1E1E", cherry: "#763C00", berry: "#8E3A2C", leaf: "#4E6B33", gold: "#C9A56B", shade: "#2F4A2A",
+    husk: "#E8DCC4", clay: "#C86B3C",
+  },
 } as const;
 
 // ── Spacing (4px base unit) ──────────────────────────────────────────
@@ -342,6 +417,9 @@ export const CSS_VARS = `
   --gc-dur-fast: ${MOTION.duration.fast};
   --gc-dur-cinema: ${MOTION.duration.cinema};
   --gc-dur-commit: ${MOTION.duration.commit};
+
+  /* §29-0b · the site skin. Emitted from SITE; read by site.css only. */
+${Object.entries(SITE).map(([k, v]) => `  --gc-s-${k.replace(/[A-Z0-9]/g, (c) => "-" + c.toLowerCase())}: ${v};`).join("\n")}
 }
 
 @media (prefers-color-scheme: dark) {

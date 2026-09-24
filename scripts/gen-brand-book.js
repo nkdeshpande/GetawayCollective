@@ -15,7 +15,7 @@
  * ── ONE DELIBERATE DIFFERENCE FROM THE APP ───────────────────────────
  * The app self-hosts its faces on purpose — no CDN, no third party seeing
  * who reads a site whose audience is a list of investors. This document
- * links Google Fonts instead, because it has to render Outfit 200 on a
+ * links Google Fonts instead, because it has to render Inter Tight 800/100 on a
  * machine that has never run the app, and because an internal reference is
  * not the public surface that rule protects.
  *
@@ -51,6 +51,21 @@ const MIN_CAP_PX = num("MIN_CAP_PX");
 const DEVICE_RATIO = num("DEVICE_RATIO");
 const MARK_WEIGHT = num("MARK_WEIGHT");
 const MIN_FONT_PX = Math.ceil((MIN_CAP_PX / CAP_RATIO) * 10) / 10;
+const MARK_WEIGHT_THIN = num("MARK_WEIGHT_THIN");
+const str = (name) => (brandTs.match(new RegExp(`export const ${name} = "([^"]+)"`)) || [])[1] || "";
+const MARK_BOX = str("MARK_BOX");
+const MARK_CUT = str("MARK_CUT");
+if (!MARK_BOX || !MARK_CUT) {
+  console.error("[brand-book] could not read MARK_BOX / MARK_CUT from the registry.");
+  process.exit(1);
+}
+/** The drawn mark (L1-01 §29-0b), as inline SVG. */
+const markSvg = (px, ground = "void", device = null, radius = 0) => {
+  const col = ground === "paper" ? COLOUR.ink : COLOUR.inkInverse;
+  const dev = device || (ground === "paper" ? COLOUR.copperDeep : COLOUR.copper);
+  return `<svg viewBox="0 0 100 100" width="${px}" height="${px}" style="flex:none;border-radius:${radius}px" aria-hidden="true">` +
+    `<path fill-rule="evenodd" d="${MARK_BOX} ${MARK_CUT}" fill="${col}"/><path d="${MARK_CUT}" fill="${dev}"/></svg>`;
+};
 
 const clearspace = (px) => Math.round(px * CAP_RATIO);
 const device = (px) => Math.max(2, Math.round(px * CAP_RATIO * DEVICE_RATIO));
@@ -85,34 +100,26 @@ if (marks.length !== 3) {
 
 /** The wordmark, as the document's own HTML. Same geometry as the component. */
 const wordmark = (px, opts = {}) => {
-  const { weight = MARK_WEIGHT, face = "Outfit", square = true, ground = "void", tracking = 0.08,
-          fluid = false } = opts;
+  const { weight = MARK_WEIGHT, thin = MARK_WEIGHT_THIN, face = "Inter Tight", square = true, ground = "void",
+          tracking = 0.07, fluid = false, device = null } = opts;
   const col = ground === "paper" ? COLOUR.ink : COLOUR.inkInverse;
-  const dev = ground === "paper" ? COLOUR.copperDeep : COLOUR.copper;
   /* Fluid marks size everything in em so one font-size governs the whole
      lockup. Fixed-px worked until the 56px hero met an 800px viewport and
-     the type ran past both edges while the square stayed put — found by
+     the type ran past both edges while the mark stayed put — found by
      looking at the rendered page, which is the only way this kind of thing
      is ever found. */
-  const d = fluid ? `${(CAP_RATIO * DEVICE_RATIO).toFixed(3)}em` : `${device(px)}px`;
+  const m = Math.round(px * CAP_RATIO * DEVICE_RATIO);
   const gap = fluid ? `${(CAP_RATIO * 0.5).toFixed(3)}em` : `${Math.round(px * CAP_RATIO * 0.5)}px`;
   const fontSize = fluid ? `clamp(${Math.min(18, px)}px, 6.2vw, ${px}px)` : `${px}px`;
-  return `<span style="display:inline-flex;align-items:baseline;gap:${gap};
-    font-family:'${face}',sans-serif;font-weight:${weight};font-size:${fontSize};line-height:1;
-    text-transform:uppercase;letter-spacing:${tracking}em;color:${col};white-space:nowrap">Getaway Collective${
-    square ? `<i style="width:${d};height:${d};background:${dev};flex:none"></i>` : ""}</span>`;
+  return `<span style="display:inline-flex;align-items:center;gap:${gap};
+    font-family:'${face}',sans-serif;font-weight:${thin};font-size:${fontSize};line-height:1;
+    text-transform:uppercase;letter-spacing:${tracking}em;color:${col};white-space:nowrap">${
+    square ? markSvg(m, ground, device) : ""}<span><b style="font-weight:${weight}">Getaway</b> Collective</span></span>`;
 };
 
 const monogram = (size, opts = {}) => {
-  const { ground = "void", radius = 0, face = "Outfit" } = opts;
-  const col = ground === "paper" ? COLOUR.ink : COLOUR.inkInverse;
-  const dev = ground === "paper" ? COLOUR.copperDeep : COLOUR.copper;
-  const t = Math.round(size * 0.42);
-  const d = Math.max(2, Math.round(t * CAP_RATIO * DEVICE_RATIO));
-  return `<span style="display:inline-flex;align-items:center;justify-content:center;gap:4px;
-    width:${size}px;height:${size}px;border:1px solid ${col};border-radius:${radius}px;
-    font-family:'${face}',sans-serif;font-weight:${MARK_WEIGHT};font-size:${t}px;line-height:1;
-    letter-spacing:.02em;color:${col}">GC<i style="width:${d}px;height:${d}px;background:${dev};flex:none"></i></span>`;
+  const { ground = "void", radius = 0 } = opts;
+  return markSvg(size, ground, null, radius);
 };
 
 /* ── The misuse panels: each renders the wrong thing ─────────────────── */
@@ -120,11 +127,9 @@ const monogram = (size, opts = {}) => {
 const WRONG_RENDER = {
   "MIS-01": () => wordmark(28, { face: "Georgia", fluid: true }),
   "MIS-02": () => wordmark(28, { square: false, fluid: true }),
-  "MIS-03": () => wordmark(28, { weight: 600, fluid: true }),
+  "MIS-03": () => wordmark(28, { weight: 600, thin: 600, fluid: true }),
   "MIS-04": () => monogram(56, { radius: 12 }),
-  "MIS-05": () => `<span style="display:inline-flex;align-items:baseline;gap:9px;font-family:'Outfit',sans-serif;
-      font-weight:${MARK_WEIGHT};font-size:28px;text-transform:uppercase;letter-spacing:.08em;
-      color:${COLOUR.inkInverse}">Getaway Collective<i style="width:5px;height:5px;background:${COLOUR.confirm}"></i></span>`,
+  "MIS-05": () => wordmark(28, { device: COLOUR.confirm, fluid: true }),
   "MIS-06": () => `<span style="display:inline-flex;align-items:center;justify-content:center;width:100%;height:64px;
       background:linear-gradient(115deg,#6b7f6a,#c9c0a8 40%,#8a8f76 70%,#e8e4d6)">${wordmark(24, { fluid: true })}</span>`,
   "MIS-07": () => wordmark(14),
@@ -154,7 +159,7 @@ const clearDiagram = `
       <div class="clear-inner">${wordmark(DIAGRAM_PX, { fluid: true })}</div>
     </div>
     <ul class="dim">
-      <li><b>${CAP_RATIO}</b> cap-height as a fraction of font-size — Outfit <code>OS/2.sCapHeight 676</code> / <code>head.unitsPerEm 1000</code>, read from the shipped woff2</li>
+      <li><b>${CAP_RATIO}</b> cap-height as a fraction of font-size — Inter <code>sCapHeight 2048</code> / <code>unitsPerEm 2816</code>, the master Inter Tight is cut from</li>
       <li><b>${clearspace(DIAGRAM_PX)}px</b> clearspace at ${DIAGRAM_PX}px font-size — the cap-height of the G, per BR-02</li>
       <li><b>${MIN_CAP_PX}px</b> minimum cap-height, which is <b>${MIN_FONT_PX}px</b> font-size. Below it the wordmark is barred and the device is the only mark</li>
       <li><b>${DEVICE_RATIO}</b> device edge as a fraction of cap-height — ${device(DIAGRAM_PX)}px here</li>
@@ -178,7 +183,7 @@ const html = `<!doctype html>
 <title>GC.SYSTEM — Brand &amp; Logo System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Inter:wght@400;500&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100;200;300;400;600;800&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
     --void:${COLOUR.void}; --void-panel:${COLOUR.voidPanel}; --paper:${COLOUR.paper};
@@ -187,7 +192,7 @@ const html = `<!doctype html>
     --copper:${COLOUR.copper}; --copper-deep:${COLOUR.copperDeep};
     --hazard:${COLOUR.hazard}; --confirm:${COLOUR.confirm}; --critical:${COLOUR.critical};
     --hair:${COLOUR.hairlineInv};
-    --display:'Outfit',sans-serif; --body:'Inter',sans-serif; --mono:'Space Mono',monospace;
+    --display:'Inter Tight',sans-serif; --body:'Inter Tight',sans-serif; --mono:'Space Mono',monospace;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--void);color:var(--ink-inv);font:400 15px/1.6 var(--body);
@@ -281,10 +286,10 @@ const html = `<!doctype html>
 
 <section>
 <h2>The mark</h2>
-<p>There is no drawn logotype, and this document does not pretend there is. BR-01 specifies the mark as the
-type system set to a particular weight and case, with a copper full stop — so that is what it is, and the
-square is real geometry rather than a glyph. When a designed logotype exists it replaces the type; the
-clearspace, the floor and the device survive unchanged.</p>
+<p>The logotype is drawn. R5 · One angle — a box chamfered at the top left and bottom right, with a skylight
+cut through it that rises straight and turns once, every point on an 11-unit module — replaced the set type on
+24 September 2026 (L1-01 §29-0b), exactly as this document said a designed logotype would. GETAWAY is set at
+${MARK_WEIGHT} and COLLECTIVE at ${MARK_WEIGHT_THIN}. The clearspace, the floor and the device survive unchanged.</p>
 
 <div class="stage">${wordmark(56, { fluid: true })}</div>
 <div class="grid2">
@@ -292,11 +297,11 @@ clearspace, the floor and the device survive unchanged.</p>
   <div class="paper">${wordmark(32, { ground: "paper" })}</div>
 </div>
 <p class="mono">On void, and on paper — where <code>copperDeep</code> replaces copper. 2.18:1 becomes 4.61:1;
-the same hue and saturation, moved in lightness only, which is why the square is still the same square.</p>
+the same hue and saturation, moved in lightness only, which is why the skylight is still the same skylight.</p>
 
-<div class="rule"><b>Why the full stop is square.</b> <code>RADIUS.none</code> is invariant in this system.
-A round dot would be the only curve in it, on the one element that appears on every page. Nobody ratified
-that exception, so the period is a square.</div>
+<div class="rule"><b>Why the corners are cut.</b> <code>RADIUS.none</code> is invariant in this system.
+A rounded corner would be the only curve in it, on the one element that appears on every page. The chamfer is
+how a zero-radius system softens a corner, and the mark carries two of them.</div>
 
 ${marks.map((m) => `
 <div class="markcard">
@@ -371,14 +376,13 @@ than an icon font, which is why these are characters and not drawings.</p>
 <section>
 <h2>What is still open</h2>
 <div class="open">
-  <h3>The mark is type, not a logotype</h3>
-  <p>A designed logotype has never been commissioned. The system is complete and enforceable without one —
-  and if one arrives, the clearspace, the floor, the device and every misuse rule here still apply.</p>
-  <h3>Satori has no Outfit binary</h3>
-  <p>The favicon, the iOS icon and the share card are generated by Satori, which cannot load Outfit unless a
-  font file is shipped and passed to <code>ImageResponse</code>. None is, so their letterforms are Satori's
-  default sans while the geometry and the copper are exact. They were set in Georgia — a serif this system
-  does not contain — until 20 September 2026. Shipping the Outfit binary closes it.</p>
+  <h3>The share card's letters are approximate</h3>
+  <p>The favicon and the iOS icon are now pure geometry, so Satori renders them exactly. The share card also
+  sets the name, and Satori cannot load Inter Tight unless a font file is passed to <code>ImageResponse</code>;
+  none is, so its letters are Satori's default sans. Shipping the binary closes it.</p>
+  <h3>CAP_RATIO is quoted, not measured</h3>
+  <p>next/font fetches Inter Tight at build, so no binary sits in the repository to read. 0.727 is Inter's
+  published ratio; re-read it when a binary is vendored.</p>
   <h3>The display scale and the stylesheet disagree</h3>
   <p><code>constants/typography.ts</code> sets <code>display-xl</code> and <code>display-l</code> at weight
   ${MARK_WEIGHT} and <code>display-m</code> and <code>heading</code> at 300.

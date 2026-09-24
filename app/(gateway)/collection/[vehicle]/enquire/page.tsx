@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { ChapterSurface } from "@/app/_assemblies/propertychapters";
+import { SiteChapter } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "Enquire · Getaway Collective",
@@ -20,5 +20,5 @@ export const metadata: Metadata = {
 
 export default async function Pcollection_vehicle_enquire(props: { params: Promise<{ vehicle: string }> }) {
   const params = await props.params;
-  return <ChapterSurface path="/collection/[vehicle]/enquire" param={params.vehicle} />;
+  return <SiteChapter path="/collection/[vehicle]/enquire" param={params.vehicle} />;
 }

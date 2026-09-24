@@ -937,6 +937,25 @@ Where any source, brief, prior draft or future input conflicts with GC.SYSTEM, *
 
 **Colour is semantic, never decorative.** Copper carries currency and yield and nothing else. Critical is the rarest colour in the system, budgeted at twelve enumeration values and enforced by `scripts/enum-lint.js`.
 
+### 29-0b. The site skin — AMENDED 24 Sep 2026
+
+*Recorded on the founder's instruction of 24 Sep 2026: the live platform takes "the complete new skin and experience" of the site prototype. The prototype is `_DESIGN/gc/GC-Site.html`, with the brand blueprint beside it; neither is edited from this repository.*
+
+**What changes.** Three values the Core locked, and nothing else in it:
+
+| | Was | Is |
+|---|---|---|
+| Display face | Outfit | Inter Tight |
+| Text face | Inter | Satoshi (Indian Type Foundry, Fontshare licence) |
+| Editorial face | Playfair Display italic | Inter Tight at weight 100 |
+| The mark (BR-01) | Outfit 200 wordmark with a copper square | R5 · One angle, the drawn mark, with the 02C lockup: GETAWAY at 800 over COLLECTIVE at 100 |
+
+**What is added, and may only add.** `SITE`, the public site's warm-grey ramp, and `FILM`, the grounds, skies and inks the estate films are drawn with, both in `constants/tokens.ts`. Neither shadows a core value. The seventeen core colours, radius `0px`, the 4px spacing base, the strokes, the curves and the durations are unchanged, value for value.
+
+**What it governs.** The public routes — the Collection and each estate, the Journal, the legal corpus and the company pages — render the site (`app/_assemblies/site/`). Every figure about a vehicle is read from the vehicle register (`constants/vehicles.ts`), never from the prototype: the founder ruled so the same day.
+
+**Procedure, stated plainly.** §32a asks for thirty days' notice, a Constitutional Impact Assessment and a Special Resolution of at least 76%. None of the three is evidenced here. The founder elected to proceed on 24 Sep 2026; whether the §32a steps apply to a change of typeface and mark, and when they are completed, is the founder's to record. This paragraph exists so the gap is on the record rather than assumed closed.
+
 ### 29-0a. Accessibility is part of the system, not a review of it
 
 **Colour is never the only carrier of meaning.** A status carries a label, a metric carries a unit, a risk band carries a word. This is WCAG 1.4.1 and it is also what makes the palette safe on both grounds.

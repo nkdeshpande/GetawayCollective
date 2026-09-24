@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { JournalEntry } from "@/app/_assemblies/documents";
+import { SiteJournalEntry } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "Story · Getaway Collective",
@@ -20,5 +20,5 @@ export const metadata: Metadata = {
 
 export default async function Pjournal_story(props: { params: Promise<{ story: string }> }) {
   const params = await props.params;
-  return <JournalEntry slug={params.story} />;
+  return <SiteJournalEntry slug={params.story} />;
 }

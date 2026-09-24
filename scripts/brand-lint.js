@@ -59,22 +59,30 @@ const fonts = read(FONTS);
 
 /* ── 1 · BR-01: the mark weight is 200, and it is actually loaded ─────── */
 
+/* ── BR-01 as amended, 24 Sep 2026 (L1-01 §29-0b) ─────────────────────
+   The mark is drawn (R5 · One angle) and the lockup sets GETAWAY in Inter
+   Tight 800 over COLLECTIVE in Inter Tight 100. Both weights must load:
+   a weight that is asked for and not loaded falls to the nearest one
+   SILENTLY — the defect this lint was first written against. */
 const MARK_WEIGHT = Number((registry.match(/MARK_WEIGHT\s*=\s*(\d+)/) || [])[1]);
-if (MARK_WEIGHT !== 200) {
-  fail.push(`BR-01 sets the wordmark at Outfit 200; the registry says ${MARK_WEIGHT || "nothing"}.`);
+const MARK_WEIGHT_THIN = Number((registry.match(/MARK_WEIGHT_THIN\s*=\s*(\d+)/) || [])[1]);
+if (MARK_WEIGHT !== 800 || MARK_WEIGHT_THIN !== 100) {
+  fail.push(`BR-01 sets GETAWAY at Inter Tight 800 and COLLECTIVE at 100; the registry says ${MARK_WEIGHT || "nothing"} and ${MARK_WEIGHT_THIN || "nothing"}.`);
 }
 
-const outfitBlock = (fonts.match(/Outfit\(\{[\s\S]*?\}\)/) || [""])[0];
-const loadedWeights = [...outfitBlock.matchAll(/"(\d{3})"/g)].map((m) => Number(m[1]));
-if (!loadedWeights.includes(MARK_WEIGHT)) {
-  fail.push(
-    `Outfit is loaded at [${loadedWeights.join(", ") || "none"}] and the mark needs ${MARK_WEIGHT}. ` +
-    `A wordmark asking for an unloaded weight falls to the nearest one SILENTLY — ` +
-    `this is the defect that shipped, and it is invisible on screen.`,
-  );
+const faceBlock = (fonts.match(/Inter_Tight\(\{[\s\S]*?\}\)/) || [""])[0];
+const loadedWeights = [...faceBlock.matchAll(/"(\d{3})"/g)].map((m) => Number(m[1]));
+for (const w of [MARK_WEIGHT, MARK_WEIGHT_THIN]) {
+  if (!loadedWeights.includes(w)) {
+    fail.push(
+      `Inter Tight is loaded at [${loadedWeights.join(", ") || "none"}] and the mark needs ${w}. ` +
+      `A wordmark asking for an unloaded weight falls to the nearest one SILENTLY — ` +
+      `this is the defect that shipped, and it is invisible on screen.`,
+    );
+  }
 }
 
-/* Anything in the type scale that asks for a weight the face does not carry
+/* The type scale asks for display weights too, and an unloaded one
    has the same silent failure. Reported, because the scale is ratified too. */
 if (exists("constants/typography.ts")) {
   const scale = read("constants/typography.ts");
@@ -83,36 +91,20 @@ if (exists("constants/typography.ts")) {
   );
   const missing = [...asked].filter((w) => !loadedWeights.includes(w)).sort();
   if (missing.length) {
-    fail.push(`constants/typography.ts sets display roles at weight ${missing.join(", ")}, which Outfit is not loaded at.`);
+    fail.push(`constants/typography.ts sets display roles at weight ${missing.join(", ")}, which Inter Tight is not loaded at.`);
   }
 }
 
-/* ── 2 · BR-01: the wordmark carries its copper square ───────────────── */
-
-if (!/gc-device/.test(component)) {
-  fail.push("The wordmark renderer does not include the device. BR-01 makes the trailing square the mark.");
+/* The geometry is the registry's, never redrawn in the renderer. */
+if (!/MARK_PATH/.test(component) || !/MARK_CUT/.test(component)) {
+  fail.push("The mark renderer does not draw from MARK_PATH and MARK_CUT. The geometry lives in constants/brand-system.ts, once.");
 }
-if (!/background:\s*var\(--gc-copper\)/.test(styles)) {
+if (!/gc-device/.test(component)) {
+  fail.push("The mark renderer does not include the device. BR-01 makes the copper skylight the mark's device.");
+}
+if (!/\.gc-device\s*\{[^}]*fill:\s*var\(--gc-copper\)/.test(styles)) {
   fail.push("The device is not copper. BR-01 grants copper's only non-financial use to this one element.");
 }
-
-/* ── 3 · The device is square. RADIUS.none is invariant ─────────────── */
-
-const radius = styles.match(/\.gc-device\s*\{[^}]*\}/);
-if (radius && !/border-radius:\s*var\(--gc-radius\)/.test(radius[0])) {
-  fail.push("The device must take var(--gc-radius). A round dot is the only curve in a zero-radius system.");
-}
-/* The lookahead sits immediately after the colon and consumes its own
-   whitespace. Written as `\s*(?!…)` it backtracks to zero spaces, tests
-   the guard against " " instead of "var(", and flags the correct answer —
-   which is exactly what it did on its first run. scripts/token-lint.js
-   carries the same note about the same trap; the hazard is documented in
-   this repo and still caught me. */
-for (const m of styles.matchAll(/border-radius:(?!\s*(?:0\b|var\(--gc-radius\)))([^;]+);/g)) {
-  fail.push(`brandmark.css rounds a corner: "${m[1].trim()}". GC never rounds a corner.`);
-}
-
-/* ── 4 · The mark is never set in a face the system does not have ────── */
 
 const FORBIDDEN = [...registry.matchAll(/FORBIDDEN_MARK_FACES\s*=\s*\[([^\]]*)\]/g)]
   .flatMap((m) => [...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]));
@@ -183,7 +175,7 @@ if (!(CAP_RATIO > 0 && CAP_RATIO < 1)) {
   if (capAtFloor < MIN_CAP_PX) {
     fail.push(`The floor does not clear BR-02: ${minFont}px font-size gives ${capAtFloor.toFixed(2)}px cap-height, under ${MIN_CAP_PX}.`);
   }
-  note.push(`clearspace = ${CAP_RATIO} x font-size (Outfit sCapHeight 676 / upem 1000)`);
+  note.push(`clearspace = ${CAP_RATIO} x font-size (Inter sCapHeight 2048 / upem 2816)`);
   note.push(`wordmark floor = ${minFont}px font-size for a ${MIN_CAP_PX}px cap-height`);
 }
 
@@ -203,7 +195,7 @@ if (misuseWhy < misuse.length) fail.push(`${misuse.length - misuseWhy} misuse(s)
 /* ── Report ──────────────────────────────────────────────────────────── */
 
 console.log(`\n[brand-lint] ${marks.length} marks · ${misuse.length} recorded misuses · ${FORBIDDEN.length} barred faces`);
-console.log(`[brand-lint] Outfit loaded at ${loadedWeights.join(", ")} · mark weight ${MARK_WEIGHT}`);
+console.log(`[brand-lint] Inter Tight loaded at ${loadedWeights.join(", ")} · mark weights ${MARK_WEIGHT} / ${MARK_WEIGHT_THIN}`);
 for (const n of note) console.log(`  ${n}`);
 if (handSet === 0) console.log("  one renderer: no surface sets the wordmark by hand");
 
@@ -213,4 +205,4 @@ if (fail.length) {
   console.error("");
   process.exit(1);
 }
-console.log("\n[brand-lint] PASS — one specification, one renderer, and the ratified weight is loaded\n");
+console.log("\n[brand-lint] PASS — one specification, one renderer, and both ratified weights are loaded\n");

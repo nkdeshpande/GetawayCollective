@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { JournalIndex } from "@/app/_assemblies/documents";
+import { SiteJournalIndex } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "The Journal · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pjournal() {
-  return <JournalIndex />;
+  return <SiteJournalIndex />;
 }

@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { About } from "@/app/_assemblies/about";
+import { SiteText } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "About · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pabout() {
-  return <About />;
+  return <SiteText path="/about" />;
 }

@@ -11,14 +11,14 @@
  */
 
 import type { Metadata } from "next";
-import { PropertySurface } from "@/app/_assemblies/property";
-import { propertyTitle } from "@/constants/property-page";
+import { SiteEstate } from "@/app/_assemblies/site/pages";
+import { siteTitle } from "@/app/_assemblies/site/pages";
 
 export async function generateMetadata(
   props: { params: Promise<{ vehicle: string }> },
 ): Promise<Metadata> {
   const params = await props.params;
-  const name = propertyTitle(params.vehicle);
+  const name = siteTitle(params.vehicle);
   return {
     title: name ?? "Opportunity · Getaway Collective",
     robots: { index: true, follow: true },
@@ -27,5 +27,5 @@ export async function generateMetadata(
 
 export default async function Pcollection_vehicle(props: { params: Promise<{ vehicle: string }> }) {
   const params = await props.params;
-  return <PropertySurface slug={params.vehicle} />;
+  return <SiteEstate slug={params.vehicle} />;
 }

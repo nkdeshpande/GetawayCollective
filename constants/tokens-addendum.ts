@@ -328,13 +328,15 @@ export const Z = {
 
 export const BRAND = {
   wordmark: {
-    spec: "Outfit 200, uppercase. The trailing period always rendered in Copper.",
-    rule: "The only place a full stop is permitted as a brand device.",
+    /* Amended 24 Sep 2026, L1-01 §29-0b. Was: "Outfit 200, uppercase. The
+       trailing period always rendered in Copper." */
+    spec: "The drawn mark (R5 · One angle) beside GETAWAY in Inter Tight 800 over COLLECTIVE in Inter Tight 100, uppercase. The skylight cut always rendered in Copper.",
+    rule: "The skylight is the only place copper carries the brand.",
   },
   clearspace: {
     minimum: "Equal to the cap-height of the G on all sides",
     minSize: "20px cap-height",
-    rule: "Never on a photographic background without a solid or 70%-dim scrim.",
+    rule: "Never on a photograph. The mark sits on a solid bar above or below the picture (ruling of 21 Sep 2026).",
   },
   iconography: {
     spec: "1px stroke, square frame, no fills, no two-tone.",

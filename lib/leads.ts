@@ -39,6 +39,13 @@ export const DossierLead = z.object({
    * can send any flag they like.
    */
   vehicle: z.string().trim().max(64).optional(),
+  /**
+   * What the person wrote, and the topics they ticked. Optional, capped,
+   * and passed through as text only: the site's enquiry form has a
+   * question field, and without this the question was dropped on the
+   * floor while the page said it had been received. Added 24 Sep 2026.
+   */
+  note: z.string().trim().max(2000).optional(),
 });
 export type DossierLeadInput = z.infer<typeof DossierLead>;
 

@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { StandingDocBySlug } from "@/app/_assemblies/documents";
+import { SiteLegalDoc } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "Legal Document · Getaway Collective",
@@ -20,5 +20,5 @@ export const metadata: Metadata = {
 
 export default async function Plegal_document(props: { params: Promise<{ document: string }> }) {
   const params = await props.params;
-  return <StandingDocBySlug document={params.document} />;
+  return <SiteLegalDoc document={params.document} />;
 }

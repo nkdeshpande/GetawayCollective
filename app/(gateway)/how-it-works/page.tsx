@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { HowItWorks } from "@/app/_assemblies/publicpages";
+import { SiteText } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "How It Works · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Phow_it_works() {
-  return <HowItWorks />;
+  return <SiteText path="/how-it-works" />;
 }

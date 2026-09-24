@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Composed } from "@/app/_assemblies/compose";
+import { SiteText } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "Contact · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pcontact() {
-  return <Composed path="/contact" />;
+  return <SiteText path="/contact" />;
 }

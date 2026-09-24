@@ -33,6 +33,9 @@
 /* After assemblies.css: shell-mobile.css overrides the generated
    prototype CSS by ORDER, and must never be folded into it. */
 @import url("./_assemblies/shell-mobile.css");
+/* §29-0b · the public site. Last, and scoped under .site, so it can only
+   ever reach the public frame and never re-order the rules above. */
+@import url("./_assemblies/site.css");
 
 *,
 *::before,

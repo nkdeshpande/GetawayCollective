@@ -9,21 +9,32 @@
 import { describe, it, expect } from "vitest";
 import {
   BRAND_LAWS, CAP_RATIO, COPPER_EXCEPTION, DEVICE_RATIO, FORBIDDEN_MARK_FACES,
-  MARKS, MARK_COLOUR, MARK_WEIGHT, MIN_CAP_PX, MIN_FONT_PX, MISUSE,
+  MARKS, MARK_COLOUR, MARK_PATH, MARK_WEIGHT, MARK_WEIGHT_THIN, MIN_CAP_PX, MIN_FONT_PX, MISUSE,
   clearspacePx, devicePx,
 } from "../constants/brand-system";
 import { BRAND } from "../constants/tokens-addendum";
 import { COLOUR, RADIUS } from "../constants/tokens";
 
 describe("the mark implements the ratified spec", () => {
-  it("is set at the weight BR-01 states", () => {
-    expect(MARK_WEIGHT).toBe(200);
-    expect(BRAND.wordmark.spec).toContain("Outfit 200");
+  /* Amended 24 Sep 2026 (L1-01 §29-0b): the drawn mark replaced the set
+     type, exactly as BRAND_LAWS said it would. GETAWAY at 800 over
+     COLLECTIVE at 100; the device is the copper skylight in the mark. */
+  it("is set at the weights BR-01 states, as amended", () => {
+    expect(MARK_WEIGHT).toBe(800);
+    expect(MARK_WEIGHT_THIN).toBe(100);
+    expect(BRAND.wordmark.spec).toContain("Inter Tight 800");
+    expect(BRAND.wordmark.spec).toContain("Inter Tight 100");
   });
 
-  it("keeps the trailing period as the brand device, and only there", () => {
-    expect(BRAND.wordmark.rule).toContain("only place a full stop");
-    expect(COPPER_EXCEPTION).toContain("only place a full stop");
+  it("keeps copper for the skylight, and only there", () => {
+    expect(BRAND.wordmark.rule).toContain("only place copper carries the brand");
+    expect(COPPER_EXCEPTION).toContain("only place copper carries the brand");
+  });
+
+  it("draws every point of the mark on the 11-unit module", () => {
+    const pts = [...MARK_PATH.matchAll(/(\d+)/g)].map((m) => Number(m[1]));
+    expect(pts.length).toBeGreaterThan(0);
+    for (const p of pts) expect((p - 6) % 11).toBe(0);
   });
 
   it("declares exactly three marks, each with a floor and an authority", () => {
@@ -39,18 +50,18 @@ describe("the mark implements the ratified spec", () => {
 
 describe("BR-02 clearspace is arithmetic, not a wish", () => {
   it("derives the floor from the measured cap-height", () => {
-    // 20px cap-height / 0.676 = 29.59 -> 29.6
-    expect(MIN_FONT_PX).toBe(29.6);
+    // 20px cap-height / 0.727 = 27.51 -> 27.6
+    expect(MIN_FONT_PX).toBe(27.6);
     expect(MIN_FONT_PX * CAP_RATIO).toBeGreaterThanOrEqual(MIN_CAP_PX);
   });
 
-  it("uses Outfit's own cap-height, not a guess", () => {
-    // OS/2.sCapHeight 676 over head.unitsPerEm 1000, read from the shipped woff2
-    expect(CAP_RATIO).toBeCloseTo(676 / 1000, 5);
+  it("uses Inter's own cap-height, not a guess", () => {
+    // sCapHeight 2048 over unitsPerEm 2816 in the Inter master Inter Tight is cut from
+    expect(CAP_RATIO).toBeCloseTo(2048 / 2816, 3);
   });
 
   it("gives clearspace equal to the cap-height of the G", () => {
-    expect(clearspacePx(100)).toBe(68); // 0.676 * 100, rounded
+    expect(clearspacePx(100)).toBe(73); // 0.727 * 100, rounded
     expect(clearspacePx(MIN_FONT_PX)).toBe(MIN_CAP_PX);
   });
 
@@ -62,9 +73,9 @@ describe("BR-02 clearspace is arithmetic, not a wish", () => {
 });
 
 describe("the mark obeys the rest of the system", () => {
-  it("is square, because RADIUS.none is invariant", () => {
+  it("is chamfered, never rounded, because RADIUS.none is invariant", () => {
     expect(RADIUS.none).toBe("0px");
-    expect(MISUSE.map((m) => m.wrong)).toContain("A round device.");
+    expect(MISUSE.map((m) => m.wrong)).toContain("A rounded corner on the mark.");
   });
 
   it("takes copper on void and the AA-clearing copper on paper", () => {
@@ -76,6 +87,7 @@ describe("the mark obeys the rest of the system", () => {
 
   it("bars the faces that actually shipped on the mark", () => {
     expect(FORBIDDEN_MARK_FACES).toContain("Georgia");
+    expect(FORBIDDEN_MARK_FACES).toContain("Outfit"); // retired 24 Sep 2026
   });
 });
 
@@ -88,7 +100,7 @@ describe("every recorded misuse says why", () => {
     }
   });
 
-  it("admits there is no drawn logotype", () => {
-    expect(BRAND_LAWS.derivedNotDrawn).toContain("no drawn logotype");
+  it("records that the logotype is now drawn", () => {
+    expect(BRAND_LAWS.drawnNotDerived).toContain("R5");
   });
 });

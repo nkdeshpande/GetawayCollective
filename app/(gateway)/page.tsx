@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { Root } from "@/app/_assemblies/publicpages";
+import { SiteHome } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function P() {
-  return <Root />;
+  return <SiteHome />;
 }

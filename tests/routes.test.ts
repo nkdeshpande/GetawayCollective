@@ -29,8 +29,10 @@ const vantageOf = (route: (typeof ROUTES)[number]) =>
   route.assembly ? assemblyById(route.assembly)?.vantage ?? GROUP_VANTAGE[route.group] : GROUP_VANTAGE[route.group];
 
 describe("canonical IA v5", () => {
-  /* 106 canonical URLs, and 107 records once the two co-located ids are
-     counted. It was 112 and 113 until 21 Sep 2026, when six property
+  /* 112 canonical URLs, and 113 records once the two co-located ids are
+     counted. 24 Sep 2026: six public routes added with the site skin —
+     /signal, /team, /how-we-build, /press, /answers, /glossary (GC-220, 450-490).
+     It was 106 and 107 before that, and 112 and 113 until 21 Sep 2026, when six property
      chapters were retired for repeating /collection/[vehicle] under other
      names. Their ids are spent, not freed — see constants/routes.ts.
 
@@ -39,10 +41,10 @@ describe("canonical IA v5", () => {
      were consolidated into GC-400. */
   it("wires the canon plus the aliases, conventions, contact and the desk", () => {
     // 112 until six duplicate property chapters were retired, 21 Sep 2026.
-    expect(ROUTES).toHaveLength(106);
-    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(106);
+    expect(ROUTES).toHaveLength(112);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(112);
     const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
-    expect(records).toHaveLength(107);   // 113 before the retirement
+    expect(records).toHaveLength(113);   // 107 before the site skin, 113 before the retirement
     expect(new Set(records).size).toBe(records.length);
   });
 

@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { DocumentIndex } from "@/app/_assemblies/documents";
+import { SiteLegalIndex } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "Legal · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Plegal() {
-  return <DocumentIndex />;
+  return <SiteLegalIndex />;
 }

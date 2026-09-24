@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { GatewayGrid } from "@/app/_assemblies/gateway";
+import { SiteCollection } from "@/app/_assemblies/site/pages";
 
 export const metadata: Metadata = {
   title: "The Collection · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pcollection() {
-  return <GatewayGrid />;
+  return <SiteCollection />;
 }

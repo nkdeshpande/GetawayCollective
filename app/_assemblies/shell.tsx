@@ -75,6 +75,8 @@ function vantageLabel(s: Subject): string | null {
   return null;
 }
 import { plate } from "./data";
+import { SiteFooter, SiteNav, SiteSymbols } from "./site/chrome";
+import { SiteBehaviour } from "./site/behaviour";
 import { hueOf } from "./compose";
 
 /* ── Icons ───────────────────────────────────────────────────────────
@@ -139,7 +141,43 @@ function resolve(pathname: string) {
 
 const STORE = "gc-rail-collapsed";
 
-export function Shell({
+/**
+ * THE PUBLIC SITE WEARS ITS OWN FRAME — L1-01 §29-0b, 24 Sep 2026.
+ *
+ * The routes a stranger reads — the collection, the estates, the Journal,
+ * the legal corpus and the company pages — render inside the site bar and
+ * foot the prototype drew (app/_assemblies/site/chrome.tsx). Everything
+ * else keeps the rails below, unchanged, because the rails are how a
+ * signed-in person moves between apertures and the site has none.
+ *
+ * Chosen by path, never by who is looking: the same URL has one frame for
+ * everybody, so nothing about the frame discloses the viewer's standing.
+ */
+const SITE_PATHS = [
+  /^\/$/, /^\/collection(\/|$)/, /^\/journal(\/|$)/, /^\/legal(\/|$)/,
+  /^\/(how-it-works|how-we-build|about|contact|team|press|answers|glossary|signal)$/,
+];
+export const isSitePath = (p: string) => SITE_PATHS.some((re) => re.test(p));
+
+function SiteShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="site">
+      <a className="skip" href="#main">Skip to content</a>
+      <SiteSymbols />
+      <SiteNav />
+      <main id="main">{children}</main>
+      <SiteFooter />
+      <SiteBehaviour />
+    </div>
+  );
+}
+
+export function Shell(props: { children: React.ReactNode; subject?: Subject }) {
+  const pathname = usePathname() || "/";
+  return isSitePath(pathname) ? <SiteShell>{props.children}</SiteShell> : <RailShell {...props} />;
+}
+
+function RailShell({
   children,
   subject = ANONYMOUS,
 }: {

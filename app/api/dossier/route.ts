@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
   }
 
-  const { name, email, city, vehicle } = parsed.data;
+  const { name, email, city, vehicle, note } = parsed.data;
 
   /* The stance is READ from the register, never taken from the request.
      A fully subscribed vehicle takes a waitlist; an open one takes an
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
   await recordContact({
     email,
     name,
-    note: city ? `City: ${city}` : undefined,
+    note: [city ? `City: ${city}` : "", note ?? ""].filter(Boolean).join("\n") || undefined,
     source: isWaitlist ? "waitlist" : "dossier",
     correlationId,
   }).catch(() => false);
@@ -56,6 +56,7 @@ export async function POST(req: Request) {
       `Name: ${name}\nEmail: ${email}\nCity: ${city || "(not given)"}\n` +
       `Vehicle: ${v ? `${v.propertyName} (${v.slug})` : "(none named)"}\n` +
       `Stance: ${stance ? stance.kind : "(not a registered vehicle)"}` +
+      (note ? `\n\nThey wrote:\n${note}` : "") +
       (isWaitlist
         ? "\n\nWAITLIST registration. No allocation exists and none is implied."
         : ""),

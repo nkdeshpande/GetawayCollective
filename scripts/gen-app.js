@@ -181,16 +181,30 @@ const COMPOSED = (() => {
    flow declares assembly: null on purpose — see constants/routes.ts. */
 const BY_PATH = {
   /* The public surface: PUB.01-PUB.11, one renderer, chosen by path. */
-  "/": { component: "Root", from: "@/app/_assemblies/publicpages" },
-  "/how-it-works": { component: "HowItWorks", from: "@/app/_assemblies/publicpages" },
+  /* THE SITE SKIN — L1-01 §29-0b, 24 Sep 2026. Every public route a
+     stranger reads renders the site (app/_assemblies/site/pages.tsx), the
+     founder's prototype built on this repository's own content and the
+     vehicle register. The earlier renderers stay in the tree, unrouted:
+     the remediation registry and its tests still read them by path. */
+  "/": { component: "SiteHome", from: "@/app/_assemblies/site/pages" },
+  "/collection": { component: "SiteCollection", from: "@/app/_assemblies/site/pages" },
+  "/collection/[vehicle]": { component: "SiteEstate", from: "@/app/_assemblies/site/pages", param: "vehicle", passAs: "slug",
+                             titleFrom: "siteTitle", titleFromModule: "@/app/_assemblies/site/pages" },
+  "/how-it-works": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/how-it-works" },
+  "/contact": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/contact" },
+  "/team": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/team" },
+  "/how-we-build": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/how-we-build" },
+  "/press": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/press" },
+  "/answers": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/answers" },
+  "/glossary": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/glossary" },
   /* GC-400. Was falling through to the registry scaffold, which published
      the assembly id and the section slots to anybody who asked what GC is. */
-  "/about": { component: "About", from: "@/app/_assemblies/about" },
+  "/about": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/about" },
   "/collective/partners": { component: "Partners", from: "@/app/_assemblies/publicpages" },
   "/collective/operators": { component: "Operators", from: "@/app/_assemblies/publicpages" },
   "/collective/press": { component: "Wire", from: "@/app/_assemblies/publicpages" },
   "/communique/request": { component: "Dossier", from: "@/app/_assemblies/publicpages" },
-  "/signal": { component: "Signal", from: "@/app/_assemblies/publicpages" },
+  "/signal": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/signal" },
   "/roles/[code]": { component: "RoleDetail", from: "@/app/_assemblies/gatewaypages", param: "code" },
   /* Administration. */
   "/admin/vehicles/new": { component: "VehicleFormation", from: "@/app/_assemblies/adminpages" },
@@ -240,9 +254,9 @@ const BY_PATH = {
      Six of the nine were retired on 21 Sep 2026 — they repeated the
      property page under other names. /collection/[vehicle] is not here
      either: it keeps its built wireframe (AS-03). */
-  "/collection/[vehicle]/investment": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/investment", param: "vehicle" },
-  "/collection/[vehicle]/risk": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/risk", param: "vehicle" },
-  "/collection/[vehicle]/enquire": { component: "ChapterSurface", from: "@/app/_assemblies/propertychapters", prop: "/collection/[vehicle]/enquire", param: "vehicle" },
+  "/collection/[vehicle]/investment": { component: "SiteChapter", from: "@/app/_assemblies/site/pages", prop: "/collection/[vehicle]/investment", param: "vehicle" },
+  "/collection/[vehicle]/risk": { component: "SiteChapter", from: "@/app/_assemblies/site/pages", prop: "/collection/[vehicle]/risk", param: "vehicle" },
+  "/collection/[vehicle]/enquire": { component: "SiteChapter", from: "@/app/_assemblies/site/pages", prop: "/collection/[vehicle]/enquire", param: "vehicle" },
   "/invest/[vehicle]": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]", param: "vehicle" },
   "/invest/[vehicle]/asset": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/asset", param: "vehicle" },
   "/invest/[vehicle]/financials": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/[vehicle]/financials", param: "vehicle" },
@@ -263,11 +277,11 @@ const BY_PATH = {
 
   /* The legal corpus: one renderer, seven documents, chosen by path.
      AS-29 takes the path as a prop rather than being seven components. */
-  "/legal": { component: "DocumentIndex", from: "@/app/_assemblies/documents" },
-  "/legal/[document]": { component: "StandingDocBySlug", from: "@/app/_assemblies/documents", param: "document" },
+  "/legal": { component: "SiteLegalIndex", from: "@/app/_assemblies/site/pages" },
+  "/legal/[document]": { component: "SiteLegalDoc", from: "@/app/_assemblies/site/pages", param: "document" },
 
-  "/journal": { component: "JournalIndex", from: "@/app/_assemblies/documents" },
-  "/journal/[story]": { component: "JournalEntry", from: "@/app/_assemblies/documents", param: "story", passAs: "slug" },
+  "/journal": { component: "SiteJournalIndex", from: "@/app/_assemblies/site/pages" },
+  "/journal/[story]": { component: "SiteJournalEntry", from: "@/app/_assemblies/site/pages", param: "story", passAs: "slug" },
 
   "/flow": { component: "Offering", from: "@/app/_assemblies/flow" },
   "/flow/accreditation": { component: "Accreditation", from: "@/app/_assemblies/flow" },
