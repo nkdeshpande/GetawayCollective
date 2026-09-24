@@ -17,6 +17,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Film } from "./film";
+import { wireDA } from "../da/wire";
 
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s)) as T[];
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s);
@@ -89,6 +90,9 @@ export function SiteBehaviour() {
     const on = (el: EventTarget, ev: string, fn: EventListener, opt?: AddEventListenerOptions) => {
       el.addEventListener(ev, fn, opt); off.push(() => el.removeEventListener(ev, fn));
     };
+
+    /* the digital assemblies the pages carry */
+    off.push(wireDA(root));
 
     /* films */
     $$<HTMLCanvasElement>("canvas.film", root).forEach((c, i) => {

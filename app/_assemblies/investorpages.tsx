@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import { DA } from "./da/DA";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { vehicleBySlug } from "@/constants/vehicles";
@@ -26,6 +27,16 @@ const content: Record<string, { eyebrow: string; title: string; lead: string; ev
 
 function keyFor(path: string) { if (path === "/invest/qualify") return "qualify"; if (path.endsWith("/speak")) return "speak"; return path.split("/").at(-1) === "invest" ? "overview" : path.split("/").at(-1) ?? "overview"; }
 
+/* The diligence views, drawn: the capital on Financials, the parties and the
+   vote on Structure, a position on the Overview. Figures come from the same
+   register the rows beside them read. */
+function InvestorDrawn({ v, view }: { v: string; view: string }) {
+  if (view === "financials") return <div className="investor-da"><DA kind="stack" vehicle={v} /><DA kind="units" vehicle={v} /><DA kind="waterfall" vehicle={v} money /></div>;
+  if (view === "structure") return <div className="investor-da"><DA kind="entities" /><DA kind="vote" vehicle={v} /></div>;
+  if (view === "overview") return <div className="investor-da"><DA kind="position" vehicle={v} /></div>;
+  return null;
+}
+
 function InvestorWorkspace({ path, vehicle, param }: InvestorSurfaceProps) {
   const search = useSearchParams();
   const preview = path === "/investor-workspace-preview";
@@ -38,7 +49,7 @@ function InvestorWorkspace({ path, vehicle, param }: InvestorSurfaceProps) {
   const dossier = vehicleRecord && key in content && key !== "speak" ? dossierFor(vehicleRecord, key as DossierKey) : null;
   const base = `/invest/${actualVehicle}`;
   const href = (suffix: string) => preview ? `/investor-workspace-preview?view=${suffix.replace(/^\//, "") || "overview"}` : base + suffix;
-  return <main className="investor-surface p-hero-own"><WsFrame opening="investor" preview={preview} current="Diligence" tabs={[{ href: preview ? "/investor-workspace-preview" : base, label: "Diligence" }, { href: "/collection", label: "The collection" }, { href: preview ? "/investor-workspace-preview?view=speak" : `${base}/speak`, label: "Speak with IR" }]}><div className="investor-shell"><aside><span className="eyebrow">PRIVATE REVIEW</span><h2>One vehicle.<br />One record.</h2><nav>{tabs.map(([label, suffix]) => <Link key={label} className={key === (suffix ? suffix.slice(1) : "overview") ? "active" : ""} href={href(suffix)}>{label}</Link>)}</nav><Link className="investor-speak" href={href("/speak")}>Speak with IR →</Link></aside><section className="investor-main"><span className="eyebrow">{item.eyebrow}</span><h1>{dossier?.title ?? item.title}</h1><p className="investor-lead">{dossier?.lead ?? item.lead}</p>{dossier ? dossier.sections.map((sec) => <div className="investor-dossier" key={sec.heading}><span>{sec.heading.toUpperCase()}</span>{sec.rows.map((r) => <article key={r.label}><h3>{r.label}</h3><strong>{r.value}</strong><em>{r.basis}</em></article>)}</div>) : <div className="investor-proof"><span>WHAT SUPPORTS THIS VIEW</span>{item.evidence.map((e, i) => <article key={e}><b>0{i + 1}</b><p>{e}</p><em>Verified record →</em></article>)}</div>}<div className="investor-action"><p>{dossier?.note ?? item.note}</p><Link className="btn primary" href={dossier?.actionHref ?? href(key === "overview" ? "/asset" : key === "asset" ? "/financials" : key === "financials" ? "/structure" : key === "structure" ? "/risks" : key === "risks" ? "/dataroom" : key === "dataroom" ? "/commit" : "/speak")}>{dossier?.action ?? item.action}</Link></div></section></div></WsFrame></main>;
+  return <main className="investor-surface p-hero-own"><WsFrame opening="investor" preview={preview} current="Diligence" tabs={[{ href: preview ? "/investor-workspace-preview" : base, label: "Diligence" }, { href: "/collection", label: "The collection" }, { href: preview ? "/investor-workspace-preview?view=speak" : `${base}/speak`, label: "Speak with IR" }]}><div className="investor-shell"><aside><span className="eyebrow">PRIVATE REVIEW</span><h2>One vehicle.<br />One record.</h2><nav>{tabs.map(([label, suffix]) => <Link key={label} className={key === (suffix ? suffix.slice(1) : "overview") ? "active" : ""} href={href(suffix)}>{label}</Link>)}</nav><Link className="investor-speak" href={href("/speak")}>Speak with IR →</Link></aside><section className="investor-main"><span className="eyebrow">{item.eyebrow}</span><h1>{dossier?.title ?? item.title}</h1><p className="investor-lead">{dossier?.lead ?? item.lead}</p>{dossier ? dossier.sections.map((sec) => <div className="investor-dossier" key={sec.heading}><span>{sec.heading.toUpperCase()}</span>{sec.rows.map((r) => <article key={r.label}><h3>{r.label}</h3><strong>{r.value}</strong><em>{r.basis}</em></article>)}</div>) : <div className="investor-proof"><span>WHAT SUPPORTS THIS VIEW</span>{item.evidence.map((e, i) => <article key={e}><b>0{i + 1}</b><p>{e}</p><em>Verified record →</em></article>)}</div>}{vehicleRecord ? <InvestorDrawn v={vehicleRecord.key} view={key} /> : null}<div className="investor-action"><p>{dossier?.note ?? item.note}</p><Link className="btn primary" href={dossier?.actionHref ?? href(key === "overview" ? "/asset" : key === "asset" ? "/financials" : key === "financials" ? "/structure" : key === "structure" ? "/risks" : key === "risks" ? "/dataroom" : key === "dataroom" ? "/commit" : "/speak")}>{dossier?.action ?? item.action}</Link></div></section></div></WsFrame></main>;
 }
 
 export function InvestorSurface(props: InvestorSurfaceProps) {

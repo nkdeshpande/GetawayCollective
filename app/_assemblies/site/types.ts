@@ -91,6 +91,10 @@ export interface Block {
   readonly jcards?: readonly JournalCard[];
   readonly kinds?: Readonly<Record<string, string>>;
   readonly faq?: string;
+  /** A digital assembly (app/_assemblies/da): its kind, and the vehicle it draws. */
+  readonly da?: string;
+  readonly vehicle?: string;
+  readonly money?: boolean;
   /** A heading's anchor, so a contents strip can point at it. */
   readonly id?: string;
   /** Markup built from tokens by the site itself (the Journal's drawings). */

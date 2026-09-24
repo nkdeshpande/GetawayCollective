@@ -27,6 +27,7 @@ import { useSearchParams } from "next/navigation";
 import { VEHICLES, LIFECYCLE_LABEL, BUILD_LABEL, stanceFor, vehicleBySlug } from "@/constants/vehicles";
 import { VEHICLE_STAGES, type VehicleStageId } from "@/constants/workspace-modules";
 import { WsFrame, OFFICE_TABS, OFFICE_PREVIEW_TABS } from "./workspace/frame";
+import { DA } from "./da/DA";
 import { ApertureCard, ApertureStrip, openItems } from "./workspace/aperture";
 import { DeskView, EXAMPLE_PEOPLE } from "./workspace/desk";
 
@@ -160,6 +161,8 @@ function OfficeWorkspace({ path, params }: OfficeProps) {
 
         {key === "collection" ? <>
           <Head k="collection" extra={<Figures />} />
+          <section className="ws-section"><div className="ws-sec-head"><span className="eb">Where each estate stands</span><h2 className="ws-h2">One track, <span>every estate.</span></h2></div>
+            <div className="ws-card iv-card"><DA kind="stages" /></div></section>
           <div className="ws-table">
             <div className="hd"><span>Estate</span><span>Stage</span><span>Offering</span><span>Open items</span><span>Next</span></div>
             {VEHICLES.map((x) => {
@@ -190,6 +193,13 @@ function OfficeWorkspace({ path, params }: OfficeProps) {
 
           {key === "vehicle" && !preview ? <AtlasFindings vehicle={v.slug} /> : null}
 
+          {key === "vehicle" ? (
+            <section className="ws-section">
+              <div className="ws-sec-head"><span className="eb">Capital at a glance</span><h2 className="ws-h2">The record, <span>drawn.</span></h2></div>
+              <div className="ws-da"><div className="ws-card iv-card"><DA kind="stack" vehicle={v.key} /></div><div className="ws-card iv-card"><DA kind="units" vehicle={v.key} /></div></div>
+              <div className="ws-card iv-card"><DA kind="waterfall" vehicle={v.key} money /></div>
+            </section>
+          ) : null}
           {key === "vehicle" ? (
             <section className="ws-section">
               <div className="ws-sec-head"><span className="eb">Lifecycle</span><h2 className="ws-h2">Ten stages, <span>each with its gate.</span></h2></div>

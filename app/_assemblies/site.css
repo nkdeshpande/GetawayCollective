@@ -14,7 +14,9 @@
 .site .brand{border-bottom:revert;padding:revert}
 .site .btn{align-items:revert;background:revert;border:revert;color:revert;display:revert;font:revert;gap:revert;justify-content:revert;letter-spacing:revert;padding:revert;text-transform:revert;transition:revert}
 .site .btn:hover{background:revert;border-color:revert;color:revert}
+.site .col-stages{padding:revert}
 .site .dim{color:revert}
+.site .fin-da{display:revert;gap:revert;grid-template-columns:revert;margin-top:revert}
 .site .foot{border-top:revert;margin-top:revert;padding:revert}
 .site .hero{align-items:revert;border-bottom:revert;display:revert;min-height:revert;overflow:revert;position:revert}
 .site .hero .go{display:revert;flex-wrap:revert;gap:revert;margin-top:revert}

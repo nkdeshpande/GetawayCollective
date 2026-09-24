@@ -14,6 +14,7 @@ import { FILM, SITE } from "@/constants/tokens";
 import type { Block, Card, Concept, FilmRef, FormSpec, MapSpec, SiteEstate, SitePage, Volume } from "./types";
 import type { Reading } from "./registry";
 import { rupees, rupeesFull } from "./registry";
+import { daHTML, type DAKind } from "../da/render";
 
 const INK = FILM.ink as Readonly<Record<string, string>>;
 
@@ -143,21 +144,11 @@ export function FIN(E: SiteEstate, R: Reading) {
   let h = `<section class="fin" id="${k}-capital"><span class="eb">Capital</span>` +
     `<h2 class="h2">${o.units} units offered. <span>${full ? "All held." : `${o.available} available.`}</span></h2>` +
     `<p class="para fin-lead">${esc(v.registeredName)} holds ${esc(E.name)}. The offering letter governs every figure below.</p>`;
-  h += '<div class="stack4">' + [
-    ["Project cost", rupees(v.stack.projectTotal), "The capital stack, in full"],
-    ["Equity", rupees(o.totalEquity), `${rupees(o.offered)} offered · ${rupees(o.promoter)} held by the sponsor`],
-    ["Bank facility", rupees(v.stack.facility), v.stack.covenant],
-    ["Units", `${o.subscribed} / ${o.units}`, "Offered units subscribed"],
-  ].map((x) => `<div><em>${x[0]}</em><b>${x[1]}</b><span>${esc(x[2])}</span></div>`).join("") + "</div>";
-  const cells: string[] = [];
-  for (let i = 0; i < R.promoterUnits; i++) cells.push("hold");
-  for (let i = 0; i < o.units; i++) cells.push(i < o.subscribed ? "sold" : "t3");
-  h += `<div class="bar20" style="grid-template-columns:repeat(${cells.length},1fr)" aria-label="${esc(`${cells.length} units: ${R.promoterUnits} held by the sponsor, ${o.subscribed} subscribed, ${o.available} available`)}">` +
-    cells.map((c) => `<span class="${c}"></span>`).join("") + "</div>" +
-    `<div class="legend"><span><i class="k-hold"></i>${R.promoterUnits} · the sponsor</span><span><i class="k-sold"></i>${o.subscribed} · subscribed</span>` +
-    (o.available ? `<span><i class="k-t3"></i>${o.available} · available</span>` : "") + "</div>";
-  h += '<div class="units"><div class="hd"><span>Units</span><span>Price each</span><span>Subscribed</span><span>Available</span></div>' +
-    `<div><span>${o.units} offered</span><span>${rupees(o.unitPrice)}</span><span>${o.subscribed}</span><span>${o.available}</span></div></div>`;
+  /* The capital, drawn: what the estate is spent on beside where the money
+     comes from, every unit and who holds it, the waterfall on this
+     vehicle's own stages, and a position built from its own unit price. */
+  h += `<div class="fin-da">${daHTML("stack", { vehicle: v.key })}${daHTML("units", { vehicle: v.key })}</div>`;
+  h += `<div class="fin-da">${daHTML("waterfall", { vehicle: v.key, money: true })}${daHTML("position", { vehicle: v.key })}</div>`;
   h += `<p class="note">DEPOSIT ${o.deposit ? rupees(o.deposit) : "NOT STATED"} · LOCK-IN ${esc(o.lockIn.toUpperCase())} · ` +
     `${esc(v.stack.moratorium.toUpperCase())} · CAPITAL IS AT RISK · NOTHING HERE FORECASTS A RETURN</p></section>`;
   return h;
@@ -312,6 +303,7 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
         `</div><div class="jlist">${J.map((e) => `<a class="jrow" data-k="${e.kind}" href="/journal/${e.key}"><span class="mono">${e.dateLabel}</span><span><b>${e.title}</b><em>${e.standfirst}</em></span><span class="mono">${K[e.kind]}<br>${e.minutes} min read</span></a>`).join("")}</div>`;
     }
     if (b.faq) h += `<div class="faq ${lt ? "" : "dk"} faq-inline">${faqs[b.faq] ?? ""}</div>`;
+    if (b.da) h += daHTML(b.da as DAKind, { vehicle: b.vehicle, money: b.money });
     if (b.deposit) h += DEPOSIT(b.deposit);
   });
   return h + "</article>";

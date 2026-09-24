@@ -22,6 +22,7 @@ import { DOCUMENTS } from "@/content/legal";
 import { vehicleBySlug } from "@/constants/vehicles";
 import { chapterContent } from "../propertychapter";
 import type { ChapterId } from "@/constants/property-chapters";
+import { daHTML } from "../da/render";
 import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify } from "./render";
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
@@ -119,6 +120,7 @@ export function SiteCollection() {
     '<div class="r"><div><span class="sq"><svg aria-hidden="true"><use href="#i-unit"/></svg></span><div><h4>Hold only what you need</h4><p>Each estate is divided into units in its own LLP, priced in its offering letter. A partner holds from one unit upward.</p></div></div>' +
     '<div><span class="sq"><svg aria-hidden="true"><use href="#i-gov"/></svg></span><div><h4>Governed, never held</h4><p>Getaway Collective holds no equity in any estate and is paid from one disclosed stage of the waterfall.</p></div></div>' +
     '<div><span class="sq"><svg aria-hidden="true"><use href="#i-net"/></svg></span><div><h4>One standard, many estates</h4><p>Every estate is built from the same three chassis and run by the same operating partner.</p></div></div></div></section>' +
+    `<section class="col-stages"><span class="eb">Where each estate stands</span><h2 class="h2">One track, <span>every estate.</span></h2>${daHTML("stages")}</section>` +
     `<section class="faq" id="faq"><h2 class="h2">Frequently asked <span>questions</span></h2>${faqHTML(FAQ)}</section>`;
   return <Mount html={html} light />;
 }

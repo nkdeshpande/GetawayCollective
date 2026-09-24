@@ -24,10 +24,11 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { VEHICLES, TENURE_LABEL, WATERFALL_STAGES, vehicleBySlug, type Vehicle } from "@/constants/vehicles";
+import { VEHICLES, TENURE_LABEL, vehicleBySlug, type Vehicle } from "@/constants/vehicles";
 import { rupees, rupeesFull } from "./site/registry";
 import { WsFrame, type WsTab } from "./workspace/frame";
 import { ApertureCard, stateOf } from "./workspace/aperture";
+import { DA } from "./da/DA";
 
 type MemberProps = { path: string; param?: string };
 type View = "home" | "portfolio" | "vehicle" | "property" | "structure" | "capital" | "entitlement" | "documents" | "profile";
@@ -47,7 +48,6 @@ function viewFor(path: string, requested: string | null): View {
     : last === "time" ? "entitlement" : last === "documents" ? "documents" : "vehicle";
 }
 
-const pct = (bps: number | null | undefined) => (bps == null ? "Not stated" : `${(bps / 100).toFixed(bps % 100 ? 2 : 0)}%`);
 
 function Rows({ rows }: { rows: readonly (readonly [string, string, boolean?])[] }) {
   return <dl className="iv-rows">{rows.map(([k, v, money]) => <div key={k}><dt>{k}</dt><dd className={money ? "money" : ""}>{v}</dd></div>)}</dl>;
@@ -95,23 +95,27 @@ function EstateViews({ v, view, preview }: { v: Vehicle; view: View; preview: bo
         ["Audited", v.audited ? "Yes" : "Not yet"],
       ]} /></div>
     </Section>
+    <Section eb="Who does what" title="Three parties, <span>never one.</span>">
+      <div className="ws-card iv-card"><DA kind="entities" /></div>
+    </Section>
     <Section eb="Decisions" title="How the partners <span>decide.</span>">
-      <div className="ws-card iv-card">{g ? <Rows rows={[
-        ["Ordinary resolution", `Above ${pct(g.ordinaryBps)} of equity`], ["Special resolution", `${pct(g.specialBps)} of equity`],
-        ["Quorum", pct(g.quorumBps)], ["Reserved matters", g.reservedMatters], ["Transfer", g.transferRule], ["Designated partners", g.designatedPartners],
-      ]} /> : <p className="iv-pad">The thresholds are not yet stated for this vehicle.</p>}</div>
+      <div className="ws-card iv-card">{g ? <>
+        <DA kind="vote" vehicle={v.key} />
+        <Rows rows={[["Reserved matters", g.reservedMatters], ["Transfer", g.transferRule], ["Designated partners", g.designatedPartners]]} />
+      </> : <p className="iv-pad">The thresholds are not yet stated for this vehicle.</p>}</div>
     </Section>
   </>;
   if (view === "capital") return <>
     <Section eb="Capital" title="How the estate <span>is paid for.</span>" note="Figures come from the estate's record, and the offering letter governs each of them. Capital is at risk.">
+      <div className="ws-card iv-card"><DA kind="stack" vehicle={v.key} /></div>
+      <div className="ws-card iv-card"><DA kind="units" vehicle={v.key} /></div>
       <div className="ws-card iv-card"><Rows rows={[
-        ["Land", rupees(s.land), true], ["Formation", rupees(s.formation), true], ["Bank facility", rupees(s.facility), true],
-        ["Equity", rupees(s.equityLayer), true], ["Project cost", rupees(s.projectTotal), true], ["Moratorium", s.moratorium], ["Covenant", s.covenant],
+        ["Moratorium", s.moratorium], ["Covenant", s.covenant],
         ["Unit price", rupees(o.unitPrice), true], ["Holding deposit", o.deposit === null ? "Not stated" : rupeesFull(o.deposit), true], ["Lock-in", o.lockIn],
       ]} /></div>
     </Section>
     <Section eb="The waterfall" title="Where each rupee <span>of revenue goes.</span>">
-      <div className="ws-card iv-card">{w ? <Rows rows={WATERFALL_STAGES.map(([k, n]) => [n, pct(w[k])] as const)} /> : <p className="iv-pad">The waterfall is not yet stated for this vehicle.</p>}</div>
+      <div className="ws-card iv-card">{w ? <DA kind="waterfall" vehicle={v.key} money /> : <p className="iv-pad">The waterfall is not yet stated for this vehicle.</p>}</div>
     </Section>
     <Section eb="Your capital" title="What you have <span>contributed.</span>">
       <Personal preview={preview} what="Your capital account" example={[["Contributed", "₹80,00,000", true], ["Distributions to date", "None yet"], ["Next statement", "Quarter ending 31 Dec 2026"]]} />
@@ -125,6 +129,9 @@ function EstateViews({ v, view, preview }: { v: Vehicle; view: View; preview: bo
         ["Begins", e.begins], ["Your share", "In proportion to your equity"], ["Carried forward", "No; unused nights do not accrue"],
       ] : [["Night pool", "The allocation rule is not yet set for this estate"], ["Your share", "In proportion to your equity, once set"]]} /></div>
     </Section>
+    {e ? <Section eb="At a glance" title="Nights, <span>by units held.</span>">
+      <div className="ws-card iv-card"><DA kind="position" vehicle={v.key} /></div>
+    </Section> : null}
     <Section eb="Your entitlement" title="This <span>year.</span>">
       <Personal preview={preview} what="Your entitlement" example={[["Your share", "20% of the pool"], ["This year", "24 nights"], ["Arranged through", "Sensory Getaways"]]} />
     </Section>
@@ -176,6 +183,9 @@ function MemberWorkspace({ path, param }: MemberProps) {
             <p>Each estate you hold is its own partnership. Open one to see its property, its structure, its capital and your entitlement.</p></div></header>
           <Section eb="Your positions" title="Across <span>the collection.</span>">
             <Personal preview={preview} what="Your list of positions" example={[["SlowSpace Coastal", "2 units · settled 14 Jul 2026"], ["Coorg Coffee Creek", "Holding deposit paid · 23 Sep 2026"]]} />
+          </Section>
+          <Section eb="Where each estate stands" title="One track, <span>every estate.</span>">
+            <div className="ws-card iv-card"><DA kind="stages" /></div>
           </Section>
           <Section eb="The estates" title="Open <span>an estate.</span>">
             <div className="ap-grid">{VEHICLES.filter((x) => stateOf(x) !== "forming").map((x) => <ApertureCard key={x.key} v={x} opening="public" href={estateHref(x)} />)}</div>

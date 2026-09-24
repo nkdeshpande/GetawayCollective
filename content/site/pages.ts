@@ -12,7 +12,7 @@
 
 import type { SitePage } from "@/app/_assemblies/site/types";
 
-export const PAGES: Record<string, SitePage> = {
+export const PAGES: Record<string, SitePage> =  {
  "about": {
   "key": "about",
   "eyebrow": "About",
@@ -65,20 +65,7 @@ export const PAGES: Record<string, SitePage> = {
     "h": "Three parties, never one"
    },
    {
-    "steps": [
-     [
-      "Getaway Collective governs",
-      "Structures each estate as its own LLP and governs it for the partners. Paid from one disclosed stage of the waterfall, and from nothing else."
-     ],
-     [
-      "Sensory Getaways operates",
-      "Appointed to run every estate under a Commercial Services Agreement, measured on service levels."
-     ],
-     [
-      "Brand & Digital generates demand",
-      "Paid inside each vehicle, at stage two of the waterfall."
-     ]
-    ]
+    "da": "entities"
    },
    {
     "src": "L1-01 84–119 · legal.ts 132–154, 937"
@@ -175,28 +162,10 @@ export const PAGES: Record<string, SitePage> = {
     "h": "The path to becoming a partner"
    },
    {
-    "steps": [
-     [
-      "Qualify",
-      "Sixteen stages, from Discover to Issued. About fifteen working days from a complete file. Rights attach to ownership, not to accreditation."
-     ],
-     [
-      "Reserve",
-      "A flat deposit of ₹1,00,000, the same at every size, holds your place in an offering. It buys nothing, makes nobody a partner, and is refundable until the Vehicle Agreement is signed."
-     ],
-     [
-      "Read",
-      "The offering letter, the LLP agreement and the risk disclosure. The executed instrument governs; nothing on a page does."
-     ],
-     [
-      "Commit",
-      "By holding, never by clicking. Capital actions take three seconds on purpose."
-     ],
-     [
-      "Settle",
-      "On settlement you become a member of the LLP. That step is irreversible."
-     ]
-    ]
+    "da": "path"
+   },
+   {
+    "da": "lockin"
    },
    {
     "src": "public.ts 310–322 · content/member.ts"
@@ -208,32 +177,8 @@ export const PAGES: Record<string, SitePage> = {
     "p": "Revenue flows through six stages, in order, on the vehicle's gross revenue base, and closes to 10,000 basis points. There is no preferred return, no catch-up and no carried interest."
    },
    {
-    "rows": [
-     [
-      "01 · Operating company",
-      "Sensory Getaways, on service levels"
-     ],
-     [
-      "02 · Brand & Digital",
-      "Per the offering letter"
-     ],
-     [
-      "03 · Enterprise admin reserve",
-      "2.5%"
-     ],
-     [
-      "04 · Property sinking fund",
-      "2.5%"
-     ],
-     [
-      "05 · Debt service",
-      "Per the offering letter"
-     ],
-     [
-      "06 · LLP partner distributions",
-      "The remainder, pro rata"
-     ]
-    ]
+    "da": "waterfall",
+    "money": true
    },
    {
     "src": "L1-16 28–57"
@@ -245,24 +190,7 @@ export const PAGES: Record<string, SitePage> = {
     "p": "Votes are weighted by equity, never one partner, one vote. Resolutions are recorded in a register that is append-only: a correction is a new entry, never an edit."
    },
    {
-    "rows": [
-     [
-      "Ordinary resolution",
-      "More than 50% of equity"
-     ],
-     [
-      "Special resolution",
-      "76% of equity"
-     ],
-     [
-      "Entrenched clause",
-      "100%: unanimity"
-     ],
-     [
-      "A tie",
-      "Is not approval"
-     ]
-    ]
+    "da": "vote"
    },
    {
     "src": "public.ts 932–938"
@@ -275,6 +203,9 @@ export const PAGES: Record<string, SitePage> = {
    },
    {
     "p": "Nights follow your position; they are an incident of ownership, never the product. The exact allocation rule is not yet decided and each offering letter will state it."
+   },
+   {
+    "da": "position"
    },
    {
     "src": "public.ts 184 · DECISIONS.md D-08"
@@ -806,6 +737,9 @@ export const PAGES: Record<string, SitePage> = {
     "src": "CRK CLAUDE.md · SSC CLAUDE.md"
    },
    {
+    "da": "stages"
+   },
+   {
     "h": "Six steps, in order"
    },
    {
@@ -838,6 +772,18 @@ export const PAGES: Record<string, SitePage> = {
    },
    {
     "src": "SSC-00-CN-003 §16 · CRK GFC R1 A-605"
+   },
+   {
+    "h": "The vehicle, formed in eight steps"
+   },
+   {
+    "da": "formation"
+   },
+   {
+    "h": "Three chassis, every estate"
+   },
+   {
+    "da": "chassis"
    },
    {
     "h": "Why we publish the holds"
@@ -1095,6 +1041,9 @@ export const PAGES: Record<string, SitePage> = {
   "title": "Short answers, <span>with sources.</span>",
   "lead": "The questions people ask most often, answered in one or two sentences each, with the source every answer comes from.",
   "blocks": [
+   {
+    "da": "search"
+   },
    {
     "rows": [
      [
