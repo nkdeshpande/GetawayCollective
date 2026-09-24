@@ -13,7 +13,7 @@
 import { FILM, SITE } from "@/constants/tokens";
 import type { Block, Card, Concept, FilmRef, FormSpec, MapSpec, SiteEstate, SitePage, Volume } from "./types";
 import type { Reading } from "./registry";
-import { rupees } from "./registry";
+import { rupees, rupeesFull } from "./registry";
 
 const INK = FILM.ink as Readonly<Record<string, string>>;
 
@@ -80,7 +80,7 @@ function axoSVG(C: Concept) {
   });
   sv += `<g font-family="Space Mono" font-size="11" fill="${SITE.mute}">` +
     (C.labels || []).map((l) => `<text x="${l[0]}" y="${l[1]}">${l[2]}</text>`).join("") +
-    '<text x="30" y="500">AXONOMETRIC · SCHEMATIC · NOT TO SCALE</text></g>';
+    '<text x="30" y="500">ILLUSTRATIVE DRAWING · NOT TO SCALE</text></g>';
   return sv;
 }
 
@@ -107,7 +107,7 @@ function mapSVG(M: MapSpec) {
     const a = ps[Number(M.tag[0])], c = ps[Number(M.tag[1])], mx = (a[0] + c[0]) / 2, my = (a[1] + c[1]) / 2;
     s += `<rect x="${mx - 30}" y="${my - 36}" width="60" height="24" fill="${INK.paper}"/><text x="${mx}" y="${my - 19}" text-anchor="middle" font-family="Space Mono" font-size="13" fill="${SITE.night}">${M.tag[2]}</text>`;
   }
-  return s + `<text x="24" y="${H - 12}" font-family="Space Mono" font-size="10" fill="${SITE.ash2}">POSITIONS FROM COORDINATES · ROUTE SCHEMATIC</text>`;
+  return s + `<text x="24" y="${H - 12}" font-family="Space Mono" font-size="10" fill="${SITE.ash2}">THE ROUTE IS ILLUSTRATIVE</text>`;
 }
 
 /* ── the estate select on the enquiry form names estates; the API takes slugs ── */
@@ -142,7 +142,7 @@ export function FIN(E: SiteEstate, R: Reading) {
   const full = o.available <= 0;
   let h = `<section class="fin" id="${k}-capital"><span class="eb">Capital</span>` +
     `<h2 class="h2">${o.units} units offered. <span>${full ? "All held." : `${o.available} available.`}</span></h2>` +
-    `<p class="para fin-lead">${esc(v.registeredName)} holds ${esc(E.name)}. The figures below are read from the vehicle register, and the offering letter governs every one of them.</p>`;
+    `<p class="para fin-lead">${esc(v.registeredName)} holds ${esc(E.name)}. The offering letter governs every figure below.</p>`;
   h += '<div class="stack4">' + [
     ["Project cost", rupees(v.stack.projectTotal), "The capital stack, in full"],
     ["Equity", rupees(o.totalEquity), `${rupees(o.offered)} offered · ${rupees(o.promoter)} held by the sponsor`],
@@ -158,7 +158,7 @@ export function FIN(E: SiteEstate, R: Reading) {
     (o.available ? `<span><i class="k-t3"></i>${o.available} · available</span>` : "") + "</div>";
   h += '<div class="units"><div class="hd"><span>Units</span><span>Price each</span><span>Subscribed</span><span>Available</span></div>' +
     `<div><span>${o.units} offered</span><span>${rupees(o.unitPrice)}</span><span>${o.subscribed}</span><span>${o.available}</span></div></div>`;
-  h += `<p class="note">SOURCE · THE VEHICLE REGISTER · DEPOSIT ${o.deposit ? rupees(o.deposit) : "NOT STATED"} · LOCK-IN ${esc(o.lockIn.toUpperCase())} · ` +
+  h += `<p class="note">DEPOSIT ${o.deposit ? rupees(o.deposit) : "NOT STATED"} · LOCK-IN ${esc(o.lockIn.toUpperCase())} · ` +
     `${esc(v.stack.moratorium.toUpperCase())} · CAPITAL IS AT RISK · NOTHING HERE FORECASTS A RETURN</p></section>`;
   return h;
 }
@@ -187,7 +187,10 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   /* An estate that is not yet a vehicle has no enquiry route of its own;
      its questions go to the general desk. */
   const ask = R ? `/collection/${E.slug}/enquire` : "/contact";
-  const cta = waitlist ? ["Join the waitlist", "#waitlist"] : [R ? "Get the offering pack" : "Ask about this estate", ask];
+  const open = !!R && R.stance.kind === "open" && R.vehicle.offering.deposit !== null;
+  const cta = waitlist ? ["Join the waitlist", "#waitlist"]
+    : open ? [`Hold a position · ${rupeesFull(R!.vehicle.offering.deposit!)} deposit`, `${ask}#hold`]
+    : [R ? "Get the offering pack" : "Ask about this estate", ask];
   h += `<section class="phero" id="${k}-hero">${film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain })}` +
     `<div class="top"><div><span class="eb">${E.eyebrow}</span><h1>${E.name}</h1><span class="credit">${E.credit}</span></div></div>` +
     `<div class="strip"><div class="pr">${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div>` +
@@ -247,8 +250,29 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   return h;
 }
 
+/* ── the holding deposit: stated in full before the button, paid online,
+   everything after it offline (founder ruling, 24 Sep 2026) ── */
+export function DEPOSIT(d: NonNullable<Block["deposit"]>) {
+  const units = Array.from({ length: Math.max(1, d.available) }, (_, i) => i + 1);
+  return `<form class="tx-form dep" id="hold" novalidate data-form data-to="deposit" data-vehicle="${d.vehicle}" data-theme-hex="${INK.ink}">` +
+    `<div class="dep-terms"><div><span class="eb">Holding deposit</span><b>${d.amount}</b><span>Flat, whatever size you take</span></div>` +
+    `<ul><li>Paid online, to <b>${esc(d.payee)}</b>, the partnership that owns the estate. Getaway Collective holds none of it.</li>` +
+    "<li>Refundable in full until the Vehicle Agreement is signed.</li>" +
+    "<li>It holds your position; it buys nothing and makes nobody a partner.</li>" +
+    `<li>Identity checks, the balance at ${d.unitPrice} a unit and the Agreement all complete offline, with Investor Relations.</li></ul></div>` +
+    `<label class="fld" for="dep-u"><span>Units you intend to take</span><select id="dep-u" name="units">${units.map((u) => `<option value="${u}">${u} unit${u === 1 ? "" : "s"}</option>`).join("")}</select></label>` +
+    '<label class="fld" for="dep-n"><span>Name</span><input id="dep-n" name="name" type="text" autocomplete="name" required></label>' +
+    '<label class="fld" for="dep-e"><span>Email</span><input id="dep-e" name="email" type="email" autocomplete="email" required></label>' +
+    '<label class="fld" for="dep-p"><span>Mobile</span><input id="dep-p" name="phone" type="tel" autocomplete="tel" required></label>' +
+    '<label class="fld" for="dep-c"><span>City</span><input id="dep-c" name="city" type="text" autocomplete="address-level2"></label>' +
+    '<label class="ack"><input type="checkbox" name="acknowledged" required> <span>I have read the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> and the <a class="tx-u" href="/legal/terms">Terms</a>. Capital is at risk.</span></label>' +
+    `<div><button class="btn lead" type="submit">Pay the ${d.amount} deposit ${NE}</button></div>` +
+    '<p class="tx-ok" hidden></p><p class="tx-err" hidden></p>' +
+    '<p class="tx-src">Payments are taken by Razorpay. Card, UPI and netbanking details never reach this site.</p></form>';
+}
+
 export function faqHTML(list: readonly (readonly string[])[], t: Readonly<Record<string, string>> = {}) {
-  return list.map((f) => `<details><summary>${f[0]}<i aria-hidden="true">+</i></summary><p>${fill(f[1], t)}<span class="src">Source · ${f[2]}</span></p></details>`).join("");
+  return list.map((f) => `<details><summary>${f[0]}<i aria-hidden="true">+</i></summary><p>${fill(f[1], t)}</p></details>`).join("");
 }
 
 // ── the text-page template ──
@@ -258,10 +282,16 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
     `<div class="tx-head"><span class="eb">${P.eyebrow}</span><h1 class="tx-h1">${P.title}</h1>${P.lead ? `<p class="tx-lead">${P.lead}</p>` : ""}${P.meta ? `<p class="mono tx-meta">${P.meta}</p>` : ""}</div></section>` +
     `<article class="tx-body${lt ? " lt" : ""}">`;
   P.blocks.forEach((b: Block) => {
-    if (b.h) h += `<h2 class="tx-h2">${b.h}</h2>`;
+    if (b.toc) h += `<nav class="tx-toc" aria-label="In this piece"><span class="eb">In this piece</span>${b.toc.map((t) => `<a href="#${t[0]}">${t[1]}</a>`).join("")}</nav>`;
+    if (b.lede) h += `<p class="tx-p tx-lede">${b.lede}</p>`;
+    if (b.h) h += `<h2 class="tx-h2"${b.id ? ` id="${b.id}"` : ""}>${b.h}</h2>`;
     if (b.p) h += `<p class="tx-p">${b.p}</p>`;
+    if (b.pull) h += `<blockquote class="tx-pull"><p>${b.pull}</p></blockquote>`;
+    if (b.html) h += b.html;
+    if (b.inspire) h += `<figure class="tx-inspire"><blockquote>${esc(b.inspire.text)}</blockquote><figcaption><b>${esc(b.inspire.who)}</b><span>${esc(b.inspire.where)}</span></figcaption></figure>`;
     if (b.q) h += `<blockquote class="tx-q">${b.q}</blockquote>`;
-    if (b.src) h += `<p class="tx-src">Source · ${b.src}</p>`;
+    /* Sources are kept in the content for whoever maintains it, and never
+       printed: a file name or a clause number is our filing, not the reader's. */
     if (b.list) h += `<ul class="tx-list">${b.list.map((li) => `<li>${li}</li>`).join("")}</ul>`;
     if (b.figs) h += `<div class="tx-figs">${b.figs.map((f) => `<div><b>${f[0]}</b><span>${f[1]}</span></div>`).join("")}</div>`;
     if (b.steps) h += `<ol class="tx-steps">${b.steps.map((s, i) => `<li><em>${String(i + 1).padStart(2, "0")}</em><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join("")}</ol>`;
@@ -279,9 +309,10 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
       const K = b.kinds, J = b.jcards;
       h += `<div class="jchips" role="group" aria-label="Filter the Journal"><button class="chip" type="button" aria-pressed="true" data-k="all">All ${J.length}</button>` +
         Object.keys(K).map((kk) => { const n = J.filter((e) => e.kind === kk).length; return n ? `<button class="chip" type="button" aria-pressed="false" data-k="${kk}">${K[kk]} ${n}</button>` : ""; }).join("") +
-        `</div><div class="jlist">${J.map((e) => `<a class="jrow" data-k="${e.kind}" href="/journal/${e.key}"><span class="mono">${e.id}</span><span><b>${e.title}</b><em>${e.standfirst}</em></span><span class="mono">${K[e.kind]}<br>${e.date} · ${e.minutes} min</span></a>`).join("")}</div>`;
+        `</div><div class="jlist">${J.map((e) => `<a class="jrow" data-k="${e.kind}" href="/journal/${e.key}"><span class="mono">${e.dateLabel}</span><span><b>${e.title}</b><em>${e.standfirst}</em></span><span class="mono">${K[e.kind]}<br>${e.minutes} min read</span></a>`).join("")}</div>`;
     }
     if (b.faq) h += `<div class="faq ${lt ? "" : "dk"} faq-inline">${faqs[b.faq] ?? ""}</div>`;
+    if (b.deposit) h += DEPOSIT(b.deposit);
   });
   return h + "</article>";
 }

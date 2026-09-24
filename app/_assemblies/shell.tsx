@@ -155,7 +155,7 @@ const STORE = "gc-rail-collapsed";
  */
 const SITE_PATHS = [
   /^\/$/, /^\/collection(\/|$)/, /^\/journal(\/|$)/, /^\/legal(\/|$)/,
-  /^\/(how-it-works|how-we-build|about|contact|team|press|answers|glossary|signal)$/,
+  /^\/(how-it-works|how-we-build|about|contact|team|press|answers|glossary|signal|sign-in|verify)$/,
 ];
 export const isSitePath = (p: string) => SITE_PATHS.some((re) => re.test(p));
 

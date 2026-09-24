@@ -214,7 +214,8 @@ export const UNIT = {
 /**
  * THE INITIAL DEPOSIT.
  *
- * ₹50,000 is taken on the platform to reserve a unit. The balance of the
+ * ₹1,00,000 is taken on the platform to reserve a unit (₹50,000 until the
+ * founder ruling of 24 Sep 2026). The balance of the
  * commitment, the Vehicle Agreement and the transfer of funds are all
  * completed off the platform, in person or by instructed transfer.
  *
@@ -227,13 +228,13 @@ export const UNIT = {
  * deposit makes nobody a partner, and the screens say so.
  *
  * FLAT, AND MORE OBVIOUSLY SO NOW THAT THE UNIT MOVES.
- * ₹50,000 holds a 5% position and a 50% position alike. When the stake
+ * ₹1,00,000 holds a 5% position and a 50% position alike. When the stake
  * was fixed, a percentage would merely have been redundant; now it would
  * be false — so `balance` is no longer stored here. It belongs to a
  * position, and it is computed by `position()` below.
  */
 export const DEPOSIT = {
-  amount: 50000_0000n,          // ₹50,000
+  amount: 100000_0000n,         // ₹1,00,000
   refundable: "Refundable in full until the Vehicle Agreement is signed.",
   window: "15 working days from the deposit",
 } as const;

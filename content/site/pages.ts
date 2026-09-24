@@ -182,7 +182,7 @@ export const PAGES: Record<string, SitePage> = {
      ],
      [
       "Reserve",
-      "A flat deposit of ₹50,000, the same at every size, holds your place in an offering. It buys nothing, makes nobody a partner, and is refundable until the Vehicle Agreement is signed."
+      "A flat deposit of ₹1,00,000, the same at every size, holds your place in an offering. It buys nothing, makes nobody a partner, and is refundable until the Vehicle Agreement is signed."
      ],
      [
       "Read",
@@ -274,7 +274,7 @@ export const PAGES: Record<string, SitePage> = {
     "h": "Time at the estate"
    },
    {
-    "p": "Nights follow your position; they are an incident of ownership, never the product. The exact allocation rule is an open decision (D-08) and each offering letter will state it."
+    "p": "Nights follow your position; they are an incident of ownership, never the product. The exact allocation rule is not yet decided and each offering letter will state it."
    },
    {
     "src": "public.ts 184 · DECISIONS.md D-08"
@@ -470,7 +470,7 @@ export const PAGES: Record<string, SitePage> = {
     "rows": [
      [
       "Place",
-      "The Sakleshpur hills, Hassan (the canon still records Chikmagalur)"
+      "The Sakleshpur hills, Hassan"
      ],
      [
       "Keys",
@@ -486,7 +486,7 @@ export const PAGES: Record<string, SitePage> = {
      ],
      [
       "House brand",
-      "Not ratified",
+      "Not yet decided",
       1
      ],
      [
@@ -496,7 +496,7 @@ export const PAGES: Record<string, SitePage> = {
      ],
      [
       "Figures",
-      "Withheld until counsel answers Q-01",
+      "Withheld until counsel advises",
       1
      ]
     ]
@@ -540,16 +540,12 @@ export const PAGES: Record<string, SitePage> = {
       "PV01 Aranthodu Water Estate LLP · forming, no LLPIN yet"
      ],
      [
-      "Asset code",
-      "<span class=\"mono\">ARA-01</span>"
-     ],
-     [
       "Place",
-      "Aranthodu, Dakshina Kannada (the canon records Sullia)"
+      "Aranthodu, Dakshina Kannada"
      ],
      [
       "Keys",
-      "12: six on water, six in the grove (the canon records 10)"
+      "12: six on water, six in the grove"
      ],
      [
       "Land",
@@ -599,7 +595,7 @@ export const PAGES: Record<string, SitePage> = {
    0,
    1
   ],
-  "lead": "Every estate is designed, engineered and modelled by named people, and governed by a founder whose rulings are written down. This page records who they are, and leaves a slot wherever something has not yet been supplied.",
+  "lead": "Every estate is designed, engineered and modelled by named people, and governed by a founder whose decisions are written down. This page records who they are, and leaves a slot wherever something has not yet been supplied.",
   "blocks": [
    {
     "people": [
@@ -608,10 +604,10 @@ export const PAGES: Record<string, SitePage> = {
       "initials": "ND",
       "role": "Founder",
       "name": "Nikhil Deshpande",
-      "line": "Founder of Getaway Collective. Sets the standard every estate is designed, built and governed to, and signs the rulings that make it binding.",
+      "line": "Founder of Getaway Collective. Sets the standard every estate is designed, built and governed to, and signs the decisions that make it binding.",
       "does": [
        "The enterprise and brand constitutions",
-       "Design and capital rulings at each estate, recorded with a number (for example S-06, the steel structure at Seaside Confluence)",
+       "Design and capital decisions at each estate, each written down and dated, such as the steel structure at Seaside Confluence",
        "The separation between the platform, the operating partner and each vehicle"
       ],
       "rows": [
@@ -635,10 +631,10 @@ export const PAGES: Record<string, SitePage> = {
       "initials": "KS",
       "role": "Architect",
       "name": "Karthik Shanbhogue",
-      "line": "Architecture for the collection: the design intent of each estate and the drawings it is built from.",
+      "line": "Architecture for the collection: the design of each estate and the drawings it is built from.",
       "does": [
        "Estate plans and building design",
-       "Design intent through to construction sets",
+       "Design through to construction sets",
        "Materials, light and the way each building meets its land"
       ],
       "rows": [
@@ -807,7 +803,7 @@ export const PAGES: Record<string, SitePage> = {
     ]
    },
    {
-    "src": "CRK CLAUDE.md · SSC CLAUDE.md · SSC-01-DR-007"
+    "src": "CRK CLAUDE.md · SSC CLAUDE.md"
    },
    {
     "h": "Six steps, in order"
@@ -819,8 +815,8 @@ export const PAGES: Record<string, SitePage> = {
       "Each estate starts from an owner-confirmed site record: coordinates, land and title, read from the instrument itself rather than a summary."
      ],
      [
-      "A design canon",
-      "The architect sets the design intent: how the building meets the land, what it is made of, and which of the three chassis it uses."
+      "A design brief",
+      "The architect sets the design: how the building meets the land, what it is made of, and which of the three chassis it uses."
      ],
      [
       "Structure and services",
@@ -832,10 +828,10 @@ export const PAGES: Record<string, SitePage> = {
      ],
      [
       "A basis set of drawings",
-      "A numbered set of A1 sheets, marked as design intent until it is issued for construction."
+      "A numbered set of A1 sheets, marked as design until it is issued for construction."
      ],
      [
-      "A register of holds",
+      "A list of open questions",
       "Every open question is named with what closes it, who owns it and when. Seaside Confluence carries fifteen; Creek's basis set lists twenty-two."
      ]
     ]
@@ -1103,51 +1099,51 @@ export const PAGES: Record<string, SitePage> = {
     "rows": [
      [
       "<b class=\"tx-strong\">What is Getaway Collective?</b>",
-      "An investment platform for collective ownership of exceptional retreats in India. Each estate is held by its own LLP and owned by its partners.<span class=\"tx-src tx-src-in\">Source · legal.ts 132–137</span>"
+      "An investment platform for collective ownership of exceptional retreats in India. Each estate is held by its own LLP and owned by its partners."
      ],
      [
       "<b class=\"tx-strong\">Who founded Getaway Collective?</b>",
-      "Nikhil Deshpande.<span class=\"tx-src tx-src-in\">Source · Founder, 24 Sep 2026</span>"
+      "Nikhil Deshpande."
      ],
      [
       "<b class=\"tx-strong\">Does Getaway Collective own the properties?</b>",
-      "No. It governs each vehicle and holds no equity in any of them; the LLP owns the estate.<span class=\"tx-src tx-src-in\">Source · legal.ts 132–154</span>"
+      "No. It governs each vehicle and holds no equity in any of them; the LLP owns the estate."
      ],
      [
       "<b class=\"tx-strong\">What do investors own?</b>",
-      "Units in the estate's LLP. A unit is 5% of the equity, and a partner holds from one to ten.<span class=\"tx-src tx-src-in\">Source · public.ts 285, 306</span>"
+      "Units in the estate's LLP. A unit is 5% of the equity, and a partner holds from one to ten."
      ],
      [
       "<b class=\"tx-strong\">Is it a timeshare?</b>",
-      "No. A timeshare sells time; a unit is equity in the partnership that owns the estate, and time follows the position.<span class=\"tx-src tx-src-in\">Source · journal.ts 404–452</span>"
+      "No. A timeshare sells time; a unit is equity in the partnership that owns the estate, and time follows the position."
      ],
      [
       "<b class=\"tx-strong\">Where are the estates?</b>",
-      "In Karnataka: Solace in the Nandi Hills corridor, Seaside Confluence at Padubidri on the Udupi coast, and SlowSpace Creek and Coffee Fields Forever in Kodagu.<span class=\"tx-src tx-src-in\">Source · properties.yaml</span>"
+      "In Karnataka: Solace in the Nandi Hills corridor, Seaside Confluence at Padubidri on the Udupi coast, and SlowSpace Creek and Coffee Fields Forever in Kodagu."
      ],
      [
       "<b class=\"tx-strong\">Who runs the estates?</b>",
-      "Sensory Getaways, the operating partner, under a Commercial Services Agreement measured on service levels.<span class=\"tx-src tx-src-in\">Source · L1-01 56</span>"
+      "Sensory Getaways, the operating partner, under a Commercial Services Agreement measured on service levels."
      ],
      [
       "<b class=\"tx-strong\">Who designs the estates?</b>",
-      "Architect Karthik Shanbhogue, with structural design by Manjunath & Co., MEP design by Addya, and a building information model for each estate.<span class=\"tx-src tx-src-in\">Source · Founder, 24 Sep 2026</span>"
+      "Architect Karthik Shanbhogue, with structural design by Manjunath & Co., MEP design by Addya, and a building information model for each estate."
      ],
      [
       "<b class=\"tx-strong\">How are decisions made?</b>",
-      "By the partners, with votes weighted by equity: more than 50% for an ordinary resolution, 76% for a special one.<span class=\"tx-src tx-src-in\">Source · public.ts 932–938</span>"
+      "By the partners, with votes weighted by equity: more than 50% for an ordinary resolution, 76% for a special one."
      ],
      [
       "<b class=\"tx-strong\">How long does accreditation take?</b>",
-      "About fifteen working days from a complete file.<span class=\"tx-src tx-src-in\">Source · public.ts 310</span>"
+      "About fifteen working days from a complete file."
      ],
      [
       "<b class=\"tx-strong\">Can units be sold?</b>",
-      "There is no public market. Partners can post interest on an internal register; nothing guarantees a buyer.<span class=\"tx-src tx-src-in\">Source · public.ts 330–333</span>"
+      "There is no public market. Partners can post interest on an internal register; nothing guarantees a buyer."
      ],
      [
       "<b class=\"tx-strong\">Is capital at risk?</b>",
-      "Yes. Capital is at risk, and no return is guaranteed by any party. The <a href=\"/legal/risk-disclosure\" class=\"tx-u\">Risk Factors</a> set it out in full.<span class=\"tx-src tx-src-in\">Source · legal.ts 85–95</span>"
+      "Yes. Capital is at risk, and no return is guaranteed by any party. The <a href=\"/legal/risk-disclosure\" class=\"tx-u\">Risk Factors</a> set it out in full."
      ]
     ]
    },

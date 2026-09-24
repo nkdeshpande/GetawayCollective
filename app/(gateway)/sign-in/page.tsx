@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { SystemSurface } from "@/app/_assemblies/systempages";
+import { SiteSignIn } from "@/app/_assemblies/site/identity";
 
 export const metadata: Metadata = {
   title: "Sign In · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Psign_in() {
-  return <SystemSurface path="/sign-in" />;
+  return <SiteSignIn />;
 }

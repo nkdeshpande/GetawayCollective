@@ -700,7 +700,7 @@ export const OFFICE_PAGES: Record<string, Entry> = {
       "Nothing — the ledger is internal.",
       "Nothing at KYC.",
       "Partners see their slice through statements, never raw entries.",
-      "Live from the first real movement — the ₹50,000 deposit is likely first.",
+      "Live from the first real movement — the ₹1,00,000 deposit is likely first.",
     ),
     sections: [
       { kind: "empty", what: "No entries",

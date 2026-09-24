@@ -122,7 +122,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      11,
      1
     ],
-    "para": "Ridge sits on the ground floor of Building A and opens straight onto its own courtyard. The brief was one sentence: rain on stone, heard from bed. The low sill, the deep threshold and the stone apron all serve it. Two keys, SOL-01 and SOL-02.",
+    "para": "Ridge sits on the ground floor of Building A and opens straight onto its own courtyard. The brief was one sentence: rain on stone, heard from bed. The low sill, the deep threshold and the stone apron all serve it. Two keys, numbers 1 and 2.",
     "meta": [
      "38 M² + COURTYARD",
      "EAST",
@@ -163,7 +163,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "solace",
      5.9
     ],
-    "para": "Expanse rides the upper deck of Building A at +3.8 metres. It is deliberately spare: the horizon does the decorating. A window seat runs the full width of the east wall, built for people who wake early on purpose. Two keys, SOL-03 and SOL-04.",
+    "para": "Expanse rides the upper deck of Building A at +3.8 metres. It is deliberately spare: the horizon does the decorating. A window seat runs the full width of the east wall, built for people who wake early on purpose. Two keys, numbers 3 and 4.",
     "meta": [
      "36 M² + DECK",
      "+3.8 M FFL",
@@ -204,7 +204,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "solace",
      19.4
     ],
-    "para": "The Twin Gables of Building B hold the two largest keys on the estate. Overhead the roof rises into a five-and-a-half-metre void; rain lands on it like an instrument. Below, a private onsen holds at forty degrees. Two keys, SOL-05 and SOL-06.",
+    "para": "The Twin Gables of Building B hold the two largest keys on the estate. Overhead the roof rises into a five-and-a-half-metre void; rain lands on it like an instrument. Below, a private onsen holds at forty degrees. Two keys, numbers 5 and 6.",
     "meta": [
      "52 M² + PORCH",
      "5.5 M VOID",
@@ -326,7 +326,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "Bortle 2 on new-moon weeks. Field glasses on the shelf."
     ]
    ],
-   "note": "The estate is run by Sensory Getaways, the operating partner. Partners use it in proportion to their position; the allocation rule is being set (decision D-08)."
+   "note": "The estate is run by Sensory Getaways, the operating partner. Partners use it in proportion to their position; the allocation rule is being set."
   },
   "getting": {
    "title": "Two hours <span>north.</span>",
@@ -429,7 +429,7 @@ export const ESTATES: Record<string, SiteEstate> = {
       ],
       [
        "Keys",
-       "SOL-01 · SOL-02"
+       "Key 1"
       ]
      ],
      "svg": "<rect x=\"80\" y=\"70\" width=\"300\" height=\"250\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><rect x=\"380\" y=\"70\" width=\"150\" height=\"250\" fill=\"{ink:moss}\" fill-opacity=\".18\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><text x=\"400\" y=\"200\" font-family=\"Space Mono\" font-size=\"12\">COURTYARD</text><rect x=\"110\" y=\"100\" width=\"120\" height=\"100\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"120\" y=\"160\" font-family=\"Space Mono\" font-size=\"11\">KING</text><rect x=\"250\" y=\"100\" width=\"100\" height=\"90\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"258\" y=\"150\" font-family=\"Space Mono\" font-size=\"11\">RAIN SHOWER</text><path d=\"M380 250A40 40 0 0 0 340 290\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"110\" y=\"300\" font-family=\"Space Mono\" font-size=\"11\">TEA COUNTER</text>"
@@ -456,7 +456,7 @@ export const ESTATES: Record<string, SiteEstate> = {
       ],
       [
        "Keys",
-       "SOL-03 · SOL-04"
+       "Key 3"
       ]
      ],
      "svg": "<rect x=\"80\" y=\"80\" width=\"330\" height=\"220\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><rect x=\"410\" y=\"80\" width=\"120\" height=\"220\" fill=\"{ink:slate}\" fill-opacity=\".2\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><text x=\"425\" y=\"195\" font-family=\"Space Mono\" font-size=\"12\">DECK</text><rect x=\"394\" y=\"100\" width=\"16\" height=\"180\" fill=\"{ink:slate}\" fill-opacity=\".5\"/><text x=\"300\" y=\"75\" font-family=\"Space Mono\" font-size=\"11\">WINDOW SEAT, FULL WIDTH</text><rect x=\"120\" y=\"120\" width=\"130\" height=\"110\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"130\" y=\"180\" font-family=\"Space Mono\" font-size=\"11\">KING</text><rect x=\"270\" y=\"210\" width=\"100\" height=\"70\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"276\" y=\"250\" font-family=\"Space Mono\" font-size=\"11\">SKYLIGHT SHOWER</text>"
@@ -483,7 +483,7 @@ export const ESTATES: Record<string, SiteEstate> = {
       ],
       [
        "Keys",
-       "SOL-05 · SOL-06"
+       "Key 5"
       ]
      ],
      "svg": "<rect x=\"90\" y=\"60\" width=\"330\" height=\"290\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><path d=\"M255 60V350\" stroke=\"{ink:ink}\" stroke-dasharray=\"6 5\"/><text x=\"262\" y=\"80\" font-family=\"Space Mono\" font-size=\"11\">RIDGE LINE · 5.5 M VOID</text><rect x=\"120\" y=\"110\" width=\"120\" height=\"110\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"128\" y=\"170\" font-family=\"Space Mono\" font-size=\"11\">KING</text><rect x=\"290\" y=\"240\" width=\"100\" height=\"80\" fill=\"{ink:ember}\" fill-opacity=\".25\" stroke=\"{ink:ink}\"/><text x=\"298\" y=\"285\" font-family=\"Space Mono\" font-size=\"11\">ONSEN 40°</text><rect x=\"20\" y=\"140\" width=\"70\" height=\"140\" fill=\"{ink:ember}\" fill-opacity=\".12\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><text x=\"26\" y=\"215\" font-family=\"Space Mono\" font-size=\"11\">PORCH</text>"
@@ -491,10 +491,6 @@ export const ESTATES: Record<string, SiteEstate> = {
    ]
   },
   "details": [
-   [
-    "Estate code",
-    "<span class=\"mono\">SOL</span>"
-   ],
    [
     "House brand",
     "SlowSpace"
@@ -529,7 +525,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Nights per unit",
-    "Allocation rule being set, D-08",
+    "Allocation rule being set",
     1
    ],
    [
@@ -549,7 +545,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "enquireHour": 18.8,
   "heroLabel": "Drawn film: the river mouth at dusk, Padubidri",
   "eyebrow": "Getaway Collective · Udupi coast",
-  "credit": "Seaside Confluence · a SlowSpace estate · the coastal prototype",
+  "credit": "Seaside Confluence · a SlowSpace estate · the first coastal estate",
   "spec": "{{KEYS}} KEYS · ONE STEEL BUILDING · {{LAND}}",
   "intro": "Twelve keys over the river where it meets the sea, on the Udupi coast. One building, stood on steel so the ground under it is barely touched. Every key looks at the river; the verandah is the useful space.",
   "place": {
@@ -559,11 +555,11 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    "title": "Two waters meeting. <b>That is the name.</b>",
    "text": "The estate sits at Nadsal, Padubidri, in Kaup taluk of Udupi district, on the estuarine edge of the coast: the Arabian Sea to the west, the river to the east. The river's name is being confirmed before print. The mangrove along the water is protected and nothing is built or planted in it.",
-   "coords": "13.117416°N 74.765988°E · SITE RECORD SSC-11-RG-002"
+   "coords": "13.117416°N 74.765988°E"
   },
   "concept": {
    "title": "One building. <span>Two waters.</span>",
-   "lead": "Ruling S-06, 02 Sep 2026: majority steel, because of the coastal zone and the mangrove setbacks. Driven galvanised piles, no excavation, and a building that stands inside its registered parcel.",
+   "lead": "Mostly steel, because of the coastal zone and the mangrove setbacks. Driven galvanised piles, no excavation, and a building that stands inside its registered parcel.",
    "ground": [
     {
      "c": "{ink:sea2}",
@@ -917,7 +913,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "Dinner on the veranda, timed to the tide."
     ]
    ],
-   "note": "Food and the tide table will be run by an operating partner; the appointment is out to tender. A ritual is an invitation, never programming. Sources: SSC-00-CN-003 §01.2, §12.3."
+   "note": "Food and the tide table will be run by an operating partner; the appointment is out to tender. A ritual is an invitation, never programming."
   },
   "getting": {
    "title": "Thirty minutes <span>from the airport.</span>",
@@ -977,7 +973,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "plan": {
    "title": "One building, <span>on its parcel.</span>",
-   "note": "SCHEMATIC · NOT TO SCALE · DESIGN INTENT, NOT FOR CONSTRUCTION · EVERY POSITION WAITS ON THE COASTAL ZONE LINE (H-01)",
+   "note": "SCHEMATIC · NOT TO SCALE · DESIGN INTENT, NOT FOR CONSTRUCTION · EVERY POSITION WAITS ON THE COASTAL ZONE LINE",
    "tabs": [
     {
      "tab": "Site",
@@ -1056,14 +1052,6 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "details": [
    [
-    "Public name",
-    "Seaside Confluence"
-   ],
-   [
-    "Estate code",
-    "<span class=\"mono\">SSC</span>"
-   ],
-   [
     "House brand",
     "SlowSpace"
    ],
@@ -1077,7 +1065,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Structure",
-    "Steel on driven piles (ruling S-06)"
+    "Steel on driven piles"
    ],
    [
     "Enclosed floor",
@@ -1089,16 +1077,16 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Stage",
-    "Gate G0 · design intent, not for construction"
+    "In design; not yet issued for construction"
    ],
    [
     "Coastal zone",
-    "CRZ line not yet read; decides every position (H-01)",
+    "CRZ line not yet read; decides every position",
     1
    ],
    [
     "Floor area permission",
-    "Met by the assembled land (H-03)"
+    "Met by the assembled land"
    ],
    [
     "Operator",
@@ -1110,7 +1098,7 @@ export const ESTATES: Record<string, SiteEstate> = {
     1
    ]
   ],
-  "detailsNote": "SOURCES · SSC-00-CN-003 §02–04, §16 · SSC-01-DR-007 · LLP AGREEMENT 22 JUL 2026 · LAND ACQUIRED PER FOUNDER, 24 SEP 2026",
+  "detailsNote": "",
   "waitlist": {
    "chip": "FULLY SUBSCRIBED",
    "title": "Join the <span>waitlist.</span>",
@@ -1147,7 +1135,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    "title": "It rains ninety days a year. <b>We built for the ninety.</b>",
    "text": "Creek lies at Cherala, near Sunticoppa and Kushalnagara in Kodagu, in the river-forest of Coorg. Between 2,500 and 4,000 millimetres of rain fall each year. The last engine you hear is your own car, at the gate: from there you walk down, and cross the water.",
-   "coords": "12.385716°N 75.836097°E · OWNER RECORD CRK-11-RG-001"
+   "coords": "12.385716°N 75.836097°E"
   },
   "concept": {
    "title": "The river is <span>the operating system.</span>",
@@ -1402,7 +1390,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "465 SQ FT · 43.2 M²",
      "PLATE 7.2 × 6.0 M",
      "DECK 7.2 × 4.8 M",
-     "LOFT TYPE UNDER REVIEW (H-09)"
+     "LOFT TYPE UNDER REVIEW"
     ],
     "cards": [
      {
@@ -1428,7 +1416,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      },
      {
       "k": "Chassis",
-      "v": "ARC-CH-02 Ridge"
+      "v": "Ridge"
      }
     ]
    },
@@ -1509,55 +1497,55 @@ export const ESTATES: Record<string, SiteEstate> = {
   ],
   "materials": [
    [
-    "RB-01",
+    "No. 1",
     "River-cast concrete",
     "Cast with the stream's own aggregate.",
     "{ink:sage}"
    ],
    [
-    "RB-02",
+    "No. 2",
     "Driftwood oak",
     "Silvered, not stained.",
     "{ink:oat}"
    ],
    [
-    "RB-03",
+    "No. 3",
     "Corten",
     "Inland, where the air allows it.",
     "{ink:rust}"
    ],
    [
-    "RB-04",
+    "No. 4",
     "Laterite",
     "The red stone of the region.",
     "{ink:ember}"
    ],
    [
-    "RB-05",
+    "No. 5",
     "River basalt",
     "Underfoot at the water's edge.",
     "{ink:stone3}"
    ],
    [
-    "RB-06",
+    "No. 6",
     "Linen and wool",
     "Undyed linen, iron-grey wool, one indigo or canopy-green note.",
     "{ink:slateGrey}"
    ],
    [
-    "RB-07",
+    "No. 7",
     "Canopy green",
     "Grown or woven, never painted.",
     "{ink:canopy}"
    ],
    [
-    "RB-08",
+    "No. 8",
     "Lime plaster",
     "No gypsum.",
     "{ink:bone}"
    ],
    [
-    "RB-11",
+    "No. 11",
     "EPDM gaskets",
     "Joints that move with the rain. No sealant.",
     "{ink:coal}"
@@ -1593,7 +1581,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "The drying yard, after dark."
     ]
    ],
-   "note": "Each ritual is offered once; declining counts as done. Who runs them is not yet appointed. The coracle drift waits on a water-safety review and is not offered here. Sources: CRK-00-CN-002 R1 Part B · CN-004 sheets 12–13."
+   "note": "Each ritual is offered once; declining counts as done. Who runs them is not yet appointed. The coracle drift waits on a water-safety review and is not offered here."
   },
   "getting": {
    "title": "A day's <span>drive west.</span>",
@@ -1718,7 +1706,7 @@ export const ESTATES: Record<string, SiteEstate> = {
       ],
       [
        "Total",
-       "651 sq ft · under review (H-09)",
+       "651 sq ft · under review",
        1
       ],
       [
@@ -1731,14 +1719,6 @@ export const ESTATES: Record<string, SiteEstate> = {
    ]
   },
   "details": [
-   [
-    "Public name",
-    "SlowSpace Creek"
-   ],
-   [
-    "Estate code",
-    "<span class=\"mono\">CRK</span>"
-   ],
    [
     "House brand",
     "SlowSpace"
@@ -1787,14 +1767,14 @@ export const ESTATES: Record<string, SiteEstate> = {
     "Coffee Fields Forever, 1.8 km, a different estate"
    ]
   ],
-  "detailsNote": "SOURCES · CRK GFC R1 (07 SEP 2026) · CN-001, CN-002 R1, CN-004 · PL-002 · CA-002 R2 (RATIFIED) · LAND ACQUIRED PER FOUNDER, 24 SEP 2026",
+  "detailsNote": "",
   "slug": "coorg-coffee-creek",
   "vehicleKey": "coorgcreek"
  },
  "cff": {
   "key": "cff",
   "name": "Coffee Fields",
-  "vehicle": "the Coffee Fields Forever LLP (identifier pending, D-03)",
+  "vehicle": "the Coffee Fields Forever LLP, being formed",
   "pal": "cff",
   "hour": 16.5,
   "enquireHour": 17.5,
@@ -1810,7 +1790,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    "title": "Twenty keys. <b>One working plantation.</b>",
    "text": "Coffee Fields Forever sits at Valamudi, near Suntikoppa in Kodagu, on three acres of shade-grown coffee. Two acres are buildable; at least two-thirds of the estate stays as it is. It is a different estate from SlowSpace Creek, 1.8 km away.",
-   "coords": "12°23'25.6\"N 75°49'13.8\"E · SITE RECORD CFF-11-RG-002"
+   "coords": "12°23'25.6\"N 75°49'13.8\"E"
   },
   "concept": {
    "title": "Three hamlets. <span>One canopy.</span>",
@@ -2000,7 +1980,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "cff",
      17.4
     ],
-    "para": "Twenty keys, each around 450 square feet, arranged in three hamlets and one tree house. Their public names are still being decided (D-07), so this page names them by the hamlet they stand in.",
+    "para": "Twenty keys, each around 450 square feet, arranged in three hamlets and one tree house. Their public names are still being decided, so this page names them by the hamlet they stand in.",
     "meta": [
      "20 KEYS",
      "~450 SQ FT EACH",
@@ -2215,17 +2195,9 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "details": [
    [
-    "Public name",
-    "Coffee Fields Forever"
-   ],
-   [
     "Vehicle",
-    "No identifier yet (D-03)",
+    "No identifier yet",
     1
-   ],
-   [
-    "Estate code",
-    "<span class=\"mono\">CFF</span>"
    ],
    [
     "House brand",
@@ -2249,7 +2221,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Key names",
-    "Being decided (D-07)",
+    "Being decided",
     1
    ],
    [
@@ -2271,7 +2243,7 @@ export const ESTATES: Record<string, SiteEstate> = {
     "SlowSpace Creek, 1.8 km, a different estate"
    ]
   ],
-  "detailsNote": "SOURCES · properties.yaml 89–115 · vehicles.yaml 52–72 · CFF CLAUDE.md · CFF-06-CN-001 · CFF experiences 09 Aug 2026",
+  "detailsNote": "",
   "slug": "coffee-fields-forever",
   "vehicleKey": null
  }
@@ -2286,7 +2258,7 @@ export const FAQX: Record<string, [string, string, string][]> = {
   ],
   [
    "Is the building already approved?",
-   "Not yet. The coastal zone line still has to be read from the plan sheet, and it decides where the building may stand (H-01). The drawings are design intent, not for construction.",
+   "Not yet. The coastal zone line still has to be read from the plan sheet, and it decides where the building may stand. The drawings are in design, not yet for construction.",
    "SSC-00-CN-003 §16"
   ]
  ],
@@ -2315,7 +2287,7 @@ export const FAQX: Record<string, [string, string, string][]> = {
   ],
   [
    "Why are the keys not named?",
-   "Their public names are an open decision (D-07). Until it is made, the page names each key by its hamlet.",
+   "Their public names are not yet decided. Until it is made, the page names each key by its hamlet.",
    "DECISIONS.md D-07"
   ]
  ]

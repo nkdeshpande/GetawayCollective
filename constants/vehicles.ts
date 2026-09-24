@@ -381,7 +381,9 @@ const SLOWSPACE: Vehicle = {
     unitPrice: 4000000_0000n,
     subscribed: 6,
     available: 0,
-    deposit: 50000_0000n,
+    /* ₹1,00,000 from 24 Sep 2026, founder ruling: one flat deposit at every
+       estate, refundable in full until the Vehicle Agreement is signed. */
+    deposit: 100000_0000n,
     lockIn: "36 months from financial close",
   },
   operating: {
@@ -469,7 +471,9 @@ const SOLACE: Vehicle = {
     unitPrice: 2500000_0000n,
     subscribed: 4,
     available: 0,
-    deposit: 50000_0000n,
+    /* ₹1,00,000 from 24 Sep 2026, founder ruling: one flat deposit at every
+       estate, refundable in full until the Vehicle Agreement is signed. */
+    deposit: 100000_0000n,
     lockIn: "36 months from financial close",
   },
   operating: {
@@ -549,7 +553,9 @@ const COORGCREEK: Vehicle = {
     unitPrice: 10000000_0000n,
     subscribed: 0,
     available: 4,
-    deposit: 50000_0000n,
+    /* ₹1,00,000 from 24 Sep 2026, founder ruling: one flat deposit at every
+       estate, refundable in full until the Vehicle Agreement is signed. */
+    deposit: 100000_0000n,
     lockIn: "36 months from financial close",
   },
   operating: {
@@ -661,10 +667,11 @@ const WILDWOOD: Vehicle = {
     unitPrice: 5000000_0000n,
     subscribed: 0,
     available: 2,
-    /* No holding deposit is stated for this structure. The folder's
-       ₹2,25,000 belongs to a ₹22.50 L ladder unit this raise does not use,
-       and carrying it across would put a figure on a page nothing supports. */
-    deposit: null,
+    /* ₹1,00,000, founder ruling of 24 Sep 2026: one flat deposit at every
+       estate. It was null here ("no holding deposit is stated for this
+       structure") until that ruling stated one for all of them. The
+       vehicle is still forming, so nothing can be reserved against it yet. */
+    deposit: 100000_0000n,
     lockIn: "36 months from full launch",
   },
 

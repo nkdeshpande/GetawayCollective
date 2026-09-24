@@ -17,18 +17,26 @@ import { notFound } from "next/navigation";
 import { ESTATES, FAQX } from "@/content/site/estates";
 import { PAGES } from "@/content/site/pages";
 import { COLLECTION, FAQ, HOME_JOURNAL, HOME_STACK, MANIFESTO, NEXT_ESTATES, TRIO } from "@/content/site/home";
-import { JOURNAL, JOURNAL_INTRO, KIND_LABEL } from "@/content/journal";
+import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
 import { vehicleBySlug } from "@/constants/vehicles";
 import { chapterContent } from "../propertychapter";
 import type { ChapterId } from "@/constants/property-chapters";
 import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify } from "./render";
-import { openReading, read, vehicleOf } from "./registry";
+import { graphicHTML } from "./infographics";
+import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
+import { openReading, read, rupees, rupeesFull, vehicleOf } from "./registry";
 import type { Block, SitePage } from "./types";
 
 function Mount({ html, light = false }: { html: string; light?: boolean }) {
   return <div className={`pg${light ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: html }} />;
 }
+
+/** 2026-08-03 → 3 Aug 2026. */
+const longDate = (iso: string) => {
+  const [y, m, d] = iso.split("-").map(Number);
+  return `${d} ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][m - 1]} ${y}`;
+};
 
 const estateBySlug = (slug: string) => Object.values(ESTATES).find((e) => e.slug === slug);
 const pageByPath = (path: string) => Object.values(PAGES).find((p) => p.path === path);
@@ -159,9 +167,9 @@ function route(p: string) {
 }
 
 export function SiteJournalIndex() {
-  const cards = JOURNAL.slice().reverse().map((e) => ({ id: e.id, key: e.slug, kind: e.kind, title: e.title, standfirst: e.standfirst, date: e.published, minutes: e.minutes }));
+  const cards = JOURNAL.slice().reverse().map((e) => ({ id: e.id, key: e.slug, kind: e.kind, title: e.title, standfirst: e.standfirst, date: e.published, dateLabel: longDate(e.published), minutes: e.minutes }));
   const P: SitePage = {
-    key: "journal", path: "/journal", light: 1, eyebrow: "The Journal", title: "Notes from <span>the collective.</span>", lead: JOURNAL_INTRO,
+    key: "journal", path: "/journal", light: 1, eyebrow: "The Journal", title: "Notes from <span>the collective.</span>", lead: "One decision an entry, with what it cost. Every figure quoted here comes from the same record the platform itself runs on.",
     blocks: [
       { jcards: cards, kinds: KIND_LABEL },
       { h: "The Signal" }, { p: "The Journal arrives once a week as The Signal. No tracking pixel, and the list is never sold." },
@@ -174,14 +182,43 @@ export function SiteJournalIndex() {
 export function SiteJournalEntry({ slug }: { slug: string }) {
   const e = JOURNAL.find((x) => x.slug === slug);
   if (!e) notFound();
+  /* The entry's own text, in its own order, with the site's reading aids
+     laid around it (content/site/journal-extras.ts): a contents strip, a
+     lede, its figures pulled out, one sentence of its own set large, a
+     drawing of numbers it states, and one line from somebody else. */
+  const x = JOURNAL_EXTRAS[e.slug];
+  const headings = e.body.filter((b) => b.t === "h").map((b) => (b as { x: string }).x);
+  const anchor = (i: number) => `s-${i + 1}`;
   const blocks: Block[] = [];
+  if (headings.length > 1) blocks.push({ toc: headings.map((t, i) => [anchor(i), t]) });
+  if (x?.facts) blocks.push({ figs: x.facts });
+  let hi = -1, pulled = false, drawn = false, firstP = true;
+  const place = () => {
+    if (x && !drawn && hi === x.graphicAfter) { blocks.push({ html: graphicHTML(x.graphic, headings) }); drawn = true; }
+  };
+  if (x && x.graphicAfter === -1 && x.graphic.kind !== "weekends" && x.graphic.kind !== "rain" && x.graphic.kind !== "nots") place();
   for (const b of e.body) {
-    if (b.t === "p") blocks.push({ p: b.x });
-    else if (b.t === "h") blocks.push({ h: b.x });
+    if (b.t === "p") {
+      blocks.push(firstP ? { lede: b.x } : { p: b.x });
+      firstP = false;
+      if (x?.graphic.kind === "nots" && !drawn) { blocks.push({ html: graphicHTML(x.graphic, headings) }); drawn = true; }
+    } else if (b.t === "h") {
+      place();
+      hi++;
+      if (x && !pulled && hi === Math.max(1, Math.floor(headings.length / 2))) { blocks.push({ pull: x.pull }); pulled = true; }
+      blocks.push({ h: b.x, id: anchor(hi) });
+    }
     else if (b.t === "list") blocks.push({ list: b.x });
     else if (b.t === "assert") blocks.push({ assert: b.x });
-    else if (b.t === "figure") { blocks.push({ rows: [[b.label, b.value]] }); blocks.push({ src: b.source }); }
+    else if (b.t === "figure") blocks.push({ rows: [[b.label, b.value]] });
+    if (x && !drawn && x.graphicAfter === -1 && (x.graphic.kind === "weekends" || x.graphic.kind === "rain") && b.t === "p" && blocks.filter((k) => k.p || k.lede).length === 2) {
+      blocks.push({ html: graphicHTML(x.graphic, headings) }); drawn = true;
+    }
   }
+  place();
+  if (x && !drawn) blocks.push({ html: graphicHTML(x.graphic, headings) });
+  if (x && !pulled) blocks.push({ pull: x.pull });
+  if (x) blocks.push({ inspire: x.quote });
   if (e.onward?.length) {
     blocks.push({ h: "Read next" });
     blocks.push({ rows: e.onward.map((o) => [`<a class="tx-u" href="${route(o.path)}">${o.title}</a>`, o.why]) });
@@ -190,7 +227,7 @@ export function SiteJournalEntry({ slug }: { slug: string }) {
   const f = filmFor(e.slug, e.kind);
   const P: SitePage = {
     key: `j-${e.slug}`, path: `/journal/${e.slug}`, eyebrow: `Journal · ${KIND_LABEL[e.kind]} · ${e.minutes} min`, title: e.title,
-    film: [f[0], f[1], f[2], f[3]], meta: `${e.id} · PUBLISHED ${e.published}`, lead: e.standfirst, blocks,
+    film: [f[0], f[1], f[2], f[3]], meta: `PUBLISHED ${longDate(e.published).toUpperCase()}`, lead: e.standfirst, blocks,
   };
   return <Mount html={TXT(P)} />;
 }
@@ -235,12 +272,23 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
   if (!v) notFound();
   const id = path.split("/").pop() as ChapterId;
   const c = chapterContent(v, id);
+  /* The chapter copy cites its conflict register ("C-02: ...") for the
+     office; a reader needs the sentence, not the filing number. */
+  const plain = (t: string) => {
+    const s = t.replace(/\b[A-Z]{1,3}-\d{2}[a-z]?:\s*/g, "").replace(/\s*\((?:[A-Z]{1,3}-\d{2}[a-z]?(?:,\s*)?)+\)/g, "");
+    return /^(?:\s*[A-Z]{1,3}-\d{2}[a-z]?\s*·?)+$/.test(s) ? "Each is on the estate's record, with what will close it." : s;
+  };
   const name = E?.name ?? v.propertyName;
   const blocks: Block[] = [];
-  if (c.rows.length) blocks.push({ rows: c.rows.map((r) => [esc(r.label), `${esc(r.value)}${r.basis ? `<span class="tx-src tx-src-in">${esc(r.basis)}</span>` : ""}`]) });
-  if (c.withheld.length) { blocks.push({ h: "Withheld, and why" }); blocks.push({ list: c.withheld.map(esc) }); }
+  if (c.rows.length) blocks.push({ rows: c.rows.map((r) => [esc(plain(r.label)), `${esc(plain(r.value))}${r.basis ? `<span class="tx-note">${esc(plain(r.basis))}</span>` : ""}`]) });
+  if (c.withheld.length) { blocks.push({ h: "Withheld, and why" }); blocks.push({ list: c.withheld.map((w) => esc(plain(w))) }); }
   if (id === "enquire") {
     const R = read(v);
+    if (R.stance.kind === "open" && v.offering.deposit !== null) {
+      blocks.push({ h: "Hold a position" });
+      blocks.push({ deposit: { vehicle: v.slug, payee: v.registeredName, amount: rupeesFull(v.offering.deposit), available: R.stance.unitsAvailable, unitPrice: rupees(v.offering.unitPrice) } });
+      blocks.push({ h: "Or ask first" });
+    }
     blocks.push({ h: R.stance.kind === "waitlist" ? "Join the waitlist" : "Request the offering pack" });
     blocks.push({ form: {
       id: `${v.key}-enq`, addr: "ir@getawaycollective.co",
@@ -252,7 +300,7 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
   }
   blocks.push({ links: [[`Back to ${name}`, `/collection/${v.slug}`], ["Investment", `/collection/${v.slug}/investment`], ["Risk", `/collection/${v.slug}/risk`], ["Enquire", `/collection/${v.slug}/enquire`, "lead"]] });
   const P: SitePage = {
-    key: `${v.key}-${id}`, path, eyebrow: `${esc(name)} · ${esc(c.eyebrow.replace(/^CHAPTER \d+ · /, ""))}`, title: esc(c.title), lead: esc(c.lead),
+    key: `${v.key}-${id}`, path, eyebrow: `${esc(name)} · ${esc(c.eyebrow.replace(/^CHAPTER \d+ · /, ""))}`, title: esc(plain(c.title)), lead: esc(plain(c.lead)),
     film: E ? [E.pal, E.enquireHour || 18] : undefined, blocks,
   };
   return <Mount html={fill(TXT(P))} />;

@@ -350,7 +350,7 @@ export function Offering() {
 const STEPS = [
   { id: "identity", t: "Identity", d: "Legal name and contact, for the register." },
   { id: "verification", t: "Verification", d: "PAN and address, for regulatory compliance." },
-  { id: "terms", t: "Terms and deposit", d: "The agreement you are entering, and the ₹50,000 that reserves a unit." },
+  { id: "terms", t: "Terms and deposit", d: "The agreement you are entering, and the ₹1,00,000 that reserves a unit." },
 ] as const;
 
 export function Accreditation() {
@@ -470,7 +470,7 @@ export function Accreditation() {
                     ) : (
                       <div style={{ marginBottom: "var(--gc-sp-m)" }}>
                         {/* What is actually taken here, and what is not.
-                            ₹50,000 reserves a unit; the balance, the
+                            ₹1,00,000 reserves a unit; the balance, the
                             Agreement and the transfer happen off the
                             platform. Stating the balance beside the
                             deposit is the point — a screen showing only

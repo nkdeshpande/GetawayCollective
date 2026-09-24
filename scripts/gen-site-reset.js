@@ -30,6 +30,7 @@ const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8").replace(/\r\n/g,
 /* The classes the site's markup uses, read from the files that write it. */
 const SOURCES = [
   "app/_assemblies/site/render.ts", "app/_assemblies/site/pages.tsx", "app/_assemblies/site/chrome.tsx",
+  "app/_assemblies/site/infographics.ts", "app/_assemblies/site/identity.tsx",
   "content/site/estates.ts", "content/site/pages.ts", "content/site/home.ts",
 ];
 const siteClasses = new Set();

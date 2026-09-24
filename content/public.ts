@@ -313,7 +313,7 @@ export const MANIFESTO: PublicPage = {
           "The Hospitality Asset Disclosure for the specific property, acknowledged with your " +
           "identity and the time. It states partial and total loss of capital in those words." },
         { n: "04", t: "Deposit and commitment", d:
-          "A flat ₹50,000 holds the position — the same amount at every size. It buys nothing " +
+          "A flat ₹1,00,000 holds the position — the same amount at every size. It buys nothing " +
           "and makes nobody a partner. The balance, the Agreement and the transfer of funds all " +
           "complete off the platform." },
         { n: "05", t: "Settlement", d:
@@ -378,7 +378,7 @@ export const MANIFESTO: PublicPage = {
              "deliver. It begins at handover and not before — nothing is drawable against an " +
              "asset that has not been built." },
         { q: "Is the deposit a percentage of what I commit?",
-          a: "No. It is a flat ₹50,000 and it does not move with the size of the position. It " +
+          a: "No. It is a flat ₹1,00,000 and it does not move with the size of the position. It " +
              "reserves the position and is refundable in full until the Vehicle Agreement is " +
              "signed." },
         { q: "When do I become a partner?",

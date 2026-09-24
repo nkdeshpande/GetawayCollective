@@ -224,8 +224,10 @@ const BY_PATH = {
      generic /office/* → OfficeSurface rule below, which renders the
      workspace mockup. This route reads live grants and a live event log. */
   "/office/register": { component: "PropertyRegister", from: "@/app/_assemblies/propertyregister" },
-  "/sign-in": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/sign-in" },
-  "/verify": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/verify" },
+  /* Sign-in and verify wear the site since 24 Sep 2026; the handshake is
+     unchanged (app/_assemblies/site/identity.tsx says rule for rule). */
+  "/sign-in": { component: "SiteSignIn", from: "@/app/_assemblies/site/identity" },
+  "/verify": { component: "SiteVerify", from: "@/app/_assemblies/site/identity" },
   "/status": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/status" },
   "/403": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/403" },
   "/invest/qualify": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/qualify" },

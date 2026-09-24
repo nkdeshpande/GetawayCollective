@@ -91,9 +91,22 @@ export interface Block {
   readonly jcards?: readonly JournalCard[];
   readonly kinds?: Readonly<Record<string, string>>;
   readonly faq?: string;
+  /** A heading's anchor, so a contents strip can point at it. */
+  readonly id?: string;
+  /** Markup built from tokens by the site itself (the Journal's drawings). */
+  readonly html?: string;
+  readonly toc?: readonly (readonly [string, string])[];
+  readonly lede?: string;
+  readonly pull?: string;
+  readonly inspire?: { readonly text: string; readonly who: string; readonly where: string };
+  /** The holding deposit, for an offering that is open. Figures are the register's. */
+  readonly deposit?: {
+    readonly vehicle: string; readonly payee: string; readonly amount: string;
+    readonly available: number; readonly unitPrice: string;
+  };
 }
 
-export interface JournalCard { readonly id: string; readonly key: string; readonly kind: string; readonly title: string; readonly standfirst: string; readonly date: string; readonly minutes: number }
+export interface JournalCard { readonly id: string; readonly key: string; readonly kind: string; readonly title: string; readonly standfirst: string; readonly date: string; readonly dateLabel: string; readonly minutes: number }
 
 export interface SitePage {
   readonly key: string;

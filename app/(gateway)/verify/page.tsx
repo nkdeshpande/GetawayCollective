@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { SystemSurface } from "@/app/_assemblies/systempages";
+import { SiteVerify } from "@/app/_assemblies/site/identity";
 
 export const metadata: Metadata = {
   title: "Verify · Getaway Collective",
@@ -19,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default async function Pverify() {
-  return <SystemSurface path="/verify" />;
+  return <SiteVerify />;
 }

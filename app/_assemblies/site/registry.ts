@@ -34,6 +34,9 @@ export function rupees(minor: bigint): string {
   return `₹${r.toLocaleString("en-IN")}`;
 }
 
+/** ₹1,00,000 — every digit, Indian grouping, for a sum someone is about to pay. */
+export const rupeesFull = (minor: bigint): string => `₹${(minor / FACTOR).toLocaleString("en-IN")}`;
+
 export const vehicleOf = (key: string | null): Vehicle | undefined =>
   key ? VEHICLES.find((v) => v.key === key) : undefined;
 
@@ -74,8 +77,7 @@ export function read(v: Vehicle): Reading {
     OFFER: offer,
   };
   const details: (readonly [string, string, number?])[] = [
-    ["Vehicle", v.registeredName + (v.llpin ? ` · LLPIN ${v.llpin}` : "")],
-    ["Asset code", `<span class="mono">${v.assetCode}</span>`],
+    ["Held by", v.registeredName + (v.llpin ? ` · LLPIN ${v.llpin}` : "")],
     ["Place", v.jurisdiction],
     ["Coordinates", v.coordinates ? `<span class="mono">${v.coordinates}</span>` : "Not yet recorded", v.coordinates ? undefined : 1],
     ["Land", v.landArea],

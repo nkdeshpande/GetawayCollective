@@ -21,6 +21,62 @@ import { Film } from "./film";
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s)) as T[];
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s);
 
+/* ── THE HOLDING DEPOSIT ─────────────────────────────────────────────
+   The server names the amount and opens the order; Razorpay's own checkout
+   takes the card, UPI or netbanking details, which never touch this site;
+   the server then checks Razorpay's signature before recording anything.
+   Every outcome is said in words, including "nothing was taken". */
+type Rzp = new (o: Record<string, unknown>) => { open: () => void; on: (e: string, f: (r: unknown) => void) => void };
+function loadCheckout(): Promise<Rzp | null> {
+  const w = window as unknown as { Razorpay?: Rzp };
+  if (w.Razorpay) return Promise.resolve(w.Razorpay);
+  return new Promise((resolve) => {
+    const s = document.createElement("script");
+    s.src = "https://checkout.razorpay.com/v1/checkout.js";
+    s.onload = () => resolve((window as unknown as { Razorpay?: Rzp }).Razorpay ?? null);
+    s.onerror = () => resolve(null);
+    document.head.appendChild(s);
+  });
+}
+async function payDeposit(f: HTMLFormElement) {
+  const ok = f.querySelector<HTMLElement>(".tx-ok"), err = f.querySelector<HTMLElement>(".tx-err");
+  const btn = f.querySelector<HTMLButtonElement>("button[type=submit]");
+  const say = (el: HTMLElement | null, text: string) => { if (ok) ok.hidden = true; if (err) err.hidden = true; if (el) { el.textContent = text; el.hidden = false; } };
+  const val = (n: string) => (f.querySelector<HTMLInputElement>(`[name="${n}"]`)?.value || "").trim();
+  const ack = f.querySelector<HTMLInputElement>('[name="acknowledged"]');
+  if (!val("name") || !/.+@.+\..+/.test(val("email")) || val("phone").length < 8) { say(err, "Add your name, email and mobile number."); return; }
+  if (!ack?.checked) { say(err, "Confirm you have read the Risk Factors and the Terms."); ack?.focus(); return; }
+  const vehicle = f.dataset.vehicle || "";
+  const body = { vehicle, units: Number(val("units") || 1), name: val("name"), email: val("email"), phone: val("phone"), city: val("city") || undefined, acknowledged: true };
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch("/api/deposit", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 503 && j.error === "not-configured") {
+      say(ok, `Online payment is not open yet, so nothing was taken. Your request is recorded (reference ${String(j.reference).slice(0, 8)}) and Investor Relations will send payment details.`);
+      return;
+    }
+    if (!r.ok || !j.ok) { say(err, j.detail ? `This offering cannot take a deposit right now: ${j.detail}` : "That did not go through, and nothing was taken. Write to ir@getawaycollective.co."); return; }
+    const Razorpay = await loadCheckout();
+    if (!Razorpay) { say(err, "The payment window could not load, and nothing was taken. Try again, or write to ir@getawaycollective.co."); return; }
+    const rz = new Razorpay({
+      key: j.keyId, amount: j.order.amount, currency: j.order.currency, order_id: j.order.id,
+      name: j.payee, description: j.description, prefill: j.prefill, theme: { color: f.dataset.themeHex },
+      handler: async (res: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+        const v = await fetch("/api/deposit/verify", { method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ orderId: res.razorpay_order_id, paymentId: res.razorpay_payment_id, signature: res.razorpay_signature, email: body.email, vehicle, reference: j.reference }) });
+        if (v.ok) say(ok, `Deposit received. Your position is held; reference ${String(j.reference).slice(0, 8)}. Investor Relations will write within one working day about identity checks, the balance and the Vehicle Agreement.`);
+        else say(err, `Razorpay took the payment (${res.razorpay_payment_id}) but this site could not confirm it. Keep that id; Investor Relations will reconcile it.`);
+        f.reset();
+      },
+      modal: { ondismiss: () => say(err, "Payment window closed. Nothing was taken.") },
+    });
+    rz.on("payment.failed", () => say(err, "The payment did not go through, and nothing was taken."));
+    rz.open();
+  } catch { say(err, "That did not go through, and nothing was taken. Write to ir@getawaycollective.co."); }
+  finally { if (btn) btn.disabled = false; }
+}
+
 export function SiteBehaviour() {
   const pathname = usePathname();
   const router = useRouter();
@@ -142,6 +198,7 @@ export function SiteBehaviour() {
       $$<HTMLButtonElement>(".chip", f).forEach((c) => on(c, "click", () => c.setAttribute("aria-pressed", String(c.getAttribute("aria-pressed") !== "true"))));
       on(f, "submit", (async (ev: Event) => {
         ev.preventDefault();
+        if (f.dataset.to === "deposit") { await payDeposit(f); return; }
         const ok = $<HTMLElement>(".tx-ok", f), err = $<HTMLElement>(".tx-err", f);
         const btn = $<HTMLButtonElement>("button[type=submit]", f);
         const val = (n: string) => ($<HTMLInputElement>(`[name="${n}"]`, f)?.value || "").trim();
