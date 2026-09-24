@@ -36,6 +36,8 @@
 /* §29-0b · the public site. Last, and scoped under .site, so it can only
    ever reach the public frame and never re-order the rules above. */
 @import url("./_assemblies/site.css");
+/* The signed-in workspaces in the same language, scoped under .ws. */
+@import url("./_assemblies/workspace.css");
 
 *,
 *::before,

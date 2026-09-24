@@ -59,8 +59,10 @@ export function read(v: Vehicle): Reading {
   const unitsTotal = o.unitPrice > 0n ? Number(o.totalEquity / o.unitPrice) : o.units;
   const promoterUnits = o.unitPrice > 0n ? Number(o.promoter / o.unitPrice) : 0;
   const full = o.available <= 0 && o.subscribed > 0;
-  const status = full ? "FULLY SUBSCRIBED" : v.lifecycle === "raising" ? "RAISING" : v.lifecycle === "forming" ? "FORMING" : v.lifecycle.toUpperCase();
-  const price: readonly [string, string] = !ok
+  const status = full ? "FULLY SUBSCRIBED" : v.lifecycle === "raising" ? "RAISING" : v.lifecycle === "forming" ? "PIPELINE" : v.lifecycle.toUpperCase();
+  const price: readonly [string, string] = v.lifecycle === "forming"
+    ? ["In the pipeline", "not yet open for subscription"]
+    : !ok
     ? ["Offering not yet published", "the record is still being settled"]
     : full
       ? [`Fully subscribed · ${o.subscribed} of ${o.units} units offered`, `${rupees(o.unitPrice)} a unit · waitlist open`]

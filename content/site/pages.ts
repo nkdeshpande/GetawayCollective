@@ -537,7 +537,7 @@ export const PAGES: Record<string, SitePage> = {
     "rows": [
      [
       "Vehicle",
-      "PV01 Aranthodu Water Estate LLP · forming, no LLPIN yet"
+      "PV01 Aranthodu Water Estate LLP · in the pipeline, not yet open for subscription"
      ],
      [
       "Place",
