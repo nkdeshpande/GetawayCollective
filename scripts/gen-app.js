@@ -233,6 +233,7 @@ const BY_PATH = {
      unchanged (app/_assemblies/site/identity.tsx says rule for rule). */
   "/sign-in": { component: "SiteSignIn", from: "@/app/_assemblies/site/identity" },
   "/verify": { component: "SiteVerify", from: "@/app/_assemblies/site/identity" },
+  "/start": { component: "SiteStart", from: "@/app/_assemblies/site/start" },
   /* Status wears the site since 25 Sep 2026, its rows derived from the
      same presence checks as /api/health (app/_assemblies/site/system.tsx). */
   "/status": { component: "SiteStatus", from: "@/app/_assemblies/site/system" },

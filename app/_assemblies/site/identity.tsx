@@ -23,7 +23,9 @@ export function SiteSignIn() {
   const emailId = useId();
   const [providers, setProviders] = useState<string[] | null>(null);
   const [phase, setPhase] = useState<"idle" | "sending" | "sent">("idle");
-  const [from, setFrom] = useState("/");
+  /* Where the link returns: the page that sent the reader here, or /start,
+     which sends each person to their own place (lib/landing.ts). */
+  const [from, setFrom] = useState("/start");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,20 +56,20 @@ export function SiteSignIn() {
     <div className="pg idn">
       <section className="idn-film" aria-hidden="true">
         <canvas className="film" data-pal="solace" data-hour="21.5" />
-        <div className="idn-cap"><span className="eb">Solace, after dark</span><p>For partners and investors of the collection.</p></div>
+        <div className="idn-cap"><span className="eb">Solace, after dark</span><p>For anyone considering the collection, and for its partners.</p></div>
       </section>
       <section className="idn-panel">
         <span className="eb">Sign in</span>
         <h1 className="tx-h1">{
-          providers === null ? <>Welcome <span>back.</span></>
+          providers === null ? <>Sign in, <span>or begin.</span></>
             : !hasGoogle && !hasEmail ? <>Not open <span>yet.</span></>
-            : <>Welcome <span>back.</span></>
+            : <>Sign in, <span>or begin.</span></>
         }</h1>
 
         {error ? <p className="tx-err" role="alert">{error}</p> : null}
 
         {phase === "sent" ? <>
-          <p className="tx-p">If that address belongs to a partner or an investor of the collection, a sign-in link is on its way. It works once and expires shortly.</p>
+          <p className="tx-p">A sign-in link is on its way to that address. It works once and expires shortly. If this is your first time, the same link creates your sign-in: there is nothing else to fill in.</p>
           <button className="btn gray" type="button" onClick={() => { setPhase("idle"); setError(null); }}>Use a different address</button>
         </> : <>
           {hasGoogle ? <button className="btn idn-google" type="button" onClick={() => signIn("google", { callbackUrl: from })}>Continue with Google</button> : null}
@@ -84,7 +86,7 @@ export function SiteSignIn() {
             <p className="tx-p">Private access is not open yet. Nothing is lost by waiting, and the public collection is complete without it.</p>
             <div className="tx-links"><Link className="btn lead" href="/collection">See the collection</Link><Link className="btn gray" href="/contact">Talk to Investor Relations</Link></div>
           </> : null}
-          <p className="idn-note">No password. Entering an address never reveals whether it belongs to anyone here.</p>
+          <p className="idn-note">No password and no documents. New or returning, the same link does both. Identity checks come later, alongside the offering, and never before you can look.</p>
         </>}
 
         <div className="idn-foot"><Link href="/collection">The collection</Link><Link href="/contact">Enquire</Link><Link href="/legal/privacy">Privacy</Link></div>
@@ -98,7 +100,7 @@ export function SiteVerify() {
     <div className="pg idn">
       <section className="idn-film" aria-hidden="true">
         <canvas className="film" data-pal="coast" data-hour="6.4" />
-        <div className="idn-cap"><span className="eb">Seaside Confluence, first light</span><p>For partners and investors of the collection.</p></div>
+        <div className="idn-cap"><span className="eb">Seaside Confluence, first light</span><p>For anyone considering the collection, and for its partners.</p></div>
       </section>
       <section className="idn-panel">
         <span className="eb">Check your email</span>

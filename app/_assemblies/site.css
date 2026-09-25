@@ -31,7 +31,7 @@
 .site .strip{background:revert;border:revert;display:revert;gap:revert;overflow-x:revert;padding:revert;scroll-snap-type:revert}
 /* ── END GENERATED RESET ── */
 .site *{box-sizing:border-box}
-.site{margin:0;background:var(--void);color:var(--paper);font:500 15.5px/1.6 var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.site{margin:0;background:var(--void);color:var(--paper);font:500 15.5px/1.6 var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 .site a{color:inherit;text-decoration:none}
 .site button{font:inherit;color:inherit}
 .site :focus-visible{outline:2px solid var(--electric);outline-offset:3px}
@@ -1062,3 +1062,25 @@
   .site.rv [data-rv=film]:not(.rv-in){opacity:1;transform:scale(1.035)}
 }
 .site section[id],.site .tx-h2[id]{scroll-margin-top:calc(var(--gc-sp-3xs) * 32)}
+
+/* The way in, or back to one's own place — 25 Sep 2026 (chrome.tsx). A
+   quiet text link beside Enquire; it names the reader's place once the
+   session is known, and stays visible on a phone. */
+.site .nav .nav-acct{font:600 13.5px var(--text);color:var(--paper);white-space:nowrap;padding:calc(var(--gc-sp-3xs) * 2) 0;border-bottom:1px solid transparent;transition:border-color .3s var(--ease)}
+.site .nav .nav-acct:hover{border-bottom-color:var(--paper)}
+@media (max-width:560px){.site .nav .nav-acct{font-size:12.5px}}
+
+/* ── The bar: the mark alone, receding as one reads down — 25 Sep 2026 ──
+   chrome.tsx sets --nav-p from 0 to 1 over the first 280px scrolled; the
+   transition turns that into a slow, eased retreat. It returns on the
+   first scroll up, and whenever anything in it has focus. The estate bar,
+   which sits under it, rises into its place. */
+.site .nav .brand{display:inline-flex;align-items:center}
+.site .nav .brand .gc-mark{width:30px;height:30px;shape-rendering:geometricPrecision}
+@media (prefers-reduced-motion:no-preference){
+  .site .nav{transform:translate3d(0,calc(var(--nav-p,0) * -100%),0);opacity:calc(1 - var(--nav-p,0) * .85);transition:transform .9s var(--ease),opacity .9s var(--ease)}
+  .site .nav.away{pointer-events:none}
+  .site .nav:focus-within{transform:none;opacity:1;pointer-events:auto}
+  .site:has(.nav.away) .ebar{top:0;transition:transform .5s var(--ease),opacity .5s var(--ease),top .9s var(--ease)}
+}
+/* overflow-x:clip, not hidden (25 Sep 2026): hidden made .site a scroll container, so the sticky bar never stuck. clip still stops sideways scroll; hidden stays first as the fallback for browsers without clip. */

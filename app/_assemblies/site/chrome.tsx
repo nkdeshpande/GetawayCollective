@@ -14,6 +14,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { accountLabel } from "@/lib/account-label";
 import { usePathname } from "next/navigation";
 import { MARK_CUT, MARK_PATH } from "@/constants/brand-system";
 import { Mark } from "../brandmark";
@@ -38,15 +40,67 @@ const NAV = [
   ["/collection", "Collection"], ["/how-it-works", "How it works"], ["/journal", "Journal"], ["/team", "Team"], ["/about", "About"],
 ] as const;
 
+/**
+ * The way in, or back. 25 Sep 2026: the bar had no sign-in at all, and a
+ * signed-in partner saw nothing that led to their holdings. Signed out it
+ * reads "Sign in"; signed in it names the person's own place and goes to
+ * /start, which sends them there (lib/landing.ts). The session is read
+ * once, after the page has drawn, so the bar never waits on it.
+ */
+function AccountLink() {
+  const [access, setAccess] = useState<string | null>(null);
+  const [known, setKnown] = useState(false);
+  useEffect(() => {
+    let live = true;
+    fetch("/api/auth/session").then((r) => (r.ok ? r.json() : null)).catch(() => null).then((sess) => {
+      if (!live) return;
+      const u = (sess as { user?: { access?: string } } | null)?.user; // vocab-lint-ignore — Auth.js field name
+      setAccess(u ? u.access ?? "identified" : null);
+      setKnown(true);
+    });
+    return () => { live = false; };
+  }, []);
+  return <Link className={`nav-acct${known ? " on" : ""}`} href={access ? "/start" : "/sign-in"}>{accountLabel(access)}</Link>;
+}
+
+/**
+ * The bar steps aside as a reader goes down the page. 25 Sep 2026, founder:
+ * a slow disappearing motion on scroll. How far it has gone is tied to how
+ * far the reader has scrolled (--nav-p, 0 to 1 over the first 280px after
+ * the top 40px), eased by a transition, so it recedes rather than snaps.
+ * Scrolling up, or tabbing into it, brings it straight back. A reader who
+ * asks for reduced motion keeps a still bar.
+ */
+function useReceding(): number {
+  const [p, setP] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let last = window.scrollY, raf = 0;
+    const tick = () => {
+      raf = 0;
+      const y = window.scrollY, dy = y - last;
+      last = y;
+      if (y < 40) setP(0);
+      else if (dy < -6) setP(0);
+      else if (dy > 0) setP((q) => Math.max(q, Math.min(1, (y - 40) / 280)));
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    window.addEventListener("scroll", on, { passive: true });
+    return () => { window.removeEventListener("scroll", on); if (raf) cancelAnimationFrame(raf); };
+  }, []);
+  return p;
+}
+
 export function SiteNav() {
   const pathname = usePathname() || "/";
   const here = (p: string) => pathname === p || pathname.startsWith(p + "/");
   const stage = stageOf(pathname);
+  const p = useReceding();
   return (
-    <header className="nav">
-      {/* BR-02 bars the wordmark under a 20px cap-height, so the bar carries
-          the monogram and the name beside it, as the prototype does. */}
-      <Link className="brand" href="/" aria-label="Getaway Collective, home"><Mark size={24} /><span className="brand-name"><b>Getaway</b> Collective</span></Link>
+    <header className={`nav${p >= 1 ? " away" : ""}`} style={{ "--nav-p": p.toFixed(3) } as React.CSSProperties}>
+      {/* 25 Sep 2026, founder: the mark alone, without the name beside it.
+          The name stays the link's accessible label. */}
+      <Link className="brand" href="/" aria-label="Getaway Collective, home"><Mark size={30} /></Link>
       {/* Where this page sits on the path (d03): Discover to Hold, quietly. */}
       {stage ? (
         <span className="nav-path" title={STAGES.join(" → ")}>
@@ -61,6 +115,7 @@ export function SiteNav() {
       </nav>
       <SiteSearch />
       <span className="lang">EN</span>
+      <AccountLink />
       <Link className="btn btn-s" href="/contact">Enquire</Link>
     </header>
   );

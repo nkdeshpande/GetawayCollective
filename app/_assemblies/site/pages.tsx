@@ -338,9 +338,11 @@ export function SiteJournalEntry({ slug }: { slug: string }) {
  * stated: they are shown in full at review, and the threshold is the
  * founder's. Every estate figure is the register's, with its basis.
  */
-const PHASES: readonly (readonly [string, number, number])[] = [
-  ["Before you begin", 1, 2], ["Who you are", 3, 6], ["Whether it fits", 7, 11], ["The decision, and after", 12, 16],
-];
+/* 25 Sep 2026, founder: KYC is a parallel process, the last step of becoming
+   a partner, never a hurdle. So the stages are shown as two tracks: the path
+   (which opens the offering) and KYC alongside it, completing before the LLP
+   agreement is signed. The stage table itself is unchanged. */
+const KYC_STAGES = new Set(["identity", "address", "tax-residency", "source-of-funds", "documents", "screening"]);
 
 /** The estates the calculator can show: those whose yield the site already publishes, open ones first. */
 function calcEstates(): CalcEstate[] {
@@ -371,14 +373,14 @@ export function SiteQualify() {
   const hold = deposit ? rupeesFull(deposit) : null;
 
   const tile = (t: string, p: string) => `<div class="own-tile"><h3>${t}</h3><p>${p}</p></div>`;
-  const stagesHTML = PHASES.map(([h, a, z]) => {
-    const rows = S.filter((r) => r.n >= a && r.n <= z);
-    return `<h3 class="tx-h3">${esc(h)}</h3><ol class="tx-steps">${rows.map((r) =>
-      `<li><em>${String(r.n).padStart(2, "0")}</em><div><h3>${esc(r.t)}</h3><p>${esc(r.what)}</p>${r.note ? `<p class="tx-assert">${esc(r.note)}</p>` : ""}</div></li>`).join("")}</ol>`;
-  }).join("");
+  const track = (rows: typeof S, mark: (i: number) => string) => `<ol class="tx-steps">${rows.map((r, i) =>
+    `<li><em>${mark(i)}</em><div><h3>${esc(r.t)}</h3><p>${esc(r.what)}</p>${r.note ? `<p class="tx-assert">${esc(r.note)}</p>` : ""}</div></li>`).join("")}</ol>`;
+  const stagesHTML =
+    `<h3 class="tx-h3">The path, in order</h3>${track(S.filter((r) => !KYC_STAGES.has(r.slug)), (i) => String(i + 1).padStart(2, "0"))}` +
+    `<h3 class="tx-h3">KYC, alongside: any time, complete before you sign</h3>${track(S.filter((r) => KYC_STAGES.has(r.slug)), (i) => `K${i + 1}`)}`;
 
   const blocks: Block[] = [
-    { figs: [["3", "steps from here to owning"], ["0", "commitments made by qualifying"], ["15", "working days to a decision, from submission"], ...(hold ? [[hold, "holds your units, refundable until you sign"]] : [])] },
+    { figs: [["0", "documents needed to sign in"], ["3", "steps from here to owning"], ["0", "commitments made by signing in"], ...(hold ? [[hold, "holds your units, refundable until you sign"]] : [])] },
     { h: "What you own" },
     { html: `<div class="own-tiles">` +
       tile("A share of a real place", "Your units are a share of the partnership that holds the land and the buildings, registered in its own name.") +
@@ -389,27 +391,27 @@ export function SiteQualify() {
       `</div>` },
     { h: "Three steps" },
     { steps: [
-      ["Qualify online", "Tell us who you are and confirm it digitally. Every stage saves as you leave it, so nothing has to be done in one sitting. A decision follows within 15 working days of a complete submission."],
-      ["Choose your estate, hold your units", `Read the full offering, then hold your units online${hold ? ` with a ${hold} deposit` : ""}. It is refundable until you sign the LLP agreement.`],
-      ["Sign, and it is yours", "Sign the LLP agreement and settle your units. From then on you are a partner: you vote, you receive distributions when there are any, and your nights begin at handover."],
+      ["Sign in, and look", "One email address: no password, no documents, nothing to pass. Every estate, its drawings and its figures are open to you. A short suitability questionnaire opens the full offering documents, with a decision within 15 working days."],
+      ["Hold your units", `Hold your units online${hold ? ` with a ${hold} deposit` : ""}. It is refundable in full until you sign the LLP agreement.`],
+      ["KYC alongside, then sign", "Identity checks run in parallel, at your pace, from the day you sign in. They complete before you sign the LLP agreement and settle your units. Then you are a partner: you vote, you receive distributions when there are any, and your nights begin at handover."],
     ] },
-    { p: "Why we ask at all: partners own real land together, and the law requires the partnership to know who each of them is. Qualifying lets you examine an offering in full. It buys nothing and commits you to nothing." },
-    { links: [["Begin qualification", "/invest/qualify", "lead"], ["See the collection", "/collection"]] },
+    { p: "Why there are checks at all: partners own real land together, and the law requires the partnership to know who each of them is before they become one. That is why KYC is the last step, not the first. It never stands between you and the estates." },
+    { links: [["Sign in or begin", "/sign-in", "lead"], ["See the collection", "/collection"]] },
     { h: "What your money does, <span>four ways</span>", id: "calculator" },
     { p: "The same sum, over the same years, in an estate, an apartment you let out, a fixed deposit and an equity SIP. Move the sliders; change the assumptions to your own. Only one of the four is also a place you can spend your time." },
     { html: calcHTML(estates) },
     { html: fourWaysHTML() },
     { assert: "An estate is not a deposit. Your capital is at risk and no return is guaranteed by any party; every estate figure here is modelled from its register and stated with its basis. Figures are before tax. Read the Risk Factors before you decide." },
     { h: "Every stage, in full" },
-    { html: `<details class="tx-fold"><summary>Read all ${S.length} stages of qualification, in order</summary>${stagesHTML}</details>` },
+    { html: `<details class="tx-fold"><summary>Read every stage: the path, and KYC alongside it</summary>${stagesHTML}</details>` },
     { h: "What happens to what you enter" },
     { p: "The Privacy Notice states what is collected, why, who sees it and how long it is kept. Accreditation and screening records, for example, are kept for eight years after the relationship ends, as the law requires." },
-    { links: [["Begin qualification", "/invest/qualify", "lead"], ["Risk factors", "/legal/risk-disclosure"], ["Privacy Notice", "/legal/privacy"], ["Answers", "/answers"]] },
+    { links: [["Sign in or begin", "/sign-in", "lead"], ["Risk factors", "/legal/risk-disclosure"], ["Privacy Notice", "/legal/privacy"], ["Answers", "/answers"]] },
   ];
   const P: SitePage = {
     key: "qualify", path: "/how-to-qualify", light: 1, eyebrow: "How to qualify",
     title: "Own a retreat <span>in three steps.</span>",
-    lead: "Qualify online, at your own pace. Hold your units with a refundable deposit. Sign, and a share of the place is yours, with nights of your own every year.",
+    lead: "Sign in with one email and look at everything. Hold your units with a refundable deposit. KYC runs alongside and completes before you sign; then a share of the place is yours, with nights of your own every year.",
     blocks,
   };
   return <Mount html={TXT(P)} light />;

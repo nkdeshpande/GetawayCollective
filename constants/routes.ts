@@ -189,6 +189,11 @@ export const PUBLIC_ROUTES: readonly Route[] = [
   R("GC-006", "/member-workspace-preview", "Member Workspace Preview", "gateway", "AS-32",
     { indexable: false,
       notes: "Design-review surface only. Placeholder relationship material; never member-restricted records." }),
+  /* 25 Sep 2026: every sign-in arrives here and is sent on to its own place
+     (lib/landing.ts). Public so a signed-out visitor is sent to sign in
+     rather than refused; never indexed, because it is not a page. */
+  R("GC-905", "/start", "Where Next", "gateway", "AS-32",
+    { indexable: false, notes: "Sends a signed-in person to their own place: the Office, their holdings, or the estate raising now. Renders nothing." }),
   R("GC-007", "/office-workspace-preview", "Office Workspace Preview", "gateway", "AS-32",
     { indexable: false,
       notes: "Design-review surface only. Placeholder operational material; never internal or restricted records." }),
