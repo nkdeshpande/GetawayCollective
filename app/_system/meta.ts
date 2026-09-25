@@ -16,7 +16,7 @@ import { ESTATES } from "@/content/site/estates";
 import { PAGES } from "@/content/site/pages";
 import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
-import { vehicleBySlug } from "@/constants/vehicles";
+import { VEHICLES, vehicleBySlug } from "@/constants/vehicles";
 import { ROUTES } from "@/constants/routes";
 
 const BRAND = "Getaway Collective";
@@ -34,6 +34,35 @@ const plain = (s: string | undefined) =>
   (s ?? "").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
 /** Search results show about 160 characters; cut at a word. */
 const clip = (s: string, n = 158) => (s.length <= n ? s : s.slice(0, s.lastIndexOf(" ", n)).replace(/[,;:·]$/, "") + "…");
+
+/**
+ * Where an estate is, in the words people search with. 25 Sep 2026.
+ *
+ * Titles used to be the estate's name alone ("Creek"), which nobody
+ * searching for a retreat in Coorg would ever type. The place comes from
+ * the region the estate already names above its title and the state on
+ * its register record, so nothing new is claimed; Kodagu also carries
+ * Coorg, the name most people use for it.
+ */
+export function placeOf(eyebrow: string | undefined, jurisdiction: string | undefined): string {
+  let region = plain(eyebrow).replace(/^Getaway Collective\s*·\s*/, "") || (jurisdiction ?? "");
+  if (/Kodagu/i.test(region) && !/Coorg/i.test(region)) region = region.replace(/Kodagu/i, "Kodagu (Coorg)");
+  const state = /Karnataka/.test(jurisdiction ?? "") && !/Karnataka/.test(region) ? ", Karnataka" : "";
+  return region ? region + state : "";
+}
+
+/** "Karnataka, India" while every estate is there; "India" once one is not. */
+const WHERE = VEHICLES.every((v) => /Karnataka/.test(v.jurisdiction)) ? "Karnataka, India" : "India";
+
+/**
+ * Two pages whose titles are written out in full: the home page leads with
+ * the brand, and the collection says what and where it is. The words are
+ * the site's own description, not new claims.
+ */
+const FULL_TITLE: Readonly<Record<string, string>> = {
+  "/": `${BRAND} · Collective ownership of retreats in India`,
+  "/collection": `The Collection · Retreat estates in ${WHERE} · ${BRAND}`,
+};
 
 const CHAPTER: Readonly<Record<string, string>> = { investment: "The investment", risk: "Risk", enquire: "Enquire" };
 
@@ -54,9 +83,10 @@ function resolve(pattern: string, p: Readonly<Record<string, string>>): { title?
     if (!name) return {};
     const chapter = pattern.split("/").pop()!;
     if (CHAPTER[chapter]) return { title: `${name} · ${CHAPTER[chapter]}`, description: `${CHAPTER[chapter]} for ${name}, read from the vehicle register. Capital is at risk.` };
-    return { title: name, description: plain(e?.intro) || plain(page?.lead) };
+    const where = placeOf(e?.eyebrow ?? page?.eyebrow, v?.jurisdiction);
+    return { title: where ? `${name} · ${where}` : name, description: plain(e?.intro) || plain(page?.lead) };
   }
-  if (pattern === "/how-to-qualify") return { description: "The sixteen stages of accreditation, in order, readable before you begin. Qualifying commits you to nothing; a decision follows within 15 working days of submission." };
+  if (pattern === "/how-to-qualify") return { description: "Own a share of a retreat in three steps: qualify online, hold your units with a refundable deposit, sign. And what the same sum does in an estate, an apartment, a fixed deposit and an equity SIP." };
   if (pattern === "/operating-partner") return { description: "Who runs each Getaway Collective estate day to day, how the operating partner is measured and paid, and what happens when it fails." };
   const page = Object.values(PAGES).find((x) => x.path === pattern);
   return page ? { description: plain(page.lead) } : {};
@@ -91,10 +121,15 @@ export function describePath(path: string): { title: string; kicker: string } | 
   return route ? { title: route.name, kicker: BRAND } : undefined;
 }
 
-export function pageMeta(pattern: string, params: Readonly<Record<string, string>>, fallbackTitle: string): Metadata {
+/**
+ * `index` is false for a public page the route table keeps out of search
+ * (sign-in, the previews, the error states): it keeps its title and
+ * canonical, and says noindex.
+ */
+export function pageMeta(pattern: string, params: Readonly<Record<string, string>>, fallbackTitle: string, index = true): Metadata {
   const path = pattern.replace(/\[(\w+)\]/g, (_, k: string) => params[k] ?? k);
   const r = resolve(pattern, params);
-  const title = r.title ? `${r.title} · ${BRAND}` : fallbackTitle;
+  const title = FULL_TITLE[pattern] ?? (r.title ? `${r.title} · ${BRAND}` : fallbackTitle);
   const description = clip(plain(r.description) || DEFAULT);
   return {
     title,
@@ -105,6 +140,6 @@ export function pageMeta(pattern: string, params: Readonly<Record<string, string
        again — without this line no public page carried a share image. */
     openGraph: { title, description, url: path, siteName: BRAND, type: pattern.startsWith("/journal/") ? "article" : "website", images: [shareFor(path, title)] },
     twitter: { card: "summary_large_image", title, description, images: [shareFor(path, title).url] },
-    robots: { index: true, follow: true },
+    robots: { index, follow: true },
   };
 }

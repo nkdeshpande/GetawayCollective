@@ -14,7 +14,8 @@ import { fontVars } from "./_system/fonts";
 import { CookieConsent, Specimens } from "./_assemblies/dialogs";
 import { Shell } from "./_assemblies/shell";
 import { currentSubject } from "@/lib/session";
-import { siteGraphJSON } from "./_system/ld";
+import { headers } from "next/headers";
+import { pageGraphJSON } from "./_system/ld";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -49,16 +50,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
      last place that can await before the tree turns into client
      components. The Shell needs it and cannot fetch it itself. */
   const subject = await currentSubject();
+  /* The path the middleware passed on (x-gc-path), so the structured data
+     can describe THIS page. Used only to choose among graphs built from
+     our own content; never echoed into the page. */
+  const path = (await headers()).get("x-gc-path");
 
   return (
     /* No `user-scalable=no`. AS-06 collects a PAN number and AS-14 is a
        mandatory reading surface; disabling zoom on either is WCAG 1.4.4. */
     <html lang="en-IN" className={fontVars}>
       <body>
-        {/* One structured-data graph for the site (app/_system/ld.ts): the
-            organisation, the estates, the Journal, the answers and the
-            glossary, read from the same sources the pages render. */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: siteGraphJSON() }} />
+        {/* Structured data for this page (app/_system/ld.ts): the organisation
+            and the site everywhere; an estate, an article, the answers or
+            the glossary only on the page that shows it. */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: pageGraphJSON(path) }} />
         {/* AS-37. The rail filters itself by reachability on every
             render, so the shell shows an anonymous visitor exactly the
             surfaces an anonymous visitor can open — and nothing that

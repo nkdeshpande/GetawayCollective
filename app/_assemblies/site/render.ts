@@ -260,7 +260,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as held that the register does not hold.</p>` +
     `${estateDocket(R.vehicle, E.name.replace(/<[^>]+>/g, ""), R.publishable)}</section>`;
   if (capital) h += FIN(E, R!);
-  h += '<section class="own"><div><b>01</b><h4>Qualify</h4><p>Sixteen stages from Discover to Issued, about fifteen working days from a complete file. <a class="tx-u" href="/how-to-qualify">Read them first</a>.</p></div>' +
+  h += '<section class="own"><div><b>01</b><h4>Qualify</h4><p>Online, at your own pace; a decision within fifteen working days of a complete file. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
     '<div><b>02</b><h4>Commit</h4><p>Read the offering letter, the LLP agreement and the risk disclosure. Commit by holding, never by clicking.</p></div>' +
     `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${esc(R ? R.vehicle.registeredName : fill(E.vehicle, t))}. Your units are on the register; your first vote opens in Member Home.</p></div></section>`;
   h += `<section class="faq dk faq-estate" id="${k}-faq"><h2 class="h2">Questions about <span>${E.name}</span></h2>${faq}</section>`;

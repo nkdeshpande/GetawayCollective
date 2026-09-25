@@ -73,7 +73,15 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const verdict = canReach(pathname, subjectFrom(req.auth));
 
-  if (verdict.ok) return NextResponse.next();
+  if (verdict.ok) {
+    /* 25 Sep 2026: the path, passed to the root layout so its structured
+       data can describe the page being served (app/_system/ld.ts). Set
+       here, on the request only, so a client-sent value never survives;
+       the layout uses it to pick a graph and never prints it. */
+    const forward = new Headers(req.headers);
+    forward.set("x-gc-path", pathname);
+    return NextResponse.next({ request: { headers: forward } });
+  }
 
   const to = denialRoute(verdict);
 

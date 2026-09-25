@@ -19,7 +19,9 @@ import { PAGES } from "@/content/site/pages";
 import { COLLECTION, FAQ, HOME_JOURNAL, HOME_STACK, MANIFESTO, NEXT_ESTATES, TRIO } from "@/content/site/home";
 import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
-import { vehicleBySlug } from "@/constants/vehicles";
+import { VEHICLES, vehicleBySlug } from "@/constants/vehicles";
+import { PROPERTIES } from "../data";
+import { calcHTML, compareHTML as fourWaysHTML, simulate, DEFAULTS as CALC_DEFAULTS, type CalcEstate } from "./calc";
 import { chapterContent } from "../propertychapter";
 import type { ChapterId } from "@/constants/property-chapters";
 import { daHTML } from "../da/render";
@@ -283,39 +285,92 @@ export function SiteJournalEntry({ slug }: { slug: string }) {
   return <Mount html={TXT(P)} />;
 }
 
-// ── how to qualify: the sixteen stages, read from the passport's own table ──
+// ── how to qualify: what you get, three steps, and the same sum four ways ──
 /**
- * 25 Sep 2026. The passport's sixteen stages existed only as unrouted
- * compositions, so a stranger could not see what accreditation asks until
- * they had signed in to start it. This reads the same rows the stage pages
- * are built from, so the two cannot describe different processes. It starts
- * nothing and collects nothing. The accreditation criteria are not stated:
- * they are shown in full at review, and the threshold is the founder's.
+ * 25 Sep 2026, rewritten the same day on the founder's brief: the page read
+ * as a list of hurdles ("Sixteen stages, readable before you begin") when
+ * what a reader wants first is what ownership gives them and how little
+ * stands in the way. It now leads with that, in three steps, and puts the
+ * returns calculator (./calc.ts) where the decision is made.
+ *
+ * Nothing was taken away. The sixteen stages are still here, folded, read
+ * from the passport's own table so the page and the stage pages cannot
+ * describe different processes. The accreditation criteria are still not
+ * stated: they are shown in full at review, and the threshold is the
+ * founder's. Every estate figure is the register's, with its basis.
  */
 const PHASES: readonly (readonly [string, number, number])[] = [
   ["Before you begin", 1, 2], ["Who you are", 3, 6], ["Whether it fits", 7, 11], ["The decision, and after", 12, 16],
 ];
+
+/** The estates the calculator can show: those whose yield the site already publishes, open ones first. */
+function calcEstates(): CalcEstate[] {
+  const R = (m: bigint) => Number(m / 10000n);
+  return VEHICLES.map((v, n) => ({ v, p: PROPERTIES[n] }))
+    .filter(({ p }) => p.yield.conf !== "UNKNOWN" && p.yield.v > 0 && p.yieldBasis)
+    .map(({ v, p }) => ({
+      key: v.key,
+      name: plainName(Object.values(ESTATES).find((e) => e.vehicleKey === v.key)?.name) || v.propertyName,
+      unitPrice: R(v.offering.unitPrice),
+      maxUnits: v.offering.available > 0 ? v.offering.available : v.offering.units,
+      yieldPct: p.yield.v, yieldClass: String(p.yield.conf), basis: p.yieldBasis!, fromYear: 3,
+      equity: R(v.offering.totalEquity),
+      poolMin: v.entitlement?.nightPoolMin ?? 0, poolMax: v.entitlement?.nightPoolMax ?? 0,
+      nightly: R(v.operating.adr),
+      status: v.offering.available > 0 ? "open, raising" : "fully subscribed, waitlist",
+    }))
+    .sort((a, b) => Number(b.status.startsWith("open")) - Number(a.status.startsWith("open")));
+}
+const plainName = (s: string | undefined) => (s ?? "").replace(/<[^>]+>/g, "").trim();
+
 export function SiteQualify() {
   const S = PASSPORT_STAGES;
+  const estates = calcEstates();
+  const lead = estates[0];
+  const one = lead ? simulate({ estate: lead, units: 1, ...CALC_DEFAULTS, countNights: true }) : null;
+  const deposit = VEHICLES.find((v) => v.offering.available > 0 && v.offering.deposit)?.offering.deposit;
+  const hold = deposit ? rupeesFull(deposit) : null;
+
+  const tile = (t: string, p: string) => `<div class="own-tile"><h3>${t}</h3><p>${p}</p></div>`;
+  const stagesHTML = PHASES.map(([h, a, z]) => {
+    const rows = S.filter((r) => r.n >= a && r.n <= z);
+    return `<h3 class="tx-h3">${esc(h)}</h3><ol class="tx-steps">${rows.map((r) =>
+      `<li><em>${String(r.n).padStart(2, "0")}</em><div><h3>${esc(r.t)}</h3><p>${esc(r.what)}</p>${r.note ? `<p class="tx-assert">${esc(r.note)}</p>` : ""}</div></li>`).join("")}</ol>`;
+  }).join("");
+
   const blocks: Block[] = [
-    { figs: [[String(S.length), "stages, in order"], ["0", "commitments made by qualifying"], ["15", "working days to a decision, from submission"]] },
-    { p: "Every stage saves as you leave it, so nothing has to be done in one sitting. Qualifying lets you examine an offering in full; it buys nothing and commits you to nothing." },
-  ];
-  /* The four phases as gates (./docket.ts): one open at a time, its stages listed in it. */
-  blocks.push({ h: "The four phases" }, { gates: { id: "ph", label: "The four phases of accreditation", items: PHASES.map(([h, a, z]) => ({
-    t: h, sub: `Stages ${String(a).padStart(2, "0")}–${String(z).padStart(2, "0")}`,
-    items: S.filter((r) => r.n >= a && r.n <= z).map((r) => [`${String(r.n).padStart(2, "0")} · ${r.t}`, r.what] as const),
-  })) } });
-  for (const r of S) if (r.note) blocks.push({ assert: r.note });
-  blocks.push(
+    { figs: [["3", "steps from here to owning"], ["0", "commitments made by qualifying"], ["15", "working days to a decision, from submission"], ...(hold ? [[hold, "holds your units, refundable until you sign"]] : [])] },
+    { h: "What you own" },
+    { html: `<div class="own-tiles">` +
+      tile("A share of a real place", "Your units are a share of the partnership that holds the land and the buildings, registered in its own name.") +
+      tile("Nights of your own", lead && one ? `The estate's nights each year are shared by equity. One unit at ${esc(lead.name)} is about ${one.nightsPerYear[0]} to ${one.nightsPerYear[1]} nights a year, from handover.` : "The estate's nights each year are shared among its partners by equity, from handover.") +
+      tile("Income, modelled", lead ? `Distributions follow the waterfall. At ${esc(lead.name)} the modelled yield is ${lead.yieldPct}% a year, ${lead.yieldClass.toLowerCase()}, ${esc(lead.basis)}. Not promised.` : "Distributions follow the waterfall, from stabilised occupancy. Not promised.") +
+      tile("Nothing to run", "The operating partner runs every estate day to day, measured on service levels and paid from the waterfall. You decide; it delivers.") +
+      tile("A vote", "The partners decide the matters that matter, each vote weighted by equity.") +
+      `</div>` },
+    { h: "Three steps" },
+    { steps: [
+      ["Qualify online", "Tell us who you are and confirm it digitally. Every stage saves as you leave it, so nothing has to be done in one sitting. A decision follows within 15 working days of a complete submission."],
+      ["Choose your estate, hold your units", `Read the full offering, then hold your units online${hold ? ` with a ${hold} deposit` : ""}. It is refundable until you sign the LLP agreement.`],
+      ["Sign, and it is yours", "Sign the LLP agreement and settle your units. From then on you are a partner: you vote, you receive distributions when there are any, and your nights begin at handover."],
+    ] },
+    { p: "Why we ask at all: partners own real land together, and the law requires the partnership to know who each of them is. Qualifying lets you examine an offering in full. It buys nothing and commits you to nothing." },
+    { links: [["Begin qualification", "/invest/qualify", "lead"], ["See the collection", "/collection"]] },
+    { h: "What your money does, <span>four ways</span>", id: "calculator" },
+    { p: "The same sum, over the same years, in an estate, an apartment you let out, a fixed deposit and an equity SIP. Move the sliders; change the assumptions to your own. Only one of the four is also a place you can spend your time." },
+    { html: calcHTML(estates) },
+    { html: fourWaysHTML() },
+    { assert: "An estate is not a deposit. Your capital is at risk and no return is guaranteed by any party; every estate figure here is modelled from its register and stated with its basis. Figures are before tax. Read the Risk Factors before you decide." },
+    { h: "Every stage, in full" },
+    { html: `<details class="tx-fold"><summary>Read all ${S.length} stages of qualification, in order</summary>${stagesHTML}</details>` },
     { h: "What happens to what you enter" },
     { p: "The Privacy Notice states what is collected, why, who sees it and how long it is kept. Accreditation and screening records, for example, are kept for eight years after the relationship ends, as the law requires." },
-    { links: [["Begin qualification", "/invest/qualify", "lead"], ["Privacy Notice", "/legal/privacy"], ["Risk factors", "/legal/risk-disclosure"], ["Answers", "/answers"]] },
-  );
+    { links: [["Begin qualification", "/invest/qualify", "lead"], ["Risk factors", "/legal/risk-disclosure"], ["Privacy Notice", "/legal/privacy"], ["Answers", "/answers"]] },
+  ];
   const P: SitePage = {
     key: "qualify", path: "/how-to-qualify", light: 1, eyebrow: "How to qualify",
-    title: "Sixteen stages, <span>readable before you begin.</span>",
-    lead: "What accreditation asks, in the order it asks it. Anyone may read this; nothing on this page starts an application.",
+    title: "Own a retreat <span>in three steps.</span>",
+    lead: "Qualify online, at your own pace. Hold your units with a refundable deposit. Sign, and a share of the place is yours, with nights of your own every year.",
     blocks,
   };
   return <Mount html={TXT(P)} light />;

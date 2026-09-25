@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 import { SiteStatus } from "@/app/_assemblies/site/system";
 import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = pageMeta("/status", {}, "System Status · Getaway Collective");
+export const metadata: Metadata = pageMeta("/status", {}, "System Status · Getaway Collective", false);
 
 export default async function Pstatus() {
   return <SiteStatus />;

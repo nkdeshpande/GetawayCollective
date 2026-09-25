@@ -600,12 +600,17 @@ export const OFFICE_ROUTES: readonly Route[] = [
 // ─────────────────────────────────────────────────────────────────────
 
 export const SYSTEM_ROUTES: readonly Route[] = [
-  R("GC-900", "/sign-in", "Sign In", "gateway", "AS-32"),
+  /* 25 Sep 2026: none of these six is a page anyone should arrive at from
+     a search. They were public, so isIndexable() put them in the sitemap
+     and let them be indexed: a sign-in form, a verification step, a status
+     readout and three error states, listed beside the estates. Public
+     still, and reachable; just not advertised. */
+  R("GC-900", "/sign-in", "Sign In", "gateway", "AS-32", { indexable: false }),
   R("GC-910", "/verify", "Verify", "gateway", "AS-32",
-    { notes: "The code remains single-use and outside the path. The page is public; the pending identity and token govern the write." }),
-  R("GC-920", "/status", "System Status", "gateway", "AS-15"),
+    { indexable: false, notes: "The code remains single-use and outside the path. The page is public; the pending identity and token govern the write." }),
+  R("GC-920", "/status", "System Status", "gateway", "AS-15", { indexable: false }),
   R("GC-930", "/403", "Not Permitted", "gateway", "AS-16",
-    { notes: "Says the viewer may not see it. Never says whether it EXISTS — that difference is " +
+    { indexable: false, notes: "Says the viewer may not see it. Never says whether it EXISTS — that difference is " +
              "the shape of the system, handed to anyone probing it." }),
 
   /* /404 and /500 are FRAMEWORK CONVENTIONS, not pages. Next.js owns both
@@ -619,11 +624,11 @@ export const SYSTEM_ROUTES: readonly Route[] = [
      them removed both files as orphans and handed production Next's stock
      pages, which is the one place a stack trace can still surface. */
   R("GC-940", "/404", "Not Found", "gateway", "AS-16",
-    { notes: "No stack trace, no exception name, no auto-redirect. The middleware rewrites an " +
+    { indexable: false, notes: "No stack trace, no exception name, no auto-redirect. The middleware rewrites an " +
              "unknown route and a missing right here, so this page must never confirm whether " +
              "the surface exists." }),
   R("GC-950", "/500", "System Error", "gateway", "AS-16",
-    { notes: "Renders the failure without rendering the error. An exception name or a stack tells " +
+    { indexable: false, notes: "Renders the failure without rendering the error. An exception name or a stack tells " +
              "anyone probing the site what the stack is." }),
 ];
 

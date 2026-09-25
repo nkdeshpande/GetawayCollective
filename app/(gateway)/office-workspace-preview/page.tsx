@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 import { OfficeSurface } from "@/app/_assemblies/officepages";
 import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = pageMeta("/office-workspace-preview", {}, "Office Workspace Preview · Getaway Collective");
+export const metadata: Metadata = pageMeta("/office-workspace-preview", {}, "Office Workspace Preview · Getaway Collective", false);
 
 export default async function Poffice_workspace_preview() {
   return <OfficeSurface path="/office-workspace-preview" />;

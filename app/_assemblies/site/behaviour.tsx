@@ -15,6 +15,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { wireCalc } from "./calc";
 import { usePathname, useRouter } from "next/navigation";
 import { Film } from "./film";
 import { wireDA } from "../da/wire";
@@ -341,6 +342,9 @@ export function SiteBehaviour() {
 
     /* the digital assemblies the pages carry */
     off.push(wireDA(root));
+
+    /* the returns calculator (./calc.ts), where a page carries one */
+    off.push(wireCalc(root));
 
     /* films */
     $$<HTMLCanvasElement>("canvas.film", root).forEach((c, i) => {
