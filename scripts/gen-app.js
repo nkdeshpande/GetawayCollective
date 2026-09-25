@@ -322,8 +322,12 @@ function conventionSource(r, conv) {
   return (
     banner +
     `\n"use client";\n\n` +
-    `import { SiteError } from "@/app/_assemblies/site/lost";\n\n` +
-    `export default function ErrorBoundary({ reset }: { error: Error; reset: () => void }) {\n` +
+    `import { SiteError } from "@/app/_assemblies/site/lost";\n` +
+    /* 25 Sep 2026: the failure is reported (app/_system/report.ts), never
+       shown. The page still renders nothing of the error itself. */
+    `import { useReportError } from "@/app/_system/report";\n\n` +
+    `export default function ErrorBoundary({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {\n` +
+    `  useReportError(error);\n` +
     `  return <SiteError reset={reset} />;\n` +
     `}\n`
   );
@@ -341,7 +345,13 @@ function pageSource(r) {
     port = { component: "Composed", from: "@/app/_assemblies/compose",
              prop: r.path, param: r.params[0] };
   }
-  const indexable = access === "public";
+  /* 25 Sep 2026: "public" and "indexable" are two questions. This read only
+     the first, so a public route the table marks indexable:false (the three
+     workspace previews) still told search engines to index it, and only
+     robots.txt kept them out. Public decides which metadata a page gets;
+     isIndexable decides whether it may be listed. */
+  const isPublic = access === "public";
+  const indexable = isPublic && r.indexable !== "false"; // the parser yields "true" | "false" | null
   const hasParams = r.params.length > 0;
   const usesParams = hasParams && (!port || port.needsProperty || port.needsParams || port.param);
   /* The root's name IS the brand, so the suffix would render "Getaway
@@ -382,14 +392,15 @@ function pageSource(r) {
      app/_system/meta.ts (25 Sep 2026): a page with params resolves its own
      title from the thing it shows — the Journal entry, the document, the
      estate — instead of the route table's name for the template. */
-  const meta = indexable && hasParams
+  const noindex = indexable ? "" : ", false";
+  const meta = isPublic && hasParams
     ? `export async function generateMetadata(\n` +
       `  props: { params: Promise<{ ${r.params.map((p) => `${p}: string`).join("; ")} }> },\n` +
       `): Promise<Metadata> {\n` +
-      `  return pageMeta(${JSON.stringify(r.path)}, await props.params, ${JSON.stringify(title)});\n` +
+      `  return pageMeta(${JSON.stringify(r.path)}, await props.params, ${JSON.stringify(title)}${noindex});\n` +
       `}\n`
-    : indexable
-    ? `export const metadata: Metadata = pageMeta(${JSON.stringify(r.path)}, {}, ${JSON.stringify(title)});\n`
+    : isPublic
+    ? `export const metadata: Metadata = pageMeta(${JSON.stringify(r.path)}, {}, ${JSON.stringify(title)}${noindex});\n`
     : `export async function generateMetadata(): Promise<Metadata> {\n` +
       `  const reachable = canReach(${JSON.stringify(r.path)}, await currentSubject()).ok;\n` +
       `  return {\n` +
@@ -417,7 +428,7 @@ function pageSource(r) {
             `import { notFound } from "next/navigation";\n`
           : "")
       : `import { Surface } from "@/app/_system/surface";\n`) +
-    (indexable
+    (isPublic
       ? `import { pageMeta } from "@/app/_system/meta";
 `
       : `import { canReach } from "@/lib/access";\n` +

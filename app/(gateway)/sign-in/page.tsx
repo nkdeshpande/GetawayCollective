@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 import { SiteSignIn } from "@/app/_assemblies/site/identity";
 import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = pageMeta("/sign-in", {}, "Sign In · Getaway Collective");
+export const metadata: Metadata = pageMeta("/sign-in", {}, "Sign In · Getaway Collective", false);
 
 export default async function Psign_in() {
   return <SiteSignIn />;

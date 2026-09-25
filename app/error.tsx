@@ -13,7 +13,9 @@
 "use client";
 
 import { SiteError } from "@/app/_assemblies/site/lost";
+import { useReportError } from "@/app/_system/report";
 
-export default function ErrorBoundary({ reset }: { error: Error; reset: () => void }) {
+export default function ErrorBoundary({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useReportError(error);
   return <SiteError reset={reset} />;
 }

@@ -166,7 +166,9 @@ describe("the generated app tree", () => {
     /* Since 25 Sep 2026 the title, description, canonical and robots of a
        public page come from one helper, read from the page's own content. */
     expect(page).toContain("pageMeta(");
-    expect(readIf("app/_system/meta.ts")).toContain("index: true");
+    /* Indexable unless the route table says otherwise (25 Sep 2026: sign-in,
+       the previews and the error states pass false). */
+    expect(readIf("app/_system/meta.ts")).toContain("index = true");
   });
 
   it("marks generated pages and group layouts", () => {

@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 import { SystemSurface } from "@/app/_assemblies/systempages";
 import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = pageMeta("/403", {}, "Not Permitted · Getaway Collective");
+export const metadata: Metadata = pageMeta("/403", {}, "Not Permitted · Getaway Collective", false);
 
 export default async function P403() {
   return <SystemSurface path="/403" />;
