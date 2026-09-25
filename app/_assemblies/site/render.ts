@@ -13,6 +13,7 @@
 import { FILM, SITE } from "@/constants/tokens";
 import type { Block, Card, Concept, FilmRef, FormSpec, MapSpec, NextStep, SiteEstate, SitePage, Volume } from "./types";
 import { nextFor } from "@/content/site/next";
+import { GATES, estateDocket } from "./docket";
 import type { Reading } from "./registry";
 import { rupees, rupeesFull, src, type Prov } from "./registry";
 import { daHTML, type DAKind } from "../da/render";
@@ -186,7 +187,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   const waitlist = !!E.waitlist && (!R || R.stance.kind === "waitlist");
   const capital = !!R && R.publishable;
   const secs = ["hero", "place", "concept", ...E.chapters.map((c) => c.id), "materials", "day", "getting", "plan", "details",
-    ...(capital ? ["capital"] : []), waitlist ? "waitlist" : "enquire"];
+    ...(R ? ["papers"] : []), ...(capital ? ["capital"] : []), waitlist ? "waitlist" : "enquire"];
   const idOf = (s: string) => (s === "waitlist" ? "waitlist" : s === "concept" ? "concept" : `${k}-${s}`);
   let h = `<nav class="pager" aria-label="Sections">${secs.map((s) => `<a href="#${idOf(s)}" aria-label="${s}"></a>`).join("")}</nav>`;
   const price = R ? R.price : ["Per unit, stated in the offering letter", "not yet a vehicle on this platform"];
@@ -254,6 +255,10 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   h += `<section class="details" id="${k}-details"><span class="eb">Property details</span><h2 class="h2">Everything <span>on record.</span></h2><div class="dt">` +
     rows.map((d) => `<div><span>${d[0]}</span><span${d[2] ? ' class="ab"' : ""}${Array.isArray(d[3]) ? src(d[3] as unknown as Prov) : ""}>${F(String(d[1]))}</span></div>`).join("") + "</div>" +
     (E.detailsNote ? `<p class="mono plan-note">${F(E.detailsNote)}</p>` : "") + "</section>";
+  /* The estate's papers, as a docket: each status read from the register. */
+  if (R) h += `<section class="dkt-sec" id="${k}-papers"><span class="eb">The papers</span><h2 class="h2">What is <span>on file.</span></h2>` +
+    `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as held that the register does not hold.</p>` +
+    `${estateDocket(R.vehicle, E.name.replace(/<[^>]+>/g, ""), R.publishable)}</section>`;
   if (capital) h += FIN(E, R!);
   h += '<section class="own"><div><b>01</b><h4>Qualify</h4><p>Sixteen stages from Discover to Issued, about fifteen working days from a complete file. <a class="tx-u" href="/how-to-qualify">Read them first</a>.</p></div>' +
     '<div><b>02</b><h4>Commit</h4><p>Read the offering letter, the LLP agreement and the risk disclosure. Commit by holding, never by clicking.</p></div>' +
@@ -311,7 +316,9 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
        printed: a file name or a clause number is our filing, not the reader's. */
     if (b.list) h += `<ul class="tx-list">${b.list.map((li) => `<li>${li}</li>`).join("")}</ul>`;
     if (b.figs) h += `<div class="tx-figs">${b.figs.map((f) => `<div><b>${f[0]}</b><span>${f[1]}</span></div>`).join("")}</div>`;
-    if (b.steps) h += `<ol class="tx-steps">${b.steps.map((s, i) => `<li><em>${String(i + (b.stepsFrom ?? 1)).padStart(2, "0")}</em><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join("")}</ol>`;
+    if (b.steps && b.stepsAs === "gates") h += GATES(`g-${P.key}`, b.h || P.eyebrow, b.steps.map((s) => ({ t: String(s[0]), text: String(s[1]) })));
+    else if (b.gates) h += GATES(`g-${P.key}-${b.gates.id}`, b.gates.label, b.gates.items);
+    else if (b.steps) h += `<ol class="tx-steps">${b.steps.map((s, i) => `<li><em>${String(i + (b.stepsFrom ?? 1)).padStart(2, "0")}</em><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join("")}</ol>`;
     if (b.rows) h += `<div class="tx-rows">${b.rows.map((r) => `<div><span>${r[0]}</span><span${r[2] ? ' class="ab"' : ""}>${r[1]}</span></div>`).join("")}</div>`;
     if (b.legal) h += `<div class="tx-legal${b.assertion ? " tx-legal-assert" : ""}"${b.anchor ? ` id="${b.anchor}"` : ""}>${b.legal}</div>`;
     if (b.assets) h += `<div class="tx-assets">${b.assets.map((a) => { const ext = (a[1].split(".").pop() || "").toUpperCase(); const n = Number(a[3]);

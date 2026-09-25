@@ -31,6 +31,8 @@ const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8").replace(/\r\n/g,
 const SOURCES = [
   "app/_assemblies/site/render.ts", "app/_assemblies/site/pages.tsx", "app/_assemblies/site/chrome.tsx",
   "app/_assemblies/site/infographics.ts", "app/_assemblies/site/identity.tsx",
+  "app/_assemblies/site/docket.ts", "app/_assemblies/site/system.tsx", "app/_assemblies/site/lost.tsx",
+  "app/_assemblies/site/search.tsx",
   "content/site/estates.ts", "content/site/pages.ts", "content/site/home.ts",
 ];
 const siteClasses = new Set();

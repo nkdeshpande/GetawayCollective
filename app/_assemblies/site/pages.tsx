@@ -28,6 +28,7 @@ import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
 import { openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
 import type { Block, NextStep, SitePage } from "./types";
+import { rulebookDocket } from "./docket";
 import { PASSPORT_STAGES } from "@/content/compositions/passport";
 import { OPERATORS } from "@/content/public";
 
@@ -300,11 +301,12 @@ export function SiteQualify() {
     { figs: [[String(S.length), "stages, in order"], ["0", "commitments made by qualifying"], ["15", "working days to a decision, from submission"]] },
     { p: "Every stage saves as you leave it, so nothing has to be done in one sitting. Qualifying lets you examine an offering in full; it buys nothing and commits you to nothing." },
   ];
-  for (const [h, a, z] of PHASES) {
-    const rows = S.filter((r) => r.n >= a && r.n <= z);
-    blocks.push({ h }, { steps: rows.map((r) => [r.t, r.what]), stepsFrom: a });
-    for (const r of rows) if (r.note) blocks.push({ assert: r.note });
-  }
+  /* The four phases as gates (./docket.ts): one open at a time, its stages listed in it. */
+  blocks.push({ h: "The four phases" }, { gates: { id: "ph", label: "The four phases of accreditation", items: PHASES.map(([h, a, z]) => ({
+    t: h, sub: `Stages ${String(a).padStart(2, "0")}–${String(z).padStart(2, "0")}`,
+    items: S.filter((r) => r.n >= a && r.n <= z).map((r) => [`${String(r.n).padStart(2, "0")} · ${r.t}`, r.what] as const),
+  })) } });
+  for (const r of S) if (r.note) blocks.push({ assert: r.note });
   blocks.push(
     { h: "What happens to what you enter" },
     { p: "The Privacy Notice states what is collected, why, who sees it and how long it is kept. Accreditation and screening records, for example, are kept for eight years after the relationship ends, as the law requires." },
@@ -356,7 +358,8 @@ export function SiteLegalIndex() {
   const P: SitePage = {
     key: "legal", path: "/legal", light: 1, eyebrow: "Legal", title: "The documents, <span>in full.</span>",
     lead: "Every standing document this platform publishes. Each is stated once, here, and nothing else on the site paraphrases it.",
-    blocks: [{ rows: DOCUMENTS.map((d) => [`<a class="tx-u tx-strong" href="${d.path}">${esc(d.title)}</a>`, `${esc(d.purpose)}<span class="tx-src tx-src-in">Version ${d.version} · effective ${d.effective}</span>`]) }],
+    /* The standing documents as one docket (./docket.ts): a tab each, its parts listed, the full text a click away. */
+    blocks: [{ html: rulebookDocket() }],
   };
   return <Mount html={TXT(P)} light />;
 }

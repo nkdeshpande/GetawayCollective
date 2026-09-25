@@ -78,6 +78,10 @@ export interface Block {
   readonly steps?: readonly (readonly string[])[];
   /** The number the first step shows, where one sequence runs across several blocks. */
   readonly stepsFrom?: number;
+  /** Render `steps` as the gate accordion (./docket.ts) instead of a list. */
+  readonly stepsAs?: "gates";
+  /** A gate accordion with its own content. */
+  readonly gates?: { readonly id: string; readonly label: string; readonly items: readonly import("./docket").Gate[] };
   readonly rows?: readonly (readonly (string | number)[])[];
   readonly legal?: string;
   /** A legal clause that states what the platform will always do — set on its own ground. */

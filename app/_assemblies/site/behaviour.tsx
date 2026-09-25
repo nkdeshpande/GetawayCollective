@@ -213,7 +213,7 @@ function shortlist(root: HTMLElement): () => void {
       b.textContent = on ? "Saved" : "Save";
       b.setAttribute("aria-label", on ? `Remove ${b.dataset.name} from your shortlist` : `Save ${b.dataset.name} to your shortlist`);
     });
-    $$<HTMLAnchorElement>(".cc", root).forEach((c) => c.classList.toggle("saved", has((c.getAttribute("href") || "").replace("/collection/", ""))));
+    $$<HTMLAnchorElement>(".cc", root).forEach((c) => c.classList.toggle("cc-saved", has((c.getAttribute("href") || "").replace("/collection/", ""))));
     $$("[data-shortlist]", root).forEach((p) => {
       p.hidden = !l.length;
       p.replaceChildren();
@@ -261,6 +261,42 @@ function shortlist(root: HTMLElement): () => void {
   window.addEventListener("storage", paint);
   paint();
   return () => { root.removeEventListener("click", onClick); window.removeEventListener(SHORT, paint); window.removeEventListener("storage", paint); };
+}
+
+/* ── THE DOCKET AND THE GATES (./docket.ts) ───────────────────────────
+   Both are tab sets: one tab open, its panel shown, arrow keys and Home
+   and End moving between tabs as the ARIA tabs pattern expects. */
+function tabsets(root: HTMLElement): () => void {
+  const off: (() => void)[] = [];
+  const wire = (tabs: HTMLElement[], panelOf: (t: HTMLElement) => HTMLElement | null) => {
+    const select = (t: HTMLElement, focus = false) => {
+      tabs.forEach((x) => {
+        const on = x === t;
+        x.setAttribute("aria-selected", String(on)); x.tabIndex = on ? 0 : -1; x.classList.toggle("on", on);
+        const p = panelOf(x); if (p) p.hidden = !on;
+      });
+
+      if (focus) t.focus();
+    };
+    tabs.forEach((t, i) => {
+      const click = () => select(t);
+      const key = (e: KeyboardEvent) => {
+        const n = e.key === "ArrowRight" || e.key === "ArrowDown" ? i + 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? i - 1 : e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : null;
+        if (n === null) return;
+        e.preventDefault(); select(tabs[(n + tabs.length) % tabs.length], true);
+      };
+      t.addEventListener("click", click); t.addEventListener("keydown", key);
+      off.push(() => { t.removeEventListener("click", click); t.removeEventListener("keydown", key); });
+    });
+  };
+  /* Each folder carries its own tab's paper (--t, set in the markup), so a tab and its folder read as one sheet. */
+  $$("[data-dkt]", root).forEach((d) => {
+    wire($$<HTMLElement>('[role="tab"]', d), (t) => document.getElementById(t.getAttribute("aria-controls") || ""));
+  });
+  $$("[data-gates]", root).forEach((g) => {
+    wire($$<HTMLElement>(".stg", g), (t) => document.getElementById(t.getAttribute("aria-controls") || ""));
+  });
+  return () => off.forEach((x) => x());
 }
 
 /* ── AN ENQUIRY IN TWO STEPS (d11) ────────────────────────────────────
@@ -436,7 +472,7 @@ export function SiteBehaviour() {
     }
 
     /* figure sources, the shortlist and the two-step enquiry */
-    off.push(figures(root), shortlist(root), steps(root));
+    off.push(figures(root), shortlist(root), steps(root), tabsets(root));
 
     /* copy buttons: clipboard where it is allowed, a selection where it is not */
     $$(".tx-copy", root).forEach((c) => {

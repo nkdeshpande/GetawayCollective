@@ -207,6 +207,18 @@ export const SITE = {
   moss: "#5E7A3E",        // Ridge
   slate: "#5D6E7E",       // Expanse
   ember: "#A2472A",       // Voyager, laterite
+  /* Papers — 25 Sep 2026. Grounds for the sections between the films, so
+     the site reads as a sequence of places rather than one black corridor.
+     Each is a tint of a colour the site already carries, never the colour
+     itself: copper stays currency (L1-01), and kraft and manila are paper
+     that leans toward it. All take the ink at better than 12:1. */
+  manila: "#F1EADC",      // the lightest warm paper: manifesto, intros
+  kraft: "#E6DAC6",       // docket paper: folders, the record, the pack
+  sage: "#DDE3D4",        // leans to Ridge moss
+  haze: "#DCE2E8",        // leans to Expanse slate
+  clay: "#EDDCD2",        // leans to Voyager laterite
+  pine: "#0F2119",        // a green night, for drawings that need a dark ground
+  umber: "#17130F",       // a warm night, between the films
 } as const;
 
 /*

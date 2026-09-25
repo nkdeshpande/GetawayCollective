@@ -823,6 +823,7 @@ export const PAGES: Record<string, SitePage> =  {
     "h": "Six steps, in order"
    },
    {
+    "stepsAs": "gates",
     "steps": [
      [
       "A confirmed site",
