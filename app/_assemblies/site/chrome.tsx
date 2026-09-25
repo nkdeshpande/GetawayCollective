@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation";
 import { MARK_CUT, MARK_PATH } from "@/constants/brand-system";
 import { Mark } from "../brandmark";
 import { SiteSearch } from "./search";
+import { STAGES, stageOf } from "@/content/site/next";
 
 /** Symbols the rendered markup refers to by id: the mark, the arrow, three glyphs. */
 export function SiteSymbols() {
@@ -40,11 +41,19 @@ const NAV = [
 export function SiteNav() {
   const pathname = usePathname() || "/";
   const here = (p: string) => pathname === p || pathname.startsWith(p + "/");
+  const stage = stageOf(pathname);
   return (
     <header className="nav">
       {/* BR-02 bars the wordmark under a 20px cap-height, so the bar carries
           the monogram and the name beside it, as the prototype does. */}
       <Link className="brand" href="/" aria-label="Getaway Collective, home"><Mark size={24} /><span className="brand-name"><b>Getaway</b> Collective</span></Link>
+      {/* Where this page sits on the path (d03): Discover to Hold, quietly. */}
+      {stage ? (
+        <span className="nav-path" title={STAGES.join(" → ")}>
+          <span className="nav-path-bar" aria-hidden="true">{STAGES.map((s, i) => <i key={s} className={i < stage.n ? "on" : undefined} />)}</span>
+          <span className="nav-path-l"><span className="sr">Stage {stage.n} of {STAGES.length}: </span>{stage.name}</span>
+        </span>
+      ) : null}
       <nav className="links" aria-label="Main">
         {NAV.map(([href, label]) => (
           <Link key={href} href={href} aria-current={here(href) ? "page" : undefined}>{label}</Link>

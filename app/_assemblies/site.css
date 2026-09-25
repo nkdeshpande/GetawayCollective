@@ -676,3 +676,33 @@
 .site .gl-pop p{margin:0;font-size:14px;line-height:1.5;color:var(--gc-s-mist)}
 .site .gl-pop a{font-size:13px;color:var(--copper);text-decoration:underline;text-underline-offset:3px}
 @media (prefers-reduced-motion:reduce){.site .ebar,.site .nxt-go{transition:none}}
+
+/* ── Design enhancements II, 25 Sep 2026 (Next Actions d03 d05 d09 d11) ── */
+/* where a page sits on the path, in the site bar */
+.site .nav-path{display:inline-flex;align-items:center;gap:var(--gc-sp-2xs);padding-left:var(--gc-sp-s);border-left:1px solid var(--gc-s-rim);cursor:default}
+.site .nav-path-bar{display:inline-flex;gap:calc(var(--gc-sp-3xs) / 2)}
+.site .nav-path-bar i{width:10px;height:3px;background:var(--gc-s-line-2)}
+.site .nav-path-bar i.on{background:var(--copper)}
+.site .nav-path-l{font:400 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gc-s-fog)}
+@media (max-width:1100px){.site .nav-path{display:none}}
+/* a figure that opens its source */
+.site .fig-s{text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--gc-s-ash-2);cursor:help}
+.site .fig-s:focus-visible{outline:2px solid var(--electric);outline-offset:2px}
+.site .gl-pop > span{font:600 10.5px var(--text);letter-spacing:.12em;text-transform:uppercase;color:var(--gc-s-fog)}
+.site .cmp-note{margin:0;font-size:11.5px;color:var(--gc-s-stone)}
+/* the shortlist */
+.site .save[aria-pressed=true]{background:var(--paper);color:var(--gc-s-night)}
+.site .short{display:grid;gap:var(--gc-sp-xs);margin:0 var(--gut) var(--gc-sp-m);padding:var(--gc-sp-s);background:var(--gc-paper-panel);border:1px solid var(--gc-s-rule);color:var(--ink)}
+.site .short-row{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs)}
+.site .short-chip{display:inline-flex;align-items:center;gap:var(--gc-sp-3xs);padding:var(--gc-sp-3xs) var(--gc-sp-2xs);background:var(--light);border:1px solid var(--gc-s-rule);font-size:14px}
+.site .short-chip a{font-weight:600}
+.site .short-chip button{background:none;border:0;padding:0 var(--gc-sp-3xs);font:400 16px/1 var(--text);color:var(--gc-s-stone);cursor:pointer}
+.site .short .btn{justify-self:start}
+.site .short-note{margin:0;font-size:12px;color:var(--gc-s-stone)}
+.site .cc.saved h3::after{content:" · Saved";font:600 11px var(--text);letter-spacing:.12em;text-transform:uppercase;color:var(--gc-s-stone);vertical-align:middle}
+/* the enquiry in two steps */
+.site .fstep{display:grid;gap:calc(var(--gc-sp-3xs) * 4.5);margin:0;padding:0;border:0;min-width:0}
+.site .fstep legend{padding:0;margin-bottom:var(--gc-sp-2xs)}
+.site .fstep-sum{margin:0;padding:var(--gc-sp-xs) var(--gc-sp-s);background:var(--gc-paper-panel);border-left:2px solid var(--copper);font-size:14.5px;color:var(--ink)}
+.site .fstep-act{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs)}
+.site .fstep-short .ack{font-size:14px}

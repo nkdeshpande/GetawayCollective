@@ -37,3 +37,18 @@ export const NEXT: Readonly<Record<string, NextStep>> = {
 /** Legal documents all lead to the answers; everything else is listed above or has no card. */
 export const nextFor = (path: string): NextStep | undefined =>
   NEXT[path] ?? (path.startsWith("/legal/") ? ANSWERS : undefined);
+
+/**
+ * Which stage of the path a page belongs to, for the marker in the site bar
+ * (d03). Pages outside the path — contact, status, a 404 — have none.
+ * "Hold" is the partner's workspace, which wears the rails, not this bar.
+ */
+export function stageOf(path: string): { n: number; name: (typeof STAGES)[number] } | undefined {
+  const at = (name: (typeof STAGES)[number]) => ({ n: STAGES.indexOf(name) + 1, name });
+  if (/^\/collection\/[a-z0-9-]+\/enquire$/.test(path)) return at("Commit");
+  if (/^\/collection(\/|$)/.test(path)) return at("Examine");
+  if (/^\/(how-to-qualify|sign-in|verify)$/.test(path)) return at("Qualify");
+  if (/^\/(how-it-works|answers|glossary|operating-partner)$/.test(path) || /^\/legal(\/|$)/.test(path)) return at("Understand");
+  if (/^\/($|about$|team$|press$|how-we-build$|signal$|journal(\/|$))/.test(path)) return at("Discover");
+  return undefined;
+}

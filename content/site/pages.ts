@@ -278,6 +278,7 @@ export const PAGES: Record<string, SitePage> =  {
    {
     "form": {
      "id": "enq",
+     "steps": true,
      "addr": "ir@getawaycollective.co",
      "chipsLabel": "I'm asking about",
      "chips": [

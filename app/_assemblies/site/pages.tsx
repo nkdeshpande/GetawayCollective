@@ -26,7 +26,7 @@ import { daHTML } from "../da/render";
 import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify } from "./render";
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
-import { openReading, read, rupees, rupeesFull, vehicleOf } from "./registry";
+import { openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
 import type { Block, NextStep, SitePage } from "./types";
 import { PASSPORT_STAGES } from "@/content/compositions/passport";
 import { OPERATORS } from "@/content/public";
@@ -113,20 +113,23 @@ function compareHTML(): string {
   });
   if (cols.length < 2) return "";
   const gap = (s: string) => `<span class="ab">${s}</span>`;
-  const rows: [string, (c: (typeof cols)[number]) => string][] = [
-    ["Place", (c) => esc(c.v.jurisdiction)],
-    ["Keys", (c) => String(c.v.keys)],
-    ["Land", (c) => esc(c.v.landArea)],
-    ["Stage", (c) => c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase()],
-    ["Units", (c) => (c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Record still being settled"))],
-    ["A unit", (c) => (c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced"))],
-    ["Lock-in", (c) => (c.R.publishable ? esc(c.v.offering.lockIn) : gap("Stated in the offering letter"))],
-    ["Held by", (c) => esc(c.v.registeredName)],
+  type Col = (typeof cols)[number];
+  /* [measure, cell, where the cell's figure comes from] — see registry.ts src(). */
+  const rows: [string, (c: Col) => string, (c: Col) => Prov | undefined][] = [
+    ["Place", (c) => esc(c.v.jurisdiction), (c) => c.R.prov.intake],
+    ["Keys", (c) => String(c.v.keys), (c) => c.R.prov.intake],
+    ["Land", (c) => esc(c.v.landArea), (c) => c.R.prov.intake],
+    ["Stage", (c) => c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase(), (c) => c.R.prov.derived],
+    ["Units", (c) => (c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Record still being settled")), (c) => (c.R.publishable ? c.R.prov.derived : undefined)],
+    ["A unit", (c) => (c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
+    ["Lock-in", (c) => (c.R.publishable ? esc(c.v.offering.lockIn) : gap("Stated in the offering letter")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
+    ["Held by", (c) => esc(c.v.registeredName), (c) => c.R.prov.intake],
   ];
   return '<section class="cmp" id="compare"><span class="eb">Compare</span><h2 class="h2">The estates, <span>side by side.</span></h2>' +
     '<p class="para dim">Every figure is read from each estate\'s own register. Capital is at risk; the offering letter governs.</p>' +
     `<div class="cmp-wrap" tabindex="0" role="region" aria-label="The estates compared"><table class="cmp-t"><thead><tr><th scope="col"><span class="sr">Measure</span></th>${cols.map((c) => `<th scope="col"><a href="${c.e.href}">${c.e.name}</a></th>`).join("")}</tr></thead>` +
-    `<tbody>${rows.map(([k, f]) => `<tr><th scope="row">${k}</th>${cols.map((c) => `<td>${f(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></section>`;
+    `<tbody>${rows.map(([k, f, p]) => `<tr><th scope="row">${k}</th>${cols.map((c) => `<td><span${src(p(c))}>${f(c)}</span></td>`).join("")}</tr>`).join("")}</tbody></table></div>` +
+    '<p class="mono cmp-note">Tap a figure for where it comes from and how far it can be relied on.</p></section>';
 }
 
 // ── the collection ──
@@ -145,6 +148,7 @@ export function SiteCollection() {
     '<div class="col-head"><h1>Our estates</h1></div>' +
     '<div class="filters"><div class="fl" role="group" aria-label="Filter"><span class="fl-l">Filters:</span><button type="button" aria-pressed="true" data-f="all">All</button><button type="button" aria-pressed="false" data-f="coast">Coast</button><button type="button" aria-pressed="false" data-f="hills">Hills</button><button type="button" aria-pressed="false" data-f="coffee">Coffee country</button></div><span class="fl-sort">Sort: by stage</span></div>' +
     '<div class="subtabs" role="tablist"><button role="tab" aria-selected="true" data-s="open">In delivery</button><button role="tab" aria-selected="false" data-s="pipe">Pipeline</button></div>' +
+    '<section class="short" data-shortlist hidden aria-label="Your shortlist"></section>' +
     '<div class="cgrid" id="cgrid">' + COLLECTION.map((e) => {
       const st = stage(e.vehicleKey, e.stage);
       const stageOf = e.vehicleKey === "wildwood" ? "pipe" : e.stage;

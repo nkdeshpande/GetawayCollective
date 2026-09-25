@@ -121,19 +121,29 @@ function glossary(root: HTMLElement, terms: readonly (readonly [string, string])
     }
   }
   if (!marks.length) return () => {};
+  return popover(root, ".gl-t", (btn) => {
+    const [t, d] = list[Number(btn.dataset.g)];
+    return [`${t}: definition`, el("b", t), el("p", d), link("/glossary", "Every term, defined once")];
+  });
+}
+
+const el = (tag: string, text: string) => { const e = document.createElement(tag); e.textContent = text; return e; };
+const link = (href: string, text: string) => { const a = document.createElement("a"); a.href = href; a.textContent = text; return a; };
+
+/* ── ONE SMALL CARD, OPENED FROM THE WORD OR FIGURE IT EXPLAINS ─────
+   Shared by the glossary and the figure sources. One card per kind, placed
+   under its trigger, closed by a second tap, a tap elsewhere or Escape,
+   which returns focus to the trigger. */
+function popover(root: HTMLElement, trigger: string, content: (t: HTMLElement) => [string, ...HTMLElement[]]): () => void {
   const pop = document.createElement("div");
   pop.className = "gl-pop"; pop.hidden = true; pop.setAttribute("role", "dialog");
   root.appendChild(pop);
-  let openBtn: HTMLButtonElement | null = null;
+  let openBtn: HTMLElement | null = null;
   const close = () => { pop.hidden = true; openBtn?.setAttribute("aria-expanded", "false"); openBtn = null; };
-  const show = (btn: HTMLButtonElement) => {
-    const [t, d] = list[Number(btn.dataset.g)];
-    pop.replaceChildren();
-    const h = document.createElement("b"); h.textContent = t;
-    const p = document.createElement("p"); p.textContent = d;
-    const a = document.createElement("a"); a.href = "/glossary"; a.textContent = "Every term, defined once";
-    pop.append(h, p, a);
-    pop.setAttribute("aria-label", `${t}: definition`);
+  const show = (btn: HTMLElement) => {
+    const [label, ...nodes] = content(btn);
+    pop.replaceChildren(...nodes);
+    pop.setAttribute("aria-label", label);
     pop.hidden = false;
     const r = btn.getBoundingClientRect(), w = Math.min(320, innerWidth - 32);
     pop.style.width = `${w}px`;
@@ -142,15 +152,142 @@ function glossary(root: HTMLElement, terms: readonly (readonly [string, string])
     openBtn?.setAttribute("aria-expanded", "false");
     openBtn = btn; btn.setAttribute("aria-expanded", "true");
   };
+  const toggle = (btn: HTMLElement) => { if (openBtn === btn) close(); else show(btn); };
   const onClick = (ev: Event) => {
-    const btn = (ev.target as HTMLElement).closest<HTMLButtonElement>(".gl-t");
-    if (btn) { ev.preventDefault(); if (openBtn === btn) close(); else show(btn); return; }
-    if (!(ev.target as HTMLElement).closest(".gl-pop")) close();
+    const btn = (ev.target as HTMLElement).closest<HTMLElement>(trigger);
+    if (btn && root.contains(btn)) { ev.preventDefault(); toggle(btn); return; }
+    if (!pop.contains(ev.target as Node)) close();
   };
-  const onKey = (ev: KeyboardEvent) => { if (ev.key === "Escape" && openBtn) { const b = openBtn; close(); b.focus(); } };
+  const onKey = (ev: KeyboardEvent) => {
+    if (ev.key === "Escape" && openBtn) { const b = openBtn; close(); b.focus(); return; }
+    const t = ev.target as HTMLElement;
+    /* A figure is a span made focusable, so Enter and Space are wired here; a glossary term is a real button. */
+    if ((ev.key === "Enter" || ev.key === " ") && t.matches?.(trigger) && t.tagName !== "BUTTON") { ev.preventDefault(); toggle(t); }
+  };
   document.addEventListener("click", onClick);
   document.addEventListener("keydown", onKey);
   return () => { document.removeEventListener("click", onClick); document.removeEventListener("keydown", onKey); pop.remove(); };
+}
+
+/* ── WHERE A FIGURE COMES FROM (d05) ─────────────────────────────────
+   Every register figure the server tagged with data-src opens its source
+   and its confidence class. The tags are written in registry.ts. */
+function figures(root: HTMLElement): () => void {
+  const figs = $$("[data-src]", root);
+  if (!figs.length) return () => {};
+  figs.forEach((f) => {
+    f.classList.add("fig-s"); f.tabIndex = 0; f.setAttribute("role", "button");
+    f.setAttribute("aria-haspopup", "dialog"); f.setAttribute("aria-expanded", "false");
+  });
+  return popover(root, "[data-src]", (f) => [
+    "Where this figure comes from",
+    el("span", "Source"), el("p", f.dataset.src || ""),
+    el("span", `Confidence · ${f.dataset.cls || ""}`), el("p", f.dataset.clm || ""),
+    link("/glossary", "What the confidence classes mean"),
+  ]);
+}
+
+/* ── THE SHORTLIST (d09) ──────────────────────────────────────────────
+   Estates a reader saves, kept in this browser and nowhere else. It is
+   shown on the collection, and offered — ticked, removable — on an
+   enquiry, so Investor Relations knows what someone is weighing only if
+   they choose to say. */
+type Saved = { slug: string; name: string };
+const SHORT = "gc-shortlist";
+function readShort(): Saved[] {
+  try {
+    const x = JSON.parse(localStorage.getItem(SHORT) || "[]");
+    return Array.isArray(x) ? x.filter((i) => i && typeof i.slug === "string" && typeof i.name === "string").slice(0, 12) : [];
+  } catch { return []; }
+}
+function writeShort(l: Saved[]) {
+  try { localStorage.setItem(SHORT, JSON.stringify(l)); } catch { /* private mode: the shortlist lasts the page */ }
+  window.dispatchEvent(new Event(SHORT));
+}
+function shortlist(root: HTMLElement): () => void {
+  const paint = () => {
+    const l = readShort(), has = (s: string) => l.some((i) => i.slug === s);
+    $$<HTMLButtonElement>("[data-save]", root).forEach((b) => {
+      const on = has(b.dataset.save || "");
+      b.setAttribute("aria-pressed", String(on));
+      b.textContent = on ? "Saved" : "Save";
+      b.setAttribute("aria-label", on ? `Remove ${b.dataset.name} from your shortlist` : `Save ${b.dataset.name} to your shortlist`);
+    });
+    $$<HTMLAnchorElement>(".cc", root).forEach((c) => c.classList.toggle("saved", has((c.getAttribute("href") || "").replace("/collection/", ""))));
+    $$("[data-shortlist]", root).forEach((p) => {
+      p.hidden = !l.length;
+      p.replaceChildren();
+      if (!l.length) return;
+      const row = document.createElement("div"); row.className = "short-row";
+      l.forEach((i) => {
+        const chip = document.createElement("span"); chip.className = "short-chip";
+        const x = document.createElement("button"); x.type = "button"; x.dataset.drop = i.slug; x.textContent = "×";
+        x.setAttribute("aria-label", `Remove ${i.name}`);
+        chip.append(link(`/collection/${i.slug}`, i.name), x);
+        row.append(chip);
+      });
+      const ask = link("/contact", "Ask about these"); ask.className = "btn btn-s";
+      p.append(el("span", `Your shortlist · ${l.length}`), row, ask, el("p", "Kept in this browser only."));
+      p.firstElementChild!.className = "eb";
+      p.lastElementChild!.className = "short-note";
+    });
+    $$("form[data-form] [data-short]", root).forEach((s) => {
+      const f = s.closest("form")!;
+      const eligible = f.dataset.to !== "signal" && f.dataset.to !== "deposit";
+      s.hidden = !eligible || !l.length;
+      s.replaceChildren();
+      if (s.hidden) return;
+      const names = l.map((i) => i.name).join(", ");
+      const lab = document.createElement("label"); lab.className = "ack";
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = true; cb.name = "shortlist";
+      lab.append(cb, el("span", ` Include my shortlist: ${names}`));
+      s.dataset.names = names;
+      s.append(lab);
+    });
+  };
+  const onClick = (ev: Event) => {
+    const t = ev.target as HTMLElement;
+    const save = t.closest<HTMLButtonElement>("[data-save]");
+    if (save) {
+      const l = readShort(), s = save.dataset.save || "";
+      writeShort(l.some((i) => i.slug === s) ? l.filter((i) => i.slug !== s) : [...l, { slug: s, name: save.dataset.name || s }]);
+      return;
+    }
+    const drop = t.closest<HTMLButtonElement>("[data-drop]");
+    if (drop) writeShort(readShort().filter((i) => i.slug !== drop.dataset.drop));
+  };
+  root.addEventListener("click", onClick);
+  window.addEventListener(SHORT, paint);
+  window.addEventListener("storage", paint);
+  paint();
+  return () => { root.removeEventListener("click", onClick); window.removeEventListener(SHORT, paint); window.removeEventListener("storage", paint); };
+}
+
+/* ── AN ENQUIRY IN TWO STEPS (d11) ────────────────────────────────────
+   What the question is, then who is asking. The second step shows the
+   first back in one line, with a way to change it. */
+function steps(root: HTMLElement): () => void {
+  const off: (() => void)[] = [];
+  $$<HTMLFormElement>("form.tx-form-steps", root).forEach((f) => {
+    const s1 = $<HTMLFieldSetElement>('[data-step="1"]', f)!, s2 = $<HTMLFieldSetElement>('[data-step="2"]', f)!;
+    const go = (n: 1 | 2) => {
+      s1.hidden = n !== 1; s2.hidden = n !== 2;
+      if (n === 2) {
+        const topics = $$<HTMLButtonElement>('.chip[aria-pressed="true"]', f).map((c) => c.textContent || "").filter(Boolean);
+        const sel = $<HTMLSelectElement>("select", f);
+        const est = sel && sel.value ? sel.options[sel.selectedIndex].text : "";
+        const q = ($<HTMLTextAreaElement>("textarea", f)?.value || "").trim();
+        const sum = $("[data-sum]", f);
+        if (sum) sum.textContent = [topics.join(", ") || "A general question", est, q ? `“${q.length > 90 ? q.slice(0, 90) + "…" : q}”` : ""].filter(Boolean).join(" · ");
+        $<HTMLInputElement>("input", s2)?.focus();
+      } else $<HTMLElement>(".chip, select, textarea", s1)?.focus();
+    };
+    const n = $("[data-next]", f), b = $("[data-back]", f);
+    const next = () => go(2), back = () => go(1);
+    n?.addEventListener("click", next); b?.addEventListener("click", back);
+    off.push(() => { n?.removeEventListener("click", next); b?.removeEventListener("click", back); });
+  });
+  return () => off.forEach((x) => x());
 }
 
 export function SiteBehaviour() {
@@ -298,6 +435,9 @@ export function SiteBehaviour() {
       loadIndex().then((idx) => { if (alive && idx?.glossary.length) off.push(glossary(root, idx.glossary)); });
     }
 
+    /* figure sources, the shortlist and the two-step enquiry */
+    off.push(figures(root), shortlist(root), steps(root));
+
     /* copy buttons: clipboard where it is allowed, a selection where it is not */
     $$(".tx-copy", root).forEach((c) => {
       const t = $(".ct", c), b = $<HTMLButtonElement>(".cpy", c), cc = $(".cc", c);
@@ -333,7 +473,9 @@ export function SiteBehaviour() {
         if (!email || !/.+@.+\..+/.test(email)) { $<HTMLInputElement>('[name="email"]', f)?.focus(); return; }
         const to = f.dataset.to === "signal" ? "signal" : "dossier";
         const topics = $$<HTMLButtonElement>('.chip[aria-pressed="true"]', f).map((c) => c.textContent || "").filter(Boolean);
-        const note = [topics.length ? `About: ${topics.join(", ")}` : "", val("note")].filter(Boolean).join("\n").slice(0, 2000);
+        const shortBox = $<HTMLElement>("[data-short]", f);
+        const short = shortBox && !shortBox.hidden && $<HTMLInputElement>('input[name="shortlist"]', shortBox)?.checked ? shortBox.dataset.names || "" : "";
+        const note = [topics.length ? `About: ${topics.join(", ")}` : "", short ? `Shortlist: ${short}` : "", val("note")].filter(Boolean).join("\n").slice(0, 2000);
         const body = to === "signal"
           ? { email }
           : { name: val("name") || email, email, vehicle: f.dataset.vehicle || val("vehicle") || undefined, city: val("city") || undefined, note: note || undefined };
@@ -341,7 +483,12 @@ export function SiteBehaviour() {
         if (ok) ok.hidden = true; if (err) err.hidden = true;
         try {
           const r = await fetch(`/api/${to}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
-          if (r.ok) { if (ok) ok.hidden = false; f.reset(); } else if (err) err.hidden = false;
+          if (r.ok) {
+            if (ok) ok.hidden = false;
+            f.reset();
+            /* A stepped enquiry that has gone says so and nothing else. */
+            $$<HTMLElement>(".fstep", f).forEach((s) => { s.hidden = true; });
+          } else if (err) err.hidden = false;
         } catch { if (err) err.hidden = false; }
         if (btn) btn.disabled = false;
       }) as EventListener);

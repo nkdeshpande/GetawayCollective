@@ -14,7 +14,7 @@ import { FILM, SITE } from "@/constants/tokens";
 import type { Block, Card, Concept, FilmRef, FormSpec, MapSpec, NextStep, SiteEstate, SitePage, Volume } from "./types";
 import { nextFor } from "@/content/site/next";
 import type { Reading } from "./registry";
-import { rupees, rupeesFull } from "./registry";
+import { rupees, rupeesFull, src, type Prov } from "./registry";
 import { daHTML, type DAKind } from "../da/render";
 
 const INK = FILM.ink as Readonly<Record<string, string>>;
@@ -121,19 +121,33 @@ const fieldName = (label: string) =>
   /^name$/i.test(label) ? "name" : /email/i.test(label) ? "email" : /estate/i.test(label) ? "vehicle" : /city/i.test(label) ? "city" : "note";
 
 export function FORM(f: FormSpec, plain = false) {
-  return `<form class="tx-form${plain ? " tx-form-plain" : ""}" novalidate data-form data-to="${f.to || "dossier"}"${f.vehicle ? ` data-vehicle="${f.vehicle}"` : ""}>` +
+  const field = (fd: FormSpec["fields"][number], i: number) => {
+    const id = `${f.id}-${i}`, label = String(fd[0]), kind = fd[1], name = fieldName(label);
+    const input = kind === "area"
+      ? `<textarea id="${id}" name="${name}" rows="3" maxlength="2000"></textarea>`
+      : kind === "select"
+        ? `<select id="${id}" name="${name}">${(fd[2] as readonly string[]).map((o) => `<option value="${OPTION_SLUG[o] ?? ""}">${o}</option>`).join("")}</select>`
+        : `<input id="${id}" name="${name}" type="${kind}" autocomplete="${fd[2] || "off"}"${name === "email" || name === "name" ? " required" : ""}>`;
+    return `<label class="fld" for="${id}"><span>${label}</span>${input}</label>`;
+  };
+  const chips = f.chips ? `<span class="eb">${f.chipsLabel}</span><div class="chips-row">${f.chips.map((c, i) => `<button class="chip" type="button" aria-pressed="${i === 0}">${c}</button>`).join("")}</div>` : "";
+  const submit = `<button class="btn lead" type="submit">${f.submit} ${NE}</button>`;
+  /* Two steps: what the question is, then who is asking. The second step
+     names the first, so nothing typed is out of sight when it is sent. */
+  const who = (fd: FormSpec["fields"][number]) => ["name", "email", "city"].includes(fieldName(String(fd[0])));
+  const body = f.steps
+    ? `<fieldset class="fstep" data-step="1"><legend class="eb">Step 1 of 2 · What you are asking about</legend>${chips}` +
+      f.fields.map((fd, i) => (who(fd) ? "" : field(fd, i))).join("") +
+      '<div class="fstep-short" data-short hidden></div>' +
+      `<div><button class="btn lead" type="button" data-next>Continue ${NE}</button></div></fieldset>` +
+      '<fieldset class="fstep" data-step="2" hidden><legend class="eb">Step 2 of 2 · Who you are</legend>' +
+      '<p class="fstep-sum" data-sum></p>' +
+      f.fields.map((fd, i) => (who(fd) ? field(fd, i) : "")).join("") +
+      `<div class="fstep-act">${submit}<button class="btn gray" type="button" data-back>Back</button></div></fieldset>`
+    : chips + f.fields.map(field).join("") + '<div class="fstep-short" data-short hidden></div>' + `<div>${submit}</div>`;
+  return `<form class="tx-form${plain ? " tx-form-plain" : ""}${f.steps ? " tx-form-steps" : ""}" novalidate data-form data-to="${f.to || "dossier"}"${f.vehicle ? ` data-vehicle="${f.vehicle}"` : ""}>` +
     `<div class="direct-row"><span class="eb">Or write directly</span><span class="mono sel">${f.addr}</span></div>` +
-    (f.chips ? `<span class="eb">${f.chipsLabel}</span><div class="chips-row">${f.chips.map((c, i) => `<button class="chip" type="button" aria-pressed="${i === 0}">${c}</button>`).join("")}</div>` : "") +
-    f.fields.map((fd, i) => {
-      const id = `${f.id}-${i}`, label = String(fd[0]), kind = fd[1], name = fieldName(label);
-      const input = kind === "area"
-        ? `<textarea id="${id}" name="${name}" rows="3" maxlength="2000"></textarea>`
-        : kind === "select"
-          ? `<select id="${id}" name="${name}">${(fd[2] as readonly string[]).map((o) => `<option value="${OPTION_SLUG[o] ?? ""}">${o}</option>`).join("")}</select>`
-          : `<input id="${id}" name="${name}" type="${kind}" autocomplete="${fd[2] || "off"}"${name === "email" || name === "name" ? " required" : ""}>`;
-      return `<label class="fld" for="${id}"><span>${label}</span>${input}</label>`;
-    }).join("") +
-    `<div><button class="btn lead" type="submit">${f.submit} ${NE}</button></div>` +
+    body +
     `<p class="tx-ok" hidden>${f.ok}</p><p class="tx-err" hidden>That did not go through. Write to <span class="mono sel">${f.addr}</span> and it will reach the same desk.</p>` +
     `<p class="tx-src">${f.note}</p></form>`;
 }
@@ -185,8 +199,11 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     : [R ? "Get the offering pack" : "Ask about this estate", ask];
   h += `<section class="phero" id="${k}-hero">${film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain })}` +
     `<div class="top"><div><span class="eb">${E.eyebrow}</span><h1>${E.name}</h1><span class="credit">${E.credit}</span></div></div>` +
-    `<div class="strip"><div class="pr">${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div>` +
+    `<div class="strip"><div class="pr"${R?.publishable ? src(R.prov.intake) : ""}>${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div>` +
     (R ? `<span class="sold-chip">${R.status}</span>` : "") +
+    /* The shortlist (Next Actions d09): kept in this browser only, and sent
+       with an enquiry only if the reader leaves it ticked. */
+    `<button type="button" class="btn gray save" data-save="${E.slug}" data-name="${esc(E.name.replace(/<[^>]+>/g, ""))}" aria-pressed="false">Save</button>` +
     `<a class="btn lead" href="${cta[1]}">${cta[0]} ${NE}</a></div></section>`;
   /* The estate bar (Next Actions d02): once the hero has scrolled away, the
      name, where it stands and the same one action remain in reach — under the
@@ -235,7 +252,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     `</div></div><p class="mono plan-note">${F(E.plan.note)}</p></section>`;
   const rows = [...(R ? R.details : []), ...E.details];
   h += `<section class="details" id="${k}-details"><span class="eb">Property details</span><h2 class="h2">Everything <span>on record.</span></h2><div class="dt">` +
-    rows.map((d) => `<div><span>${d[0]}</span><span${d[2] ? ' class="ab"' : ""}>${F(String(d[1]))}</span></div>`).join("") + "</div>" +
+    rows.map((d) => `<div><span>${d[0]}</span><span${d[2] ? ' class="ab"' : ""}${Array.isArray(d[3]) ? src(d[3] as unknown as Prov) : ""}>${F(String(d[1]))}</span></div>`).join("") + "</div>" +
     (E.detailsNote ? `<p class="mono plan-note">${F(E.detailsNote)}</p>` : "") + "</section>";
   if (capital) h += FIN(E, R!);
   h += '<section class="own"><div><b>01</b><h4>Qualify</h4><p>Sixteen stages from Discover to Issued, about fifteen working days from a complete file. <a class="tx-u" href="/how-to-qualify">Read them first</a>.</p></div>' +

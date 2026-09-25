@@ -66,6 +66,8 @@ export interface FormSpec {
   /** Which endpoint receives it. Absent means the enquiry desk. */
   readonly to?: "signal" | "dossier";
   readonly vehicle?: string;
+  /** Two steps: what you are asking about, then who you are (Next Actions d11). */
+  readonly steps?: boolean;
 }
 
 /* A block is one of these shapes; the renderer reads whichever key is set. */

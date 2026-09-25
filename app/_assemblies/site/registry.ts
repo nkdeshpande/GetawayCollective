@@ -11,6 +11,34 @@
  */
 
 import { VEHICLES, stanceFor, publishable, type Vehicle } from "@/constants/vehicles";
+import { TAXONOMIES } from "@/constants/taxonomies";
+
+/* ── WHERE A FIGURE COMES FROM (Next Actions d05, 25 Sep 2026) ────────
+   Every register figure the site prints can be opened to its source and
+   its confidence class, in the platform's own taxonomy
+   (constants/taxonomies.ts). Two classes are used, and no stronger one:
+     REPORTED  the offering's terms as the sponsor stated them in the LLP
+               intake — a trusted party, but not an independent check;
+     INFERRED  what the site computes from those (totals, what remains).
+   Nothing here is VERIFIED: no figure on the public site has been checked
+   against an independent source by the platform, and saying so is the
+   point of the tag. Sources follow constants/vehicles.ts's own notes. */
+export type Prov = readonly [source: string, cls: "REPORTED" | "INFERRED"];
+const MEANING: Readonly<Record<string, string>> = Object.fromEntries(
+  TAXONOMIES.confidence.values.map((x) => [x.value, x.meaning]),
+);
+const attr = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+/** The attributes that make a printed figure open its source. */
+export const src = (p: Prov | undefined) =>
+  p ? ` data-src="${attr(p[0])}" data-cls="${p[1]}" data-clm="${attr(MEANING[p[1]] ?? "")}"` : "";
+const provFor = (v: Vehicle) => {
+  const intake = v.key === "wildwood" ? "The LLP intake, 11 Aug 2026, with the founder's structure of 20 Sep 2026" : "The vehicle's LLP intake sheet, 4 Aug 2026";
+  return {
+    intake: [intake, "REPORTED"] as Prov,
+    deposit: ["Founder ruling, 24 Sep 2026: one flat holding deposit at every open estate", "REPORTED"] as Prov,
+    derived: [`Computed by this site from the units offered and subscribed, as stated in ${intake.replace(/^The /, "the ")}`, "INFERRED"] as Prov,
+  };
+};
 
 const FACTOR = 10_000n;
 const CRORE = 10_000_000n;
@@ -49,7 +77,8 @@ export interface Reading {
   readonly status: string;
   readonly price: readonly [string, string];
   readonly tokens: Readonly<Record<string, string>>;
-  readonly details: readonly (readonly [string, string, number?])[];
+  readonly details: readonly (readonly [string, string, number?, Prov?])[];
+  readonly prov: ReturnType<typeof provFor>;
 }
 
 export function read(v: Vehicle): Reading {
@@ -78,25 +107,26 @@ export function read(v: Vehicle): Reading {
     KEYS: String(v.keys),
     OFFER: offer,
   };
-  const details: (readonly [string, string, number?])[] = [
-    ["Held by", v.registeredName + (v.llpin ? ` · LLPIN ${v.llpin}` : "")],
-    ["Place", v.jurisdiction],
+  const P = provFor(v);
+  const details: (readonly [string, string, number?, Prov?])[] = [
+    ["Held by", v.registeredName + (v.llpin ? ` · LLPIN ${v.llpin}` : ""), undefined, P.intake],
+    ["Place", v.jurisdiction, undefined, P.intake],
     ["Coordinates", v.coordinates ? `<span class="mono">${v.coordinates}</span>` : "Not yet recorded", v.coordinates ? undefined : 1],
-    ["Land", v.landArea],
-    ["Keys", String(v.keys)],
+    ["Land", v.landArea, undefined, P.intake],
+    ["Keys", String(v.keys), undefined, P.intake],
   ];
   if (ok) {
     details.push(
-      ["Units offered", `${o.units} at ${rupees(o.unitPrice)} · ${o.subscribed} subscribed`],
-      ["Equity", `${rupees(o.totalEquity)} · sponsor ${rupees(o.promoter)}`],
-      ["Bank facility", rupees(v.stack.facility)],
-      ["Project cost", rupees(v.stack.projectTotal)],
-      ["Lock-in", o.lockIn],
+      ["Units offered", `${o.units} at ${rupees(o.unitPrice)} · ${o.subscribed} subscribed`, undefined, P.intake],
+      ["Equity", `${rupees(o.totalEquity)} · sponsor ${rupees(o.promoter)}`, undefined, P.intake],
+      ["Bank facility", rupees(v.stack.facility), undefined, P.intake],
+      ["Project cost", rupees(v.stack.projectTotal), undefined, P.intake],
+      ["Lock-in", o.lockIn, undefined, P.intake],
     );
   } else {
     details.push(["Offering", "Not yet published", 1]);
   }
-  return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details };
+  return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details, prov: P };
 }
 
 /** The first vehicle still taking capital, for the home page's pack. */
