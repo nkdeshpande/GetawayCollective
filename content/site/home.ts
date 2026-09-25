@@ -26,6 +26,7 @@ export const COLLECTION: readonly CollectionEstate[] = [
   { name: "Seaside Confluence", line: "A SlowSpace estate · Padubidri, Udupi", spec: "12 keys · one steel building", region: "coast", stage: "open", pal: "coast", hour: 18.6, href: "/collection/slowspace-coastal", vehicleKey: "slowspace", fallback: "" },
   { name: "Nine Hills", line: "A SlowSpace estate · Sakleshpur hills", spec: "12–20 keys · 5 acres", region: "hills", stage: "pipe", pal: "nine", hour: 9, href: "/collection/nine-hills", vehicleKey: null, fallback: "Pipeline <span>· not yet offered</span>" },
   { name: "Wildwood", line: "A SlowSpace estate · Aranthodu", spec: "12 keys · 12 acres", region: "hills", stage: "pipe", pal: "wild", hour: 19, href: "/collection/wildwood", vehicleKey: "wildwood", fallback: "" },
+  { name: "Tidal Club", line: "An ESKAPE estate · Yermal, Udupi coast", spec: "40 keys · 16 villas and the Club", region: "coast", stage: "pipe", pal: "coast", hour: 7, href: "/collection/tidal-club", vehicleKey: null, fallback: "Pipeline <span>· not yet offered</span>" },
 ];
 
 /** The four estates the home page scrolls through, each with its register key. */
@@ -56,7 +57,7 @@ export const TRIO = [
 export const NEXT_ESTATES = [
   { name: "Nine Hills", line: "Located in the Sakleshpur hills, Malnad | 5 acres · 12–20 keys · pipeline", pal: "nine", hour: 9, href: "/collection/nine-hills" },
   { name: "Wildwood", line: "Located at Aranthodu, Dakshina Kannada | 12 acres, the largest holding · pipeline", pal: "wild", hour: 19, href: "/collection/wildwood" },
-  { name: "Seascape", line: "Located in Yermal, Udupi | early survey · no key count yet", pal: "coast", hour: 12, href: "" },
+  { name: "Tidal Club", line: "Located at Yermal, Udupi coast | 16 villas and the Club · pipeline", pal: "coast", hour: 7, href: "/collection/tidal-club" },
 ] as const;
 
 /** Every estate page closes on these, then its own. */

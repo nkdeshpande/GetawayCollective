@@ -520,6 +520,81 @@ export const PAGES: Record<string, SitePage> =  {
   ],
   "path": "/collection/wildwood"
  },
+ "tidal": {
+  "key": "tidal",
+  "eyebrow": "Pipeline · not yet offered",
+  "title": "Tidal <span>Club.</span>",
+  "film": [
+   "coast",
+   7
+  ],
+  "lead": "Sixteen villas and a club on the backwater at Yermal, on the Udupi coast. An ESKAPE estate, still assembling its land. Until September 2026 it was called Seascape.",
+  "blocks": [
+   {
+    "rows": [
+     [
+      "Place",
+      "Thenka, Yermal · Kaup taluk, Udupi district, on the backwater edge"
+     ],
+     [
+      "House brand",
+      "ESKAPE"
+     ],
+     [
+      "Keys",
+      "40: sixteen villas (12 Courtyard, 2 Tidal, 2 Signature) and 24 rooms in the Club, above a café and a pool"
+     ],
+     [
+      "How it is held",
+      "Unlike the rest of the collection: the villas are to be sold to their owners outright, and the Club and the common areas held by the estate's own LLP"
+     ],
+     [
+      "Land",
+      "0.35 acre held; the rest of the site is still being assembled"
+     ],
+     [
+      "Nearest airport",
+      "Mangaluru International, about 40 km"
+     ],
+     [
+      "Coastal regulation",
+      "Open: the high tide line and the site's CRZ classification are not yet drawn",
+      1
+     ],
+     [
+      "Title and survey",
+      "Open: the remaining land, and a survey of the whole site",
+      1
+     ],
+     [
+      "Figures",
+      "Withheld until counsel advises",
+      1
+     ]
+    ]
+   },
+   {
+    "src": "6.0 ESKAPE Tidal Club CLAUDE.md · TDL-00-CN-001 · _CANON properties.yaml TDL"
+   },
+   {
+    "p": "Nothing at Tidal Club is offered. No villa is for sale, the LLP has not been formed, and the structure is with counsel; nothing about it will be marketed until counsel has advised. It is shown so its place in the collection is visible."
+   },
+   {
+    "links": [
+     [
+      "Back to the collection",
+      "/collection",
+      "lead"
+     ],
+     [
+      "Join The Signal",
+      "/signal"
+     ]
+    ]
+   }
+  ],
+  "path": "/collection/tidal-club"
+ },
  "team": {
   "key": "team",
   "eyebrow": "The team",

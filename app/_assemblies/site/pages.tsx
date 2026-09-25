@@ -52,6 +52,9 @@ export function siteTitle(slug: string): string | undefined {
   return p ? `${p.title.replace(/<[^>]+>/g, "").replace(/\.$/, "")} · Getaway Collective` : undefined;
 }
 
+/** The hero counts the collection rather than stating a number that goes stale. */
+const COUNT: Readonly<Record<number, string>> = { 4: "FOUR", 5: "FIVE", 6: "SIX", 7: "SEVEN", 8: "EIGHT", 9: "NINE", 10: "TEN" };
+
 // ── home ──
 export function SiteHome() {
   const pack = openReading();
@@ -63,7 +66,7 @@ export function SiteHome() {
   const html =
     `<section class="hero">${film("coast", 18.4, { label: "Drawn film: laterite cliffs and the Arabian Sea at dusk" })}` +
     '<h1 class="wm" aria-label="Getaway Collective">GETAWAY <span>COLLECTIVE</span></h1>' +
-    '<p class="tl">Sensory Retreat,<br><span>Capital Meets Curation.</span></p><span class="scroll">SCROLL · SIX ESTATES</span></section>' +
+    `<p class="tl">Sensory Retreat,<br><span>Capital Meets Curation.</span></p><span class="scroll">SCROLL · ${COUNT[COLLECTION.length] ?? COLLECTION.length} ESTATES</span></section>` +
     `<section class="mani"><p id="mani">${MANIFESTO.split(" ").map((w) => `<span>${w}</span>`).join(" ")}</p></section>` +
     '<div class="explore-h"><span class="eb">The collection</span><h2 class="h2">Explore our <span>estates</span></h2></div>' +
     '<div class="stackfilm">' + HOME_STACK.map((s) =>
