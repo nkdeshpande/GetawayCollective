@@ -13,7 +13,7 @@
   --da-ok: var(--gc-confirm); --da-warn: var(--gc-hazard);
   --t0: var(--gc-s-line-2); --t1: var(--gc-s-mute); --t2: var(--gc-s-fog); --t3: var(--gc-electric); --t4: var(--gc-forest-light); --t5: var(--gc-hazard); --t6: var(--gc-copper);
   --c: 8px;
-  display: grid; gap: var(--gc-sp-s); color: var(--da-ink);
+  display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: var(--gc-sp-s); color: var(--da-ink);
   font-family: var(--gc-font-body); margin: var(--gc-sp-s) 0;
 }
 .pg-col .da, .lt .da, .on-paper .da, .tx-body.lt .da {

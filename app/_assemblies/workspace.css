@@ -51,9 +51,31 @@
 .ws-out { display: flex; gap: var(--gc-sp-s); font-size: 13px; color: var(--gc-s-mute); padding-left: var(--gc-sp-s); border-left: 1px solid var(--gc-s-rim); }
 .ws-out button { background: none; border: 0; padding: 0; color: var(--gc-s-mute); }
 .ws-out a:hover, .ws-out button:hover { color: var(--gc-paper); }
-@media (max-width: 980px) { .ws-tabs { display: none; } .ws-opening em { display: none; } }
+/* Narrow screens: the places move to a second row that scrolls sideways
+   rather than disappearing, so a phone can still move between them; on a
+   phone the name gives way to the mark, and nothing pushes past the edge. */
+@media (max-width: 980px) {
+  .ws-bar { flex-wrap: wrap; height: auto; min-height: 58px; row-gap: 0; padding-block: var(--gc-sp-2xs) 0; }
+  .ws-opening em { display: none; }
+  .ws-out { margin-left: auto; }
+  .ws-tabs { order: 5; flex: 1 0 100%; margin-left: 0; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
+  .ws-tabs::-webkit-scrollbar { display: none; }
+  .ws-tabs a { padding: var(--gc-sp-xs) 0; flex: none; }
+}
+@media (max-width: 560px) {
+  .ws-bar { gap: var(--gc-sp-xs); }
+  .ws-brand span { display: none; }
+  .ws-out { gap: var(--gc-sp-xs); padding-left: var(--gc-sp-xs); font-size: 12.5px; }
+  .ws-opening { padding: calc(var(--gc-sp-3xs) * 1.5) var(--gc-sp-2xs); letter-spacing: .08em; }
+}
 
 .ws-body { padding: var(--gc-sp-2xl) var(--gut) var(--gc-sp-3xl); max-width: 1440px; margin: 0 auto; display: grid; gap: var(--gc-sp-2xl); }
+/* One column that may shrink below its widest child. Without minmax(0, …)
+   the implicit track sized itself to the widest thing inside it — a wide
+   table meant to scroll in its own card widened the whole page instead. */
+.ws-body { grid-template-columns: minmax(0, 1fr); }
+.ws-head > div, .ws-section, .ws-card, .da-host { min-width: 0; }
+.ws-section { grid-template-columns: minmax(0, 1fr); }
 
 /* ── heads, figures, sections ── */
 .ws-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--gc-sp-xl); align-items: end; }
@@ -70,7 +92,7 @@
 .ws-sec-head p { margin: var(--gc-sp-xs) 0 0; max-width: 64ch; color: var(--gc-s-fog); }
 .ws-card { background: var(--gc-s-panel); clip-path: var(--cut); }
 .ws-note { margin: 0; font: 400 12px/1.6 var(--gc-font-mono); color: var(--gc-s-mute); max-width: 90ch; }
-@media (max-width: 900px) { .ws-head { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .ws-head { grid-template-columns: minmax(0, 1fr); } }
 
 /* ── the aperture ── */
 .ap { display: grid; gap: var(--gc-sp-m); }
@@ -235,3 +257,9 @@
 .iv-kyc em.ok { color: var(--gc-confirm); }
 .iv-kyc em.due { color: var(--gc-copper); }
 @media (max-width: 700px) { .iv-rows > div { grid-template-columns: 1fr; } }
+
+/* The diligence tabs wrap on a phone rather than running off the edge. */
+@media (max-width: 760px) {
+  .ws .investor-shell { grid-template-columns: minmax(0, 1fr); }
+  .ws .investor-shell nav { flex-wrap: wrap; }
+}
