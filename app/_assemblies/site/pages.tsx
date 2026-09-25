@@ -117,11 +117,23 @@ export function SiteHome() {
  * that estate's own page says, and an offering that is not yet published
  * says so rather than showing a number. No return, yield or rate appears.
  */
+type Group = "raising" | "subscribed" | "later";
+const GROUP_ORDER: Readonly<Record<Group, number>> = { raising: 0, subscribed: 1, later: 2 };
+/** Where an estate stands, for grouping: the register's status where it is a vehicle. */
+function groupOf(key: string | null): Group {
+  const v = vehicleOf(key);
+  if (!v) return "later";
+  const st = read(v).status;
+  return st === "RAISING" ? "raising" : st === "FULLY SUBSCRIBED" ? "subscribed" : "later";
+}
+const enquireHref = (slug: string) => `/collection/${slug}/enquire`;
+const NEXT_STEP: Readonly<Record<Group, string>> = { raising: "Hold a unit", subscribed: "Join the waitlist", later: "Register interest" };
+
 function compareHTML(): string {
   const cols = COLLECTION.flatMap((e) => {
     const v = vehicleOf(e.vehicleKey);
-    return v ? [{ e, v, R: read(v) }] : [];
-  });
+    return v ? [{ e, v, R: read(v), g: groupOf(e.vehicleKey) }] : [];
+  }).sort((a, b) => GROUP_ORDER[a.g] - GROUP_ORDER[b.g]);
   if (cols.length < 2) return "";
   const gap = (s: string) => `<span class="ab">${s}</span>`;
   type Col = (typeof cols)[number];
@@ -138,8 +150,11 @@ function compareHTML(): string {
   ];
   return '<section class="cmp" id="compare"><span class="eb">Compare</span><h2 class="h2">The estates, <span>side by side.</span></h2>' +
     '<p class="para dim">Every figure is read from each estate\'s own register. Capital is at risk; the offering letter governs.</p>' +
-    `<div class="cmp-wrap" tabindex="0" role="region" aria-label="The estates compared"><table class="cmp-t"><thead><tr><th scope="col"><span class="sr">Measure</span></th>${cols.map((c) => `<th scope="col"><a href="${c.e.href}">${c.e.name}</a></th>`).join("")}</tr></thead>` +
-    `<tbody>${rows.map(([k, f, p]) => `<tr><th scope="row">${k}</th>${cols.map((c) => `<td><span${src(p(c))}>${f(c)}</span></td>`).join("")}</tr>`).join("")}</tbody></table></div>` +
+    `<div class="cmp-wrap" tabindex="0" role="region" aria-label="The estates compared"><table class="cmp-t"><thead><tr><th scope="col"><span class="sr">Measure</span></th>${cols.map((c) =>
+      `<th scope="col" class="g-${c.g}"><span class="cmp-st">${c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase()}</span><a href="${c.e.href}">${c.e.name}</a></th>`).join("")}</tr></thead>` +
+    `<tbody>${rows.map(([k, f, p]) => `<tr><th scope="row">${k}</th>${cols.map((c) => `<td class="g-${c.g}"><span${src(p(c))}>${f(c)}</span></td>`).join("")}</tr>`).join("")}` +
+    `<tr class="cmp-go"><th scope="row">Next step</th>${cols.map((c) => `<td class="g-${c.g}"><a class="btn ${c.g === "raising" ? "lead" : "gray"}" href="${enquireHref(c.v.slug)}${c.g === "raising" ? "#hold" : ""}">${NEXT_STEP[c.g]}</a></td>`).join("")}</tr>` +
+    `</tbody></table></div>` +
     '<p class="mono cmp-note">Tap a figure for where it comes from and how far it can be relied on.</p></section>';
 }
 
@@ -155,17 +170,33 @@ export function SiteCollection() {
     const v = vehicleOf(key);
     return v ? read(v).status : s === "pipe" ? "PIPELINE" : "IN DELIVERY";
   };
+  /* 25 Sep 2026, founder: "how to see the properties that are the only
+     ones raising funds; completed ones should be separate too". The grid
+     now opens on what is raising, with the subscribed and the not-yet-open
+     each on their own tab, counted. Where an estate stands comes from the
+     register (read().status), never from the card's own copy. */
+  const counts = { raising: 0, subscribed: 0, later: 0 };
+  const cards = COLLECTION.map((e) => {
+    const g = groupOf(e.vehicleKey);
+    counts[g]++;
+    return { e, g, st: stage(e.vehicleKey, e.stage) };
+  });
+  const tabs: readonly (readonly [Group | "all", string])[] = [
+    ["raising", "Raising now"], ["subscribed", "Fully subscribed"], ["later", "Not yet open"], ["all", "All"],
+  ];
+  const open: Group | "all" = counts.raising ? "raising" : "all";
   const html =
     '<div class="col-head"><h1>Our estates</h1></div>' +
     '<div class="filters"><div class="fl" role="group" aria-label="Filter"><span class="fl-l">Filters:</span><button type="button" aria-pressed="true" data-f="all">All</button><button type="button" aria-pressed="false" data-f="coast">Coast</button><button type="button" aria-pressed="false" data-f="hills">Hills</button><button type="button" aria-pressed="false" data-f="coffee">Coffee country</button></div><span class="fl-sort">Sort: by stage</span></div>' +
-    '<div class="subtabs" role="tablist"><button role="tab" aria-selected="true" data-s="open">In delivery</button><button role="tab" aria-selected="false" data-s="pipe">Pipeline</button></div>' +
+    `<div class="subtabs" role="tablist" aria-label="Where each estate stands">${tabs.map(([k, label]) => {
+      const n = k === "all" ? cards.length : counts[k];
+      return `<button role="tab" aria-selected="${k === open}" data-s="${k}"${n ? "" : " disabled"}>${label} <span class="n">${n}</span></button>`;
+    }).join("")}</div>` +
     '<section class="short" data-shortlist hidden aria-label="Your shortlist"></section>' +
-    '<div class="cgrid" id="cgrid">' + COLLECTION.map((e) => {
-      const st = stage(e.vehicleKey, e.stage);
-      const stageOf = e.vehicleKey === "wildwood" ? "pipe" : e.stage;
-      return `<a class="cc" href="${e.href}" data-f="${e.region}" data-s="${stageOf}"><div class="im">${film(e.pal, e.hour)}<span class="st${st === "PIPELINE" || st === "FORMING" ? " dk" : ""}">${st}</span></div>` +
-        `<h3>${e.name}</h3><p>${e.line}</p><p>${e.spec}</p><p class="pr">${price(e.vehicleKey, e.fallback)}</p></a>`;
-    }).join("") + "</div>" +
+    '<div class="cgrid" id="cgrid">' + cards.map(({ e, g, st }) =>
+      `<a class="cc cc-${g}" href="${e.href}" data-f="${e.region}" data-s="${g}"${open !== "all" && g !== open ? " hidden" : ""}><div class="im">${film(e.pal, e.hour)}<span class="st st-${g}">${st}</span></div>` +
+      `<h3>${e.name}</h3><p>${e.line}</p><p>${e.spec}</p><p class="pr">${price(e.vehicleKey, e.fallback)}</p></a>`,
+    ).join("") + "</div>" +
     `<section class="mk">${film("solace", 17.8)}<div class="cap"><span class="eb">Take the next step</span><h2 class="h2">Make one <span>yours.</span></h2><p class="para dim">Talk to Investor Relations, or start qualification. Every conversation about capital continues in writing.</p><div><a class="btn" href="/contact">Make an enquiry</a></div></div></section>` +
     '<section class="ben"><div class="l"><h2 class="h2 h2-s">Three things <span>that are different here</span></h2><p class="para dim">Most ways to own a retreat sell nights. This one governs an asset.</p><div><a class="btn" href="#faq">Read the questions</a></div></div>' +
     '<div class="r"><div><span class="sq"><svg aria-hidden="true"><use href="#i-unit"/></svg></span><div><h4>Hold only what you need</h4><p>Each estate is divided into units in its own LLP, priced in its offering letter. A partner holds from one unit upward.</p></div></div>' +

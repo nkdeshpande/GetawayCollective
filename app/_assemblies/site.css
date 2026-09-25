@@ -936,3 +936,82 @@
 .site .proj-idx{font-size:13px;letter-spacing:.1em;color:var(--paper)}
 .site .proj-note{max-width:62ch;margin:0;text-align:center;font-size:11px;color:var(--gc-s-mute)}
 @media (prefers-reduced-motion:reduce){.site .gal-card,.site .gal-f,.site .gal-bar i{transition:none}}
+
+/* ── A page whose job is a form — 25 Sep 2026 (render.ts TXT) ─────────
+   Heading and facts beside the form, both above the fold on a wide
+   screen; heading, form, facts in that order on a narrow one. Three
+   grounds, so each layer reads as its own: the page (manila, or the film
+   on a dark page), the facts, and the form on a white card with a copper
+   edge. Fields are boxed, not underlined, so each one is a target. */
+.site .tx-split{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-areas:"head form" "facts form";column-gap:clamp(24px,4vw,64px);row-gap:calc(var(--gc-sp-3xs) * 6);align-items:start;padding:calc(var(--gc-sp-3xs) * 12) var(--gut) calc(var(--gc-sp-3xs) * 16);overflow:hidden}
+.site .tx-split.lt{background:var(--gc-s-manila);color:var(--ink)}
+.site .tx-split.dk{background:var(--gc-s-night);color:var(--paper)}
+.site .tx-split>.tx-film{position:absolute;inset:0;opacity:.55;pointer-events:none}
+.site .tx-split-head,.site .tx-split-facts,.site .tx-split-form{position:relative;min-width:0}
+.site .tx-split-head{grid-area:head}
+.site .tx-split-facts{grid-area:facts;display:grid;gap:calc(var(--gc-sp-3xs) * 5)}
+.site .tx-split-form{grid-area:form}
+.site .tx-split .tx-head{margin:0;max-width:none;padding:0;background:none}
+.site .tx-split.dk .tx-head{background:var(--gc-s-night);padding:calc(var(--gc-sp-3xs) * 6) calc(var(--gc-sp-3xs) * 7)}
+.site .tx-split .tx-h1{font-size:clamp(34px,4.4vw,62px)}
+.site .tx-split.lt .tx-lead{color:var(--gc-s-stone)}
+.site .tx-split .tx-lead{margin-bottom:0}
+.site .tx-split.lt .tx-split-facts{--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
+.site .tx-split.lt .tx-split-facts .tx-rows div span:last-child{color:var(--ink);font-weight:600}
+.site .tx-split.dk .tx-split-facts{background:var(--gc-s-night);padding:calc(var(--gc-sp-3xs) * 5) calc(var(--gc-sp-3xs) * 7)}
+.site .tx-split .tx-split-facts .tx-h2{margin:0}
+.site .tx-formcard{background:var(--gc-paper-panel);color:var(--ink);border-top:4px solid var(--copper);padding:clamp(20px,2.6vw,36px);display:grid;gap:calc(var(--gc-sp-3xs) * 5);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
+.site .tx-formcard .tx-h2{margin:0;color:var(--ink)}
+.site .tx-formcard .tx-p{color:var(--gc-s-stone)}
+.site .tx-formcard .tx-form{max-width:none}
+.site .tx-formcard .tx-form .direct-row{background:var(--gc-s-light)}
+.site .tx-formcard .tx-form .chip{background:var(--gc-s-light);color:var(--ink);box-shadow:inset 0 0 0 1px var(--gc-hairline)}
+.site .tx-formcard .tx-form .chip[aria-pressed=true]{background:var(--ink);color:var(--paper);box-shadow:none}
+.site .tx-formcard .tx-form .fld span{color:var(--gc-s-ash)}
+.site .tx-formcard .tx-form input,.site .tx-formcard .tx-form textarea,.site .tx-formcard .tx-form select{background:var(--gc-s-light);color:var(--ink);border:1px solid var(--gc-hairline);border-bottom:2px solid var(--gc-s-ash);padding:calc(var(--gc-sp-3xs) * 3) calc(var(--gc-sp-3xs) * 3.5)}
+.site .tx-formcard .tx-form input:focus,.site .tx-formcard .tx-form textarea:focus,.site .tx-formcard .tx-form select:focus{border-bottom-color:var(--electric);background:var(--gc-paper-panel)}
+.site .tx-formcard .fstep legend{font-weight:700;color:var(--ink)}
+.site .tx-formcard .tx-form+.tx-h2{border-top:1px solid var(--gc-hairline);padding-top:calc(var(--gc-sp-3xs) * 6)}
+@media (max-width:960px){
+  .site .tx-split{grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "form" "facts";padding-top:calc(var(--gc-sp-3xs) * 8)}
+}
+/* The holding deposit inside the form card: its terms stack instead of
+   splitting into two columns a card is too narrow for, and the contact
+   fields pair up, so the button is reached without a long scroll. */
+.site .tx-formcard .dep-terms{grid-template-columns:minmax(0,1fr);gap:calc(var(--gc-sp-3xs) * 3);padding:calc(var(--gc-sp-3xs) * 5)}
+.site .tx-formcard .dep-terms>div{grid-template-columns:auto 1fr;align-items:baseline;column-gap:calc(var(--gc-sp-3xs) * 3)}
+.site .tx-formcard .dep-terms>div .eb{grid-column:1/-1}
+.site .tx-formcard .dep-terms li{font-size:13.5px;line-height:1.45}
+.site .tx-formcard .tx-form.dep{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:calc(var(--gc-sp-3xs) * 4)}
+.site .tx-formcard .tx-form.dep>:not(.fld),.site .tx-formcard .tx-form.dep>.fld:first-of-type{grid-column:1/-1}
+@media (max-width:520px){.site .tx-formcard .tx-form.dep{grid-template-columns:minmax(0,1fr)}}
+
+/* ── The collection, by where each estate stands — 25 Sep 2026 ─────────
+   Three stages, three weights: raising in copper (the one to act on),
+   fully subscribed in ink, not yet open in outline. The same three marks
+   run through the tabs, the cards and the comparison. */
+.site .subtabs button .n{display:inline-grid;place-items:center;min-width:22px;margin-left:calc(var(--gc-sp-3xs) * 1.5);padding:calc(var(--gc-sp-3xs) * .5) calc(var(--gc-sp-3xs) * 1.5);font:600 11.5px var(--mono);background:var(--gc-s-chip);color:var(--ink)}
+.site .subtabs button[data-s=raising] .n{background:var(--cd);color:var(--gc-paper-panel)}
+.site .subtabs button[aria-selected=true] .n{background:var(--ink);color:var(--paper)}
+.site .subtabs button[data-s=raising][aria-selected=true]{border-color:var(--cd);color:var(--ink)}
+.site .subtabs button[data-s=raising][aria-selected=true] .n{background:var(--cd);color:var(--gc-paper-panel)}
+.site .subtabs button:disabled{opacity:.45;cursor:default}
+.site .cc .im .st.st-raising{background:var(--cd);color:var(--gc-paper-panel)}
+.site .cc .im .st.st-subscribed{background:var(--gc-s-night);color:var(--gc-paper-panel)}
+.site .cc .im .st.st-later{background:var(--gc-paper-panel);color:var(--gc-s-night)}
+.site .cc.cc-raising .pr{color:var(--cd)}
+.site .cmp-t th,.site .cmp-t td{padding-left:calc(var(--gc-sp-3xs) * 4)}
+.site .cmp-t thead th{vertical-align:bottom;border-bottom:2px solid var(--ink)}
+.site .cmp-t tbody tr:nth-child(even) :is(th,td){background:var(--gc-s-light)}
+.site .cmp-t :is(th,td).g-raising,.site .cmp-t tbody tr:nth-child(even) td.g-raising{background:var(--gc-paper-panel);color:var(--ink)}
+.site .cmp-t thead th.g-raising{border-top:4px solid var(--cd)}
+.site .cmp-t td.g-raising{font-weight:600}
+.site .cmp-t td.g-later{color:var(--gc-s-stone)}
+.site .cmp-st{display:block;width:max-content;margin-bottom:calc(var(--gc-sp-3xs) * 2);padding:calc(var(--gc-sp-3xs) * .75) calc(var(--gc-sp-3xs) * 2);font:600 10.5px var(--text);letter-spacing:.14em;text-transform:uppercase}
+.site .g-raising .cmp-st{background:var(--cd);color:var(--gc-paper-panel)}
+.site .g-subscribed .cmp-st{background:var(--gc-s-night);color:var(--gc-paper-panel)}
+.site .g-later .cmp-st{box-shadow:inset 0 0 0 1px var(--gc-s-stone);color:var(--gc-s-stone)}
+.site .cmp-t .cmp-go :is(th,td){border-bottom:0;padding-top:calc(var(--gc-sp-3xs) * 5)}
+.site .cmp-t .cmp-go .btn{min-height:40px;font-size:13px;white-space:nowrap}
+/* On a narrow screen the table scrolls sideways; the measure stays put. */
+@media (max-width:760px){.site .cmp-t tbody th,.site .cmp-t thead th:first-child{position:sticky;left:0;z-index:1;background:var(--gc-s-manila)}.site .cmp-t tbody tr:nth-child(even) th{background:var(--gc-s-light)}}

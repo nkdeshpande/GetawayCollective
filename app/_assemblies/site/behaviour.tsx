@@ -482,10 +482,10 @@ export function SiteBehaviour() {
     /* collection filters */
     const cg = $("#cgrid", root);
     if (cg) {
-      let cf = "all", cs = "open";
-      const apply = () => $$<HTMLElement>(".cc", cg).forEach((c) => { c.hidden = !((cf === "all" || c.dataset.f === cf) && c.dataset.s === cs); });
+      let cf = "all", cs = $<HTMLButtonElement>('.subtabs button[aria-selected="true"]', root)?.dataset.s || "all";
+      const apply = () => $$<HTMLElement>(".cc", cg).forEach((c) => { c.hidden = !((cf === "all" || c.dataset.f === cf) && (cs === "all" || c.dataset.s === cs)); });
       $$<HTMLButtonElement>(".fl button", root).forEach((b, _, all) => on(b, "click", () => { all.forEach((x) => x.setAttribute("aria-pressed", String(x === b))); cf = b.dataset.f || "all"; apply(); }));
-      $$<HTMLButtonElement>(".subtabs button", root).forEach((b, _, all) => on(b, "click", () => { all.forEach((x) => x.setAttribute("aria-selected", String(x === b))); cs = b.dataset.s || "open"; apply(); }));
+      $$<HTMLButtonElement>(".subtabs button", root).forEach((b, _, all) => on(b, "click", () => { all.forEach((x) => x.setAttribute("aria-selected", String(x === b))); cs = b.dataset.s || "all"; apply(); }));
       apply();
     }
 

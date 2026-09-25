@@ -307,10 +307,10 @@ export function faqHTML(list: readonly (readonly string[])[], t: Readonly<Record
 // ── the text-page template ──
 export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
   const lt = !!P.light;
-  let h = `<section class="tx-hero${lt ? " lt" : ""}">${P.film ? `<div class="tx-film">${film(P.film[0], P.film[1], { rain: P.film[2], bp: P.film[3] })}</div>` : ""}` +
-    `<div class="tx-head"><span class="eb">${P.eyebrow}</span><h1 class="tx-h1">${P.title}</h1>${P.lead ? `<p class="tx-lead">${P.lead}</p>` : ""}${P.meta ? `<p class="mono tx-meta">${P.meta}</p>` : ""}</div></section>` +
-    `<article class="tx-body${lt ? " lt" : ""}">`;
-  P.blocks.forEach((b: Block) => {
+  const filmHTML = P.film ? `<div class="tx-film">${film(P.film[0], P.film[1], { rain: P.film[2], bp: P.film[3] })}</div>` : "";
+  const headHTML = `<div class="tx-head"><span class="eb">${P.eyebrow}</span><h1 class="tx-h1">${P.title}</h1>${P.lead ? `<p class="tx-lead">${P.lead}</p>` : ""}${P.meta ? `<p class="mono tx-meta">${P.meta}</p>` : ""}</div>`;
+  let h = "";
+  const block = (b: Block) => {
     if (b.toc) h += `<nav class="tx-toc" aria-label="In this piece"><span class="eb">In this piece</span>${b.toc.map((t) => `<a href="#${t[0]}">${t[1]}</a>`).join("")}</nav>`;
     if (b.lede) h += `<p class="tx-p tx-lede">${b.lede}</p>`;
     if (b.h) h += `<h2 class="tx-h2"${b.id ? ` id="${b.id}"` : ""}>${b.h}</h2>`;
@@ -347,9 +347,34 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
     if (b.faq) h += `<div class="faq ${lt ? "" : "dk"} faq-inline">${faqs[b.faq] ?? ""}</div>`;
     if (b.da) h += daHTML(b.da as DAKind, { vehicle: b.vehicle, money: b.money });
     if (b.deposit) h += DEPOSIT(b.deposit);
-  });
+  };
+  const run = (list: readonly Block[]) => { h = ""; list.forEach(block); return h; };
   const nx = P.next === undefined ? nextFor(P.path) : P.next;
-  return h + "</article>" + (nx ? NEXTCARD(nx) : "");
+  const next = nx ? NEXTCARD(nx) : "";
+
+  /* A PAGE WHOSE JOB IS A FORM puts the form beside its heading. 25 Sep
+     2026, founder: on /contact and the enquire pages the form sat below a
+     hero and a table of facts, so it had to be scrolled to before a word
+     could be typed. Now the heading and the facts share one section with
+     the form: side by side on a wide screen, the form first after the
+     heading on a narrow one. The form sits on its own white card, so the
+     page reads in three layers: ground, facts, the thing to fill in. */
+  const isForm = (b: Block) => !!(b.form || b.deposit);
+  const first = P.blocks.findIndex(isForm);
+  if (first >= 0) {
+    let start = first;
+    while (start > 0 && P.blocks[start - 1].h && !isForm(P.blocks[start - 1])) start--;
+    let end = P.blocks.length - 1;
+    while (end > first && !isForm(P.blocks[end])) end--;
+    const facts = run(P.blocks.slice(0, start)), form = run(P.blocks.slice(start, end + 1)), tail = run(P.blocks.slice(end + 1));
+    return `<section class="tx-split${lt ? " lt" : " dk"}">${filmHTML}` +
+      `<div class="tx-split-head">${headHTML}</div>` +
+      `<div class="tx-split-form"><div class="tx-formcard">${form}</div></div>` +
+      (facts ? `<div class="tx-split-facts">${facts}</div>` : "") + `</section>` +
+      (tail ? `<article class="tx-body${lt ? " lt" : ""}">${tail}</article>` : "") + next;
+  }
+  return `<section class="tx-hero${lt ? " lt" : ""}">${filmHTML}${headHTML}</section>` +
+    `<article class="tx-body${lt ? " lt" : ""}">${run(P.blocks)}</article>` + next;
 }
 
 /** The next step, as one wide link. The stage is named so the reader can see the path. */
