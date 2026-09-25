@@ -83,6 +83,7 @@ export const OFFICE_TABS: readonly WsTab[] = [
   { href: "/office", label: "Overview" },
   { href: "/office/collection", label: "Estates" },
   { href: "/office/contacts", label: "Contacts" },
+  { href: "/office/investors", label: "Investors" },
   { href: "/office/register", label: "Register an estate" },
   { href: "/office/settings", label: "Settings" },
 ];

@@ -40,11 +40,12 @@ describe("canonical IA v5", () => {
      and 410/420/430 were spent on the v4 About sub-pages before they
      were consolidated into GC-400. */
   it("wires the canon plus the aliases, conventions, contact and the desk", () => {
-    // 112 until six duplicate property chapters were retired, 21 Sep 2026.
-    expect(ROUTES).toHaveLength(112);
-    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(112);
+    // 112 until six duplicate property chapters were retired, 21 Sep 2026;
+    // 114 since the investor record's two Office routes, 25 Sep 2026.
+    expect(ROUTES).toHaveLength(114);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(114);
     const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
-    expect(records).toHaveLength(113);   // 107 before the site skin, 113 before the retirement
+    expect(records).toHaveLength(115);   // 107 before the site skin, 113 before the retirement, 113 + 2 on 25 Sep
     expect(new Set(records).size).toBe(records.length);
   });
 
@@ -181,7 +182,7 @@ describe("registry helpers", () => {
   });
 
   it("collects the canonical dynamic segments", () => {
-    expect(allParams()).toEqual(["document", "event", "partner", "story", "vehicle", "year"]);
+    expect(allParams()).toEqual(["document", "event", "investor", "partner", "story", "vehicle", "year"]);
   });
 
   it("splits into declared sections without overlap", () => {

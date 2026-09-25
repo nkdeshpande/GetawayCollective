@@ -90,7 +90,14 @@ export type EventType =
   | "InvestmentThesisVersioned"
   | "DueDiligenceCompleted"
   | "PerformanceReportPublished"
-  | "LedgerEntryPosted";
+  | "LedgerEntryPosted"
+  /* The investor record, 25 Sep 2026. Appended rather than filed under
+     Identity so that every communication id (COM-001…) keeps its number.
+     No payload of any of these carries a PAN or an account number: the
+     record holds those encrypted, and an event log is forever. */
+  | "InvestorRegistered"
+  | "KycRecorded"
+  | "BankAccountRecorded";
 
 /**
  * Runtime mirror of the union. Downstream catalogues use this to prove exact
@@ -152,6 +159,9 @@ export const EVENT_TYPES = [
   "DueDiligenceCompleted",
   "PerformanceReportPublished",
   "LedgerEntryPosted",
+  "InvestorRegistered",
+  "KycRecorded",
+  "BankAccountRecorded",
 ] as const satisfies readonly EventType[];
 
 export interface EventEnvelope<P = Record<string, unknown>> {
@@ -201,6 +211,11 @@ export const DECISION_EVENTS: ReadonlySet<EventType> = new Set<EventType>([
   "AcquisitionCompleted",
   "DispositionCompleted",
   "ConflictDisclosed",
+  /* A KYC determination is a judgement about a person, and a change of
+     payment destination is the one change a fraud always needs. Both
+     keep their reason on the event itself. */
+  "KycRecorded",
+  "BankAccountRecorded",
 ]);
 
 export class EventValidationError extends Error {}

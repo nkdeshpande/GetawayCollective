@@ -56,6 +56,10 @@ export type CommandName =
   | "DiscloseConflict"
   | "CastVote"
   | "GrantAccreditation"
+  | "RegisterInvestor"
+  | "RecordKyc"
+  | "RecordBankAccount"
+  | "RecordRegisterEntry"
   | "ExpireAccreditation"
   | "TableResolution"
   | "ResolveResolution"
@@ -216,6 +220,31 @@ export const CAPABILITIES: readonly CapabilityDefinition[] = [
       // different consequence. Expiry blocks NEW commitments and nothing else -
       // voting, distribution and information rights survive it (§24b).
       description: "Record accreditation expiry after fifteen working days, or closure of a review without grant." }),
+  /* ── The investor record — 25 Sep 2026 ───────────────────────────────
+     Founder ruling of 24 Sep: KYC and the distribution account are held on
+     the platform, and a partner sees only the estates they hold. These are
+     the four acts that put those facts on the record. None of their events
+     carries a PAN or an account number (lib/pii.ts holds those encrypted). */
+  C({ name: "RegisterInvestor", object: BO.Investor, requiredRight: "investor.register",
+      scopeKind: "enterprise", emits: ["InvestorRegistered"], requiresReason: false,
+      conflictSensitive: false,
+      description: "Put a person on the investor register under their legal name and the verified address they sign in with. Registration confers nothing: no accreditation, no membership, no estate." }),
+  C({ name: "RecordKyc", object: BO.Investor, requiredRight: "kyc.record",
+      scopeKind: "enterprise", emits: ["KycRecorded"], requiresReason: true,
+      conflictSensitive: true,
+      description: "Record where each KYC check stands and the overall state. Verified only when every stage is verified. The PAN is stored encrypted beside its last four; the event records only that it changed." }),
+  C({ name: "RecordBankAccount", object: BO.Investor, requiredRight: "bank.record",
+      scopeKind: "enterprise", emits: ["BankAccountRecorded"], requiresReason: true,
+      conflictSensitive: true,
+      description: "Record the account distributions are paid to, and how it was verified. Held by the Compliance Office, never by the office that pays, so no one admin can both redirect and make a payment." }),
+  C({ name: "RecordRegisterEntry", object: BO.OwnershipPosition, requiredRight: "position.record",
+      scopeKind: "vehicle", emits: ["OwnershipPositionOpened", "MemberStatePromoted"], requiresReason: true,
+      conflictSensitive: true,
+      // MemberStatePromoted is emitted here as well as by DeployCapital. A
+      // position settled before the platform held the register is still a
+      // settled commitment, and the Member Law attaches to settlement, not
+      // to which system recorded it.
+      description: "Transcribe a settled position from the LLP's own register of partners. Voting share is derived from units, never typed; the units recorded may never exceed the units the vehicle issued (F-12)." }),
   C({ name: "RecordComplianceEvent", object: BO.ComplianceEvent, requiredRight: "compliance.record",
       scopeKind: "enterprise", emits: ["ComplianceEventRecorded"], requiresReason: true,
       conflictSensitive: false,

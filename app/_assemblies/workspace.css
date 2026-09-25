@@ -263,3 +263,32 @@
   .ws .investor-shell { grid-template-columns: minmax(0, 1fr); }
   .ws .investor-shell nav { flex-wrap: wrap; }
 }
+
+/* ── The investor record's forms — OFF-096 / OFF-097, 25 Sep 2026 ──────
+   Folded by default (details/summary), so each page reads as the record
+   first and the acts on it second. */
+.or-fold { margin-top: var(--gc-sp-2xs); }
+.or-fold > summary { display: inline-block; cursor: pointer; list-style: none; padding: var(--gc-sp-2xs) var(--gc-sp-s); background: var(--gc-paper); color: var(--gc-ink); font: 600 13.5px var(--gc-font-body); }
+.or-fold > summary::-webkit-details-marker { display: none; }
+.or-fold[open] > summary { background: var(--gc-s-panel); color: var(--gc-paper); }
+.or-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--gc-sp-s); padding: var(--gc-sp-m); margin-top: var(--gc-sp-2xs); background: var(--gc-s-coal); border: 1px solid var(--gc-s-line); }
+.or-field { display: grid; gap: var(--gc-sp-3xs); align-content: start; min-width: 0; }
+.or-field.wide { grid-column: 1 / -1; }
+.or-field label { font: 600 11px var(--gc-font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--gc-s-mute); }
+.or-field input, .or-field select, .or-field textarea { width: 100%; min-width: 0; background: var(--gc-s-night); color: var(--gc-paper); border: 1px solid var(--gc-s-line-2); padding: var(--gc-sp-2xs) var(--gc-sp-xs); font: 500 14.5px var(--gc-font-body); }
+.or-field input:disabled { opacity: .5; }
+.or-field small { font-size: 12.5px; color: var(--gc-s-mute); }
+.or-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--gc-sp-s); align-items: center; }
+.ws .or-submit { border: 0; cursor: pointer; background: var(--gc-paper); color: var(--gc-ink); padding: var(--gc-sp-2xs) var(--gc-sp-m); font: 700 14px var(--gc-font-body); }
+.ws .or-submit:disabled { opacity: .6; cursor: progress; }
+.or-refused { margin: 0; color: var(--gc-hazard); max-width: 70ch; }
+.or-done { margin: 0; color: var(--gc-confirm); }
+.or-locked { margin: 0; font-size: 13.5px; color: var(--gc-s-mute); }
+.or-lead { margin: 0 0 var(--gc-sp-xs); color: var(--gc-s-fog); max-width: 70ch; }
+.or-table .row { color: inherit; text-decoration: none; }
+.or-estates .hd, .or-estates .row { grid-template-columns: 1.2fr 1fr 1.6fr; }
+.or-history { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--gc-sp-3xs); }
+.or-history li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--gc-sp-3xs) var(--gc-sp-s); padding: var(--gc-sp-xs) 0; border-top: 1px solid var(--gc-s-line); }
+.or-history span { font-size: 13px; color: var(--gc-s-mute); }
+.or-history em { grid-column: 1 / -1; font-style: normal; font-size: 13.5px; color: var(--gc-s-fog); }
+@media (max-width: 900px) { .or-estates .row { grid-template-columns: 1fr; } }
