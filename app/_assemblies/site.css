@@ -1015,3 +1015,50 @@
 .site .cmp-t .cmp-go .btn{min-height:40px;font-size:13px;white-space:nowrap}
 /* On a narrow screen the table scrolls sideways; the measure stays put. */
 @media (max-width:760px){.site .cmp-t tbody th,.site .cmp-t thead th:first-child{position:sticky;left:0;z-index:1;background:var(--gc-s-manila)}.site .cmp-t tbody tr:nth-child(even) th{background:var(--gc-s-light)}}
+
+/* ── Each estate in its own colours — 25 Sep 2026 ──────────────────────
+   render.ts PROP wraps the page in .est[data-pal]: the palette its film is
+   drawn in. Three roles, all tokens: an accent (the chassis colour the
+   landscape leans to), a night for the dark sections, a paper for the
+   light ones. Accent text only ever appears large (numerals, the thin half
+   of a heading), where it clears 3:1; small text keeps the ink. */
+.site .est{--est-acc:var(--gc-copper-deep);--est-deep:var(--gc-s-umber);--est-paper:var(--gc-s-manila);background:var(--est-deep)}
+.site .est:is([data-pal=creek],[data-pal=wild]){--est-acc:var(--gc-s-moss);--est-deep:var(--gc-s-pine);--est-paper:var(--gc-s-sage)}
+.site .est:is([data-pal=coast],[data-pal=nine]){--est-acc:var(--gc-s-slate);--est-deep:var(--gc-s-tide);--est-paper:var(--gc-s-haze)}
+.site .est[data-pal=cff]{--est-acc:var(--gc-s-ember);--est-paper:var(--gc-s-clay)}
+.site .est :is(.phero .top div,.phero .strip,.chap .tag,.chap .side,.mk .cap){background:var(--est-deep)}
+.site .est :is(.phero .strip,.mk .cap,.chap .side){border-top:3px solid var(--est-acc)}
+.site .est .eb::before{content:"";display:inline-block;width:18px;height:2px;margin-right:calc(var(--gc-sp-3xs) * 2.5);vertical-align:middle;background:var(--est-acc)}
+.site .est .intro{background:var(--est-paper)}
+.site .est .own{background:transparent}
+.site .est .own div{background:var(--est-paper);color:var(--ink);border-top:3px solid var(--est-acc)}
+.site .est .own b{color:var(--est-acc)}
+.site .est .own p{color:var(--gc-s-stone)}
+.site .est :is(.coll,.details,.faq-estate) .h2 span{color:var(--est-acc)}
+.site .est .coll,.site .est .details{border-top:4px solid var(--est-acc)}
+.site .est .chamber .ttl .ch-n{display:inline-block;margin-bottom:calc(var(--gc-sp-3xs) * 3);padding:calc(var(--gc-sp-3xs) * 1) calc(var(--gc-sp-3xs) * 2.5);font-size:12px;letter-spacing:.14em;background:var(--est-acc);color:var(--gc-paper-panel)}
+.site .est .chamber .meta span{border-left:2px solid var(--est-acc);padding-left:calc(var(--gc-sp-3xs) * 2.5)}
+.site .est .sold-chip{background:var(--est-acc);color:var(--gc-paper-panel)}
+.site .est .pager a.on{background:var(--est-acc);transform:scale(1.35)}
+.site .est .pager a{transition:background .4s var(--ease),transform .4s var(--ease)}
+.site .est .fin .stack4 div{border-top:3px solid var(--est-acc)}
+.site .est .ebar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--est-acc);transform-origin:0 50%;transform:scaleX(var(--sp,0))}
+
+/* ── Text pages: a mark for every part, figures in the page's copper ── */
+.site .tx-body.lt>.tx-h2::before{content:"";display:block;width:32px;height:3px;margin-bottom:calc(var(--gc-sp-3xs) * 3.5);background:var(--cd)}
+.site .lt .tx-figs b{color:var(--cd)}
+.site .lt .tx-figs div{border-top:3px solid var(--cd)}
+
+/* ── Motion: sections arrive as they are reached — 25 Sep 2026 ─────────
+   behaviour.tsx wireReveal marks what may move, reveals at once whatever
+   is already on screen, and adds .rv to the page only then; so nothing is
+   ever hidden without script, and nothing flashes. A rise of 16px and a
+   fade, eased, once; a film settles from a 3.5% zoom. Off entirely for a
+   reader who asks for reduced motion. */
+@media (prefers-reduced-motion:no-preference){
+  .site.rv [data-rv]{transition:opacity .9s var(--ease),transform 1s var(--ease)}
+  .site.rv [data-rv]:not(.rv-in){opacity:0;transform:translate3d(0,16px,0)}
+  .site.rv [data-rv=film]{transition:transform 1.8s var(--ease)}
+  .site.rv [data-rv=film]:not(.rv-in){opacity:1;transform:scale(1.035)}
+}
+.site section[id],.site .tx-h2[id]{scroll-margin-top:calc(var(--gc-sp-3xs) * 32)}

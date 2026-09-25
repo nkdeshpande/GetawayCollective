@@ -431,6 +431,60 @@ function steps(root: HTMLElement): () => void {
   return () => off.forEach((x) => x());
 }
 
+/* ── Motion: sections arrive as they are reached — 25 Sep 2026 ────────
+   Marks what may move, reveals at once whatever is already on screen, and
+   only then adds .rv to the page (site.css), so nothing is hidden without
+   script and nothing above the fold flashes. Siblings in a grid arrive a
+   beat apart. Off entirely for a reader who asks for reduced motion. */
+const REVEAL = [
+  ".tx-body > :not(.tx-toc)", ".tx-split-facts > *",
+  ".est .intro-p", ".est .chap .tag", ".est .chap .side", ".est .concept > .eb", ".est .concept > .h2", ".est .concept-lead", ".est .axo",
+  ".est .chamber .ttl", ".est .chamber .para", ".est .chamber .meta", ".est .pc-rail > *",
+  ".est .coll > .eb", ".est .coll > .h2", ".est .cgr > div", ".est :is(.day, .getting, .plan, .details, .fin) > *", ".est .own > div", ".est .faq-estate > .h2", ".est .mk .cap",
+  ".cgrid > .cc", ".ben .r > div", ".cmp > *", ".col-stages > *", ".faq > .h2", ".calc", ".calc-cmp",
+].join(",");
+const FILMS = ".est .chap .film > canvas, .est .chamber .film > canvas";
+const STAGGER = ".cgrid, .cgr, .pc-rail, .own, .tx-figs, .own-tiles, .tx-steps, .ben .r";
+
+function wireReveal(root: HTMLElement, still: boolean): () => void {
+  if (still || typeof IntersectionObserver === "undefined") return () => {};
+  const skip = ".phero, .tx-hero, .tx-split-head, .tx-formcard, .ebar, .pager, form";
+  const els = [...$$<HTMLElement>(REVEAL, root), ...$$<HTMLElement>(FILMS, root)].filter((el) => !el.closest(skip));
+  const io = new IntersectionObserver((es) => es.forEach((en) => {
+    if (en.isIntersecting) { en.target.classList.add("rv-in"); io.unobserve(en.target); }
+  }), { rootMargin: "0px 0px -8% 0px" });
+  const vh = innerHeight;
+  els.forEach((el) => {
+    el.dataset.rv = el.tagName === "CANVAS" ? "film" : "";
+    const r = el.getBoundingClientRect();
+    if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add("rv-in");
+    else io.observe(el);
+    const p = el.parentElement;
+    if (p && p.matches(STAGGER)) {
+      const i = [...p.children].indexOf(el);
+      if (i > 0) el.style.transitionDelay = `${Math.min(i, 5) * 70}ms`;
+    }
+  });
+  root.classList.add("rv");
+  /* A safety net, not the mechanism: some embedded browsers pause observers
+     for a page they consider hidden. A light check on scroll, and again when
+     the page becomes visible, means nothing can be left unrevealed. */
+  let t = 0;
+  const sweep = () => {
+    t = 0;
+    const h = innerHeight;
+    els.forEach((el) => { if (!el.classList.contains("rv-in")) { const r = el.getBoundingClientRect(); if (r.top < h * 0.95 && r.bottom > 0) el.classList.add("rv-in"); } });
+  };
+  const onScroll = () => { if (!t) t = window.setTimeout(sweep, 160); };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  document.addEventListener("visibilitychange", sweep);
+  return () => {
+    io.disconnect(); if (t) clearTimeout(t);
+    window.removeEventListener("scroll", onScroll); document.removeEventListener("visibilitychange", sweep);
+    root.classList.remove("rv");
+  };
+}
+
 export function SiteBehaviour() {
   const pathname = usePathname();
   const router = useRouter();
@@ -447,6 +501,9 @@ export function SiteBehaviour() {
     /* the digital assemblies the pages carry */
     off.push(wireDA(root));
 
+    /* sections arrive as they are reached */
+    off.push(wireReveal(root, still));
+
     /* the returns calculator (./calc.ts), where a page carries one */
     off.push(wireCalc(root));
 
@@ -460,6 +517,12 @@ export function SiteBehaviour() {
       const a = (ev.target as HTMLElement).closest("a");
       if (!a || ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || a.target) return;
       const href = a.getAttribute("href") || "";
+      /* a link within the page glides there rather than jumping */
+      if (href.length > 1 && href.startsWith("#")) {
+        const t = document.getElementById(decodeURIComponent(href.slice(1)));
+        if (t) { ev.preventDefault(); t.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" }); history.replaceState(null, "", href); }
+        return;
+      }
       if (!href.startsWith("/") || href.startsWith("//") || href.startsWith("/api/")) return;
       ev.preventDefault();
       router.push(href);
@@ -569,6 +632,9 @@ export function SiteBehaviour() {
       io.observe(hero);
       $$(".mk, .mk-wait", root).forEach((m) => io.observe(m));
       off.push(() => io.disconnect());
+      /* how far through the estate, drawn in its accent under the bar */
+      const prog = () => ebar.style.setProperty("--sp", String(Math.min(1, Math.max(0, scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)))));
+      on(window, "scroll", prog, { passive: true }); prog();
     }
 
     /* the glossary, in context: a defined word opens its definition where it

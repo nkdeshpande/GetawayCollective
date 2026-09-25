@@ -219,6 +219,7 @@ export const SITE = {
   clay: "#EDDCD2",        // leans to Voyager laterite
   pine: "#0F2119",        // a green night, for drawings that need a dark ground
   umber: "#17130F",       // a warm night, between the films
+  tide: "#101C22",        // a sea night: the coast film's own ground, for the coast estates' pages (25 Sep 2026)
 } as const;
 
 /*

@@ -224,8 +224,8 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     `<div class="axo"><svg viewBox="0 0 760 520" class="axo-svg" role="img" aria-label="Axonometric drawing of ${esc(E.name)}">${axoSVG(C)}</svg><div class="zl">` +
     C.zones.map((z) => `<button type="button" aria-pressed="true" data-z="${z.k}"><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></button>`).join("") +
     "</div></div></section>";
-  E.chapters.forEach((c) => {
-    h += `<section class="chamber" id="${k}-${c.id}"><div class="ttl"><h3>${c.title}</h3></div><div class="film">${fr(c.film)}</div>` +
+  E.chapters.forEach((c, i) => {
+    h += `<section class="chamber" id="${k}-${c.id}"><div class="ttl"><span class="ch-n mono">${String(i + 1).padStart(2, "0")} / ${String(E.chapters.length).padStart(2, "0")}</span><h3>${c.title}</h3></div><div class="film">${fr(c.film)}</div>` +
       `<p class="para">${F(c.para)}</p><div class="meta">${c.meta.map((m) => `<span>${F(m)}</span>`).join("")}</div>` +
       `<div class="pc-rail">${c.cards.map((x) => card({ ...x, s: x.s && F(x.s), v: x.v && F(x.v) })).join("")}</div></section>`;
   });
@@ -276,7 +276,11 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     `<h2 class="h2">Make ${E.name} <span>yours.</span></h2><p class="para dim">Request the offering pack, or write to Investor Relations at ` +
     '<span class="mono sel">ir@getawaycollective.co</span>. Capital is at risk: read the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> before committing.</p>' +
     `<div class="row-btns"><a class="btn lead" href="${ask}">${R ? "Request the offering pack" : "Ask about this estate"} ${NE}</a><a class="btn gray" href="/collection">Other estates</a></div></div></section>`;
-  return h;
+  /* 25 Sep 2026, founder: the estate pages read as one dark corridor. The
+     page now wears its own landscape: the palette its film is drawn in
+     sets an accent, a night and a paper (site.css, .est[data-pal]), so
+     Creek reads green, Confluence reads sea-slate, Solace reads granite. */
+  return `<div class="est" data-pal="${E.pal}">${h}</div>`;
 }
 
 /* ── the holding deposit: stated in full before the button, paid online,
