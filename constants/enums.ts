@@ -122,6 +122,14 @@ export const ENUM_DISPLAY: Record<string, EnumDisplay> = {
     expired: D("Expired", "Blocks new commitments only. Voting survives", "hazard",
       "Accreditation expired. New commitments are blocked; voting, distribution and information rights are unaffected."),
   },
+  /* 24 Sep 2026 · UFR-0167. */
+  "Investor.kyc_state": {
+    not_started: D("Not started", "No KYC on file yet", "steel"),
+    in_progress: D("In progress", "Checks under way", "electric"),
+    verified: D("Verified", "Identity, address and tax residency checked", "confirm"),
+    needs_update: D("Needs update", "A check has lapsed or changed", "hazard",
+      "A KYC check has lapsed or a detail has changed. New commitments wait until it is renewed; existing rights are unaffected."),
+  },
   "Commitment.commitment_state": {
     offered: D("Offered", "Made, not yet accepted", "steel"),
     accepted: D("Accepted", "Binding. Accreditation tested at this moment", "electric"),

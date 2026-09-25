@@ -30,7 +30,23 @@ import { WsFrame, type WsTab } from "./workspace/frame";
 import { ApertureCard, stateOf } from "./workspace/aperture";
 import { DA } from "./da/DA";
 
-type MemberProps = { path: string; param?: string };
+/** The signed-in investor's own record, as lib/session.ts currentInvestor() reads it. */
+export interface Person {
+  readonly holdings: readonly { readonly key: string; readonly units: string; readonly votingPercent: string }[];
+  readonly profile: {
+    readonly legalName: string; readonly memberState: string; readonly accreditationState: string; readonly accreditationExpiresOn: string | null;
+    readonly taxJurisdiction: string; readonly becameMemberOn: string | null; readonly kycState: string | null;
+    readonly kycStages: Readonly<Record<string, string>> | null; readonly kycVerifiedOn: string | null; readonly kycReviewDueOn: string | null;
+    readonly panLast4: string | null;
+    readonly bank: { readonly holder: string | null; readonly name: string | null; readonly ifsc: string | null; readonly last4: string | null; readonly verifiedOn: string | null; readonly method: string | null };
+  };
+}
+type MemberProps = { path: string; param?: string; person?: Person | null; office?: boolean };
+type RowT = readonly (readonly [string, string, boolean?])[];
+
+const day = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : null);
+const titleCase = (s: string) => s.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+const KYC_STAGES = [["identity", "Identity"], ["address", "Address"], ["tax_residency", "Tax residency and PAN"], ["source_of_funds", "Source of funds"], ["suitability", "Suitability"], ["screening", "Screening"]] as const;
 type View = "home" | "portfolio" | "vehicle" | "property" | "structure" | "capital" | "entitlement" | "documents" | "profile";
 
 const ESTATE_VIEWS: readonly (readonly [View, string, string])[] = [
@@ -63,18 +79,20 @@ function Section({ eb, title, children, note }: { eb: string; title: string; chi
   );
 }
 
-/** A person's fact that is not yet wired: an example in the preview, a plain statement otherwise. */
-function Personal({ preview, example, what }: { preview: boolean; example: readonly (readonly [string, string, boolean?])[]; what: string }) {
-  return preview
-    ? <div className="ws-card iv-card"><span className="iv-example">Example</span><Rows rows={example} /></div>
-    : <div className="ws-card iv-card iv-empty"><b>{what} is not connected to this screen yet.</b><p>Investor Relations holds it and will send it on request. It appears here once your record is wired to the platform.</p><Link className="btn" href="/contact">Ask Investor Relations</Link></div>;
+/** A person's fact: the record's, when it is on file; an example in the preview; otherwise said plainly. */
+function Personal({ preview, example, what, real }: { preview: boolean; example: RowT; what: string; real?: RowT | null }) {
+  if (preview) return <div className="ws-card iv-card"><span className="iv-example">Example</span><Rows rows={example} /></div>;
+  if (real && real.length) return <div className="ws-card iv-card"><Rows rows={real} /></div>;
+  return <div className="ws-card iv-card iv-empty"><b>{what} is not on record here yet.</b><p>Investor Relations holds it and will send it on request. It appears here once it is recorded on the platform.</p><Link className="btn" href="/contact">Ask Investor Relations</Link></div>;
 }
 
-function EstateViews({ v, view, preview }: { v: Vehicle; view: View; preview: boolean }) {
+function EstateViews({ v, view, preview, person }: { v: Vehicle; view: View; preview: boolean; person?: Person | null }) {
   const o = v.offering, s = v.stack, g = v.governance, e = v.entitlement, w = v.operating.waterfall;
+  const held = person?.holdings.find((h) => h.key === v.key);
   if (view === "vehicle") return <>
     <Section eb="Your position" title="What you hold <span>here.</span>">
-      <Personal preview={preview} what="Your position" example={[["Units held", "2"], ["Share of the equity", "20%"], ["Settled on", "14 Jul 2026"], ["Votes", "Weighted by your equity"]]} />
+      <Personal preview={preview} what="Your position" example={[["Units held", "2"], ["Share of the equity", "20%"], ["Settled on", "14 Jul 2026"], ["Votes", "Weighted by your equity"]]}
+        real={held ? [["Units held", held.units], ["Share of the votes", `${held.votingPercent}%`], ["Votes", "Weighted by your equity"]] : null} />
     </Section>
     <Section eb="The estate" title="As its partners <span>see it.</span>"><ApertureCard v={v} opening="partner" /></Section>
   </>;
@@ -133,7 +151,8 @@ function EstateViews({ v, view, preview }: { v: Vehicle; view: View; preview: bo
       <div className="ws-card iv-card"><DA kind="position" vehicle={v.key} /></div>
     </Section> : null}
     <Section eb="Your entitlement" title="This <span>year.</span>">
-      <Personal preview={preview} what="Your entitlement" example={[["Your share", "20% of the pool"], ["This year", "24 nights"], ["Arranged through", "Sensory Getaways"]]} />
+      <Personal preview={preview} what="Your entitlement" example={[["Your share", "20% of the pool"], ["This year", "24 nights"], ["Arranged through", "Sensory Getaways"]]}
+        real={held ? [["Your share", `${held.votingPercent}% of the pool, following your equity`], ["This year", "Set by the estate's annual policy"], ["Arranged through", "Sensory Getaways"]] : null} />
     </Section>
   </>;
   return (
@@ -143,27 +162,38 @@ function EstateViews({ v, view, preview }: { v: Vehicle; view: View; preview: bo
   );
 }
 
-function Profile({ preview }: { preview: boolean }) {
+function Profile({ preview, person }: { preview: boolean; person?: Person | null }) {
+  const p = person?.profile;
+  const b = p?.bank;
   return <>
     <Section eb="Your profile" title="Who the register <span>knows you as.</span>">
-      <Personal preview={preview} what="Your investor record" example={[["Legal name", "Anika Rao"], ["Accreditation", "Accredited · renews 12 Aug 2027"], ["Tax residency", "India"], ["Partner since", "14 Jul 2026"]]} />
+      <Personal preview={preview} what="Your investor record" example={[["Legal name", "Anika Rao"], ["Accreditation", "Accredited · renews 12 Aug 2027"], ["Tax residency", "India"], ["Partner since", "14 Jul 2026"]]}
+        real={p ? [["Legal name", p.legalName], ["Accreditation", titleCase(p.accreditationState) + (p.accreditationExpiresOn ? ` · until ${day(p.accreditationExpiresOn)}` : "")],
+          ["Tax residency", p.taxJurisdiction], ["Partner since", day(p.becameMemberOn) ?? "Not yet settled"], ["PAN", p.panLast4 ? `•••••${p.panLast4}` : "Not on record"]] : null} />
     </Section>
     <Section eb="KYC" title="Your checks, <span>stage by stage.</span>" note="Documents are checked by the platform and held under the Privacy Notice. Nothing here is shown to other partners.">
       {preview
         ? <ol className="iv-kyc">{[["Identity", "Verified"], ["Address", "Verified"], ["Tax residency and PAN", "Verified"], ["Source of funds", "Stated"], ["Suitability", "Completed"], ["Screening", "Clear"], ["Accreditation", "Issued"], ["Annual review", "Due Aug 2027"]].map(([k, st], i) => (
           <li key={k} className="ws-card"><span className="mono">{String(i + 1).padStart(2, "0")}</span><b>{k}</b><em className={/Due/.test(st) ? "due" : "ok"}>{st}</em></li>))}</ol>
-        : <Personal preview={false} what="Your KYC record" example={[]} />}
+        : p?.kycState ? <>
+          <div className="ws-card iv-card"><Rows rows={[["Overall", titleCase(p.kycState)], ["Last verified", day(p.kycVerifiedOn) ?? "Not yet"], ["Next review", day(p.kycReviewDueOn) ?? "Not set"]]} /></div>
+          {p.kycStages ? <ol className="iv-kyc">{KYC_STAGES.map(([k, label], i) => { const st = p.kycStages?.[k] ?? "not started"; return (
+            <li key={k} className="ws-card"><span className="mono">{String(i + 1).padStart(2, "0")}</span><b>{label}</b><em className={/verified|clear|complete|stated/i.test(st) ? "ok" : "due"}>{titleCase(st)}</em></li>); })}</ol> : null}
+        </> : <Personal preview={false} what="Your KYC record" example={[]} />}
     </Section>
     <Section eb="Bank account" title="Where distributions <span>are paid.</span>"
-      note="Bank details are not held on this platform yet. Until they are, they are taken and verified by Investor Relations. When they move here they will be verified by a penny drop and shown masked, never in full.">
+      note="The account number is held encrypted and shown only by its last four digits, never in full. To change it, write to Investor Relations; a new account is verified before any payment is made to it.">
       {preview
         ? <div className="ws-card iv-card"><span className="iv-example">Example</span><Rows rows={[["Account holder", "Anika Rao"], ["Bank", "HDFC Bank"], ["Account", "•••• •••• 4821"], ["IFSC", "HDFC0••••12"], ["Verified", "By penny drop, 16 Jul 2026"]]} /></div>
-        : <Personal preview={false} what="Your bank account" example={[]} />}
+        : <Personal preview={false} what="Your bank account" example={[]}
+            real={b?.last4 ? [["Account holder", b.holder ?? "Not on record"], ["Bank", b.name ?? "Not on record"], ["Account", `•••• •••• ${b.last4}`],
+              ["IFSC", b.ifsc ? `${b.ifsc.slice(0, 4)}••••${b.ifsc.slice(-2)}` : "Not on record"],
+              ["Verified", b.verifiedOn ? `${b.method ? titleCase(b.method) + ", " : ""}${day(b.verifiedOn)}` : "Not yet verified"]] : null} />}
     </Section>
   </>;
 }
 
-function MemberWorkspace({ path, param }: MemberProps) {
+function MemberWorkspace({ path, param, person, office = false }: MemberProps) {
   const search = useSearchParams();
   const preview = path === "/member-workspace-preview";
   const view = viewFor(path, search.get("view"));
@@ -174,6 +204,7 @@ function MemberWorkspace({ path, param }: MemberProps) {
     : [{ href: "/home", label: "Holdings" }, { href: "/portfolio", label: "Estates" }, { href: "/profile", label: "Profile" }];
   const current = preview ? (view === "home" || view === "portfolio" ? "Holdings" : view === "profile" ? "Profile" : "An estate") : undefined;
   const inEstate = !["home", "portfolio", "profile"].includes(view);
+  const shown = VEHICLES.filter((x) => (preview ? stateOf(x) !== "forming" : office || person?.holdings.some((h) => h.key === x.key)));
 
   return (
     <main className="p-hero-own">
@@ -182,13 +213,17 @@ function MemberWorkspace({ path, param }: MemberProps) {
           <header className="ws-head"><div><span className="eb">Your holdings</span><h1 className="ws-h1">Everything you own, <span>in one place.</span></h1>
             <p>Each estate you hold is its own partnership. Open one to see its property, its structure, its capital and your entitlement.</p></div></header>
           <Section eb="Your positions" title="Across <span>the collection.</span>">
-            <Personal preview={preview} what="Your list of positions" example={[["SlowSpace Coastal", "2 units · settled 14 Jul 2026"], ["Coorg Coffee Creek", "Holding deposit paid · 23 Sep 2026"]]} />
+            <Personal preview={preview} what="Your list of positions" example={[["SlowSpace Coastal", "2 units · settled 14 Jul 2026"], ["Coorg Coffee Creek", "Holding deposit paid · 23 Sep 2026"]]}
+              real={person?.holdings.length ? person.holdings.map((h) => [VEHICLES.find((x) => x.key === h.key)?.propertyName ?? h.key, `${h.units} units · ${h.votingPercent}% of the votes`] as const) : null} />
           </Section>
           <Section eb="Where each estate stands" title="One track, <span>every estate.</span>">
             <div className="ws-card iv-card"><DA kind="stages" /></div>
           </Section>
           <Section eb="The estates" title="Open <span>an estate.</span>">
-            <div className="ap-grid">{VEHICLES.filter((x) => stateOf(x) !== "forming").map((x) => <ApertureCard key={x.key} v={x} opening="public" href={estateHref(x)} />)}</div>
+            {/* A partner sees the estates they hold; the Office, every one. */}
+            {shown.length
+              ? <div className="ap-grid">{shown.map((x) => <ApertureCard key={x.key} v={x} opening={preview ? "public" : "partner"} href={estateHref(x)} />)}</div>
+              : <div className="ws-card iv-card iv-empty"><b>No estate is recorded against your name yet.</b><p>An estate appears here once your position in it is settled on the register. If you hold one and it is missing, Investor Relations will correct the record.</p><Link className="btn" href="/contact">Ask Investor Relations</Link></div>}
           </Section>
         </> : null}
 
@@ -198,13 +233,13 @@ function MemberWorkspace({ path, param }: MemberProps) {
           <nav className="ws-subnav" aria-label="This estate"><div>
             {ESTATE_VIEWS.map(([id, label, suffix]) => <Link key={id} href={estateHref(v, suffix)} aria-current={view === id ? "page" : undefined}>{label}</Link>)}
           </div></nav>
-          <EstateViews v={v} view={view} preview={preview} />
+          <EstateViews v={v} view={view} preview={preview} person={person} />
         </> : null}
 
         {view === "profile" ? <>
           <header className="ws-head"><div><span className="eb">Profile</span><h1 className="ws-h1">Your record, <span>and your checks.</span></h1>
             <p>Your identity, your KYC and the account distributions are paid to. Changes to any of them are made with Investor Relations and recorded.</p></div></header>
-          <Profile preview={preview} />
+          <Profile preview={preview} person={person} />
         </> : null}
       </WsFrame>
     </main>

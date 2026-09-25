@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { MemberSurface } from "@/app/_assemblies/memberpages";
+import { PartnerSurface } from "@/app/_assemblies/partner";
 import { canReach } from "@/lib/access";
 import { currentSubject } from "@/lib/session";
 
@@ -25,5 +25,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Pportfolio_vehicle_activity(props: { params: Promise<{ vehicle: string }> }) {
   const params = await props.params;
-  return <MemberSurface path="/portfolio/[vehicle]/activity" param={params.vehicle} />;
+  return <PartnerSurface path="/portfolio/[vehicle]/activity" param={params.vehicle} />;
 }

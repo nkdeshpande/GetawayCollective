@@ -11,7 +11,7 @@
  */
 
 import type { Metadata } from "next";
-import { MemberSurface } from "@/app/_assemblies/memberpages";
+import { PartnerSurface } from "@/app/_assemblies/partner";
 import { canReach } from "@/lib/access";
 import { currentSubject } from "@/lib/session";
 
@@ -24,5 +24,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Pportfolio() {
-  return <MemberSurface path="/portfolio" />;
+  return <PartnerSurface path="/portfolio" />;
 }
