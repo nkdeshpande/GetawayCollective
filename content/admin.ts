@@ -72,7 +72,7 @@ export const FORMATION: readonly Stage[] = [
   },
   {
     n: "03", title: "Registration",
-    writes: ["Registered name", "LLPIN", "Registrar", "Date of incorporation", "Registered office"],
+    writes: ["Registered name", "LLP identification number (LLPIN)", "Registrar", "Date of incorporation", "Registered office"],
     gates: [{ kind: "prior", stage: "02" }, { kind: "right", right: "vehicle.form" }],
     irreversible: true,
     note:
@@ -102,7 +102,7 @@ export const FORMATION: readonly Stage[] = [
   },
   {
     n: "06", title: "The waterfall",
-    writes: ["Six stages, in order, with their basis points"],
+    writes: ["Six stages, in order, each as a share of revenue"],
     gates: [
       { kind: "prior", stage: "05" },
       { kind: "arithmetic", must: "The six stages sum to exactly 100%" },
@@ -122,7 +122,7 @@ export const FORMATION: readonly Stage[] = [
   },
   {
     n: "08", title: "Formation",
-    writes: ["InvestmentVehicleFormed event", "The reason for forming", "The register, opened"],
+    writes: ["A dated record that the vehicle was formed", "The reason for forming it", "Its register of partners, opened"],
     gates: [{ kind: "prior", stage: "07" }, { kind: "right", right: "vehicle.form" }],
     irreversible: true,
     note:

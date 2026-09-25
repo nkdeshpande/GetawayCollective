@@ -89,11 +89,11 @@ export const PAGES: Record<string, SitePage> =  {
     "rows": [
      [
       "The team",
-      "<a href=\"/team\" class=\"tx-u\">The founder, the architect, and the structural, MEP and modelling practices</a>"
+      "<a href=\"/team\" class=\"tx-u\">The founder, the architect, and the structural, building-systems and modelling practices</a>"
      ],
      [
       "Registered details",
-      "[legal form] · LLPIN [000-0000] · [registered office]",
+      "Published here once the platform's own registration is complete. Each estate's partnership, with its LLP identification number where one has been issued, is named on that estate's page.",
       1
      ]
     ]
@@ -174,7 +174,7 @@ export const PAGES: Record<string, SitePage> =  {
     "h": "Where the money goes"
    },
    {
-    "p": "Revenue flows through six stages, in order, on the vehicle's gross revenue base, and closes to 10,000 basis points. There is no preferred return, no catch-up and no carried interest."
+    "p": "Revenue flows through six stages, in order, each a share of the estate's gross revenue, and the six always add up to exactly 100%: nothing leaves outside them. There is no preferred return, no catch-up and no carried interest, so no class of investor is paid ahead of the others and no one takes a performance fee on top."
    },
    {
     "da": "waterfall",
@@ -214,7 +214,7 @@ export const PAGES: Record<string, SitePage> =  {
     "h": "Leaving"
    },
    {
-    "p": "There is no public market for units. The internal register is a noticeboard where partners can post interest; nothing guarantees a buyer."
+    "p": "There is no public market for units. After the lock-in, partners can post units on a noticeboard that other partners see first; it is not a market, and nothing guarantees a buyer."
    },
    {
     "src": "public.ts 330–333"
@@ -337,7 +337,7 @@ export const PAGES: Record<string, SitePage> =  {
     "rows": [
      [
       "What changed",
-      "On the register and in the estates"
+      "In the estates, and in their records"
      ],
      [
       "What was decided",
@@ -559,7 +559,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "Coastal regulation",
-      "Open: the high tide line and the site's CRZ classification are not yet drawn",
+      "Open: the high tide line and the site's classification under the Coastal Regulation Zone rules are not yet drawn",
       1
      ],
      [
@@ -606,7 +606,7 @@ export const PAGES: Record<string, SitePage> =  {
    0,
    1
   ],
-  "lead": "Every estate is designed, engineered and modelled by named people, and governed by a founder whose decisions are written down. This page records who they are, and leaves a slot wherever something has not yet been supplied.",
+  "lead": "Every estate is designed, engineered and modelled by named people, and governed by a founder whose decisions are written down. This page records who they are; where a registration or a name is still to be published, it says so rather than leaving it out.",
   "blocks": [
    {
     "people": [
@@ -625,16 +625,6 @@ export const PAGES: Record<string, SitePage> =  {
        [
         "Contact",
         "hello@getawaycollective.co"
-       ],
-       [
-        "Profile and background",
-        "To be supplied",
-        1
-       ],
-       [
-        "Photograph",
-        "Not yet commissioned",
-        1
        ]
       ]
      },
@@ -657,11 +647,6 @@ export const PAGES: Record<string, SitePage> =  {
        [
         "Practice",
         "To be named",
-        1
-       ],
-       [
-        "Profile",
-        "To be supplied",
         1
        ]
       ]
@@ -686,17 +671,12 @@ export const PAGES: Record<string, SitePage> =  {
         "Registration",
         "To be added",
         1
-       ],
-       [
-        "Profile",
-        "To be supplied",
-        1
        ]
       ]
      },
      {
       "initials": "AD",
-      "role": "MEP design",
+      "role": "Building systems (MEP)",
       "name": "Addya",
       "line": "Mechanical, electrical and plumbing design: water, power, drainage and air, planned from first principles for each estate's climate.",
       "does": [
@@ -708,11 +688,6 @@ export const PAGES: Record<string, SitePage> =  {
        [
         "Lead engineer",
         "To be named",
-        1
-       ],
-       [
-        "Profile",
-        "To be supplied",
         1
        ]
       ]
@@ -731,11 +706,6 @@ export const PAGES: Record<string, SitePage> =  {
        [
         "Firm",
         "To be named",
-        1
-       ],
-       [
-        "Profile",
-        "To be supplied",
         1
        ]
       ]
@@ -966,7 +936,7 @@ export const PAGES: Record<string, SitePage> =  {
       "Manjunath &amp; Co."
      ],
      [
-      "MEP design",
+      "Mechanical, electrical and plumbing",
       "Addya"
      ],
      [
@@ -978,13 +948,8 @@ export const PAGES: Record<string, SitePage> =  {
       "hello@getawaycollective.co"
      ],
      [
-      "Founded",
-      "Year to be supplied",
-      1
-     ],
-     [
       "Registered office",
-      "To be supplied",
+      "Published once the platform's own registration is complete",
       1
      ]
     ]
@@ -1132,8 +1097,8 @@ export const PAGES: Record<string, SitePage> =  {
   "key": "answers",
   "light": 1,
   "eyebrow": "Answers",
-  "title": "Short answers, <span>with sources.</span>",
-  "lead": "The questions people ask most often, answered in one or two sentences each, with the source every answer comes from.",
+  "title": "Answers, <span>in plain words.</span>",
+  "lead": "The questions people ask most about owning a share of a retreat through Getaway Collective, each answered in full. Where a figure differs from one estate to the next, the estate's own page and its offering letter give it.",
   "blocks": [
    {
     "da": "search"
@@ -1142,51 +1107,59 @@ export const PAGES: Record<string, SitePage> =  {
     "rows": [
      [
       "<b class=\"tx-strong\">What is Getaway Collective?</b>",
-      "An investment platform for collective ownership of exceptional retreats in India. Each estate is held by its own LLP and owned by its partners."
+      "Getaway Collective is an Indian platform through which people own retreats together. Each estate is held by its own limited liability partnership (LLP); investors buy units in that LLP and become its partners, with a share of its distributions, a vote on its decisions and nights at the estate once it is built. Getaway Collective governs each partnership but holds no equity in any of them, and Sensory Getaways operates the estates."
      ],
      [
       "<b class=\"tx-strong\">Who founded Getaway Collective?</b>",
-      "Nikhil Deshpande."
+      "Nikhil Deshpande. As founder he sets the standard every estate is designed, built and governed to, and signs the decisions that make it binding, each one written down and dated, such as the choice of a steel structure at Seaside Confluence. He also holds the separation at the centre of the platform: Getaway Collective governs each estate's partnership, Sensory Getaways operates the estates, and neither is the owner. The partners are."
      ],
      [
       "<b class=\"tx-strong\">Does Getaway Collective own the properties?</b>",
-      "No. It governs each vehicle and holds no equity in any of them; the LLP owns the estate."
+      "No. Each estate is held by its own LLP, and the LLP is owned by its partners. Getaway Collective governs the partnership, keeps its records and runs its votes, but it holds no equity and no economic interest in any estate. That separation is entrenched in the terms: it can change only by a unanimous vote of the partners, so the party setting the rules can never profit from bending them."
      ],
      [
       "<b class=\"tx-strong\">What do investors own?</b>",
-      "Units in the estate's LLP. A unit is 5% of the equity, and a partner holds from one to ten."
+      "Units in one estate's LLP. Each unit is a fixed share of that partnership, priced in the estate's offering letter, and each estate sets the least and the most one partner may hold. Your units carry three things, in proportion to their number: a share of distributions when there are any, voting weight on resolutions, and nights at the estate from handover. Units are not shares in Getaway Collective, and not in any other estate."
      ],
      [
       "<b class=\"tx-strong\">Is it a timeshare?</b>",
-      "No. A timeshare sells time; a unit is equity in the partnership that owns the estate, and time follows the position."
+      "No. A timeshare sells weeks of use and nothing more. A unit is equity in the partnership that holds the estate: you share in its distributions, vote on its decisions, and can sell your units after the lock-in. Nights come with that ownership, in proportion to what you hold; they are a benefit of owning, not a separate product, and they are not priced or sold on their own."
+     ],
+     [
+      "<b class=\"tx-strong\">How do I begin?</b>",
+      "Sign in with an email address: no password, no documents, and nothing to pass. Every estate, its drawings and its figures are open to you from there. When you find an estate you want, hold your units online with a holding deposit, refundable in full until you sign. KYC runs alongside at your own pace and is complete before you sign the LLP agreement and settle your units. <a class=\"tx-u\" href=\"/how-to-qualify\">The three steps, in full</a>."
+     ],
+     [
+      "<b class=\"tx-strong\">What is the holding deposit?</b>",
+      "₹1,00,000, the same at every estate whatever the number of units you intend to take. It is paid online, to the estate's own LLP rather than to Getaway Collective, and holds your units while the rest is completed with Investor Relations: the identity checks, the balance of the unit price and the Vehicle Agreement. It is refundable in full until that agreement is signed. It buys nothing on its own and makes nobody a partner."
      ],
      [
       "<b class=\"tx-strong\">Where are the estates?</b>",
-      "In Karnataka: Solace in the Nandi Hills corridor, Seaside Confluence at Padubidri on the Udupi coast, and SlowSpace Creek and Coffee Fields Forever in Kodagu."
+      "All in Karnataka. Solace is at Chikkaballapur, in the Nandi Hills corridor, about two hours from Bengaluru. Seaside Confluence is at Padubidri on the Udupi coast, between the Arabian Sea and a river estuary. SlowSpace Creek and Coffee Fields Forever lie about 1.8 km apart in Kodagu, among coffee. Three more are in the pipeline: Nine Hills in the Sakleshpur hills, Wildwood at Aranthodu in Dakshina Kannada, and Tidal Club at Yermal on the Udupi coast."
      ],
      [
       "<b class=\"tx-strong\">Who runs the estates?</b>",
-      "Sensory Getaways, the operating partner, under a Commercial Services Agreement measured on service levels."
+      "Sensory Getaways, the operating partner. It runs each estate day to day under a Commercial Services Agreement with that estate's LLP, is measured against agreed Service Levels, and is paid from the first stage of the waterfall. Its duties run to the partnership, so the partners, through their votes, hold it to the agreement. At Seaside Confluence a separate food partner is being chosen by tender."
      ],
      [
       "<b class=\"tx-strong\">Who designs the estates?</b>",
-      "Architect Karthik Shanbhogue, with structural design by Manjunath & Co., MEP design by Addya, and a building information model for each estate."
+      "The architect is Karthik Shanbhogue. Manjunath & Co. design the structures, and Addya designs the building systems, mechanical, electrical and plumbing: water, power, drainage and air, planned for each estate's climate. Building information modellers bring every discipline into one coordinated model per estate, so clashes are found on a screen rather than on site. The estates share three architectural systems, called Ridge, Expanse and Voyager."
      ],
      [
       "<b class=\"tx-strong\">How are decisions made?</b>",
-      "By the partners, with votes weighted by equity: more than 50% for an ordinary resolution, 76% for a special one."
+      "By the partners, voting in proportion to what each holds, never one vote per head. An ordinary resolution needs more than 50% of the holdings present and voting; a special resolution needs at least 76% of all holdings; entrenched principles, such as Getaway Collective holding no equity, need every partner. A tie fails. Partners holding 20% or more can call a meeting, which must be held within 21 days."
      ],
      [
       "<b class=\"tx-strong\">How long does accreditation take?</b>",
-      "About fifteen working days from a complete file."
+      "Signing in takes one email and no documents, and you can read every estate straight away. The checks that follow run alongside your reading rather than in front of it: a short suitability questionnaire opens the full offering documents, with a decision within 15 working days of a complete submission, and KYC (identity, address, tax residency, source of funds, documents and screening) can be done at your own pace. Every stage saves as you go, and all of it is complete before you sign."
      ],
      [
       "<b class=\"tx-strong\">Can units be sold?</b>",
-      "There is no public market. Partners can post interest on an internal register; nothing guarantees a buyer."
+      "Yes, after the lock-in, which is typically 36 months from financial close. There is no public market: you post units on a noticeboard that existing partners see first, and nothing guarantees a buyer or a price. A buyer from outside the partnership needs the consent of partners holding a majority, and must complete the same identity checks. During the lock-in, units move only on a partner's death or with every partner's consent."
      ],
      [
       "<b class=\"tx-strong\">Is capital at risk?</b>",
-      "Yes. Capital is at risk, and no return is guaranteed by any party. The <a href=\"/legal/risk-disclosure\" class=\"tx-u\">Risk Factors</a> set it out in full."
+      "Yes. Capital is at risk, and no return is guaranteed by any party, including Getaway Collective, the operating partner and the sponsor. Estates carry construction and delivery risk, bank debt is repaid before partners, income depends on occupancy that has not yet been observed, and units cannot be sold quickly. The <a href=\"/legal/risk-disclosure\" class=\"tx-u\">Risk Factors</a> set it out in full."
      ]
     ]
    },
@@ -1211,77 +1184,145 @@ export const PAGES: Record<string, SitePage> =  {
   "light": 1,
   "eyebrow": "Glossary",
   "title": "The words, <span>defined once.</span>",
-  "lead": "Every term used on this site, in one place.",
+  "lead": "Every term used on this site, defined once and in plain words.",
   "blocks": [
    {
     "rows": [
      [
       "<b class=\"tx-strong\">Accreditation</b>",
-      "The sixteen-stage check a person completes before they can see an offering in full."
+      "The checks that establish who you are, where you are tax-resident, where your funds come from, and whether the commitment suits your circumstances. On this site they run alongside your reading, never before it, and are complete before you sign an LLP agreement. Passing them confirms eligibility; it is not advice that the investment is right for you."
      ],
      [
       "<b class=\"tx-strong\">Admin reserve</b>",
-      "Stage three of the waterfall: 2.5% of the revenue base, for governing the vehicle."
+      "The third stage of the waterfall: 2.5% of an estate's revenue, set aside to pay for governing the partnership: keeping its records, running its votes and meeting its legal obligations. It is paid before debt service and before anything reaches partners."
+     ],
+     [
+      "<b class=\"tx-strong\">Basis point</b>",
+      "One hundredth of one per cent: 100 basis points make 1%, and 10,000 make 100%. The waterfall's six stages are set in basis points so that together they always account for exactly the whole of revenue."
      ],
      [
       "<b class=\"tx-strong\">Chassis</b>",
-      "One of three architectural systems every estate is built from: Ridge, Expanse and Voyager."
+      "One of three architectural systems the estates are built from, each a repeatable dwelling adapted to its site: Ridge (38 m² with a courtyard, on the ground), Expanse (36 m² with a deck, lifted 3.8 m) and Voyager (52 m² with a porch, opened into volume)."
      ],
      [
       "<b class=\"tx-strong\">Confidence class</b>",
-      "The label every forward-looking figure carries, saying how it was arrived at."
+      "The label every forward-looking figure carries, saying how it was arrived at: observed (counted or measured), verified (checked against a source document), modelled (computed from stated assumptions), estimated (a judgement on incomplete information), forecast (about a period that has not happened) or pending (expected, and shown as absent rather than as zero)."
      ],
      [
-      "<b class=\"tx-strong\">Covenant</b>",
-      "The rule that at least 65% of every estate is kept as it is."
+      "<b class=\"tx-strong\">Covenant (land)</b>",
+      "The standing promise that at least 65% of every estate's land is kept as it is: not built on, paved or cleared. Each estate page states its own share."
+     ],
+     [
+      "<b class=\"tx-strong\">Covenant (loan)</b>",
+      "A condition a lender sets on its loan. The estates' bank facilities carry a minimum debt service coverage ratio; see DSCR."
+     ],
+     [
+      "<b class=\"tx-strong\">Designated partner</b>",
+      "A partner named in an LLP agreement to carry the partnership's legal duties: its filings, records and compliance. Where the agreement names Getaway Collective, it carries those duties without holding any equity."
+     ],
+     [
+      "<b class=\"tx-strong\">Distribution</b>",
+      "A payment to partners from the last stage of the waterfall, after the operating partner, brand and platform, the two reserves and any loan repayments have been paid. It is shared in proportion to units held, and nothing guarantees one in any year."
+     ],
+     [
+      "<b class=\"tx-strong\">DSCR</b>",
+      "Debt service coverage ratio: the income an estate has available for its loan, divided by the repayments due. A covenant of 1.50x minimum means income must be at least one and a half times the repayments."
+     ],
+     [
+      "<b class=\"tx-strong\">Entrenched principle</b>",
+      "A rule that can change only by a unanimous vote of the partners, 100% of holdings. That Getaway Collective holds no equity in any estate is one of them."
+     ],
+     [
+      "<b class=\"tx-strong\">Financial close</b>",
+      "The date an estate's funding is complete: the equity raised and the bank facility in place. The lock-in on units runs from it."
+     ],
+     [
+      "<b class=\"tx-strong\">Handover</b>",
+      "The day an estate is complete and handed to the operating partner to open. Partners' nights begin at handover; before it there is nothing to draw on."
+     ],
+     [
+      "<b class=\"tx-strong\">Holding deposit</b>",
+      "₹1,00,000, paid online to the estate's own LLP to hold your units while the rest is completed. It is the same at every estate, whatever the number of units, and refundable in full until the Vehicle Agreement is signed. It makes nobody a partner."
      ],
      [
       "<b class=\"tx-strong\">Key</b>",
-      "One dwelling at an estate."
+      "One self-contained dwelling at an estate, counted the way a hotel counts its keys, whatever its size. Each estate page states how many it has."
+     ],
+     [
+      "<b class=\"tx-strong\">KYC</b>",
+      "The identity checks Indian law requires before anyone becomes a partner: identity, address, tax residency, source of funds, supporting documents and screening. They run alongside your reading, at your own pace, and are complete before you sign."
+     ],
+     [
+      "<b class=\"tx-strong\">Lock-in</b>",
+      "The period after financial close during which units cannot be sold or transferred, except on a partner's death or with every partner's consent. Typically 36 months; each estate's LLP agreement states its own."
      ],
      [
       "<b class=\"tx-strong\">LLP</b>",
-      "Limited Liability Partnership: the company that owns each estate."
+      "A limited liability partnership under India's LLP Act 2008: a body that holds property in its own name, whose partners' liability is limited to what they contribute. Each estate has its own LLP, and investors become its partners."
+     ],
+     [
+      "<b class=\"tx-strong\">LLPIN</b>",
+      "The LLP identification number the Registrar of Companies issues when a partnership is incorporated. An estate whose LLP is still being formed has none yet, and its page says so."
      ],
      [
       "<b class=\"tx-strong\">Member</b>",
-      "An investor after settlement: a partner in the LLP."
+      "An investor whose funds have settled: a partner in the estate's LLP, with a vote, a share of distributions and, from handover, nights. Before settlement an investor has an obligation and no rights."
+     ],
+     [
+      "<b class=\"tx-strong\">Moratorium</b>",
+      "A period at the start of a bank loan when only interest is paid and no principal. At the estates offered so far it covers the first 18 months."
      ],
      [
       "<b class=\"tx-strong\">Offering letter</b>",
-      "The document that states an estate's price, terms and figures. It governs; nothing on a page does."
+      "The document that sets an estate's unit price, number of units, lock-in, fees, risks and figures. Where it and any web page differ, the offering letter governs; nothing on a page is a term of investment."
      ],
      [
       "<b class=\"tx-strong\">Operating partner</b>",
-      "Sensory Getaways, which runs every estate under a Commercial Services Agreement."
+      "Sensory Getaways, which runs every estate day to day under a Commercial Services Agreement with that estate's LLP. It is measured against agreed Service Levels, paid from the first stage of the waterfall, and owes its duties to the partnership."
+     ],
+     [
+      "<b class=\"tx-strong\">Quorum</b>",
+      "The share of total holdings that must take part for a partners' vote to count. Where an estate's agreement states it, it is 60%."
      ],
      [
       "<b class=\"tx-strong\">Register</b>",
-      "The append-only record of positions, resolutions and documents; also the noticeboard where partners post units."
+      "The partnership's permanent record of who holds which units, every resolution and every document. Entries are added, never edited or removed. It also carries a noticeboard where partners can post units after the lock-in; that is not a market, and it guarantees no buyer."
+     ],
+     [
+      "<b class=\"tx-strong\">Reserved matter</b>",
+      "A decision the LLP agreement keeps for the partners alone, such as selling the land or borrowing beyond the agreed limit."
      ],
      [
       "<b class=\"tx-strong\">Resolution</b>",
-      "A decision of the partners: ordinary above 50%, special at 76%, entrenched at 100%."
+      "A decision of the partners, weighted by holding: ordinary (more than 50% of the holdings present and voting), special (at least 76% of all holdings) or entrenched (100%). A tie fails."
      ],
      [
       "<b class=\"tx-strong\">Revenue base</b>",
-      "The vehicle's gross revenue, on which the waterfall is calculated."
+      "An estate's gross revenue, before any costs. Every stage of the waterfall is a share of it, so the six stages always account for all of it."
      ],
      [
       "<b class=\"tx-strong\">Settlement</b>",
-      "The moment cleared funds reach the vehicle and an investor becomes a member. It cannot be undone."
+      "The moment an investor's cleared funds reach the estate's LLP. From then the investor is a partner. It cannot be undone; the way out is a transfer after the lock-in. Funds must settle within 15 working days of committing."
      ],
      [
       "<b class=\"tx-strong\">Sinking fund</b>",
-      "Stage four of the waterfall: 2.5% of the revenue base, for renewal over the long term."
+      "The fourth stage of the waterfall: 2.5% of an estate's revenue set aside every year for long-term renewal, so the estate is kept up as it ages."
+     ],
+     [
+      "<b class=\"tx-strong\">Sponsor</b>",
+      "The founding party that puts its own money into an estate's equity alongside the partners. Each estate's offering shows how much of the equity the sponsor holds."
      ],
      [
       "<b class=\"tx-strong\">Unit</b>",
-      "5% of an estate's LLP. Twenty units make the whole equity layer."
+      "A fixed share of one estate's LLP, priced in its offering letter. Each estate sets its own unit size, price and the most one partner may hold, and its page shows how many remain. Your units decide your share of distributions, your voting weight and your nights."
+     ],
+     [
+      "<b class=\"tx-strong\">Waitlist</b>",
+      "For an estate whose units are all held: a list, in the order it was joined, of people who hear first if a partner offers units after the lock-in. Joining commits you to nothing."
      ],
      [
       "<b class=\"tx-strong\">Waterfall</b>",
-      "The six stages, in fixed order, through which an estate's revenue is paid."
+      "The six stages, in fixed order, through which an estate's revenue is paid: the operating partner, brand and platform, the admin reserve, the sinking fund, debt service, and then partners. Each stage is paid in full before the next receives anything, and the six always add up to the whole of revenue."
      ]
     ]
    },

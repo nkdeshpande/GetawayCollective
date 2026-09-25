@@ -19,6 +19,7 @@ import {
   publishable, stanceFor, waterfallState,
   type Vehicle,
 } from "../../constants/vehicles";
+import { plainTerms } from "../../lib/plain";
 
 export type DossierKey = "overview" | "asset" | "financials" | "structure" | "risks" | "dataroom" | "commit";
 
@@ -176,7 +177,7 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
             rows: [
               { label: "Land", value: inr(s.land), basis: SOURCE },
               { label: "Formation and pre-development", value: inr(s.formation), basis: SOURCE },
-              { label: "Facility", value: inr(s.facility), basis: `${s.moratorium} · covenant ${s.covenant}` },
+              { label: "Facility", value: inr(s.facility), basis: plainTerms(`${s.moratorium} · covenant: ${s.covenant}`) },
               { label: "Equity layer", value: inr(s.equityLayer), basis: "Sponsor plus partners" },
               { label: "Project total", value: inr(s.projectTotal), basis: s.equityLayer + s.facility === s.projectTotal ? "Equity + facility: reconciles" : "Equity + facility: DOES NOT RECONCILE" },
             ],
@@ -236,7 +237,7 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
                   { label: "Special resolution", value: pct(g.specialBps), basis: "Of voting interest" },
                   { label: "Quorum", value: pct(g.quorumBps), basis: "Of voting interest" },
                   { label: "Reserved matters", value: g.reservedMatters, basis: SOURCE },
-                  { label: "Transfer of an interest", value: g.transferRule, basis: SOURCE },
+                  { label: "Transfer of an interest", value: plainTerms(g.transferRule), basis: SOURCE },
                 ],
               }]
             : []),
@@ -261,11 +262,11 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
           {
             heading: "What the record says can go wrong",
             rows: [
-              { label: "Title", value: "Unverified", basis: `${v.commitments}` },
+              { label: "Title", value: "Unverified", basis: plainTerms(v.commitments) },
               { label: "Nothing is built", value: BUILD_LABEL[v.buildStage], basis: "Construction begins after the equity raise closes; the programme is not locked." },
-              { label: "Debt before revenue", value: `${inr(s.facility)} facility`, basis: `${s.moratorium}. Covenant: ${s.covenant}.` },
+              { label: "Debt before revenue", value: `${inr(s.facility)} facility`, basis: plainTerms(`${s.moratorium}. Covenant: ${s.covenant}.`) },
               { label: "Yield is a forecast", value: y ? pct(y.bps) : NOT_STATED, basis: `FORECAST · ${v.operating.yieldBasis}. No revenue has been observed.` },
-              { label: "Your capital is locked", value: o.lockIn, basis: `${v.governance?.transferRule ?? NOT_STATED}` },
+              { label: "Your capital is locked", value: o.lockIn, basis: v.governance ? plainTerms(v.governance.transferRule) : NOT_STATED },
               { label: "Sponsor share of equity", value: pct(Number((o.promoter * 10000n) / o.totalEquity)), basis: `Of the equity layer. Ordinary resolutions need ${v.governance ? pct(v.governance.ordinaryBps) : NOT_STATED}, special ${v.governance ? pct(v.governance.specialBps) : NOT_STATED}.` },
               { label: "Not audited", value: v.audited ? "Audited" : "Unaudited", basis: "No audited accounts exist for a vehicle that has not yet traded." },
               { label: "Entitlement has no date", value: v.entitlement?.begins ?? NOT_STATED, basis: "When you can first use the property depends on construction." },

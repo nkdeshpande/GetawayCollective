@@ -25,6 +25,7 @@ import {
 } from "../../constants/vehicles";
 import type { ChapterId } from "../../constants/property-chapters";
 import { inr, modelledYield, type Row } from "./investordossier";
+import { plainTerms } from "../../lib/plain";
 
 export interface ChapterContent {
   readonly eyebrow: string;
@@ -48,10 +49,10 @@ const pct = (bps: number): string => `${(bps / 100).toFixed(2)}%`;
 const gatedRows = (v: Vehicle): Row[] => [
   {
     label: "Figures withheld",
-    value: "Until the record is settled",
+    value: "Until the record is complete",
     basis:
-      `This vehicle has ${publishable(v).because.length} unsettled item(s) in its register. ` +
-      `A figure nobody can stand behind is worse than a figure nobody has published.`,
+      `This estate's record has ${publishable(v).because.length} open item${publishable(v).because.length === 1 ? "" : "s"}, listed below. ` +
+      `A figure nobody can stand behind is worse than no figure at all.`,
   },
 ];
 
@@ -86,8 +87,8 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
           eyebrow: "CHAPTER 06 · THE INVESTMENT",
           title: "The economics are not published yet.",
           lead:
-            "Every figure on this chapter would be one a reader could act on, and the register " +
-            "for this vehicle is not settled. It is withheld rather than estimated.",
+            "Every figure here is one a reader could act on, and this estate's record still has " +
+            "open items. Until they are closed the figures are withheld, not estimated.",
           rows: gatedRows(v),
           withheld: gate.because,
         };
@@ -101,7 +102,7 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
           : "The waterfall is not complete, so no yield is stated.",
         rows: [
           { label: "Project total", value: inr(s.projectTotal), basis: `${inr(s.equityLayer)} equity + ${inr(s.facility)} facility` },
-          { label: "Facility", value: inr(s.facility), basis: `${s.moratorium} · ${s.covenant}` },
+          { label: "Facility", value: inr(s.facility), basis: plainTerms(`${s.moratorium} · ${s.covenant}`) },
           { label: "Gross revenue", value: inr(v.operating.grossRevenue), basis: `Rate ${inr(v.operating.adr)} at ${pct(v.operating.occupancyBps)} occupancy — forecast` },
           ...(wf
             ? WATERFALL_STAGES.map(([k, label]) => ({
@@ -127,9 +128,9 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
           "not from a template — a risk with nothing behind it is not listed.",
         rows: [
           { label: "Nothing is built", value: BUILD_LABEL[v.buildStage], basis: "Construction carries cost, programme and delivery risk, and none of it is insured away." },
-          { label: "How the land is held", value: v.tenure ? TENURE_LABEL[v.tenure] : NOT_STATED, basis: v.commitments },
-          { label: "Debt ranks ahead of you", value: inr(s.facility), basis: `${s.moratorium}. ${s.covenant}.` },
-          { label: "Your capital is locked", value: o.lockIn, basis: v.governance?.transferRule ?? "Transfer terms are not on record." },
+          { label: "How the land is held", value: v.tenure ? TENURE_LABEL[v.tenure] : NOT_STATED, basis: plainTerms(v.commitments) },
+          { label: "Debt ranks ahead of you", value: inr(s.facility), basis: plainTerms(`${s.moratorium}. ${s.covenant}.`) },
+          { label: "Your capital is locked", value: o.lockIn, basis: v.governance ? plainTerms(v.governance.transferRule) : "Transfer terms are not on record." },
           { label: "The yield is a forecast", value: wf.state === "complete" ? "Modelled" : "Not stated", basis: "No revenue has been observed. Occupancy and rate are assumptions." },
           { label: "Open items on the record", value: String(registered.length), basis: registered.length ? registered.map((c) => c.id).join(" · ") : "None registered." },
         ],

@@ -92,18 +92,20 @@ export function read(v: Vehicle): Reading {
   const price: readonly [string, string] = v.lifecycle === "forming"
     ? ["In the pipeline", "not yet open for subscription"]
     : !ok
-    ? ["Offering not yet published", "the record is still being settled"]
+    ? ["Offering not yet published", "its figures are still being confirmed"]
     : full
       ? [`Fully subscribed · ${o.subscribed} of ${o.units} units offered`, `${rupees(o.unitPrice)} a unit · waitlist open`]
       : [`${o.available} of ${o.units} units available`, `${rupees(o.unitPrice)} a unit`];
   const offer = ok
     ? `${o.units} units are offered to partners at ${rupees(o.unitPrice)} each, ${rupees(o.offered)} in all; ` +
       `the sponsor holds ${rupees(o.promoter)} of the ${rupees(o.totalEquity)} equity. ` +
-      `${o.available ? `${o.available} remain available.` : "All are subscribed."}`
-    : "The offering is not yet published: the record it would be priced from is still being settled.";
+      `${o.available ? `${o.available} remain available.` : "All are subscribed."}` +
+      (o.deposit !== null ? ` A position is held online with a ${rupeesFull(o.deposit)} deposit, refundable in full until the Vehicle Agreement is signed.` : "") +
+      ` Units are then locked in for ${o.lockIn}. The offering letter governs every figure.`
+    : "The offering is not yet published: its figures are still being confirmed, and none is estimated in the meantime.";
   const tokens = {
     vehicle: v.registeredName,
-    LAND: v.landArea.toUpperCase(),
+    LAND: v.landArea,
     KEYS: String(v.keys),
     OFFER: offer,
   };

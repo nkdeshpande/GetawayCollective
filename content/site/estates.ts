@@ -23,7 +23,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: granite ridge at first light, Nandi Hills corridor",
   "eyebrow": "Getaway Collective · Nandi Hills corridor",
   "credit": "A SlowSpace estate · the reference vehicle",
-  "spec": "{{KEYS}} KEYS · {{LAND}} · 65% OF THE LAND KEPT AS IT IS · 2H FROM BENGALURU",
+  "spec": "{{KEYS}} keys · {{LAND}} · 65% of the land kept as it is · 2 h from Bengaluru",
   "intro": "Six keys on six-tenths of an acre, on a granite ridge two hours from Bengaluru. Two-thirds of the land stays exactly as it is. Solace is the first estate the collective will deliver, and the one every other estate will be measured against.",
   "place": {
    "film": [
@@ -382,7 +382,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "plan": {
    "title": "Two buildings, <span>six keys.</span>",
-   "note": "SCHEMATIC · NOT TO SCALE · AREAS FROM THE KEY ROSTER",
+   "note": "Schematic, not to scale. Areas are those scheduled for each key.",
    "tabs": [
     {
      "tab": "Site",
@@ -546,7 +546,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: the river mouth at dusk, Padubidri",
   "eyebrow": "Getaway Collective · Udupi coast",
   "credit": "Seaside Confluence · a SlowSpace estate · the first coastal estate",
-  "spec": "{{KEYS}} KEYS · ONE STEEL BUILDING · {{LAND}}",
+  "spec": "{{KEYS}} keys · one steel building · {{LAND}}",
   "intro": "Twelve keys over the river where it meets the sea, on the Udupi coast. One building, stood on steel so the ground under it is barely touched. Every key looks at the river; the verandah is the useful space.",
   "place": {
    "film": [
@@ -554,7 +554,7 @@ export const ESTATES: Record<string, SiteEstate> = {
     17.2
    ],
    "title": "Two waters meeting. <b>That is the name.</b>",
-   "text": "The estate sits at Nadsal, Padubidri, in Kaup taluk of Udupi district, on the estuarine edge of the coast: the Arabian Sea to the west, the river to the east. The river's name is being confirmed before print. The mangrove along the water is protected and nothing is built or planted in it.",
+   "text": "The estate sits at Nadsal, Padubidri, in Kaup taluk of Udupi district, on the estuarine edge of the coast: the Arabian Sea to the west, a river estuary to the east. The mangrove along the water is protected and nothing is built or planted in it.",
    "coords": "13.117416°N 74.765988°E"
   },
   "concept": {
@@ -973,7 +973,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "plan": {
    "title": "One building, <span>on its parcel.</span>",
-   "note": "SCHEMATIC · NOT TO SCALE · DESIGN INTENT, NOT FOR CONSTRUCTION · EVERY POSITION WAITS ON THE COASTAL ZONE LINE",
+   "note": "Schematic, not to scale, and design intent only: not for construction. Every position waits on the Coastal Regulation Zone line.",
    "tabs": [
     {
      "tab": "Site",
@@ -1081,7 +1081,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Coastal zone",
-    "CRZ line not yet read; decides every position",
+    "The Coastal Regulation Zone (CRZ) line, not yet read from the survey; it decides where every building may stand",
     1
    ],
    [
@@ -1091,25 +1091,20 @@ export const ESTATES: Record<string, SiteEstate> = {
    [
     "Operator",
     "Sensory Getaways; food partner out to tender"
-   ],
-   [
-    "River name",
-    "To be confirmed before print (U-2)",
-    1
    ]
   ],
   "detailsNote": "",
   "waitlist": {
    "chip": "FULLY SUBSCRIBED",
    "title": "Join the <span>waitlist.</span>",
-   "text": "Every offered unit of {{vehicle}} is held. When a partner posts units on the internal register, the waitlist is offered them first, in the order it was joined. A place on the waitlist is not an offer and commits you to nothing.",
+   "text": "Every offered unit of {{vehicle}} is held. If, after the lock-in, a partner offers units for sale, the waitlist is offered them first, in the order it was joined. A place on the waitlist is not an offer and commits you to nothing.",
    "chips": [
     "1 unit",
     "2 units",
     "3 or more"
    ],
-   "ok": "You are on the Confluence waitlist. Investor Relations will write when units are posted on the register; nothing is asked of you until then.",
-   "note": "Units change hands only through the register, at a price the partners agree; nothing guarantees that any will be posted."
+   "ok": "You are on the Confluence waitlist. Investor Relations will write if a partner offers units for sale; nothing is asked of you until then.",
+   "note": "Units change hands only after the lock-in, at a price the partners agree, and a buyer from outside needs their consent. Nothing guarantees that any will be offered."
   },
   "slug": "slowspace-coastal",
   "vehicleKey": "slowspace"
@@ -1125,7 +1120,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: rain over the river-forest, Coorg",
   "eyebrow": "Getaway Collective · Kodagu",
   "credit": "SlowSpace Creek · the riverine flagship",
-  "spec": "{{KEYS}} KEYS · {{LAND}}",
+  "spec": "{{KEYS}} keys · {{LAND}}",
   "intro": "A winding refuge hidden beneath the canopy, where water pulls you slowly away from the world. The water is the site, not the planting: a stream splits the estate into an escarpment and a riparian terrace, and the only way across is on foot.",
   "place": {
    "film": [
@@ -1453,7 +1448,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      },
      {
       "k": "Level",
-      "v": "A placeholder at +96.5, until the flood line is surveyed"
+      "v": "+96.5 m, provisional until the flood line is surveyed"
      }
     ]
    },
@@ -1636,7 +1631,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "plan": {
    "title": "Five clusters, <span>one bridge.</span>",
-   "note": "SCHEMATIC · NOT TO SCALE · POSITIONS PLACED BY RULE, NOT BY SURVEY · NO FLOOD LINE IS DRAWN YET",
+   "note": "Schematic, not to scale. Positions follow the planning rules, not a survey, and no flood line is drawn yet.",
    "tabs": [
     {
      "tab": "Site",
@@ -1781,7 +1776,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: shade-grown coffee slopes in the afternoon, Kodagu",
   "eyebrow": "Getaway Collective · Suntikoppa, Coorg",
   "credit": "Coffee Fields Forever · an ESKAPE estate · the flagship destination",
-  "spec": "20 KEYS · 3.0 ACRES OF WORKING COFFEE · 250 KM FROM BENGALURU",
+  "spec": "20 keys · 3.0 acres of working coffee · 250 km from Bengaluru",
   "intro": "Twenty keys held inside a working coffee plantation at Suntikoppa. The shade-grown canopy is the product: this is the only estate in the collection that farms what it serves.",
   "place": {
    "film": [
@@ -2066,8 +2061,8 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Light",
-    "The aperture",
-    "One minute, at one moment of the day.",
+    "The framed opening",
+    "An opening cut to catch one minute of light, at one moment of the day.",
     "{ink:husk}"
    ],
    [
@@ -2103,8 +2098,8 @@ export const ESTATES: Record<string, SiteEstate> = {
     ],
     [
      "ONE MINUTE",
-     "The aperture minute",
-     "One moment of light, framed."
+     "The minute of light",
+     "Sun through the framed opening, once a day."
     ]
    ],
    "note": "Source: CFF experiences, 09 Aug 2026. No operations plan exists yet; who runs each of these is not appointed."
@@ -2162,7 +2157,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "plan": {
    "title": "Three hamlets, <span>one vault.</span>",
-   "note": "SCHEMATIC · NOT TO SCALE",
+   "note": "Schematic, not to scale.",
    "tabs": [
     {
      "tab": "Site",
@@ -2221,7 +2216,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Key names",
-    "Being decided",
+    "Being chosen; until then each key is named by its hamlet",
     1
    ],
    [
@@ -2230,12 +2225,12 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Price per unit",
-    "Stated in the offering letter",
+    "Set in the offering letter, once the partnership is formed",
     1
    ],
    [
     "Operations plan",
-    "Not yet written",
+    "Not yet written; who runs each ritual is still to be appointed",
     1
    ],
    [
@@ -2250,15 +2245,27 @@ export const ESTATES: Record<string, SiteEstate> = {
 };
 
 export const FAQX: Record<string, [string, string, string][]> = {
+ "solace": [
+  [
+   "Can I still invest in Solace?",
+   "Not in this offering. Every unit offered in Solace Retreats LLP, the partnership that holds Solace, has been taken, and the estate is being built. Units can change hands only after the lock-in, typically 36 months from financial close, and existing partners see them first. You can still ask Investor Relations to write to you if units are ever offered; asking commits you to nothing. SlowSpace Creek, in Kodagu, is the estate open now.",
+   "constants/vehicles.ts · legal.ts G.1–G.3"
+  ],
+  [
+   "When does Solace open?",
+   "Solace is under construction. No handover date is published yet, and this page will not guess one: it will be stated once the building programme is fixed. Partners' nights begin at handover, when the estate is complete and handed to the operating partner to open. Until then there is nothing to draw on, and the number of nights shown for an unbuilt estate is zero rather than a promise.",
+   "constants/vehicles.ts · legal.ts F.2"
+  ]
+ ],
  "confluence": [
   [
    "Can I still invest in Confluence?",
-   "Every unit offered is held. Join the waitlist: when a partner posts units on the internal register, the waitlist hears first, in order.",
-   "LLP agreement · public.ts 330–333"
+   "Not directly: every unit offered in SlowSpace Coastal LLP, the partnership that holds Seaside Confluence, has been taken. You can join the waitlist below. If, after the lock-in, a partner offers units for sale, the waitlist hears first, in the order it was joined. Joining is not an offer and commits you to nothing. Any sale is at a price the buyer and seller agree, and a buyer from outside the partnership needs the partners' consent.",
+   "legal.ts G.1–G.3 · public.ts 330–333"
   ],
   [
    "Is the building already approved?",
-   "Not yet. The coastal zone line still has to be read from the plan sheet, and it decides where the building may stand. The drawings are in design, not yet for construction.",
+   "Not yet. Seaside Confluence sits on the coast, where India's Coastal Regulation Zone (CRZ) rules decide how close to the water anything may be built. That line still has to be read from the survey plan, and every position on the drawings waits on it. The drawings are design intent, not yet issued for construction, and nothing is cleared or built until the line that governs it is drawn.",
    "SSC-00-CN-003 §16"
   ]
  ],
@@ -2270,24 +2277,29 @@ export const FAQX: Record<string, [string, string, string][]> = {
   ],
   [
    "Is Creek the same as Coffee Fields Forever?",
-   "No. Coffee Fields Forever is a different estate about 1.8 km away, under a different house brand.",
+   "No. They are two separate estates about 1.8 km apart in Kodagu, each with its own partnership, its own offering and its own house brand: Creek is a SlowSpace estate, and Coffee Fields Forever an ESKAPE estate. Holding units in one gives you no share, no vote and no nights in the other.",
    "properties.yaml"
   ],
   [
    "When does it open?",
-   "The opening date is not ruled. Nothing is built, and the survey that fixes the flood line is still to come.",
-   "CN-004 sheet 02"
+   "No opening date has been set, and this page will not guess one. Creek is in pre-construction: nothing is built yet, and the survey that fixes the flood line along the creek is still to come. That line decides where each building may stand. Once it is drawn and the design is fixed, a construction programme and a handover date can be stated. Partners' nights begin at handover.",
+   "CN-004 sheet 02 · legal.ts F.2"
   ]
  ],
  "cff": [
   [
+   "Can I invest in Coffee Fields Forever now?",
+   "Not on this platform yet. Its partnership is still being formed, so there is no offering letter, unit price or holding deposit to show here, and none is estimated. Ask Investor Relations and they will write when it opens; asking commits you to nothing. SlowSpace Creek, a separate estate about 1.8 km away, is open now.",
+   "properties.yaml · constants/vehicles.ts"
+  ],
+  [
    "Is this the same estate as Creek?",
-   "No. SlowSpace Creek is a separate estate 1.8 km away, under a different house brand and its own LLP.",
+   "No. SlowSpace Creek is a separate estate about 1.8 km away, under a different house brand and held by its own LLP. Coffee Fields Forever will have its own partnership, its own offering letter and its own partners, and a holding in one carries no share, no vote and no nights in the other.",
    "properties.yaml"
   ],
   [
    "Why are the keys not named?",
-   "Their public names are not yet decided. Until it is made, the page names each key by its hamlet.",
+   "A key is one dwelling at the estate. The public names for Coffee Fields Forever's keys have not been chosen yet, and the working names used in design are not meant for publication. Until the names are chosen, this page refers to each key by the hamlet it sits in, so that nothing printed now has to be withdrawn later.",
    "DECISIONS.md D-07"
   ]
  ]

@@ -21,6 +21,7 @@
 
 import { DOCUMENTS, readingMinutes } from "@/content/legal";
 import { TENURE_LABEL, BUILD_LABEL, type Vehicle } from "@/constants/vehicles";
+import { plainTerms } from "@/lib/plain";
 /* Local, not imported from ./render, which imports this file. */
 const esc = (s: unknown) =>
   String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -100,8 +101,8 @@ export function estateDocket(v: Vehicle, name: string, publishable: boolean): st
       meta: v.incorporated ? `Incorporated ${dt(v.incorporated)} · ${v.registrar}` : `Registrar · ${v.registrar}`,
       stamp: v.llpin ? "On record" : "Not yet", stampTone: v.llpin ? "ok" : "open",
       purpose: v.llpin
-        ? `The partnership that holds ${name}. LLPIN ${v.llpin}.`
-        : `The partnership that will hold ${name}. It is not yet incorporated, so it has no LLPIN.`,
+        ? `The partnership that holds ${name}. Its LLP identification number (LLPIN) is ${v.llpin}.`
+        : `The partnership that will hold ${name}. It is not yet incorporated, so it has no LLP identification number yet.`,
       lists: v.registeredOffice ? [{ h: "Registered office", items: [v.registeredOffice] }] : [],
     },
     {
@@ -111,11 +112,11 @@ export function estateDocket(v: Vehicle, name: string, publishable: boolean): st
       purpose: v.agreementDated
         ? "The agreement every partner signs. Where it and this site differ, the agreement governs."
         : "Not yet executed. Until it is, nothing on this page is a term of partnership.",
-      lists: g ? [{ h: "Decisions, as the register states them", items: [
+      lists: g ? [{ h: "How the partners decide", items: [
         `Ordinary resolution · ${pct(g.ordinaryBps)} of voting interest`,
         `Special resolution · ${pct(g.specialBps)} of voting interest`,
         `Quorum · ${pct(g.quorumBps)}`,
-        `Transfers · ${g.transferRule}`,
+        `Transfers · ${plainTerms(g.transferRule)}`,
       ] }] : [],
     },
     {
@@ -123,21 +124,21 @@ export function estateDocket(v: Vehicle, name: string, publishable: boolean): st
       stamp: publishable ? "On request" : "Not yet", stampTone: publishable ? "wait" : "open",
       purpose: publishable
         ? "The drawings, the structure of the LLP, the waterfall and the risk disclosure, in one document. Sent after a short qualification."
-        : "Not yet published: the record it would be priced from is still being settled.",
+        : "Not yet published: the figures it would be priced from are still being confirmed.",
       links: publishable ? [["Request the pack", `/collection/${v.slug}/enquire`], ["How to qualify", "/how-to-qualify"]] : [],
     },
     {
       label: "Land", eyebrow: "Land and title", title: v.landArea,
       meta: `${v.jurisdiction} · ${BUILD_LABEL[v.buildStage]}`,
-      stamp: titled ? "On record" : v.tenure ? "In progress" : "Not stated",
+      stamp: titled ? "On record" : v.tenure ? "In progress" : "Not on file",
       stampTone: titled ? "ok" : v.tenure ? "wait" : "open",
-      purpose: v.tenure ? TENURE_LABEL[v.tenure] + "." : "The register states no position on how the land is held, and this page does not infer one.",
+      purpose: v.tenure ? TENURE_LABEL[v.tenure] + "." : "How the land is held is not yet on file, so this page does not guess at it.",
     },
     {
       label: "Accounts", eyebrow: "The accounts", title: v.audited ? "Audited accounts" : "Accounts",
       stamp: v.audited ? "On record" : "Not yet", stampTone: v.audited ? "ok" : "open",
       purpose: v.audited
-        ? "The register records this vehicle's accounts as audited. They are not published on this site."
+        ? "This partnership's accounts are audited. They are not published on this site."
         : "No audited accounts exist yet for a vehicle that has not yet traded.",
     },
     ...DOCUMENTS.filter((d) => d.path === "/legal/risk-disclosure" || d.path === "/legal/terms").map((d): DocketTab => ({

@@ -114,7 +114,7 @@ export function wireDA(root: ParentNode): () => void {
       const draw = () => {
         const m = +r.value, left = lock - m;
         fill.style.width = `${((m + 2) / (lock + 8)) * 100}%`;
-        setText(el, "s", m < 0 ? "Before settlement" : left > 0 ? "Months until a unit can move" : "The unit can be posted on the register");
+        setText(el, "s", m < 0 ? "Before settlement" : left > 0 ? "Months until a unit can move" : "The unit can be offered to other partners");
         setText(el, "v", m < 0 ? "Deposit" : left > 0 ? `${left} mo` : "Open");
         const t = f(el, "t"); if (t) { t.textContent = m < 0 ? "Refundable" : left > 0 ? "Locked" : "Register"; t.className = `da-tag ${m < 0 ? "" : left > 0 ? "warn" : "ok"}`; }
       };

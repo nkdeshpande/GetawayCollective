@@ -40,7 +40,7 @@ const ROWS: readonly StageRow[] = [
       { id: "name", label: "Full legal name", help: "As on your identity document." },
       { id: "dob", label: "Date of birth", type: "date" },
     ] },
-  { slug: "address", n: 4, t: "Address", what: "Residential address, for the register and for notices.",
+  { slug: "address", n: 4, t: "Address", what: "Residential address, for the LLP's register of partners and for formal notices.",
     fields: [
       { id: "addr1", label: "Address" },
       { id: "city", label: "City" },

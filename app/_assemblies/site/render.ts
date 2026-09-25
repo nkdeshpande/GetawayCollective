@@ -16,7 +16,7 @@ import { nextFor } from "@/content/site/next";
 import { GATES, estateDocket } from "./docket";
 import { PROJECTOR, momentHour } from "./gallery";
 import type { Reading } from "./registry";
-import { rupees, rupeesFull, src, type Prov } from "./registry";
+import { rupeesFull, src, type Prov } from "./registry";
 import { daHTML, type DAKind } from "../da/render";
 
 const INK = FILM.ink as Readonly<Record<string, string>>;
@@ -166,8 +166,9 @@ export function FIN(E: SiteEstate, R: Reading) {
      vehicle's own stages, and a position built from its own unit price. */
   h += `<div class="fin-da">${daHTML("stack", { vehicle: v.key })}${daHTML("units", { vehicle: v.key })}</div>`;
   h += `<div class="fin-da">${daHTML("waterfall", { vehicle: v.key, money: true })}${daHTML("position", { vehicle: v.key })}</div>`;
-  h += `<p class="note">DEPOSIT ${o.deposit ? rupees(o.deposit) : "NOT STATED"} · LOCK-IN ${esc(o.lockIn.toUpperCase())} · ` +
-    `${esc(v.stack.moratorium.toUpperCase())} · CAPITAL IS AT RISK · NOTHING HERE FORECASTS A RETURN</p></section>`;
+  const lc = (x: string) => x.charAt(0).toLowerCase() + x.slice(1);
+  h += `<p class="note">Holding deposit ${o.deposit ? rupeesFull(o.deposit) : "not yet set"}, refundable in full until the Vehicle Agreement is signed · ` +
+    `Lock-in ${esc(o.lockIn)} · Bank loan ${esc(lc(v.stack.moratorium))} · Capital is at risk, and nothing here forecasts a return.</p></section>`;
   return h;
 }
 
@@ -191,7 +192,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     ...(R ? ["papers"] : []), ...(capital ? ["capital"] : []), waitlist ? "waitlist" : "enquire"];
   const idOf = (s: string) => (s === "waitlist" ? "waitlist" : s === "concept" ? "concept" : `${k}-${s}`);
   let h = `<nav class="pager" aria-label="Sections">${secs.map((s) => `<a href="#${idOf(s)}" aria-label="${s}"></a>`).join("")}</nav>`;
-  const price = R ? R.price : ["Per unit, stated in the offering letter", "not yet a vehicle on this platform"];
+  const price = R ? R.price : ["Price set in the offering letter", "not yet open for investment here"];
   /* An estate that is not yet a vehicle has no enquiry route of its own;
      its questions go to the general desk. */
   const ask = R ? `/collection/${E.slug}/enquire` : "/contact";
@@ -264,12 +265,12 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     (E.detailsNote ? `<p class="mono plan-note">${F(E.detailsNote)}</p>` : "") + "</section>";
   /* The estate's papers, as a docket: each status read from the register. */
   if (R) h += `<section class="dkt-sec" id="${k}-papers"><span class="eb">The papers</span><h2 class="h2">What is <span>on file.</span></h2>` +
-    `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as held that the register does not hold.</p>` +
+    `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as on file unless the partnership actually holds it.</p>` +
     `${estateDocket(R.vehicle, E.name.replace(/<[^>]+>/g, ""), R.publishable)}</section>`;
   if (capital) h += FIN(E, R!);
   h += '<section class="own"><div><b>01</b><h4>Sign in</h4><p>One email: no password, no documents. KYC runs alongside and completes before you sign. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
     '<div><b>02</b><h4>Commit</h4><p>Read the offering letter, the LLP agreement and the risk disclosure. Commit by holding, never by clicking.</p></div>' +
-    `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${esc(R ? R.vehicle.registeredName : fill(E.vehicle, t))}. Your units are on the register; your first vote opens in Member Home.</p></div></section>`;
+    `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${esc(R ? R.vehicle.registeredName : fill(E.vehicle, t))}. Your units are entered in the partnership's register, and your votes, papers and nights are in your partner account.</p></div></section>`;
   h += `<section class="faq dk faq-estate" id="${k}-faq"><h2 class="h2">Questions about <span>${E.name}</span></h2>${faq}</section>`;
   if (waitlist) h += WAIT(E, R);
   else h += `<section class="mk" id="${k}-enquire">${film(E.pal, E.enquireHour || 18)}<div class="cap"><span class="eb">Take the next step</span>` +

@@ -143,13 +143,13 @@ function compareHTML(): string {
     ["Keys", (c) => String(c.v.keys), (c) => c.R.prov.intake],
     ["Land", (c) => esc(c.v.landArea), (c) => c.R.prov.intake],
     ["Stage", (c) => c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase(), (c) => c.R.prov.derived],
-    ["Units", (c) => (c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Record still being settled")), (c) => (c.R.publishable ? c.R.prov.derived : undefined)],
+    ["Units", (c) => (c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Figures being confirmed")), (c) => (c.R.publishable ? c.R.prov.derived : undefined)],
     ["A unit", (c) => (c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
-    ["Lock-in", (c) => (c.R.publishable ? esc(c.v.offering.lockIn) : gap("Stated in the offering letter")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
+    ["Lock-in", (c) => (c.R.publishable ? esc(c.v.offering.lockIn) : gap("Set in the offering letter")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
     ["Held by", (c) => esc(c.v.registeredName), (c) => c.R.prov.intake],
   ];
   return '<section class="cmp" id="compare"><span class="eb">Compare</span><h2 class="h2">The estates, <span>side by side.</span></h2>' +
-    '<p class="para dim">Every figure is read from each estate\'s own register. Capital is at risk; the offering letter governs.</p>' +
+    '<p class="para dim">Every figure is read from each estate\'s own record. Capital is at risk; the offering letter governs.</p>' +
     `<div class="cmp-wrap" tabindex="0" role="region" aria-label="The estates compared"><table class="cmp-t"><thead><tr><th scope="col"><span class="sr">Measure</span></th>${cols.map((c) =>
       `<th scope="col" class="g-${c.g}"><span class="cmp-st">${c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase()}</span><a href="${c.e.href}">${c.e.name}</a></th>`).join("")}</tr></thead>` +
     `<tbody>${rows.map(([k, f, p]) => `<tr><th scope="row">${k}</th>${cols.map((c) => `<td class="g-${c.g}"><span${src(p(c))}>${f(c)}</span></td>`).join("")}</tr>`).join("")}` +
@@ -214,7 +214,7 @@ export function SiteEstate({ slug }: { slug: string }) {
   if (E) {
     const v = vehicleOf(E.vehicleKey);
     const R = v ? read(v) : undefined;
-    const faq = faqHTML([...FAQ, ...(FAQX[E.key] ?? [])], R?.tokens);
+    const faq = faqHTML([...(FAQX[E.key] ?? []), ...FAQ], R?.tokens);
     return <Mount html={PROP(E, R, faq)} />;
   }
   const P = pageByPath(`/collection/${slug}`);

@@ -46,7 +46,7 @@ export const ROLES: readonly CareerRole[] = [
       "Capital and partner relations: qualification, suitability, offering letters, and every communication with partners.",
       "Vehicles and legal engineering: one limited liability partnership per estate, its LLP agreement, its reserved matters and its resolutions.",
       "Land and title: finding the land, diligence on its title, conversion clearances, and title held in the partnership's own name.",
-      "The record and its reporting: the register every figure is read from, the six-stage waterfall, the sinking fund, and what partners receive.",
+      "The records and their reporting: the partnership records every figure on the site is read from, the six-stage waterfall, the sinking fund, and what partners receive.",
       "Governance of the operator: its Service Level, its audits, and replacing an operator that falls short, where the agreement provides.",
     ],
   },
