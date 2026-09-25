@@ -30,9 +30,9 @@ and the GitHub API. Not against any report.
 
 **Still true, re-checked and unchanged:**
 
-- **Branch protection on `main` is off.** The GitHub API returns
-  `Branch not protected`. CI (`.github/workflows/verify.yml`) is green and
-  still enforcing nothing.
+- ~~**Branch protection on `main` is off.**~~ *Closed 25 Sep 2026:*
+  protection requires the `verify` check, is enforced for admins, and
+  blocks force-pushes and deletion. CI runs on every branch push.
 - **`/signal` is dead.** It is absent from `constants/routes.ts`;
   `app/api/signal/route.ts` still exists and is still orphaned.
 - **No external fact can enter the system.** Persistence landing does not
@@ -352,10 +352,10 @@ happen again if nobody is looking for it.
 | Financial Digital Twin | **AMBER, narrower** | Projection is sound; *ingestion* is the gap |
 | Governance Execution | AMBER | Unchanged |
 | AI | AMBER/BLUE | Contracts now declared; engine correctly deferred |
-| Infrastructure | **AMBER** | *Was RED/AMBER.* Database landed 12 Aug. Now amber for a different reason: durable rate limiting is unconfigured in production, no backup restore has been tested, and branch protection is still off |
+| Infrastructure | **AMBER** | *Was RED/AMBER.* Database landed 12 Aug. Now amber for a different reason: durable rate limiting is unconfigured in production and no backup restore has been tested (branch protection closed 25 Sep) |
 
-Still open and unglamorous: **branch protection on `main` is off**, so the
-green CI check is not yet enforcing anything.
+*Closed 25 Sep 2026:* branch protection on `main` now enforces the green
+CI check, for admins too.
 
 ---
 

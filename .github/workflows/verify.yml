@@ -5,15 +5,18 @@
 # skipped: the same eighteen checks and the full suite, on every push
 # and pull request, plus the production build the hook does not run.
 #
-# Branch protection (Settings → Branches → main → require status
-# checks → "verify") turns a red run into a blocked merge. That last
-# step is a dashboard action only the repository owner can take.
+# Branch protection on main requires this check, for admins too since
+# 25 Sep 2026: a commit reaches main only once "verify" has passed on
+# that exact commit. So it runs on a push to ANY branch as well. To ship:
+# push your branch, wait for verify to pass on it, then fast-forward main
+# to it (git push origin <branch>:main), or open a pull request. A direct
+# push of an unverified commit to main is refused.
 
 name: verify
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
   pull_request:
 
 jobs:

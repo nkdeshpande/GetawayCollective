@@ -38,11 +38,18 @@ behind the accreditation gate as touching a real financial instrument, not a
 prototype. The ~9,000 words of Terms/Risk copy remain unreviewed by a
 lawyer and are now published — don't extend them as though settled.
 
-**Two known-open infrastructure gaps** (both verified 12 Aug, both easy to
-mistake for closed because the code is finished): durable rate limiting is
+**One known-open infrastructure gap** (verified 12 Aug, easy to mistake
+for closed because the code is finished): durable rate limiting is
 unconfigured in production, so `lib/rate-limit.ts` runs its per-instance
-in-memory fallback; and branch protection on `main` is off, so the green CI
-check enforces nothing.
+in-memory fallback.
+
+**Branch protection on `main` is ON and enforced for admins** (25 Sep
+2026). The `verify` check must pass on the exact commit before it can land
+on `main`; force-pushes and deletion are blocked. CI runs on every branch
+push, so to ship: push your branch, wait for `verify` to go green on it
+(`gh run list --branch <branch>`), then `git push origin <branch>:main`, or
+open a pull request. A direct push of an unverified commit is refused, and
+that refusal is the gate working, not an obstacle to route around.
 
 ## The root-level `GC-*.html`/`.xlsx` files are not canon
 
