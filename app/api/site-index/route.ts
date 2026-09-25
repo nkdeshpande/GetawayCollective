@@ -15,7 +15,6 @@ import { PAGES } from "@/content/site/pages";
 import { COLLECTION } from "@/content/site/home";
 import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
-import { PASSPORT_STAGES } from "@/content/compositions/passport";
 import { OPERATORS } from "@/content/public";
 import { ROUTES } from "@/constants/routes";
 
@@ -50,7 +49,7 @@ export function GET() {
     /* A page is found by its name ("Press Kit"), and its headline is the summary. */
     else add(["Page", nameOf(p.path, plain(p.eyebrow)), cut(`${plain(p.title)} ${plain(p.lead)}`), p.path]);
   }
-  add(["Page", nameOf("/how-to-qualify", "How to qualify"), `The ${PASSPORT_STAGES.length} stages of accreditation, readable before you begin.`, "/how-to-qualify"]);
+  add(["Page", nameOf("/how-to-qualify", "How to qualify"), "Three steps to owning a retreat, and what the same sum does four ways.", "/how-to-qualify"]);
   add(["Page", nameOf("/operating-partner", "The operating partner"), cut(plain(OPERATORS.standfirst)), "/operating-partner"]);
   add(["Page", nameOf("/collection", "The collection"), "Every estate, where it stands, side by side.", "/collection"]);
   add(["Page", nameOf("/journal", "The Journal"), "One decision an entry, with what it cost.", "/journal"]);

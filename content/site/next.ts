@@ -26,7 +26,7 @@ export const NEXT: Readonly<Record<string, NextStep>> = {
   "/how-we-build": COLLECTION,
   "/press": { stage: "Discover", title: "About Getaway Collective", text: "Who we are, and what we do not do.", href: "/about" },
   "/journal": COLLECTION,
-  "/how-it-works": { stage: "Qualify", title: "How to qualify", text: "The sixteen stages of accreditation, readable before you begin.", href: "/how-to-qualify" },
+  "/how-it-works": { stage: "Qualify", title: "How to qualify", text: "Three steps to owning, and what the same sum does four ways.", href: "/how-to-qualify" },
   "/how-to-qualify": { stage: "Qualify", title: "Questions before you begin", text: "Investor Relations replies on working days, in writing.", href: "/contact" },
   "/operating-partner": HOW,
   "/answers": HOW,

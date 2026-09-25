@@ -706,3 +706,56 @@
 .site .fstep-sum{margin:0;padding:var(--gc-sp-xs) var(--gc-sp-s);background:var(--gc-paper-panel);border-left:2px solid var(--copper);font-size:14.5px;color:var(--ink)}
 .site .fstep-act{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs)}
 .site .fstep-short .ack{font-size:14px}
+
+/* ── how to qualify: what you own, and the returns calculator — 25 Sep 2026 ──
+   (app/_assemblies/site/pages.tsx SiteQualify, ./site/calc.ts). Light page
+   only. Series colours are the estate's copper against three neutrals, so
+   the one line that is ours reads first. */
+.site .own-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--gc-sp-3xs);margin:calc(var(--gc-sp-3xs) * 4) 0}
+.site .own-tile{background:var(--gc-paper-panel);border:1px solid var(--gc-s-rule);padding:calc(var(--gc-sp-3xs) * 5.5) calc(var(--gc-sp-3xs) * 5)}
+.site .own-tile h3{margin:0 0 calc(var(--gc-sp-3xs) * 2);font:700 19px/1.2 var(--display);color:var(--ink)}
+.site .own-tile p{margin:0;color:var(--gc-s-stone);font-size:14.5px}
+.site .calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:calc(var(--gc-sp-3xs) * 6);margin:calc(var(--gc-sp-3xs) * 6) 0;padding:calc(var(--gc-sp-3xs) * 6);background:var(--gc-paper-panel);border:1px solid var(--gc-s-rule);color:var(--ink)}
+.site .calc-in{display:grid;gap:calc(var(--gc-sp-3xs) * 4);align-content:start}
+.site .calc-f{display:grid;gap:calc(var(--gc-sp-3xs) * 1.5)}
+.site .calc-f>span:first-child{font:600 11.5px var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--gc-s-stone)}
+.site .calc-f select,.site .calc-f input[type=number]{font:600 15px var(--text);color:var(--ink);background:var(--light);border:1px solid var(--gc-s-rule);padding:calc(var(--gc-sp-3xs) * 2) calc(var(--gc-sp-3xs) * 2.5);width:100%;min-width:0}
+.site .calc-f input[type=range]{width:100%;accent-color:var(--cd)}
+.site .calc-f output{font-size:15px;color:var(--ink)}
+.site .calc-f small,.site .calc-basis{font-size:12.5px;color:var(--gc-s-stone);margin:0}
+.site .calc-pct{display:flex;align-items:center;gap:calc(var(--gc-sp-3xs) * 1.5)}
+.site .calc-pct input{max-width:110px}
+.site .calc-chk{display:flex;gap:calc(var(--gc-sp-3xs) * 2.5);align-items:flex-start;font-size:14px;color:var(--ink)}
+.site .calc-chk input{margin-top:calc(var(--gc-sp-3xs) * 1);accent-color:var(--cd)}
+.site .calc-asm{border-top:1px solid var(--gc-s-rule);padding-top:calc(var(--gc-sp-3xs) * 3)}
+.site .calc-asm summary{cursor:pointer;font:600 14px var(--text);color:var(--ink)}
+.site .calc-asm[open]{display:grid;gap:calc(var(--gc-sp-3xs) * 3)}
+.site .calc-out{display:grid;gap:calc(var(--gc-sp-3xs) * 4);min-width:0}
+.site .calc-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-3xs)}
+.site .calc-card{display:grid;gap:calc(var(--gc-sp-3xs) * 1.5);padding:calc(var(--gc-sp-3xs) * 4);background:var(--light);border-left:4px solid var(--gc-s-rule)}
+.site .calc-card b{font:400 clamp(24px,2.6vw,34px)/1 var(--mono);letter-spacing:-.04em;color:var(--ink)}
+.site .calc-card small{font-size:12.5px;line-height:1.45;color:var(--gc-s-stone)}
+.site .calc-card.s-est{border-left-color:var(--cd)}
+.site .calc-card.s-apt{border-left-color:var(--moss)}
+.site .calc-card.s-sip{border-left-color:var(--electric)}
+.site .calc-card.s-fd{border-left-color:var(--slate)}
+.site .calc-chart{width:100%;height:auto;display:block}
+.site .calc-chart .c-grid{stroke:var(--gc-s-rule);stroke-width:1}
+.site .calc-chart .c-ax{fill:var(--gc-s-stone);font:500 11px var(--mono)}
+.site .calc-chart .c-line{fill:none;stroke-width:2;stroke-linejoin:round}
+.site .calc-chart .s-nights{stroke:var(--cd);stroke-width:3.5}
+.site .calc-chart .s-est{stroke:var(--cd);stroke-dasharray:6 5}
+.site .calc-chart .s-apt{stroke:var(--moss)}
+.site .calc-chart .s-sip{stroke:var(--electric)}
+.site .calc-chart .s-fd{stroke:var(--slate)}
+.site .calc-nights{margin:0;font-size:15px;color:var(--ink)}
+.site .calc-nights b{font-size:22px;color:var(--cd)}
+.site .calc-cmp{display:grid;margin:calc(var(--gc-sp-3xs) * 2) 0 calc(var(--gc-sp-3xs) * 6);overflow-x:auto}
+.site .calc-cmp>div{display:grid;grid-template-columns:minmax(120px,.8fr) repeat(4,minmax(150px,1fr));gap:calc(var(--gc-sp-3xs) * 4);padding:calc(var(--gc-sp-3xs) * 3.5) 0;border-top:1px solid var(--gc-s-rule);font-size:14px;color:var(--gc-s-stone)}
+.site .calc-cmp>div>span:first-child{font-weight:700;color:var(--ink)}
+.site .calc-cmp>div>span:nth-child(2){color:var(--ink)}
+.site .calc-cmp>.hd{font:600 11.5px var(--text);letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.site .tx-fold{border-top:1px solid var(--gc-s-rule);padding-top:calc(var(--gc-sp-3xs) * 4)}
+.site .tx-fold>summary{cursor:pointer;font:700 17px var(--display);color:var(--ink)}
+.site .tx-fold .tx-h3{margin:calc(var(--gc-sp-3xs) * 6) 0 calc(var(--gc-sp-3xs) * 2);font:600 11.5px var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--gc-s-stone)}
+@media (max-width:860px){.site .calc{grid-template-columns:minmax(0,1fr);padding:calc(var(--gc-sp-3xs) * 4)}.site .calc-cards{grid-template-columns:minmax(0,1fr)}}
