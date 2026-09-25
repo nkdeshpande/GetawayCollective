@@ -30,7 +30,9 @@ import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
 import { openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
 import type { Block, NextStep, SitePage } from "./types";
-import { rulebookDocket } from "./docket";
+import { DOCKET, rulebookDocket } from "./docket";
+import { APPLY, ROLES, WHY } from "@/content/site/careers";
+import { GALLERY } from "./gallery";
 import { PASSPORT_STAGES } from "@/content/compositions/passport";
 import { OPERATORS } from "@/content/public";
 
@@ -77,6 +79,12 @@ export function SiteHome() {
       `<a class="btn go" href="${s.href}">${s.cta} ${NE}</a></section>`).join("") + "</div>" +
     `<section class="ref"><div>${film("solace", 7)}</div><div>${film("creek", 11)}</div><div>${film("cff", 17)}</div>` +
     '<div class="mid"><div><span class="eb">Getaway Collective</span><b>ONE STANDARD</b><p class="para para-s">Every estate held in its own LLP, drawn to one standard, run by one operator.</p><a class="btn" href="/collection">See all</a></div></div></section>' +
+    /* The collection, in frames (./gallery.ts): the fan opens the full-screen viewer, one estate a frame. */
+    `<section class="gal-sec"><div class="gal-head"><span class="eb">The collection, in frames</span>` +
+    `<h2 class="h2">${(COUNT[COLLECTION.length] ?? String(COLLECTION.length)).charAt(0)}${(COUNT[COLLECTION.length] ?? "").slice(1).toLowerCase()} estates, <span>drawn.</span></h2>` +
+    '<p class="para">Open the frames and move through them: swipe, drag, or use the arrow keys. Every frame leads to its estate.</p></div>' +
+    GALLERY("gal-home", "The collection, in frames", COLLECTION.map((c) => ({ pal: c.pal, hour: c.hour, t: c.name.replace(/<[^>]+>/g, ""), line: `${c.line} · ${c.spec}`, href: c.href }))) +
+    "</section>" +
     '<section class="next"><div class="center gut"><h2 class="h2">Next <span>estates</span></h2><p class="para mute">Named, surveyed, not yet open. Each will arrive with its own offering letter.</p></div><div class="rail">' +
     NEXT_ESTATES.map((n) => `${n.href ? `<a class="nc" href="${n.href}">` : '<article class="nc">'}<div class="im">${film(n.pal, n.hour)}</div><h4>${n.name}</h4><p>${n.line}</p>${n.href ? "</a>" : "</article>"}`).join("") + "</div></section>" +
     '<section class="makers"><div class="trio">' +
@@ -371,6 +379,30 @@ export function SiteQualify() {
     key: "qualify", path: "/how-to-qualify", light: 1, eyebrow: "How to qualify",
     title: "Own a retreat <span>in three steps.</span>",
     lead: "Qualify online, at your own pace. Hold your units with a refundable deposit. Sign, and a share of the place is yours, with nights of your own every year.",
+    blocks,
+  };
+  return <Mount html={TXT(P)} light />;
+}
+
+// ── careers: the two roles, as a docket (content/site/careers.ts) ──
+export function SiteCareers() {
+  const blocks: Block[] = [
+    { lede: "Getaway Collective runs as two roles, kept apart on purpose. One holds the capital and governs; the other runs the estates and carries the brands. Everything the company does belongs to one of them." },
+    { h: "The two roles" },
+    { html: DOCKET("roles", "The two roles", ROLES.map((r) => ({
+      label: r.label, eyebrow: r.holder, title: r.title, stamp: r.stamp, purpose: r.purpose,
+      lists: [{ h: "What the role holds", items: r.holds }, { h: "Orientation", items: [r.orientation] }],
+    }))) },
+    { h: "Why two, and not one" },
+    { gates: { id: "why", label: "Why the company is two roles", items: WHY.map((w) => ({ t: w.t, sub: w.sub, text: w.text })) } },
+    { links: [["The Terms", "/legal/terms"], ["The operating partner", "/operating-partner"]] },
+    { h: "How to apply" },
+    { p: `Write to <span class="mono sel">${esc(APPLY.address)}</span>. ${esc(APPLY.ask)}` },
+  ];
+  const P: SitePage = {
+    key: "careers", path: "/careers", light: 1, eyebrow: "Careers",
+    title: "Two roles. <span>One company.</span>",
+    lead: "The work of Getaway Collective, divided the way the company is: capital and governance on one side, operations and brand on the other.",
     blocks,
   };
   return <Mount html={TXT(P)} light />;

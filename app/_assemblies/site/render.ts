@@ -14,6 +14,7 @@ import { FILM, SITE } from "@/constants/tokens";
 import type { Block, Card, Concept, FilmRef, FormSpec, MapSpec, NextStep, SiteEstate, SitePage, Volume } from "./types";
 import { nextFor } from "@/content/site/next";
 import { GATES, estateDocket } from "./docket";
+import { PROJECTOR, momentHour } from "./gallery";
 import type { Reading } from "./registry";
 import { rupees, rupeesFull, src, type Prov } from "./registry";
 import { daHTML, type DAKind } from "../da/render";
@@ -237,9 +238,15 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
       }
       return `<div><div class="t"><span>${m[0]}</span><b>${m[1]}</b><p>${F(m[2])}</p></div><svg viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">${bars}</svg></div>`;
     }).join("") + "</div></section>";
-  h += `<section class="day" id="${k}-day"><span class="eb">${E.day.eyebrow}</span><h2 class="h2">${E.day.title}</h2><div class="clock">` +
-    E.day.items.map((d) => `<div><b>${d[0]}</b><h4>${d[1]}</h4><p>${F(d[2])}</p></div>`).join("") +
-    `</div><p class="para day-note">${F(E.day.note)}</p></section>`;
+  /* The day, as the estate's centred gallery (./gallery.ts PROJECTOR): each
+     moment is the estate's own film relit at that hour, captioned below. */
+  const strip = (s: string) => s.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&");
+  h += `<section class="day" id="${k}-day"><span class="eb">${E.day.eyebrow}</span><h2 class="h2">${E.day.title}</h2>` +
+    PROJECTOR(`pj-${k}`, strip(E.day.eyebrow), E.day.items.map((d, i) => {
+      const m = momentHour(String(d[0]), i);
+      return { pal: E.pal, hour: m.hour, rain: m.rain, label: String(d[0]), t: strip(String(d[1])), line: strip(F(String(d[2]))) };
+    })) +
+    `<p class="para day-note">${F(E.day.note)}</p></section>`;
   const G = E.getting;
   h += `<section class="getting" id="${k}-getting"><div><span class="eb">Getting there</span><h2 class="h2">${G.title}</h2><p class="para dim">${F(G.sub)}</p><div class="tcards">` +
     G.cards.map((c, i) => `<button type="button" aria-pressed="${i === 0}"><b>${c[0]}</b><em>${c[1]}</em><span>${F(c[2])}</span></button>`).join("") +

@@ -51,6 +51,7 @@ export function GET() {
   }
   add(["Page", nameOf("/how-to-qualify", "How to qualify"), "Three steps to owning a retreat, and what the same sum does four ways.", "/how-to-qualify"]);
   add(["Page", nameOf("/operating-partner", "The operating partner"), cut(plain(OPERATORS.standfirst)), "/operating-partner"]);
+  add(["Page", nameOf("/careers", "Careers"), "Two roles: the master developer and asset manager, and the operating and brand partner.", "/careers"]);
   add(["Page", nameOf("/collection", "The collection"), "Every estate, where it stands, side by side.", "/collection"]);
   add(["Page", nameOf("/journal", "The Journal"), "One decision an entry, with what it cost.", "/journal"]);
   for (const j of JOURNAL) add([`Journal · ${KIND_LABEL[j.kind]}`, j.title, j.standfirst, `/journal/${j.slug}`]);

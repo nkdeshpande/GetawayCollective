@@ -42,11 +42,11 @@ describe("canonical IA v5", () => {
   it("wires the canon plus the aliases, conventions, contact and the desk", () => {
     // 112 until six duplicate property chapters were retired, 21 Sep 2026;
     // 114 since the investor record's two Office routes, 25 Sep 2026;
-    // 116 with /how-to-qualify and /operating-partner the same day.
-    expect(ROUTES).toHaveLength(116);
-    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(116);
+    // 116 with /how-to-qualify and /operating-partner the same day; 117 with /careers.
+    expect(ROUTES).toHaveLength(117);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(117);
     const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
-    expect(records).toHaveLength(117);   // 107 before the site skin, 113 before the retirement, 113 + 2 + 2 on 25 Sep
+    expect(records).toHaveLength(118);   // 107 before the site skin, 113 before the retirement, 113 + 2 + 2 + 1 on 25 Sep
     expect(new Set(records).size).toBe(records.length);
   });
 

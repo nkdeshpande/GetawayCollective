@@ -197,6 +197,7 @@ const BY_PATH = {
   "/press": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/press" },
   "/how-to-qualify": { component: "SiteQualify", from: "@/app/_assemblies/site/pages" },
   "/operating-partner": { component: "SiteOperator", from: "@/app/_assemblies/site/pages" },
+  "/careers": { component: "SiteCareers", from: "@/app/_assemblies/site/pages" },
   "/answers": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/answers" },
   "/glossary": { component: "SiteText", from: "@/app/_assemblies/site/pages", prop: "/glossary" },
   /* GC-400. Was falling through to the registry scaffold, which published

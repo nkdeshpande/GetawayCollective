@@ -277,6 +277,8 @@ export const PUBLIC_ROUTES: readonly Route[] = [
   /* Added 25 Sep 2026: two pages whose copy existed with no route. */
   R("GC-492", "/how-to-qualify", "How to Qualify", "gateway", "AS-32",
     { notes: "The sixteen passport stages, readable before signing in, read from the same table the stage pages use. Starts nothing." }),
+  R("GC-496", "/careers", "Careers", "gateway", "AS-32",
+    { notes: "The company's two roles, from the founder's Strategic Partition: capital and governance; operations and brand. Roles, not vacancies." }),
   R("GC-494", "/operating-partner", "The Operating Partner", "gateway", "AS-32",
     { notes: "PUB.06, The Invisible Hand: who runs each estate, how it is measured and paid, and what happens when it fails." }),
   // ── The legal corpus ──────────────────────────────────────────────

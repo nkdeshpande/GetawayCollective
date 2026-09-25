@@ -18,6 +18,7 @@
 .site .dim{color:revert}
 .site .fin-da{display:revert;gap:revert;grid-template-columns:revert;margin-top:revert}
 .site .foot{border-top:revert;margin-top:revert;padding:revert}
+.site .gal{overflow:revert;padding:revert;position:revert}
 .site .hero{align-items:revert;border-bottom:revert;display:revert;min-height:revert;overflow:revert;position:revert}
 .site .hero .go{display:revert;flex-wrap:revert;gap:revert;margin-top:revert}
 .site .hero h1{max-width:revert}
@@ -880,3 +881,58 @@
 .site .tx-fold>summary{cursor:pointer;font:700 17px var(--display);color:var(--ink)}
 .site .tx-fold .tx-h3{margin:calc(var(--gc-sp-3xs) * 6) 0 calc(var(--gc-sp-3xs) * 2);font:600 11.5px var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--gc-s-stone)}
 @media (max-width:860px){.site .calc{grid-template-columns:minmax(0,1fr);padding:calc(var(--gc-sp-3xs) * 4)}.site .calc-cards{grid-template-columns:minmax(0,1fr)}}
+
+/* -- The gallery and the projector (./site/gallery.ts) · 25 Sep 2026 --------
+   The collection's gallery: a fan of frames that opens a full-screen viewer.
+   Each estate's projector: its day, centred, one frame at a time, cut not
+   faded. Pictures are untreated and captions sit below them (21 Sep ruling). */
+.site .gal-sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:var(--gc-sp-2xl);align-items:center;padding:20vh var(--gut) 18vh}
+.site .gal-head{display:grid;gap:var(--gc-sp-s);max-width:460px}
+.site .gal-head .para{color:var(--gc-s-fog)}
+.site .gal{display:grid;justify-items:center;gap:var(--gc-sp-s)}
+.site .gal-fan{position:relative;width:100%;height:clamp(280px,30vw,400px);padding:0;border:0;background:none;cursor:pointer}
+.site .gal-card{--c:10px;position:absolute;left:50%;bottom:var(--gc-sp-m);width:clamp(128px,13vw,196px);aspect-ratio:4/5;overflow:hidden;background:var(--gc-s-coal);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2));transform-origin:50% 100%;transform:translateX(calc(-50% + var(--i) * 54%)) translateY(calc(var(--a) * 14px)) rotate(calc(var(--i) * 5deg));transition:transform .6s var(--ease)}
+.site .gal-fan:hover .gal-card,.site .gal-fan:focus-visible .gal-card{transform:translateX(calc(-50% + var(--i) * 66%)) translateY(calc(var(--a) * 8px - 14px)) rotate(calc(var(--i) * 6deg))}
+.site .gal-fan:focus-visible{outline:2px solid var(--electric);outline-offset:var(--gc-sp-2xs)}
+.site .gal-hint{margin:0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gc-s-mute)}
+.site .gal-ov{position:fixed;inset:0;z-index:95;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:var(--gc-s-night);color:var(--paper)}
+.site .gal-hud{display:flex;align-items:center;gap:var(--gc-sp-m);padding:var(--gc-sp-m) var(--gut)}
+.site .gal-idx{margin-left:auto;font-size:12px;color:var(--gc-s-fog);white-space:nowrap}
+.site .gal-x{flex:none;white-space:nowrap;padding:var(--gc-sp-2xs) var(--gc-sp-s);border:1px solid var(--gc-s-line-2);background:none;color:var(--paper);font:600 12px var(--text);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.site .gal-x .mono{margin-left:var(--gc-sp-3xs);color:var(--gc-s-mute)}
+.site .gal-x:hover,.site .gal-x:focus-visible{background:var(--paper);color:var(--gc-s-night)}
+.site .gal-vp{position:relative;display:flex;align-items:center;gap:var(--gc-sp-l);padding:0 12vw;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;outline:none}
+.site .gal-vp::-webkit-scrollbar{display:none}
+.site .gal-vp.drag{cursor:grabbing;user-select:none}
+.site .gal-f{flex:none;width:min(76vw,1180px);margin:0;display:grid;gap:var(--gc-sp-s);scroll-snap-align:center;opacity:.38;transform:scale(.94);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.site .gal-f.on{opacity:1;transform:none}
+.site .gal-m{position:relative;aspect-ratio:16/9;max-height:62vh;overflow:hidden;background:var(--gc-s-coal)}
+.site .gal-f figcaption{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:var(--gc-sp-3xs) var(--gc-sp-m);align-items:baseline}
+.site .gal-f figcaption .mono{grid-column:1/-1;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gc-s-mute)}
+.site .gal-f figcaption b{font:800 clamp(26px,3.4vw,52px)/1 var(--display);letter-spacing:-.035em;text-transform:uppercase}
+.site .gal-f figcaption em{font-style:normal;font-size:14.5px;color:var(--gc-s-fog)}
+.site .gal-f figcaption .btn{justify-self:end}
+.site .gal-foot{display:flex;align-items:center;justify-content:center;gap:var(--gc-sp-m);padding:var(--gc-sp-m) var(--gut) var(--gc-sp-l)}
+.site .gal-step{width:44px;height:44px;border:1px solid var(--gc-s-line-2);background:none;color:var(--paper);font:400 18px var(--text);cursor:pointer}
+.site .gal-step:hover,.site .gal-step:focus-visible{background:var(--paper);color:var(--gc-s-night)}
+.site .gal-step:active{transform:translateY(2px)}
+.site .gal-bar{position:relative;width:min(240px,40vw);height:1px;background:var(--gc-s-line-2)}
+.site .gal-bar i{position:absolute;inset:0;background:var(--paper);transform-origin:0 50%;transform:scaleX(0);transition:transform .3s var(--ease)}
+@media (max-width:900px){.site .gal-sec{grid-template-columns:1fr}.site .gal-f{width:86vw}.site .gal-vp{padding:0 7vw}.site .gal-f figcaption{grid-template-columns:1fr}.site .gal-f figcaption .btn{justify-self:start}}
+
+.site .proj{display:grid;justify-items:center;gap:var(--gc-sp-m);margin-top:var(--gc-sp-xl)}
+.site .proj-screen{width:100%;display:grid;justify-items:center;padding:clamp(var(--gc-sp-m),4vw,var(--gc-sp-3xl)) var(--gc-sp-s);background:var(--gc-s-night)}
+.site .proj-f{width:min(100%,960px);margin:0;display:grid;gap:var(--gc-sp-s)}
+.site .proj-plate{position:relative;width:min(100%,calc(64vh * 4 / 3));margin-inline:auto;aspect-ratio:4/3;overflow:hidden;background:var(--gc-s-coal);box-shadow:0 0 140px var(--gc-s-rim)}
+.site .proj-screen.cut .proj-f{visibility:hidden}
+.site .proj-f figcaption{display:grid;gap:var(--gc-sp-3xs)}
+.site .proj-f figcaption .mono{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gc-s-fog)}
+.site .proj-f figcaption b{font:800 clamp(22px,2.6vw,36px)/1.05 var(--display);letter-spacing:-.025em}
+.site .proj-f figcaption em{max-width:62ch;font-style:normal;font-size:15px;line-height:1.55;color:var(--gc-s-fog)}
+.site .proj-console{display:flex;align-items:center;justify-content:center;gap:var(--gc-sp-l);width:min(100%,960px);padding-top:var(--gc-sp-s);border-top:2px solid var(--gc-s-line-2)}
+.site .proj-btn{min-width:96px;padding:var(--gc-sp-2xs) var(--gc-sp-s);border:1px solid var(--gc-s-line-2);background:none;color:var(--paper);font:600 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.site .proj-btn:hover,.site .proj-btn:focus-visible{background:var(--paper);color:var(--gc-s-night)}
+.site .proj-btn:active{transform:translateY(2px)}
+.site .proj-idx{font-size:13px;letter-spacing:.1em;color:var(--paper)}
+.site .proj-note{max-width:62ch;margin:0;text-align:center;font-size:11px;color:var(--gc-s-mute)}
+@media (prefers-reduced-motion:reduce){.site .gal-card,.site .gal-f,.site .gal-bar i{transition:none}}

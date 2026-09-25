@@ -87,6 +87,7 @@ function resolve(pattern: string, p: Readonly<Record<string, string>>): { title?
     return { title: where ? `${name} · ${where}` : name, description: plain(e?.intro) || plain(page?.lead) };
   }
   if (pattern === "/how-to-qualify") return { description: "Own a share of a retreat in three steps: qualify online, hold your units with a refundable deposit, sign. And what the same sum does in an estate, an apartment, a fixed deposit and an equity SIP." };
+  if (pattern === "/careers") return { description: "Getaway Collective runs as two roles: the master developer and asset manager, who holds the capital and governs; and the operating and brand partner, who runs the estates." };
   if (pattern === "/operating-partner") return { description: "Who runs each Getaway Collective estate day to day, how the operating partner is measured and paid, and what happens when it fails." };
   const page = Object.values(PAGES).find((x) => x.path === pattern);
   return page ? { description: plain(page.lead) } : {};

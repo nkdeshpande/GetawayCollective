@@ -146,6 +146,7 @@ export function llmsTxt(): string {
     `- [How it works](${SITE}/how-it-works): units, the waterfall, decisions, nights`,
     `- [How to qualify](${SITE}/how-to-qualify): three steps to owning, and a calculator comparing an estate with an apartment, a fixed deposit and an equity SIP`,
     `- [The operating partner](${SITE}/operating-partner): who runs each estate and how it is measured`,
+    `- [Careers](${SITE}/careers): the company's two roles, capital and governance, operations and brand`,
     `- [Press kit](${SITE}/press): boilerplates, fact sheet and usage`, "",
     "## The collection",
     ...places().map(({ node: p }) => `- [${p.name}](${p.url}): ${p.description.slice(0, 160)}`), "",

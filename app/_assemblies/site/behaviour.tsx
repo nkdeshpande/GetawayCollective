@@ -300,6 +300,110 @@ function tabsets(root: HTMLElement): () => void {
   return () => off.forEach((x) => x());
 }
 
+/* ── THE GALLERY AND THE PROJECTOR (./gallery.ts) ─────────────────────
+   The gallery: the fan opens a full-screen viewer that scrolls a frame at
+   a time (swipe, wheel, mouse drag, arrow keys), traps focus while open,
+   and gives focus back to the fan when closed. The projector: one estate,
+   centred, stepped with a hard shutter cut, never advancing by itself. */
+const two = (n: number) => String(n).padStart(2, "0");
+function galleries(root: HTMLElement, still: boolean): () => void {
+  const off: (() => void)[] = [];
+  const on = (el: EventTarget, ev: string, fn: EventListener, opt?: AddEventListenerOptions) => { el.addEventListener(ev, fn, opt); off.push(() => el.removeEventListener(ev, fn)); };
+  $$("[data-gal]", root).forEach((g) => {
+    const ov = $<HTMLElement>(".gal-ov", g), vp = $<HTMLElement>("[data-gal-vp]", g), opener = $<HTMLButtonElement>("[data-gal-open]", g);
+    if (!ov || !vp || !opener) return;
+    const frames = $$<HTMLElement>(".gal-f", vp), idx = $(".gal-idx", g), bar = $<HTMLElement>(".gal-bar i", g);
+    let cur = 0, raf = 0;
+    const mark = () => {
+      const c = vp.scrollLeft + vp.clientWidth / 2;
+      let best = 0, bd = Infinity;
+      frames.forEach((f, i) => { const d = Math.abs(f.offsetLeft + f.offsetWidth / 2 - c); if (d < bd) { bd = d; best = i; } });
+      cur = best;
+      frames.forEach((f, i) => f.classList.toggle("on", i === cur));
+      if (idx) idx.textContent = `${two(cur + 1)} / ${two(frames.length)}`;
+      if (bar) bar.style.transform = `scaleX(${(cur + 1) / frames.length})`;
+    };
+    const go = (i: number, smooth = true) => {
+      const f = frames[Math.max(0, Math.min(frames.length - 1, i))];
+      if (f) vp.scrollTo({ left: f.offsetLeft - (vp.clientWidth - f.offsetWidth) / 2, behavior: smooth && !still ? "smooth" : "auto" });
+    };
+    const open = () => {
+      ov.hidden = false; opener.setAttribute("aria-expanded", "true");
+      document.documentElement.style.overflow = "hidden";
+      requestAnimationFrame(() => { go(0, false); mark(); $<HTMLElement>(".gal-x", ov)?.focus(); });
+    };
+    const close = () => {
+      ov.hidden = true; opener.setAttribute("aria-expanded", "false");
+      document.documentElement.style.overflow = "";
+      opener.focus();
+    };
+    on(opener, "click", open);
+    $$("[data-gal-close]", ov).forEach((b) => on(b, "click", close));
+    const prev = $("[data-gal-prev]", ov), next = $("[data-gal-next]", ov);
+    if (prev) on(prev, "click", () => go(cur - 1));
+    if (next) on(next, "click", () => go(cur + 1));
+    on(vp, "scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(mark); }, { passive: true });
+    on(ov, "keydown", ((e: KeyboardEvent) => {
+      if (e.key === "Escape") { e.preventDefault(); close(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); go(cur + 1); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); go(cur - 1); }
+      else if (e.key === "Tab") {
+        const f = $$<HTMLElement>('button, a[href], [tabindex="0"]', ov).filter((x) => !x.closest("[hidden]"));
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }) as EventListener);
+    /* A mouse can drag the frames as a finger swipes them; snapping resumes on release. */
+    let down = false, sx = 0, sl = 0, moved = false;
+    on(vp, "pointerdown", ((e: PointerEvent) => {
+      if (e.pointerType !== "mouse" || e.button !== 0) return;
+      down = true; moved = false; sx = e.clientX; sl = vp.scrollLeft; vp.style.scrollSnapType = "none"; vp.classList.add("drag");
+    }) as EventListener);
+    on(window, "pointermove", ((e: PointerEvent) => {
+      if (!down) return;
+      const dx = e.clientX - sx; if (Math.abs(dx) > 4) moved = true;
+      vp.scrollLeft = sl - dx;
+    }) as EventListener);
+    on(window, "pointerup", () => {
+      if (!down) return;
+      down = false; vp.classList.remove("drag"); vp.style.scrollSnapType = "";
+      mark(); go(cur);
+    });
+    /* A drag that moved is not a click on the link beneath it. */
+    on(vp, "click", ((e: MouseEvent) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }) as EventListener, { capture: true });
+  });
+  return () => { off.forEach((x) => x()); document.documentElement.style.overflow = ""; };
+}
+
+function projectors(root: HTMLElement, still: boolean): () => void {
+  const off: (() => void)[] = [];
+  $$("[data-proj]", root).forEach((p) => {
+    const figs = $$<HTMLElement>(".proj-f", p), idx = $(".proj-idx", p), scr = $<HTMLElement>(".proj-screen", p);
+    let cur = 0, t = 0;
+    const show = (i: number) => {
+      const n = (i + figs.length) % figs.length;
+      if (n === cur) return;
+      const swap = () => { figs.forEach((f, k) => { f.hidden = k !== n; }); cur = n; if (idx) idx.textContent = `${two(n + 1)} / ${two(figs.length)}`; };
+      if (still || !scr) { swap(); return; }
+      /* The shutter: black for a beat, then the next frame, whole. No fade. */
+      scr.classList.add("cut");
+      clearTimeout(t);
+      t = window.setTimeout(() => { swap(); scr.classList.remove("cut"); }, 110);
+    };
+    const prev = $("[data-proj-prev]", p), next = $("[data-proj-next]", p);
+    const a = () => show(cur - 1), b = () => show(cur + 1);
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); a(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); b(); }
+    };
+    prev?.addEventListener("click", a); next?.addEventListener("click", b); p.addEventListener("keydown", key);
+    off.push(() => { prev?.removeEventListener("click", a); next?.removeEventListener("click", b); p.removeEventListener("keydown", key); clearTimeout(t); });
+  });
+  return () => off.forEach((x) => x());
+}
+
 /* ── AN ENQUIRY IN TWO STEPS (d11) ────────────────────────────────────
    What the question is, then who is asking. The second step shows the
    first back in one line, with a way to change it. */
@@ -476,7 +580,7 @@ export function SiteBehaviour() {
     }
 
     /* figure sources, the shortlist and the two-step enquiry */
-    off.push(figures(root), shortlist(root), steps(root), tabsets(root));
+    off.push(figures(root), shortlist(root), steps(root), tabsets(root), galleries(root, still), projectors(root, still));
 
     /* copy buttons: clipboard where it is allowed, a selection where it is not */
     $$(".tx-copy", root).forEach((c) => {

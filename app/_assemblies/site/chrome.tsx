@@ -74,7 +74,7 @@ export function SiteFooter() {
           <span className="eb">Company</span>
           <Link href="/about">About us</Link><Link href="/team">Team</Link><Link href="/how-we-build">How we build</Link>
           <Link href="/how-it-works">How it works</Link><Link href="/journal">Journal</Link><Link href="/press">Press kit</Link>
-          <Link href="/how-to-qualify">How to qualify</Link><Link href="/operating-partner">Operating partner</Link>
+          <Link href="/how-to-qualify">How to qualify</Link><Link href="/operating-partner">Operating partner</Link><Link href="/careers">Careers</Link>
           <Link href="/answers">Answers</Link><Link href="/glossary">Glossary</Link>
         </div>
         <div>
