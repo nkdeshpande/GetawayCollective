@@ -123,6 +123,9 @@ export const INTERNAL_ONLY_RIGHTS: readonly Right[] = [
   "capital.call", "capital.deploy", "distribution.execute", "ownership.transfer",
   "accreditation.grant", "policy.approve", "resolution.table", "resolution.resolve",
   "constitutional_failure.declare",
+  /* 25 Sep 2026: the investor record. Who is on the register, what they
+     hold and where they are paid never leave the constitutional functions. */
+  "investor.register", "kyc.record", "bank.record", "position.record",
 ] as const;
 
 export interface Register {

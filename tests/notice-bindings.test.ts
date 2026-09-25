@@ -38,7 +38,7 @@ describe("every reference resolves", () => {
     /* Guard the guard. An empty set would pass every membership check
        vacuously if the import ever broke — which is exactly how this
        assertion first failed, resolving to undefined and testing nothing. */
-    expect(real.size).toBe(55);
+    expect(real.size).toBe(58); // 55 + the investor record's three, 25 Sep 2026
     for (const b of NOTICE_BINDINGS) {
       if (b.eventType === null) continue;
       expect(real.has(b.eventType), `${b.gcEvent} -> ${b.eventType}`).toBe(true);

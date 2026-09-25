@@ -260,6 +260,23 @@ export const DECLARED_ACTS: readonly DeclaredAct[] = [
   A({ command: "DeclareReserveBreach",
       why: "A breach is a finding against a floor a human set, and declaring one starts obligations that cannot be quietly withdrawn.",
       aiMay: "Escalate the reserve position against its floor the moment it crosses, with the arithmetic shown." }),
+
+  /* The investor record, 25 Sep 2026. All four are declared, not
+     file-borne: each is a statement about a named person, entered by the
+     admin who holds its right, with the document it rests on held by
+     Investor Relations rather than read into a proposal. */
+  A({ command: "RegisterInvestor",
+      why: "Putting a person on the register ties their sign-in to everything they will later hold. An enquiry, a form or a forwarded email is a request to be registered, not the registration.",
+      aiMay: "Point out Desk contacts who have taken every step short of registration, and stop there." }),
+  A({ command: "RecordKyc",
+      why: "A KYC state is a judgement that a person is who they say they are. The documents evidence it; the determination is a person's, and it carries their reason.",
+      aiMay: "List records whose review date has passed or whose stages are incomplete, stating which." }),
+  A({ command: "RecordBankAccount",
+      why: "A change of payment destination is the one change every payment fraud needs, and it most often arrives as a convincing document. It is never proposed from one.",
+      aiMay: "Escalate any account recorded without a verification date, and any change made in the thirty days before a distribution." }),
+  A({ command: "RecordRegisterEntry",
+      why: "What a partner owns is transcribed from the LLP's own register by the Board, never inferred from a statement or a subscription form, because the transcription is what decides who votes and who is paid.",
+      aiMay: "Report each vehicle whose recorded units fall short of the units it issued, with the gap." }),
 ];
 
 /* ── The pipeline ─────────────────────────────────────────────────── */

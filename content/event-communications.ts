@@ -469,6 +469,29 @@ export const EVENT_COMMUNICATIONS: readonly EventCommunicationSpec[] = [
     email: { policy: "digest", subject: "Ledger posting digest", preheader: "Balanced entries posted during the period.", heading: "Ledger entries posted", body: "This digest lists balanced entries posted during the period, with dates, accounts, sources, and permanent references. Corrections appear as new entries.", cta: "Open ledger" },
     completion: "Posted immutably; any correction must be a new entry.",
   }),
+
+  /* The investor record, 25 Sep 2026 — in EVENT_TYPES order. */
+  C({
+    event: "InvestorRegistered", domain: "Identity", recipients: ["actor", "office"], tone: "info",
+    product: { surface: "toast", title: "Investor registered", body: "The person is on the register under their legal name and sign-in address. Nothing else is conferred.", cta: "Open record", persistent: false },
+    interruption: { pattern: "review-and-confirm", trigger: "Before registering", reason: "Legal name, sign-in address and tax residence must match the person's own documents; a second record for one address is refused." },
+    email: { policy: "digest", subject: "Investor register updated", preheader: "A person was added to the investor register.", heading: "Investor registered", body: "A person was added to the investor register. Registration confers no accreditation, no membership and no position in any estate.", cta: "Open register" },
+    completion: "Registered; standing follows only from later acts.",
+  }),
+  C({
+    event: "KycRecorded", domain: "Compliance", recipients: ["actor", "office"], tone: "info",
+    product: { surface: "alert-center", title: "KYC recorded", body: "The state of each check and the overall KYC state are on record, with the reason given.", cta: "Review KYC", persistent: true },
+    interruption: { pattern: "evidence-gate", trigger: "Before recording", reason: "Each stage must rest on a document or check held by Investor Relations; verified only when every stage is verified, with a date." },
+    email: { policy: "digest", subject: "KYC record updated", preheader: "The state of each check and the reason are on record.", heading: "KYC recorded", body: "The KYC record was updated. Review each stage, the overall state, the dates and the reason given. No identity number appears in this notice.", cta: "Review KYC" },
+    completion: "Recorded with its reason; the PAN, if given, is held encrypted.",
+  }),
+  C({
+    event: "BankAccountRecorded", domain: "Compliance", recipients: ["actor", "office", "investor"], tone: "warning",
+    product: { surface: "alert-center", title: "Payment account recorded", body: "The account distributions are paid to has been recorded or changed. It is shown only by its last four digits.", cta: "Review account", persistent: true },
+    interruption: { pattern: "typed-confirmation", trigger: "Before recording", reason: "The account number is typed twice and must match; the holder name, bank, IFSC, verification method and reason are required." },
+    email: { policy: "immediate", subject: "Your payment account was updated", preheader: "If you did not ask for this, write to Investor Relations today.", heading: "Payment account recorded", body: "The account your distributions are paid to was recorded or changed on your record. It is shown only by its last four digits. If you did not ask for this change, write to Investor Relations today.", cta: "Review account" },
+    completion: "Recorded encrypted; payments follow only a verified account.",
+  }),
 ].map((spec, index) => ({
   ...spec,
   id: `COM-${String(index + 1).padStart(3, "0")}` as const,

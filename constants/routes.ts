@@ -421,6 +421,16 @@ export const OFFICE_ROUTES: readonly Route[] = [
     { rights: ["compliance.record"],
       notes: "Who has reached us and has not yet been answered. Inbound only — a contact is not " +
              "an Investor until somebody with authority says so." }),
+  /* 25 Sep 2026. The investor record: who is on the register, their KYC,
+     the account they are paid to, and what they hold. Each act on these
+     pages is its own capability with its own right; the route admits any
+     Office identity and each form says which admin may use it. */
+  R("OFF-096", "/office/investors", "Investors", "admin", "AS-13",
+    { rights: ["investor.register"],
+      notes: "Who is on the investor register, and which estates are on the platform's record." }),
+  R("OFF-097", "/office/investors/[investor]", "Investor", "admin", "AS-13",
+    { params: ["investor"], rights: ["investor.register"],
+      notes: "One person: their KYC, the account they are paid to, and what they hold." }),
 
   R("OFF-100", "/office/collection", "Collection", "admin", "AS-13",
     { rights: ["portfolio.manage"],

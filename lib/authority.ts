@@ -59,6 +59,20 @@ export type Right =
   | "accreditation.grant"
   | "compliance.record"
   | "constitutional_failure.declare"
+  /* The investor record, 25 Sep 2026. Founder ruling of 24 Sep: the
+     platform holds the investor's KYC and the account distributions are
+     paid to, and a partner sees only the estates they hold — so somebody
+     must be able to put those facts on the record, and nobody else may.
+     Four rights, not one, because they are four different acts:
+       investor.register  a person goes on the register
+       kyc.record         who they are has been checked
+       bank.record        where their money goes
+       position.record    what they hold, transcribed from the LLP's own
+                          register of partners (the LLP register governs) */
+  | "investor.register"
+  | "kyc.record"
+  | "bank.record"
+  | "position.record"
   // Governance
   | "conflict.disclose"
   | "resolution.table"
@@ -79,6 +93,7 @@ export const ALL_RIGHTS: readonly Right[] = [
   "offering.open", "offering.close", "commitment.accept", "capital.call",
   "capital.deploy", "distribution.execute", "ownership.transfer",
   "accreditation.grant", "compliance.record", "constitutional_failure.declare",
+  "investor.register", "kyc.record", "bank.record", "position.record",
   "conflict.disclose", "resolution.table", "resolution.resolve", "vote.cast", "policy.approve",
   "report.publish", "thesis.version", "diligence.complete",
 ] as const;
@@ -109,6 +124,9 @@ export const ROLE_RIGHTS: Record<Role, readonly Right[]> = {
     // L1-01 §27: secondary transfers occur only through approved governance
     // mechanisms. Ownership does not move on an operator's say-so.
     "ownership.transfer",
+    /* Recording a holding is the same authority as moving one: what a
+       partner owns is never written on an operator's say-so. */
+    "position.record",
     "conflict.disclose",
   ],
   investment_committee: [
@@ -145,7 +163,15 @@ export const ROLE_RIGHTS: Record<Role, readonly Right[]> = {
     "resolution.table", "authority.grant", "authority.revoke",
     "content.publish", "conflict.disclose",
   ],
-  compliance_office: ["accreditation.grant", "compliance.record", "conflict.disclose"],
+  /* bank.record sits here, NOT with the Executive Office, on purpose. The
+     Executive Office holds distribution.execute; an admin who could both
+     change where a partner is paid and make the payment would need no
+     accomplice to divert it. */
+  compliance_office: [
+    "accreditation.grant", "compliance.record",
+    "investor.register", "kyc.record", "bank.record",
+    "conflict.disclose",
+  ],
   member: ["vote.cast", "conflict.disclose"],
 };
 
