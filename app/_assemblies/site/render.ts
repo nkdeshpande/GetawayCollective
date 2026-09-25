@@ -11,7 +11,8 @@
  */
 
 import { FILM, SITE } from "@/constants/tokens";
-import type { Block, Card, Concept, FilmRef, FormSpec, MapSpec, SiteEstate, SitePage, Volume } from "./types";
+import type { Block, Card, Concept, FilmRef, FormSpec, MapSpec, NextStep, SiteEstate, SitePage, Volume } from "./types";
+import { nextFor } from "@/content/site/next";
 import type { Reading } from "./registry";
 import { rupees, rupeesFull } from "./registry";
 import { daHTML, type DAKind } from "../da/render";
@@ -187,6 +188,14 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     `<div class="strip"><div class="pr">${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div>` +
     (R ? `<span class="sold-chip">${R.status}</span>` : "") +
     `<a class="btn lead" href="${cta[1]}">${cta[0]} ${NE}</a></div></section>`;
+  /* The estate bar (Next Actions d02): once the hero has scrolled away, the
+     name, where it stands and the same one action remain in reach — under the
+     site bar on a wide screen, along the bottom on a phone. Hidden until
+     SiteBehaviour sees the hero leave, so a reader who never scrolls never
+     sees it. */
+  h += `<div class="ebar" data-ebar aria-hidden="true"><div class="ebar-in"><b>${E.name}</b>` +
+    (R ? `<span class="ebar-st">${R.status}</span>` : "") +
+    `<span class="ebar-pr">${price[0]}</span><a class="btn lead btn-s" href="${cta[1]}" tabindex="-1">${cta[0]}</a></div></div>`;
   h += `<section class="intro"><p class="para center narrow intro-p">${F(E.intro)}</p></section>`;
   h += `<section class="chap" id="${k}-place"><div class="film">${fr(E.place.film)}<div class="tag"><h3>${E.place.title}</h3></div>` +
     `<div class="side"><p class="para">${F(E.place.text)}</p><p class="mono coords">${R?.vehicle.coordinates || E.place.coords}</p></div></div></section>`;
@@ -229,7 +238,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     rows.map((d) => `<div><span>${d[0]}</span><span${d[2] ? ' class="ab"' : ""}>${F(String(d[1]))}</span></div>`).join("") + "</div>" +
     (E.detailsNote ? `<p class="mono plan-note">${F(E.detailsNote)}</p>` : "") + "</section>";
   if (capital) h += FIN(E, R!);
-  h += '<section class="own"><div><b>01</b><h4>Qualify</h4><p>Sixteen stages from Discover to Issued, about fifteen working days from a complete file.</p></div>' +
+  h += '<section class="own"><div><b>01</b><h4>Qualify</h4><p>Sixteen stages from Discover to Issued, about fifteen working days from a complete file. <a class="tx-u" href="/how-to-qualify">Read them first</a>.</p></div>' +
     '<div><b>02</b><h4>Commit</h4><p>Read the offering letter, the LLP agreement and the risk disclosure. Commit by holding, never by clicking.</p></div>' +
     `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${esc(R ? R.vehicle.registeredName : fill(E.vehicle, t))}. Your units are on the register; your first vote opens in Member Home.</p></div></section>`;
   h += `<section class="faq dk faq-estate" id="${k}-faq"><h2 class="h2">Questions about <span>${E.name}</span></h2>${faq}</section>`;
@@ -308,5 +317,12 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
     if (b.da) h += daHTML(b.da as DAKind, { vehicle: b.vehicle, money: b.money });
     if (b.deposit) h += DEPOSIT(b.deposit);
   });
-  return h + "</article>";
+  const nx = P.next === undefined ? nextFor(P.path) : P.next;
+  return h + "</article>" + (nx ? NEXTCARD(nx) : "");
+}
+
+/** The next step, as one wide link. The stage is named so the reader can see the path. */
+export function NEXTCARD(n: NextStep) {
+  return `<aside class="nxt" aria-label="Next step"><a href="${n.href}"><span class="eb">Next · ${esc(n.stage)}</span>` +
+    `<b>${esc(n.title)}</b><em>${esc(n.text)}</em><span class="nxt-go" aria-hidden="true">${NE}</span></a></aside>`;
 }

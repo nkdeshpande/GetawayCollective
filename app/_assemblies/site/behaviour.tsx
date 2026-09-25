@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Film } from "./film";
 import { wireDA } from "../da/wire";
+import { loadIndex } from "./search";
 
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s)) as T[];
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s);
@@ -76,6 +77,80 @@ async function payDeposit(f: HTMLFormElement) {
     rz.open();
   } catch { say(err, "That did not go through, and nothing was taken. Write to ir@getawaycollective.co."); }
   finally { if (btn) btn.disabled = false; }
+}
+
+/* ── THE GLOSSARY, IN CONTEXT ────────────────────────────────────────
+   Walks the prose of the page (never headings, links, buttons or figures)
+   and marks the first use of each defined term. A tap opens one small
+   card with the definition and a way to the whole glossary. */
+const PROSE = ".tx-body .tx-p, .tx-body .tx-lede, .tx-body .tx-list li, .tx-body .tx-steps p, .intro-p, .chamber > .para, .chap .side .para, .concept-lead, .fin-lead";
+const SKIP = "a, button, b, strong, code, h1, h2, h3, h4, .mono, .gl-t";
+function glossary(root: HTMLElement, terms: readonly (readonly [string, string])[]): () => void {
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const list = [...terms].sort((a, b) => b[0].length - a[0].length);
+  const used = new Set<number>();
+  const marks: HTMLButtonElement[] = [];
+  for (const el of $$(PROSE, root)) {
+    if (used.size === list.length || marks.length >= 8) break;
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => ((n.parentElement?.closest(SKIP) && n.parentElement.closest(SKIP) !== el) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+    });
+    const nodes: Text[] = [];
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) nodes.push(n as Text);
+    for (let node of nodes) {
+      for (;;) {
+        let best: { i: number; at: number; len: number } | null = null;
+        list.forEach(([t], i) => {
+          if (used.has(i)) return;
+          const m = new RegExp(`\\b${esc(t)}s?\\b`, "i").exec(node.data);
+          if (m && (!best || m.index < best.at)) best = { i, at: m.index, len: m[0].length };
+        });
+        if (!best || marks.length >= 8) break;
+        const b = best as { i: number; at: number; len: number };
+        used.add(b.i);
+        const rest = node.splitText(b.at);
+        const after = rest.splitText(b.len);
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.className = "gl-t"; btn.dataset.g = String(b.i);
+        btn.setAttribute("aria-expanded", "false");
+        btn.textContent = rest.data;
+        rest.replaceWith(btn);
+        marks.push(btn);
+        node = after;
+      }
+    }
+  }
+  if (!marks.length) return () => {};
+  const pop = document.createElement("div");
+  pop.className = "gl-pop"; pop.hidden = true; pop.setAttribute("role", "dialog");
+  root.appendChild(pop);
+  let openBtn: HTMLButtonElement | null = null;
+  const close = () => { pop.hidden = true; openBtn?.setAttribute("aria-expanded", "false"); openBtn = null; };
+  const show = (btn: HTMLButtonElement) => {
+    const [t, d] = list[Number(btn.dataset.g)];
+    pop.replaceChildren();
+    const h = document.createElement("b"); h.textContent = t;
+    const p = document.createElement("p"); p.textContent = d;
+    const a = document.createElement("a"); a.href = "/glossary"; a.textContent = "Every term, defined once";
+    pop.append(h, p, a);
+    pop.setAttribute("aria-label", `${t}: definition`);
+    pop.hidden = false;
+    const r = btn.getBoundingClientRect(), w = Math.min(320, innerWidth - 32);
+    pop.style.width = `${w}px`;
+    pop.style.left = `${Math.max(16, Math.min(r.left + scrollX, scrollX + innerWidth - w - 16))}px`;
+    pop.style.top = `${r.bottom + scrollY + 8}px`;
+    openBtn?.setAttribute("aria-expanded", "false");
+    openBtn = btn; btn.setAttribute("aria-expanded", "true");
+  };
+  const onClick = (ev: Event) => {
+    const btn = (ev.target as HTMLElement).closest<HTMLButtonElement>(".gl-t");
+    if (btn) { ev.preventDefault(); if (openBtn === btn) close(); else show(btn); return; }
+    if (!(ev.target as HTMLElement).closest(".gl-pop")) close();
+  };
+  const onKey = (ev: KeyboardEvent) => { if (ev.key === "Escape" && openBtn) { const b = openBtn; close(); b.focus(); } };
+  document.addEventListener("click", onClick);
+  document.addEventListener("keydown", onKey);
+  return () => { document.removeEventListener("click", onClick); document.removeEventListener("keydown", onKey); pop.remove(); };
 }
 
 export function SiteBehaviour() {
@@ -192,6 +267,35 @@ export function SiteBehaviour() {
         links.forEach((a, i) => a.classList.toggle("on", i === cur));
       };
       on(window, "scroll", tick, { passive: true }); tick();
+    }
+
+    /* the estate bar: shown once the hero has gone, hidden again at the enquiry */
+    const ebar = $("[data-ebar]", root), hero = $(".phero", root);
+    if (ebar && hero && typeof IntersectionObserver !== "undefined") {
+      const cta = $<HTMLAnchorElement>("a", ebar);
+      let past = false, atEnd = false;
+      const set = () => {
+        const on = past && !atEnd;
+        ebar.classList.toggle("on", on);
+        ebar.setAttribute("aria-hidden", String(!on));
+        if (cta) cta.tabIndex = on ? 0 : -1;
+      };
+      const io = new IntersectionObserver((es) => es.forEach((en) => {
+        if (en.target === hero) past = !en.isIntersecting && en.boundingClientRect.top < 0;
+        else atEnd = en.isIntersecting;
+        set();
+      }));
+      io.observe(hero);
+      $$(".mk, .mk-wait", root).forEach((m) => io.observe(m));
+      off.push(() => io.disconnect());
+    }
+
+    /* the glossary, in context: a defined word opens its definition where it
+       is read (Next Actions d04). Each term once per page, prose only. */
+    let alive = true;
+    off.push(() => { alive = false; });
+    if (pathname !== "/glossary") {
+      loadIndex().then((idx) => { if (alive && idx?.glossary.length) off.push(glossary(root, idx.glossary)); });
     }
 
     /* copy buttons: clipboard where it is allowed, a selection where it is not */

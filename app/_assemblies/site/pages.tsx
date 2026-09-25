@@ -27,7 +27,7 @@ import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify } from "./render"
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
 import { openReading, read, rupees, rupeesFull, vehicleOf } from "./registry";
-import type { Block, SitePage } from "./types";
+import type { Block, NextStep, SitePage } from "./types";
 import { PASSPORT_STAGES } from "@/content/compositions/passport";
 import { OPERATORS } from "@/content/public";
 
@@ -264,9 +264,16 @@ export function SiteJournalEntry({ slug }: { slug: string }) {
   }
   blocks.push({ links: [["Back to the Journal", "/journal"], ["Subscribe to The Signal", "/signal", "lead"]] });
   const f = filmFor(e.slug, e.kind);
+  /* The estate this entry leads to, when its onward list names one; the
+     collection otherwise. Read from the entry, never assigned by hand. */
+  const toEstate = (e.onward ?? []).map((o) => o.path.match(/^\/collection\/([a-z0-9-]+)/)?.[1]).find(Boolean);
+  const est = toEstate ? estateBySlug(toEstate) : undefined;
+  const next: NextStep = est
+    ? { stage: "Examine", title: est.name.replace(/<[^>]+>/g, ""), text: "The estate this entry is about: its place, its drawings and its offering.", href: `/collection/${est.slug}` }
+    : { stage: "Examine", title: "The estates", text: "Every estate, where it stands, side by side.", href: "/collection" };
   const P: SitePage = {
     key: `j-${e.slug}`, path: `/journal/${e.slug}`, eyebrow: `Journal · ${KIND_LABEL[e.kind]} · ${e.minutes} min`, title: e.title,
-    film: [f[0], f[1], f[2], f[3]], meta: `PUBLISHED ${longDate(e.published).toUpperCase()}`, lead: e.standfirst, blocks,
+    film: [f[0], f[1], f[2], f[3]], meta: `PUBLISHED ${longDate(e.published).toUpperCase()}`, lead: e.standfirst, blocks, next,
   };
   return <Mount html={TXT(P)} />;
 }

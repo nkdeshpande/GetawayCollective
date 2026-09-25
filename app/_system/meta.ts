@@ -14,12 +14,19 @@
 import type { Metadata } from "next";
 import { ESTATES } from "@/content/site/estates";
 import { PAGES } from "@/content/site/pages";
-import { JOURNAL } from "@/content/journal";
+import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
 import { vehicleBySlug } from "@/constants/vehicles";
+import { ROUTES } from "@/constants/routes";
 
 const BRAND = "Getaway Collective";
-const SHARE = { url: "/opengraph-image", width: 1200, height: 630, alt: BRAND };
+/**
+ * Each page's share card is drawn from its own title (app/api/og). The home
+ * page keeps the brand card app/opengraph-image.tsx draws.
+ */
+const shareFor = (path: string, alt: string) => ({
+  url: path === "/" ? "/opengraph-image" : `/api/og?p=${encodeURIComponent(path)}`, width: 1200, height: 630, alt,
+});
 const DEFAULT =
   "An investment platform for collective ownership of exceptional retreats in India. Each estate is held by its own LLP and owned by its partners. Capital is at risk.";
 
@@ -55,6 +62,35 @@ function resolve(pattern: string, p: Readonly<Record<string, string>>): { title?
   return page ? { description: plain(page.lead) } : {};
 }
 
+/**
+ * What a concrete public path is, for its share card: a title and the one
+ * line above it. Read from the same content as the page, and undefined for
+ * a path the site does not publish — so the card can never carry text that
+ * arrived in a URL.
+ */
+export function describePath(path: string): { title: string; kicker: string } | undefined {
+  let m: RegExpMatchArray | null;
+  if ((m = path.match(/^\/journal\/([a-z0-9-]+)$/))) {
+    const e = JOURNAL.find((x) => x.slug === m![1]);
+    return e ? { title: e.title, kicker: `Journal · ${KIND_LABEL[e.kind]}` } : undefined;
+  }
+  if ((m = path.match(/^\/legal\/([a-z0-9-]+)$/))) {
+    const d = DOCUMENTS.find((x) => x.path === path);
+    return d ? { title: d.title, kicker: `Legal · version ${d.version}` } : undefined;
+  }
+  if ((m = path.match(/^\/collection\/([a-z0-9-]+)(?:\/(investment|risk|enquire))?$/))) {
+    const r = resolve(m[2] ? `/collection/[vehicle]/${m[2]}` : "/collection/[vehicle]", { vehicle: m[1] });
+    if (!r.title) return undefined;
+    const e = Object.values(ESTATES).find((x) => x.slug === m![1]);
+    const page = Object.values(PAGES).find((x) => x.path === `/collection/${m![1]}`);
+    return { title: r.title, kicker: e ? plain(e.eyebrow) : plain(page?.eyebrow) || "The collection" };
+  }
+  const page = Object.values(PAGES).find((x) => x.path === path);
+  if (page) return { title: plain(page.title), kicker: plain(page.eyebrow) };
+  const route = ROUTES.find((r) => r.path === path);
+  return route ? { title: route.name, kicker: BRAND } : undefined;
+}
+
 export function pageMeta(pattern: string, params: Readonly<Record<string, string>>, fallbackTitle: string): Metadata {
   const path = pattern.replace(/\[(\w+)\]/g, (_, k: string) => params[k] ?? k);
   const r = resolve(pattern, params);
@@ -67,8 +103,8 @@ export function pageMeta(pattern: string, params: Readonly<Record<string, string
     /* Setting openGraph here replaces the one app/opengraph-image.tsx would
        have supplied rather than merging with it, so the image is named
        again — without this line no public page carried a share image. */
-    openGraph: { title, description, url: path, siteName: BRAND, type: pattern.startsWith("/journal/") ? "article" : "website", images: [SHARE] },
-    twitter: { card: "summary_large_image", title, description, images: [SHARE.url] },
+    openGraph: { title, description, url: path, siteName: BRAND, type: pattern.startsWith("/journal/") ? "article" : "website", images: [shareFor(path, title)] },
+    twitter: { card: "summary_large_image", title, description, images: [shareFor(path, title).url] },
     robots: { index: true, follow: true },
   };
 }

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MARK_CUT, MARK_PATH } from "@/constants/brand-system";
 import { Mark } from "../brandmark";
+import { SiteSearch } from "./search";
 
 /** Symbols the rendered markup refers to by id: the mark, the arrow, three glyphs. */
 export function SiteSymbols() {
@@ -49,6 +50,7 @@ export function SiteNav() {
           <Link key={href} href={href} aria-current={here(href) ? "page" : undefined}>{label}</Link>
         ))}
       </nav>
+      <SiteSearch />
       <span className="lang">EN</span>
       <Link className="btn btn-s" href="/contact">Enquire</Link>
     </header>

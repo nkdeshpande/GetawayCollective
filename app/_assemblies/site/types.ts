@@ -116,6 +116,9 @@ export interface Block {
 
 export interface JournalCard { readonly id: string; readonly key: string; readonly kind: string; readonly title: string; readonly standfirst: string; readonly date: string; readonly dateLabel: string; readonly minutes: number }
 
+/** One card at the foot of a text page: where the reader goes next, and which stage of the path that is. */
+export interface NextStep { readonly stage: string; readonly title: string; readonly text: string; readonly href: string }
+
 export interface SitePage {
   readonly key: string;
   readonly path: string;
@@ -126,4 +129,6 @@ export interface SitePage {
   readonly light?: number | boolean;
   readonly film?: FilmRef;
   readonly blocks: readonly Block[];
+  /** Overrides content/site/next.ts for this page. `null` means none. */
+  readonly next?: NextStep | null;
 }

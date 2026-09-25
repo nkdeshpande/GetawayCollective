@@ -28,10 +28,14 @@ describe("press downloads", () => {
 
 describe("share cards", () => {
   /* Read as source: vitest here has no @/ alias, and meta.ts imports through it. */
-  it("page metadata names the share image for Open Graph and X", () => {
+  it("page metadata names a share image for Open Graph and X", () => {
     const src = readFileSync(join(process.cwd(), "app/_system/meta.ts"), "utf8");
-    expect(src).toMatch(/openGraph: \{[^}]*images: \[SHARE\]/);
-    expect(src).toMatch(/twitter: \{[^}]*images: \[SHARE\.url\]/);
-    expect(src).toMatch(/SHARE = \{ url: "\/opengraph-image"/);
+    expect(src).toMatch(/openGraph: \{[^}]*images: \[shareFor\(path, title\)\]/);
+    expect(src).toMatch(/twitter: \{[^}]*images: \[shareFor\(path, title\)\.url\]/);
+  });
+  it("the per-page card takes no text from its URL", () => {
+    const src = readFileSync(join(process.cwd(), "app/api/og/route.tsx"), "utf8");
+    expect(src).toMatch(/describePath\(p\)/);
+    expect(src).not.toMatch(/searchParams\.get\("(title|t|text|kicker)"\)/);
   });
 });
