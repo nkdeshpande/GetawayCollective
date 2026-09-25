@@ -68,6 +68,8 @@ export function llmsTxt(): string {
     `- [Team](${SITE}/team): founder, architect, structural, MEP and modelling practices`,
     `- [How we build](${SITE}/how-we-build): from a confirmed site record to one coordinated model`,
     `- [How it works](${SITE}/how-it-works): units, the waterfall, decisions, nights`,
+    `- [How to qualify](${SITE}/how-to-qualify): the sixteen stages of accreditation, before you begin`,
+    `- [The operating partner](${SITE}/operating-partner): who runs each estate and how it is measured`,
     `- [Press kit](${SITE}/press): boilerplates, fact sheet and usage`, "",
     "## The collection",
     ...places().map((p) => `- [${p.name}](${p.url}): ${p.description.slice(0, 160)}`), "",

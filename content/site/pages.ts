@@ -228,13 +228,17 @@ export const PAGES: Record<string, SitePage> =  {
    {
     "links": [
      [
-      "Start qualification",
-      "/contact",
+      "How to qualify",
+      "/how-to-qualify",
       "lead"
      ],
      [
       "Read the risk disclosure",
       "/legal/risk-disclosure"
+     ],
+     [
+      "The operating partner",
+      "/operating-partner"
      ]
     ]
    }

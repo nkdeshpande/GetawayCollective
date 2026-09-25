@@ -399,6 +399,12 @@
 .site .fin .units div{grid-template-columns:1fr 1fr}}
 .site .tx-assert{margin:calc(var(--gc-sp-3xs) * 2.5) 0;padding:calc(var(--gc-sp-3xs) * 5.5) calc(var(--gc-sp-3xs) * 6.5);background:var(--paper);color:var(--ink);font:700 clamp(19px,2vw,24px)/1.35 var(--display);letter-spacing:-.01em}
 .site .lt .tx-assert{background:var(--ink);color:var(--paper)}
+/* Figures and steps on a light page: the dark-ground colours read as nothing on paper. */
+.site .lt .tx-figs div{background:var(--gc-paper-panel);border:1px solid var(--gc-s-rule)}
+.site .lt .tx-figs span,.site .lt .tx-steps p,.site .lt .tx-steps em{color:var(--gc-s-stone)}
+.site .lt .tx-steps li{border-top-color:var(--gc-s-rule)}
+.site .tx-figs:has(> div:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:560px){.site .tx-figs:has(> div:nth-child(3):last-child){grid-template-columns:1fr}}
 .site .tx-people{display:grid;gap:calc(var(--gc-sp-3xs) * 3.5)}
 .site .person{--c:14px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:calc(var(--gc-sp-3xs) * 7);background:var(--panel);padding:calc(var(--gc-sp-3xs) * 7);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
 .site .person.lead{grid-template-columns:220px minmax(0,1fr);background:var(--gc-s-rim)}

@@ -87,6 +87,9 @@ const ROWS: readonly StageRow[] = [
     fields: [] },
 ];
 
+/** The same sixteen rows, read by the public /how-to-qualify page (app/_assemblies/site/pages.tsx). */
+export const PASSPORT_STAGES = ROWS;
+
 const stagePage = (r: StageRow): Entry => ({
   title: r.t,
   eyebrow: `Passport · stage ${String(r.n).padStart(2, "0")} of ${ROWS.length}`,

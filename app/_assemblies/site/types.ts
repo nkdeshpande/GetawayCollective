@@ -74,6 +74,8 @@ export interface Block {
   readonly list?: readonly string[];
   readonly figs?: readonly (readonly string[])[];
   readonly steps?: readonly (readonly string[])[];
+  /** The number the first step shows, where one sequence runs across several blocks. */
+  readonly stepsFrom?: number;
   readonly rows?: readonly (readonly (string | number)[])[];
   readonly legal?: string;
   /** A legal clause that states what the platform will always do — set on its own ground. */

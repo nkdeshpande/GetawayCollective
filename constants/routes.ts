@@ -274,6 +274,11 @@ export const PUBLIC_ROUTES: readonly Route[] = [
     { notes: "The questions asked most often, answered in a sentence or two, each with its source." }),
   R("GC-490", "/glossary", "Glossary", "gateway", "AS-32",
     { notes: "Every term the site uses, defined once." }),
+  /* Added 25 Sep 2026: two pages whose copy existed with no route. */
+  R("GC-492", "/how-to-qualify", "How to Qualify", "gateway", "AS-32",
+    { notes: "The sixteen passport stages, readable before signing in, read from the same table the stage pages use. Starts nothing." }),
+  R("GC-494", "/operating-partner", "The Operating Partner", "gateway", "AS-32",
+    { notes: "PUB.06, The Invisible Hand: who runs each estate, how it is measured and paid, and what happens when it fails." }),
   // ── The legal corpus ──────────────────────────────────────────────
   R("GC-500", "/legal", "Legal", "gateway", "AS-29",
     { notes: "Seven standing documents, versioned, with effective dates. Nothing on this " +

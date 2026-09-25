@@ -28,6 +28,8 @@ import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
 import { openReading, read, rupees, rupeesFull, vehicleOf } from "./registry";
 import type { Block, SitePage } from "./types";
+import { PASSPORT_STAGES } from "@/content/compositions/passport";
+import { OPERATORS } from "@/content/public";
 
 function Mount({ html, light = false }: { html: string; light?: boolean }) {
   return <div className={`pg${light ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: html }} />;
@@ -264,6 +266,75 @@ export function SiteJournalEntry({ slug }: { slug: string }) {
     film: [f[0], f[1], f[2], f[3]], meta: `PUBLISHED ${longDate(e.published).toUpperCase()}`, lead: e.standfirst, blocks,
   };
   return <Mount html={TXT(P)} />;
+}
+
+// ── how to qualify: the sixteen stages, read from the passport's own table ──
+/**
+ * 25 Sep 2026. The passport's sixteen stages existed only as unrouted
+ * compositions, so a stranger could not see what accreditation asks until
+ * they had signed in to start it. This reads the same rows the stage pages
+ * are built from, so the two cannot describe different processes. It starts
+ * nothing and collects nothing. The accreditation criteria are not stated:
+ * they are shown in full at review, and the threshold is the founder's.
+ */
+const PHASES: readonly (readonly [string, number, number])[] = [
+  ["Before you begin", 1, 2], ["Who you are", 3, 6], ["Whether it fits", 7, 11], ["The decision, and after", 12, 16],
+];
+export function SiteQualify() {
+  const S = PASSPORT_STAGES;
+  const blocks: Block[] = [
+    { figs: [[String(S.length), "stages, in order"], ["0", "commitments made by qualifying"], ["15", "working days to a decision, from submission"]] },
+    { p: "Every stage saves as you leave it, so nothing has to be done in one sitting. Qualifying lets you examine an offering in full; it buys nothing and commits you to nothing." },
+  ];
+  for (const [h, a, z] of PHASES) {
+    const rows = S.filter((r) => r.n >= a && r.n <= z);
+    blocks.push({ h }, { steps: rows.map((r) => [r.t, r.what]), stepsFrom: a });
+    for (const r of rows) if (r.note) blocks.push({ assert: r.note });
+  }
+  blocks.push(
+    { h: "What happens to what you enter" },
+    { p: "The Privacy Notice states what is collected, why, who sees it and how long it is kept. Accreditation and screening records, for example, are kept for eight years after the relationship ends, as the law requires." },
+    { links: [["Begin qualification", "/invest/qualify", "lead"], ["Privacy Notice", "/legal/privacy"], ["Risk factors", "/legal/risk-disclosure"], ["Answers", "/answers"]] },
+  );
+  const P: SitePage = {
+    key: "qualify", path: "/how-to-qualify", light: 1, eyebrow: "How to qualify",
+    title: "Sixteen stages, <span>readable before you begin.</span>",
+    lead: "What accreditation asks, in the order it asks it. Anyone may read this; nothing on this page starts an application.",
+    blocks,
+  };
+  return <Mount html={TXT(P)} light />;
+}
+
+// ── the operating partner, from content/public.ts (PUB.06) ──
+/**
+ * 25 Sep 2026. "The Invisible Hand" was written, ratified and never given
+ * a route. Rendered from its record, so a holder or a date changes in one
+ * place. The ledger names the holder only where the engagement is recorded.
+ */
+const DAY = (iso: string) => longDate(iso);
+export function SiteOperator() {
+  const O = OPERATORS;
+  const blocks: Block[] = [{ lede: O.standfirst }];
+  for (const pane of O.panes) {
+    blocks.push({ h: pane.title });
+    if (pane.lede) blocks.push({ p: pane.lede });
+    for (const b of pane.body ?? []) blocks.push({ p: b });
+    if (pane.ledger) blocks.push({ rows: pane.ledger.map((l) => [
+      `<span class="mono">${esc(l.ref)}</span> · ${esc(l.role)}`,
+      `${esc(l.what)}<span class="tx-src tx-src-in">${l.holder ? `${esc(l.holder)} · ` : ""}${esc(l.state)}${l.since ? ` since ${DAY(l.since)}` : ""}</span>`,
+      l.holder ? "" : 1,
+    ]) });
+    if (pane.note) blocks.push({ p: pane.note });
+    if (pane.cta) blocks.push({ links: [[pane.cta.label, pane.cta.href, "dark"]] });
+  }
+  blocks.push({ links: [["How it works", "/how-it-works"], ["The collection", "/collection"]] });
+  const P: SitePage = {
+    key: "operator", path: "/operating-partner", light: 1, eyebrow: "The operating partner",
+    title: "The invisible <span>hand.</span>",
+    lead: "Who runs each estate day to day, how that is measured and paid, and what happens when it fails.",
+    blocks,
+  };
+  return <Mount html={TXT(P)} light />;
 }
 
 // ── the legal corpus, from content/legal.ts, in full ──

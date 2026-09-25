@@ -285,7 +285,7 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
        printed: a file name or a clause number is our filing, not the reader's. */
     if (b.list) h += `<ul class="tx-list">${b.list.map((li) => `<li>${li}</li>`).join("")}</ul>`;
     if (b.figs) h += `<div class="tx-figs">${b.figs.map((f) => `<div><b>${f[0]}</b><span>${f[1]}</span></div>`).join("")}</div>`;
-    if (b.steps) h += `<ol class="tx-steps">${b.steps.map((s, i) => `<li><em>${String(i + 1).padStart(2, "0")}</em><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join("")}</ol>`;
+    if (b.steps) h += `<ol class="tx-steps">${b.steps.map((s, i) => `<li><em>${String(i + (b.stepsFrom ?? 1)).padStart(2, "0")}</em><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join("")}</ol>`;
     if (b.rows) h += `<div class="tx-rows">${b.rows.map((r) => `<div><span>${r[0]}</span><span${r[2] ? ' class="ab"' : ""}>${r[1]}</span></div>`).join("")}</div>`;
     if (b.legal) h += `<div class="tx-legal${b.assertion ? " tx-legal-assert" : ""}"${b.anchor ? ` id="${b.anchor}"` : ""}>${b.legal}</div>`;
     if (b.assets) h += `<div class="tx-assets">${b.assets.map((a) => { const ext = (a[1].split(".").pop() || "").toUpperCase(); const n = Number(a[3]);

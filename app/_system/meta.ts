@@ -49,6 +49,8 @@ function resolve(pattern: string, p: Readonly<Record<string, string>>): { title?
     if (CHAPTER[chapter]) return { title: `${name} · ${CHAPTER[chapter]}`, description: `${CHAPTER[chapter]} for ${name}, read from the vehicle register. Capital is at risk.` };
     return { title: name, description: plain(e?.intro) || plain(page?.lead) };
   }
+  if (pattern === "/how-to-qualify") return { description: "The sixteen stages of accreditation, in order, readable before you begin. Qualifying commits you to nothing; a decision follows within 15 working days of submission." };
+  if (pattern === "/operating-partner") return { description: "Who runs each Getaway Collective estate day to day, how the operating partner is measured and paid, and what happens when it fails." };
   const page = Object.values(PAGES).find((x) => x.path === pattern);
   return page ? { description: plain(page.lead) } : {};
 }
