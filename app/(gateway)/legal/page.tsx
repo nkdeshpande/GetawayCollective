@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteLegalIndex } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Legal · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/legal", {}, "Legal · Getaway Collective");
 
 export default async function Plegal() {
   return <SiteLegalIndex />;

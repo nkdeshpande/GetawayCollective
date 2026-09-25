@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteText } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Contact · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/contact", {}, "Contact · Getaway Collective");
 
 export default async function Pcontact() {
   return <SiteText path="/contact" />;

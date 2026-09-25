@@ -12,11 +12,13 @@
 
 import type { Metadata } from "next";
 import { SiteLegalDoc } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Legal Document · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata(
+  props: { params: Promise<{ document: string }> },
+): Promise<Metadata> {
+  return pageMeta("/legal/[document]", await props.params, "Legal Document · Getaway Collective");
+}
 
 export default async function Plegal_document(props: { params: Promise<{ document: string }> }) {
   const params = await props.params;

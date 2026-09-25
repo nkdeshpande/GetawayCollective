@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteJournalIndex } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "The Journal · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/journal", {}, "The Journal · Getaway Collective");
 
 export default async function Pjournal() {
   return <SiteJournalIndex />;

@@ -188,7 +188,7 @@ const RESOLVERS = {
      Checks the record EXISTS and is RENDERED — a constant nothing reads
      would satisfy a laxer test while the promise stayed unkept. */
   "REM-004": () => {
-    const src = read("app", "_assemblies", "systempages.tsx");
+    const src = read("app", "_assemblies", "site", "system.tsx");
     return /const COMPLAINTS = \{/.test(src) && /\{COMPLAINTS\./.test(src);
   },
   /* REM-008: public property page renders at most one consolidated

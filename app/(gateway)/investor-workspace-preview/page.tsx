@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { InvestorSurface } from "@/app/_assemblies/investorpages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Investor Workspace Preview · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/investor-workspace-preview", {}, "Investor Workspace Preview · Getaway Collective");
 
 export default async function Pinvestor_workspace_preview() {
   return <InvestorSurface path="/investor-workspace-preview" />;

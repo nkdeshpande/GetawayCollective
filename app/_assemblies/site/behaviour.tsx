@@ -175,6 +175,25 @@ export function SiteBehaviour() {
       off.push(() => io.disconnect());
     }
 
+    /* a long read: how far through, and which part (Digital Visuals · Journal) */
+    const toc = $(".tx-toc", root), body = $(".tx-body", root);
+    if (toc && body) {
+      const bar = document.createElement("div");
+      bar.className = "readbar"; bar.setAttribute("aria-hidden", "true");
+      root.appendChild(bar); off.push(() => bar.remove());
+      const links = $$<HTMLAnchorElement>("a", toc);
+      const heads = links.map((a) => document.getElementById((a.getAttribute("href") || "#").slice(1))).filter(Boolean) as HTMLElement[];
+      const tick = () => {
+        const r = body.getBoundingClientRect();
+        const k = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - innerHeight)));
+        bar.style.transform = `scaleX(${k})`;
+        let cur = -1;
+        heads.forEach((h, i) => { if (h.getBoundingClientRect().top < innerHeight * 0.35) cur = i; });
+        links.forEach((a, i) => a.classList.toggle("on", i === cur));
+      };
+      on(window, "scroll", tick, { passive: true }); tick();
+    }
+
     /* copy buttons: clipboard where it is allowed, a selection where it is not */
     $$(".tx-copy", root).forEach((c) => {
       const t = $(".ct", c), b = $<HTMLButtonElement>(".cpy", c), cc = $(".cc", c);

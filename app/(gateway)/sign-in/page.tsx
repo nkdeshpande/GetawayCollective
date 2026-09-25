@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteSignIn } from "@/app/_assemblies/site/identity";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Sign In · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/sign-in", {}, "Sign In · Getaway Collective");
 
 export default async function Psign_in() {
   return <SiteSignIn />;

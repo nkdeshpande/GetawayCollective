@@ -80,6 +80,8 @@ export interface Block {
   readonly assertion?: boolean;
   readonly anchor?: string;
   readonly links?: readonly (readonly string[])[];
+  /** Files a visitor may download, from public/: [label, href, what it is for, bytes]. tests/press-assets.test.ts holds the bytes to the file. */
+  readonly assets?: readonly (readonly string[])[];
   readonly cards?: readonly { readonly href: string; readonly film: FilmRef; readonly eb: string; readonly t: string; readonly p: string }[];
   readonly form?: FormSpec;
   readonly assert?: string;

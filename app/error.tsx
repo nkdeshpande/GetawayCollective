@@ -12,15 +12,8 @@
 
 "use client";
 
-import { Surface } from "@/app/_system/surface";
+import { SiteError } from "@/app/_assemblies/site/lost";
 
 export default function ErrorBoundary({ reset }: { error: Error; reset: () => void }) {
-  return (
-    <>
-      <Surface path="/500" assembly={"AS-16"} />
-      <div className="surface" style={{ paddingTop: 0 }}>
-        <button className="btn primary" onClick={reset}>Try again</button>
-      </div>
-    </>
-  );
+  return <SiteError reset={reset} />;
 }

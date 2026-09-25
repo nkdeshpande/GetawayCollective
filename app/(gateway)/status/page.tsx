@@ -11,13 +11,11 @@
  */
 
 import type { Metadata } from "next";
-import { SystemSurface } from "@/app/_assemblies/systempages";
+import { SiteStatus } from "@/app/_assemblies/site/system";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "System Status · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/status", {}, "System Status · Getaway Collective");
 
 export default async function Pstatus() {
-  return <SystemSurface path="/status" />;
+  return <SiteStatus />;
 }

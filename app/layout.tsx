@@ -14,6 +14,7 @@ import { fontVars } from "./_system/fonts";
 import { CookieConsent, Specimens } from "./_assemblies/dialogs";
 import { Shell } from "./_assemblies/shell";
 import { currentSubject } from "@/lib/session";
+import { siteGraphJSON } from "./_system/ld";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,7 +22,16 @@ export const metadata: Metadata = {
      resolve to an absolute one. Falls back to localhost so `next build`
      never fails for want of an env var; production sets
      NEXT_PUBLIC_SITE_URL to the real domain. */
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  /* 25 Sep 2026: the fallback was localhost for every deployment, and
+     NEXT_PUBLIC_SITE_URL was never set in production, so every share card
+     pointed at http://localhost:3000/opengraph-image and showed nothing.
+     Production now falls back to the real domain, previews to their own
+     Vercel URL, and only a local run to localhost. */
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_ENV === "production" ? "https://www.getawaycollective.co"
+        : process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+  ),
   title: {
     default: "Getaway Collective",
     template: "%s",
@@ -45,6 +55,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
        mandatory reading surface; disabling zoom on either is WCAG 1.4.4. */
     <html lang="en-IN" className={fontVars}>
       <body>
+        {/* One structured-data graph for the site (app/_system/ld.ts): the
+            organisation, the estates, the Journal, the answers and the
+            glossary, read from the same sources the pages render. */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: siteGraphJSON() }} />
         {/* AS-37. The rail filters itself by reachability on every
             render, so the shell shows an anonymous visitor exactly the
             surfaces an anonymous visitor can open — and nothing that

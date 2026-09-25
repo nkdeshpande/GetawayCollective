@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { MemberSurface } from "@/app/_assemblies/memberpages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Member Workspace Preview · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/member-workspace-preview", {}, "Member Workspace Preview · Getaway Collective");
 
 export default async function Pmember_workspace_preview() {
   return <MemberSurface path="/member-workspace-preview" />;

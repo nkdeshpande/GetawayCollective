@@ -93,6 +93,37 @@ export function SiteHome() {
   return <Mount html={html} />;
 }
 
+/**
+ * THE ESTATES SIDE BY SIDE — Digital Visuals · Capital_portfolio, 25 Sep 2026
+ *
+ * The draft's comparison matrix, kept; its figures, not. Every cell is read
+ * from the vehicle register through read(), so a column says exactly what
+ * that estate's own page says, and an offering that is not yet published
+ * says so rather than showing a number. No return, yield or rate appears.
+ */
+function compareHTML(): string {
+  const cols = COLLECTION.flatMap((e) => {
+    const v = vehicleOf(e.vehicleKey);
+    return v ? [{ e, v, R: read(v) }] : [];
+  });
+  if (cols.length < 2) return "";
+  const gap = (s: string) => `<span class="ab">${s}</span>`;
+  const rows: [string, (c: (typeof cols)[number]) => string][] = [
+    ["Place", (c) => esc(c.v.jurisdiction)],
+    ["Keys", (c) => String(c.v.keys)],
+    ["Land", (c) => esc(c.v.landArea)],
+    ["Stage", (c) => c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase()],
+    ["Units", (c) => (c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Record still being settled"))],
+    ["A unit", (c) => (c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced"))],
+    ["Lock-in", (c) => (c.R.publishable ? esc(c.v.offering.lockIn) : gap("Stated in the offering letter"))],
+    ["Held by", (c) => esc(c.v.registeredName)],
+  ];
+  return '<section class="cmp" id="compare"><span class="eb">Compare</span><h2 class="h2">The estates, <span>side by side.</span></h2>' +
+    '<p class="para dim">Every figure is read from each estate\'s own register. Capital is at risk; the offering letter governs.</p>' +
+    `<div class="cmp-wrap" tabindex="0" role="region" aria-label="The estates compared"><table class="cmp-t"><thead><tr><th scope="col"><span class="sr">Measure</span></th>${cols.map((c) => `<th scope="col"><a href="${c.e.href}">${c.e.name}</a></th>`).join("")}</tr></thead>` +
+    `<tbody>${rows.map(([k, f]) => `<tr><th scope="row">${k}</th>${cols.map((c) => `<td>${f(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></section>`;
+}
+
 // ── the collection ──
 export function SiteCollection() {
   const price = (key: string | null, fallback: string) => {
@@ -121,6 +152,7 @@ export function SiteCollection() {
     '<div><span class="sq"><svg aria-hidden="true"><use href="#i-gov"/></svg></span><div><h4>Governed, never held</h4><p>Getaway Collective holds no equity in any estate and is paid from one disclosed stage of the waterfall.</p></div></div>' +
     '<div><span class="sq"><svg aria-hidden="true"><use href="#i-net"/></svg></span><div><h4>One standard, many estates</h4><p>Every estate is built from the same three chassis and run by the same operating partner.</p></div></div></div></section>' +
     `<section class="col-stages"><span class="eb">Where each estate stands</span><h2 class="h2">One track, <span>every estate.</span></h2>${daHTML("stages")}</section>` +
+    compareHTML() +
     `<section class="faq" id="faq"><h2 class="h2">Frequently asked <span>questions</span></h2>${faqHTML(FAQ)}</section>`;
   return <Mount html={html} light />;
 }

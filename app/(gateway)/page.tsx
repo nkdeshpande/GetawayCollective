@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteHome } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/", {}, "Getaway Collective");
 
 export default async function P() {
   return <SiteHome />;

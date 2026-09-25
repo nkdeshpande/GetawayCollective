@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteVerify } from "@/app/_assemblies/site/identity";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Verify · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/verify", {}, "Verify · Getaway Collective");
 
 export default async function Pverify() {
   return <SiteVerify />;

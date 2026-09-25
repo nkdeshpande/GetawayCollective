@@ -12,11 +12,13 @@
 
 import type { Metadata } from "next";
 import { SiteChapter } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "The Investment · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata(
+  props: { params: Promise<{ vehicle: string }> },
+): Promise<Metadata> {
+  return pageMeta("/collection/[vehicle]/investment", await props.params, "The Investment · Getaway Collective");
+}
 
 export default async function Pcollection_vehicle_investment(props: { params: Promise<{ vehicle: string }> }) {
   const params = await props.params;

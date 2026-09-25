@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteText } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Answers · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/answers", {}, "Answers · Getaway Collective");
 
 export default async function Panswers() {
   return <SiteText path="/answers" />;

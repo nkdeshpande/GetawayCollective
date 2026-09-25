@@ -10,8 +10,8 @@
  * 
  */
 
-import { Surface } from "@/app/_system/surface";
+import { SiteNotFound } from "@/app/_assemblies/site/lost";
 
 export default function NotFound() {
-  return <Surface path="/404" assembly={"AS-16"} />;
+  return <SiteNotFound />;
 }

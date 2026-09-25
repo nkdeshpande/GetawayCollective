@@ -163,7 +163,10 @@ describe("the generated app tree", () => {
   it("keeps public pages statically titled", () => {
     const page = readIf("app/(gateway)/collection/page.tsx");
     expect(page).toContain("export const metadata");
-    expect(page).toContain("index: true");
+    /* Since 25 Sep 2026 the title, description, canonical and robots of a
+       public page come from one helper, read from the page's own content. */
+    expect(page).toContain("pageMeta(");
+    expect(readIf("app/_system/meta.ts")).toContain("index: true");
   });
 
   it("marks generated pages and group layouts", () => {

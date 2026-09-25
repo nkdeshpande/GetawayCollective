@@ -228,7 +228,9 @@ const BY_PATH = {
      unchanged (app/_assemblies/site/identity.tsx says rule for rule). */
   "/sign-in": { component: "SiteSignIn", from: "@/app/_assemblies/site/identity" },
   "/verify": { component: "SiteVerify", from: "@/app/_assemblies/site/identity" },
-  "/status": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/status" },
+  /* Status wears the site since 25 Sep 2026, its rows derived from the
+     same presence checks as /api/health (app/_assemblies/site/system.tsx). */
+  "/status": { component: "SiteStatus", from: "@/app/_assemblies/site/system" },
   "/403": { component: "SystemSurface", from: "@/app/_assemblies/systempages", prop: "/403" },
   "/invest/qualify": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/invest/qualify" },
   "/investor-workspace-preview": { component: "InvestorSurface", from: "@/app/_assemblies/investorpages", prop: "/investor-workspace-preview" },
@@ -302,9 +304,9 @@ function conventionSource(r, conv) {
   if (conv.kind === "not-found") {
     return (
       banner +
-      `\nimport { Surface } from "@/app/_system/surface";\n\n` +
+      `\nimport { SiteNotFound } from "@/app/_assemblies/site/lost";\n\n` +
       `export default function NotFound() {\n` +
-      `  return <Surface path=${JSON.stringify(r.path)} assembly={${JSON.stringify(r.assembly)}} />;\n` +
+      `  return <SiteNotFound />;\n` +
       `}\n`
     );
   }
@@ -316,16 +318,9 @@ function conventionSource(r, conv) {
   return (
     banner +
     `\n"use client";\n\n` +
-    `import { Surface } from "@/app/_system/surface";\n\n` +
+    `import { SiteError } from "@/app/_assemblies/site/lost";\n\n` +
     `export default function ErrorBoundary({ reset }: { error: Error; reset: () => void }) {\n` +
-    `  return (\n` +
-    `    <>\n` +
-    `      <Surface path=${JSON.stringify(r.path)} assembly={${JSON.stringify(r.assembly)}} />\n` +
-    `      <div className="surface" style={{ paddingTop: 0 }}>\n` +
-    `        <button className="btn primary" onClick={reset}>Try again</button>\n` +
-    `      </div>\n` +
-    `    </>\n` +
-    `  );\n` +
+    `  return <SiteError reset={reset} />;\n` +
     `}\n`
   );
 }
@@ -379,22 +374,18 @@ function pageSource(r) {
    * page stays indexable: the title is public either way, so nothing is
    * disclosed that the page itself does not already show.
    */
-  const meta = indexable && port && port.titleFrom
+  /* Public pages read their title, description and canonical from
+     app/_system/meta.ts (25 Sep 2026): a page with params resolves its own
+     title from the thing it shows — the Journal entry, the document, the
+     estate — instead of the route table's name for the template. */
+  const meta = indexable && hasParams
     ? `export async function generateMetadata(\n` +
-      `  props: { params: Promise<{ ${r.params[0]}: string }> },\n` +
+      `  props: { params: Promise<{ ${r.params.map((p) => `${p}: string`).join("; ")} }> },\n` +
       `): Promise<Metadata> {\n` +
-      `  const params = await props.params;\n` +
-      `  const name = ${port.titleFrom}(params.${r.params[0]});\n` +
-      `  return {\n` +
-      `    title: name ?? ${JSON.stringify(title)},\n` +
-      `    robots: { index: true, follow: true },\n` +
-      `  };\n` +
+      `  return pageMeta(${JSON.stringify(r.path)}, await props.params, ${JSON.stringify(title)});\n` +
       `}\n`
     : indexable
-    ? `export const metadata: Metadata = {\n` +
-      `  title: ${JSON.stringify(title)},\n` +
-      `  robots: { index: true, follow: true },\n` +
-      `};\n`
+    ? `export const metadata: Metadata = pageMeta(${JSON.stringify(r.path)}, {}, ${JSON.stringify(title)});\n`
     : `export async function generateMetadata(): Promise<Metadata> {\n` +
       `  const reachable = canReach(${JSON.stringify(r.path)}, await currentSubject()).ok;\n` +
       `  return {\n` +
@@ -416,16 +407,15 @@ function pageSource(r) {
         /* `indexable &&` matters. The same assembly serves an office
            route, which resolves its title against the subject instead —
            so it must not import a resolver it never calls. */
-        (indexable && port.titleFrom
-          ? `import { ${port.titleFrom} } from ${JSON.stringify(port.titleFromModule)};\n`
-          : "") +
+        
         (port.needsProperty
           ? `import { propertyBySlug } from "@/app/_assemblies/data";\n` +
             `import { notFound } from "next/navigation";\n`
           : "")
       : `import { Surface } from "@/app/_system/surface";\n`) +
     (indexable
-      ? ""
+      ? `import { pageMeta } from "@/app/_system/meta";
+`
       : `import { canReach } from "@/lib/access";\n` +
         `import { currentSubject } from "@/lib/session";\n`) +
     `\n${meta}\n` +

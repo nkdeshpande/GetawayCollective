@@ -4,7 +4,7 @@
  * The independent path: it does not depend on the payer's browser staying
  * open. Verified against RAZORPAY_WEBHOOK_SECRET over the raw body; anything
  * unsigned is refused. Configure it in the Razorpay dashboard for the event
- * payment.captured, pointing at https://getawaycollective.co/api/deposit/webhook.
+ * payment.captured, pointing at https://www.getawaycollective.co/api/deposit/webhook (the bare domain answers 308, and a webhook sender need not follow it).
  */
 import { NextResponse } from "next/server";
 import { sendLead } from "@/lib/leads";

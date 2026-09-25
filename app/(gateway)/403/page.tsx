@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SystemSurface } from "@/app/_assemblies/systempages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Not Permitted · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/403", {}, "Not Permitted · Getaway Collective");
 
 export default async function P403() {
   return <SystemSurface path="/403" />;

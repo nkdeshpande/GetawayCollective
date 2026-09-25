@@ -138,6 +138,6 @@ export const config = {
      exactly the kind of rule that gets broken — so it is written here,
      at the place where the exemption is granted. */
   matcher: [
-    "/((?!api|_next/static|_next/image|images|favicon.ico|robots.txt|sitemap.xml|icon|apple-icon|opengraph-image).*)",
+    "/((?!api|_next/static|_next/image|images|favicon.ico|robots.txt|sitemap.xml|llms.txt|icon|apple-icon|opengraph-image).*)",
   ],
 };

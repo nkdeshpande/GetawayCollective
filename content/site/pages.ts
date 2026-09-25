@@ -993,7 +993,7 @@ export const PAGES: Record<string, SitePage> =  {
     "rows": [
      [
       "Mark and lockups",
-      "The digital kit: gc-mark.svg, gc-lockup.svg and their reversed versions"
+      "Below, ready to download: the mark in four versions, the lockup in four, and the share image"
      ],
      [
       "Colours",
@@ -1015,19 +1015,32 @@ export const PAGES: Record<string, SitePage> =  {
     ]
    },
    {
+    "assets": [
+     ["Mark", "/images/press/gc-mark.svg", "Ink and copper, for light grounds · vector", "332"],
+     ["Mark, reversed", "/images/press/gc-mark-reversed.svg", "Paper and copper, for dark grounds · vector", "332"],
+     ["Mark, one colour black", "/images/press/gc-mark-black.svg", "Single-colour print and embossing · vector", "277"],
+     ["Mark, one colour white", "/images/press/gc-mark-white.svg", "Single-colour on photographs or dark stock · vector", "277"],
+     ["Mark, raster", "/images/press/gc-mark.png", "1024 px square, transparent", "11520"],
+     ["Lockup", "/images/press/gc-lockup.png", "Mark and wordmark, for light grounds · 1040 px wide", "24208"],
+     ["Lockup, reversed", "/images/press/gc-lockup-reversed.png", "For dark grounds · 1040 px wide", "24086"],
+     ["Lockup with line", "/images/press/gc-lockup-tagline.png", "With the brand line, for light grounds", "33505"],
+     ["Lockup with line, reversed", "/images/press/gc-lockup-tagline-reversed.png", "With the brand line, for dark grounds", "33317"],
+     ["Share image", "/images/press/og-default.png", "1200 × 630, the card a shared link shows", "26331"]
+    ]
+   },
+   {
+    "p": "The lockups are supplied as images because the wordmark is set in Inter Tight; the marks are supplied as vectors. The brand line is Sensory Retreat, Capital Meets Curation."
+   },
+   {
     "links": [
      [
-      "Brand blueprint",
-      "https://claude.ai/artifact/SQdkMD2ppyE9XKEHrsrQZh",
+      "Meet the team",
+      "/team",
       "dark"
      ],
      [
-      "Digital kit",
-      "https://claude.ai/artifact/4zmj6cc2BHB28MT5Xd8aCa"
-     ],
-     [
-      "Meet the team",
-      "/team"
+      "Answers",
+      "/answers"
      ]
     ]
    }

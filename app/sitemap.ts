@@ -28,7 +28,7 @@ import { ROUTES, accessOf, isIndexable } from "@/constants/routes";
 import { PROPERTIES, toSlug } from "@/app/_assemblies/data";
 import { JOURNAL } from "@/content/journal";
 
-const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://getawaycollective.co").replace(/\/+$/, "");
+const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getawaycollective.co").replace(/\/+$/, "");
 
 /** Every indexable /collection/[vehicle]* chapter, straight off the table. */
 const VEHICLE_CHAPTERS = ROUTES.filter(

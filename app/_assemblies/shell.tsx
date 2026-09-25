@@ -155,9 +155,14 @@ const STORE = "gc-rail-collapsed";
  */
 const SITE_PATHS = [
   /^\/$/, /^\/collection(\/|$)/, /^\/journal(\/|$)/, /^\/legal(\/|$)/,
-  /^\/(how-it-works|how-we-build|about|contact|team|press|answers|glossary|signal|sign-in|verify)$/,
+  /^\/(how-it-works|how-we-build|about|contact|team|press|answers|glossary|signal|sign-in|verify|status)$/,
 ];
 export const isSitePath = (p: string) => SITE_PATHS.some((re) => re.test(p));
+
+/** A path the route table does not know is a 404, and a 404 wears the site: a
+ *  stranger who mistypes a link is still a stranger, and the rails would show
+ *  them a navigation built for people who are signed in. */
+export const wearsSite = (p: string) => isSitePath(p) || !resolve(p);
 
 function SiteShell({ children }: { children: React.ReactNode }) {
   return (
@@ -174,7 +179,7 @@ function SiteShell({ children }: { children: React.ReactNode }) {
 
 export function Shell(props: { children: React.ReactNode; subject?: Subject }) {
   const pathname = usePathname() || "/";
-  return isSitePath(pathname) ? <SiteShell>{props.children}</SiteShell> : <RailShell {...props} />;
+  return wearsSite(pathname) ? <SiteShell>{props.children}</SiteShell> : <RailShell {...props} />;
 }
 
 function RailShell({

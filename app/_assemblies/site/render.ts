@@ -288,6 +288,8 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
     if (b.steps) h += `<ol class="tx-steps">${b.steps.map((s, i) => `<li><em>${String(i + 1).padStart(2, "0")}</em><div><h3>${s[0]}</h3><p>${s[1]}</p></div></li>`).join("")}</ol>`;
     if (b.rows) h += `<div class="tx-rows">${b.rows.map((r) => `<div><span>${r[0]}</span><span${r[2] ? ' class="ab"' : ""}>${r[1]}</span></div>`).join("")}</div>`;
     if (b.legal) h += `<div class="tx-legal${b.assertion ? " tx-legal-assert" : ""}"${b.anchor ? ` id="${b.anchor}"` : ""}>${b.legal}</div>`;
+    if (b.assets) h += `<div class="tx-assets">${b.assets.map((a) => { const ext = (a[1].split(".").pop() || "").toUpperCase(); const n = Number(a[3]);
+      return `<a class="tx-asset" href="${a[1]}" download><span class="tx-asset-n"><b>${a[0]}</b><em>${a[2] ?? ""}</em></span><span class="mono">${ext}${n ? ` · ${n < 1024 ? `${n} B` : `${Math.round(n / 1024)} KB`}` : ""}</span><span class="tx-asset-d" aria-hidden="true">↓</span></a>`; }).join("")}</div>`;
     if (b.links) h += `<div class="tx-links">${b.links.map((l) => `<a class="btn ${l[2] || "gray"}" href="${l[1]}">${l[0]}</a>`).join("")}</div>`;
     if (b.cards) h += `<div class="tx-cards">${b.cards.map((c) => `<a class="tx-card" href="${c.href}"><div class="im">${film(c.film[0], c.film[1], { bp: c.film[2] })}</div><span class="eb">${c.eb}</span><h3>${c.t}</h3><p>${c.p}</p></a>`).join("")}</div>`;
     if (b.form) h += FORM(b.form);

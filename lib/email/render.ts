@@ -35,7 +35,7 @@
 import { COLOUR } from "../../constants/tokens";
 import type { Notice } from "../../content/notifications";
 
-const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://getawaycollective.co").replace(/\/+$/, "");
+const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getawaycollective.co").replace(/\/+$/, "");
 
 /** Escape before interpolation. A property name is content, not markup. */
 const esc = (s: string): string =>

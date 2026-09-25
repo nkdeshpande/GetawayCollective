@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteText } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "How It Works · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/how-it-works", {}, "How It Works · Getaway Collective");
 
 export default async function Phow_it_works() {
   return <SiteText path="/how-it-works" />;

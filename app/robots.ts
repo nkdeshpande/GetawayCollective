@@ -22,7 +22,7 @@
 import type { MetadataRoute } from "next";
 import { ROUTES, accessOf, isIndexable } from "@/constants/routes";
 
-const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://getawaycollective.co").replace(/\/+$/, "");
+const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getawaycollective.co").replace(/\/+$/, "");
 
 /**
  * The first segment of every non-indexable route.

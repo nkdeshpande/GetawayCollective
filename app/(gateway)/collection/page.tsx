@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteCollection } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "The Collection · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/collection", {}, "The Collection · Getaway Collective");
 
 export default async function Pcollection() {
   return <SiteCollection />;

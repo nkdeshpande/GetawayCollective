@@ -12,11 +12,9 @@
 
 import type { Metadata } from "next";
 import { SiteText } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Press Kit · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata = pageMeta("/press", {}, "Press Kit · Getaway Collective");
 
 export default async function Ppress() {
   return <SiteText path="/press" />;

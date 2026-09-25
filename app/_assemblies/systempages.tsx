@@ -5,20 +5,6 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Wordmark } from "./brandmark";
 
-/**
- * When this record was last verified.
- *
- * "Updated from this build" was not a time. A status page whose freshness
- * cannot be judged is decoration — the whole value of the surface is that
- * a reader can tell how old the claim is.
- *
- * Build-time, not request-time: these four rows are release facts, and a
- * clock that ticked would imply a monitor behind them that does not exist.
- */
-const STAMPED = new Date().toLocaleDateString("en-GB", {
-  day: "2-digit", month: "short", year: "numeric",
-});
-
 function SystemMark({ section }: { section: string }) {
   return <header className="sysbar"><Link href="/" className="sysmark" aria-label="Getaway Collective"><Wordmark size={14} /></Link><span>{section}</span></header>;
 }
@@ -170,37 +156,6 @@ function Verify() {
  * internal layer is pending is not a public concern; that private access
  * is not yet open is.
  */
-const health = [
-  ["The Collection", "Every property record is public and serving", "up"],
-  ["The Journal and legal documents", "Published and current", "up"],
-  ["Private access", "Not yet open. Nothing is lost by waiting.", "unknown"],
-  ["Partner records", "Held closed until private access opens", "unknown"],
-] as const;
-
-/**
- * The complaints figure DOC-06 promises here.
- *
- * The complaints procedure states that totals are published at /status
- * each quarter. That promise stood in a binding document while this page
- * showed nothing — a commitment made where it is most relied upon, and
- * unkept at the surface it named.
- *
- * Zero is publishable, and publishing zero is the point: a quarter with
- * no complaints is a fact rather than an absence. The quarter is stated
- * beside the count so the figure cannot silently age into a claim about
- * a period it never covered.
- */
-const COMPLAINTS = {
-  quarter: "July – September 2026",
-  received: 0,
-  upheld: 0,
-  open: 0,
-} as const;
-
-function Status() {
-  return <main className="system-page system-page-dark"><SystemMark section="SYSTEM / STATUS" /><section className="status-surface"><span className="eyebrow">Public system record</span><div className="status-head"><div><h1>Serving the public record.</h1><p>This page states the condition of the platform surface. It does not expose infrastructure, private records or security diagnostics.</p></div><span className="status-timestamp"><i /> Verified {STAMPED}</span></div><div className="health-list">{health.map(([name, detail, state]) => <article className="health-row" key={name}><i className={state} /><div><h2>{name}</h2><p>{detail}</p></div><span>{state === "up" ? "Serving" : "Not connected"}</span></article>)}</div><div className="status-complaints"><span className="eyebrow">Complaints · {COMPLAINTS.quarter}</span><p>The complaints procedure commits to publishing these totals here each quarter. A quarter with none is stated rather than left blank.</p><div className="status-figs"><div><b>{COMPLAINTS.received}</b><span>received</span></div><div><b>{COMPLAINTS.upheld}</b><span>upheld</span></div><div><b>{COMPLAINTS.open}</b><span>still open</span></div></div></div><div className="status-foot"><p>Private surfaces remain closed until identity is connected. That is a protective state, not an incident.</p><Link className="btn" href="/legal/complaints">Read the complaints procedure</Link><Link className="btn" href="/">Return to the collection</Link></div></section></main>;
-}
-
 function Denial() {
   return <main className="system-page system-page-paper"><SystemMark section="ACCESS / 403" /><section className="denial-surface"><span className="denial-symbol" aria-hidden="true">×</span><span className="eyebrow">Not available to you</span><h1>This link cannot be opened here.</h1><p>Sign in if you have not already. If material is available to you, it will appear through the appropriate part of Getaway Collective.</p><div className="denial-actions"><Link className="btn primary" href="/sign-in">Sign in</Link><Link className="btn system-secondary" href="/">Back to collection</Link></div><p className="system-note">Need help with Getaway Collective? Use the public enquiry route. This page does not identify the material that cannot be opened.</p></section></main>;
 }
@@ -208,6 +163,5 @@ function Denial() {
 export function SystemSurface({ path }: { path: string }) {
   if (path === "/sign-in") return <SignIn />;
   if (path === "/verify") return <Verify />;
-  if (path === "/status") return <Status />;
   return <Denial />;
 }

@@ -12,11 +12,13 @@
 
 import type { Metadata } from "next";
 import { SiteJournalEntry } from "@/app/_assemblies/site/pages";
+import { pageMeta } from "@/app/_system/meta";
 
-export const metadata: Metadata = {
-  title: "Story · Getaway Collective",
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata(
+  props: { params: Promise<{ story: string }> },
+): Promise<Metadata> {
+  return pageMeta("/journal/[story]", await props.params, "Story · Getaway Collective");
+}
 
 export default async function Pjournal_story(props: { params: Promise<{ story: string }> }) {
   const params = await props.params;
