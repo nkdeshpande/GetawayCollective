@@ -19,6 +19,7 @@ import { DOCUMENTS } from "@/content/legal";
 import { vehicleBySlug } from "@/constants/vehicles";
 
 const BRAND = "Getaway Collective";
+const SHARE = { url: "/opengraph-image", width: 1200, height: 630, alt: BRAND };
 const DEFAULT =
   "An investment platform for collective ownership of exceptional retreats in India. Each estate is held by its own LLP and owned by its partners. Capital is at risk.";
 
@@ -61,8 +62,11 @@ export function pageMeta(pattern: string, params: Readonly<Record<string, string
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { title, description, url: path, siteName: BRAND, type: pattern.startsWith("/journal/") ? "article" : "website" },
-    twitter: { card: "summary_large_image", title, description },
+    /* Setting openGraph here replaces the one app/opengraph-image.tsx would
+       have supplied rather than merging with it, so the image is named
+       again — without this line no public page carried a share image. */
+    openGraph: { title, description, url: path, siteName: BRAND, type: pattern.startsWith("/journal/") ? "article" : "website", images: [SHARE] },
+    twitter: { card: "summary_large_image", title, description, images: [SHARE.url] },
     robots: { index: true, follow: true },
   };
 }

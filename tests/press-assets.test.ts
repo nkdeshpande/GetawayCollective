@@ -7,7 +7,7 @@
  * asset with a stale size fails here instead of on the page.
  */
 import { describe, expect, it } from "vitest";
-import { statSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { PAGES } from "../content/site/pages";
 
@@ -23,5 +23,15 @@ describe("press downloads", () => {
   });
   it("no page links to a private draft", () => {
     expect(JSON.stringify(PAGES)).not.toMatch(/claude\.ai/);
+  });
+});
+
+describe("share cards", () => {
+  /* Read as source: vitest here has no @/ alias, and meta.ts imports through it. */
+  it("page metadata names the share image for Open Graph and X", () => {
+    const src = readFileSync(join(process.cwd(), "app/_system/meta.ts"), "utf8");
+    expect(src).toMatch(/openGraph: \{[^}]*images: \[SHARE\]/);
+    expect(src).toMatch(/twitter: \{[^}]*images: \[SHARE\.url\]/);
+    expect(src).toMatch(/SHARE = \{ url: "\/opengraph-image"/);
   });
 });
