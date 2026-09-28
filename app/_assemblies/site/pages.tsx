@@ -16,7 +16,7 @@
 import { notFound } from "next/navigation";
 import { ESTATES, FAQX } from "@/content/site/estates";
 import { PAGES } from "@/content/site/pages";
-import { COLLECTION, FAQ, HOME_JOURNAL, HOME_STACK, MANIFESTO, NEXT_ESTATES, TRIO } from "@/content/site/home";
+import { COLLECTION, FAQ, HOME_JOURNAL, HOME_STACK, MANIFESTO, NEXT_ESTATES, TRIO, type CollectionEstate } from "@/content/site/home";
 import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
 import { VEHICLES, vehicleBySlug } from "@/constants/vehicles";
@@ -28,7 +28,7 @@ import { daHTML } from "../da/render";
 import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify } from "./render";
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
-import { heldBy, openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
+import { fundingComplete, heldBy, openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
 import type { Block, NextStep, SitePage } from "./types";
 import { DOCKET, rulebookDocket } from "./docket";
 import { APPLY, ROLES, WHY } from "@/content/site/careers";
@@ -81,9 +81,9 @@ export function SiteHome() {
   /* Where an estate stands: availability and delivery, the register's where
      it is a vehicle. The featured estate that is not a vehicle is in
      delivery by the canon (_CANON/facts/properties.yaml, in_delivery). */
-  const state = (key: string | null) => {
+  const state = (key: string | null, href: string) => {
     const v = vehicleOf(key);
-    if (!v) return "Not yet open for investment · In delivery";
+    if (!v) return `${fundingComplete(href.replace("/collection/", "")) ? "Funding complete" : "Not yet open for investment"} · In delivery`;
     const R = read(v);
     return `${R.availability} · ${R.delivery}`;
   };
@@ -103,7 +103,7 @@ export function SiteHome() {
     // ── four estates, up close ──
     '<div class="explore-h"><span class="eb">The collection</span><h2 class="h2">Explore our <span>estates</span></h2></div>' +
     '<div class="stackfilm">' + HOME_STACK.map((s) =>
-      `<section class="sf">${film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey))}</span></div></div>` +
+      `<section class="sf">${film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey, s.href))}</span></div></div>` +
       `<a class="btn go" href="${s.href}">${s.cta} ${NE}</a></section>`).join("") + "</div>" +
     // ── all of them, in frames ──
     `<section class="gal-sec"><div class="gal-head"><span class="eb">The collection, in frames</span>` +
@@ -149,9 +149,10 @@ export function SiteHome() {
  */
 type Group = "raising" | "subscribed" | "later";
 const GROUP_ORDER: Readonly<Record<Group, number>> = { raising: 0, subscribed: 1, later: 2 };
-/** Where an estate stands, for grouping: the register's status where it is a vehicle. */
-function groupOf(key: string | null): Group {
-  const v = vehicleOf(key);
+/** Where an estate stands, for grouping: the register's status where it is a vehicle; a funded estate with the funded. */
+function groupOf(e: CollectionEstate): Group {
+  if (e.funding === "complete") return "subscribed";
+  const v = vehicleOf(e.vehicleKey);
   if (!v) return "later";
   const st = read(v).status;
   return st === "RAISING" ? "raising" : st === "FULLY SUBSCRIBED" ? "subscribed" : "later";
@@ -160,7 +161,7 @@ function groupOf(key: string | null): Group {
 function compareHTML(): string {
   const cols = COLLECTION.flatMap((e) => {
     const v = vehicleOf(e.vehicleKey);
-    return v ? [{ e, v, R: read(v), g: groupOf(e.vehicleKey) }] : [];
+    return v ? [{ e, v, R: read(v), g: groupOf(e) }] : [];
   }).sort((a, b) => GROUP_ORDER[a.g] - GROUP_ORDER[b.g]);
   if (cols.length < 2) return "";
   const gap = (s: string) => `<span class="ab">${s}</span>`;
@@ -172,9 +173,9 @@ function compareHTML(): string {
     ["Land", (c) => esc(c.v.landArea), (c) => c.R.prov.intake],
     ["Availability", (c) => esc(c.R.availability), (c) => c.R.prov.derived],
     ["Delivery", (c) => esc(c.R.delivery), (c) => c.R.prov.intake],
-    ["Units", (c) => (c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Figures being confirmed")), (c) => (c.R.publishable ? c.R.prov.derived : undefined)],
-    ["A unit", (c) => (c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
-    ["Lock-in", (c) => (c.R.publishable ? esc(c.v.offering.lockIn) : gap("Set in the offering letter")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
+    ["Units", (c) => (c.R.complete ? gap("Funding complete") : c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Figures being confirmed")), (c) => (c.R.publishable && !c.R.complete ? c.R.prov.derived : undefined)],
+    ["A unit", (c) => (c.R.complete ? gap("Funding complete") : c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced")), (c) => (c.R.publishable && !c.R.complete ? c.R.prov.intake : undefined)],
+    ["Lock-in", (c) => (c.R.complete ? gap("Funding complete") : c.R.publishable ? esc(c.v.offering.lockIn) : gap("Set in the offering letter")), (c) => (c.R.publishable && !c.R.complete ? c.R.prov.intake : undefined)],
     ["Held by", (c) => esc(heldBy(c.v).value), (c) => c.R.prov.intake],
   ];
   return '<section class="cmp" id="compare"><span class="eb">Compare</span><h2 class="h2">The estates, <span>side by side.</span></h2>' +
@@ -190,9 +191,9 @@ function compareHTML(): string {
 
 // ── the collection ──
 export function SiteCollection() {
-  const stage = (key: string | null, s: "open" | "pipe") => {
-    const v = vehicleOf(key);
-    return v ? read(v).status : s === "pipe" ? "PIPELINE" : "IN DELIVERY";
+  const stage = (e: CollectionEstate) => {
+    const v = vehicleOf(e.vehicleKey);
+    return v ? read(v).status : e.funding === "complete" ? "FUNDING COMPLETE" : e.stage === "pipe" ? "PIPELINE" : "IN DELIVERY";
   };
   /* 25 Sep 2026, founder: "how to see the properties that are the only
      ones raising funds; completed ones should be separate too". The grid
@@ -205,20 +206,22 @@ export function SiteCollection() {
      delivery, and what to do next. Keys, land, availability and delivery
      are the register's wherever the estate is a vehicle. */
   const cards = COLLECTION.map((e) => {
-    const g = groupOf(e.vehicleKey);
+    const g = groupOf(e);
     counts[g]++;
     const v = vehicleOf(e.vehicleKey);
     const R = v ? read(v) : undefined;
+    const done = e.funding === "complete";
     return {
-      e, g, st: stage(e.vehicleKey, e.stage), slug: e.href.replace("/collection/", ""),
+      e, g, st: stage(e), slug: e.href.replace("/collection/", ""),
       facts: v ? `${v.keys} keys · ${v.landArea}` : e.spec,
-      availability: R ? R.availability + (R.publishable && v!.offering.unitPrice > 0n ? ` · ${rupees(v!.offering.unitPrice)} a unit` : "") : e.stage === "pipe" ? "Not yet offered" : "Not yet open for investment",
+      availability: R ? R.availability + (R.publishable && !R.complete && v!.offering.unitPrice > 0n ? ` · ${rupees(v!.offering.unitPrice)} a unit` : "")
+        : done ? "Funding complete" : e.stage === "pipe" ? "Not yet offered" : "Not yet open for investment",
       delivery: R ? R.delivery : e.stage === "pipe" ? "Pipeline" : "In delivery",
       action: R ? R.action : e.stage === "pipe" ? (["Explore the concept", e.href] as const) : (["View estate progress", e.href] as const),
     };
   });
   const tabs: readonly (readonly [Group | "all", string])[] = [
-    ["raising", "Raising now"], ["subscribed", "Fully subscribed"], ["later", "Not yet open"], ["all", "All"],
+    ["raising", "Raising now"], ["subscribed", "Funding complete"], ["later", "Not yet open"], ["all", "All"],
   ];
   const open: Group | "all" = counts.raising ? "raising" : "all";
   const html =
@@ -253,7 +256,8 @@ export function SiteEstate({ slug }: { slug: string }) {
   if (E) {
     const v = vehicleOf(E.vehicleKey);
     const R = v ? read(v) : undefined;
-    const faq = faqHTML([...(FAQX[E.key] ?? []), ...FAQ], R?.tokens);
+    /* A funded estate answers its own questions only: the general ones are about investing, and it takes none. */
+    const faq = faqHTML([...(FAQX[E.key] ?? []), ...(fundingComplete(E.slug) ? [] : FAQ)], R?.tokens);
     return <Mount html={PROP(E, R, faq)} />;
   }
   const P = pageByPath(`/collection/${slug}`);
@@ -387,7 +391,7 @@ const KYC_STAGES = new Set(["identity", "address", "tax-residency", "source-of-f
 function calcEstates(): CalcEstate[] {
   const R = (m: bigint) => Number(m / 10000n);
   return VEHICLES.map((v, n) => ({ v, p: PROPERTIES[n] }))
-    .filter(({ p }) => p.yield.conf !== "UNKNOWN" && p.yield.v > 0 && p.yieldBasis)
+    .filter(({ v, p }) => !fundingComplete(v.slug) && p.yield.conf !== "UNKNOWN" && p.yield.v > 0 && p.yieldBasis)
     .map(({ v, p }) => ({
       key: v.key,
       name: plainName(Object.values(ESTATES).find((e) => e.vehicleKey === v.key)?.name) || v.propertyName,
@@ -560,6 +564,16 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
     return /^(?:\s*[A-Z]{1,3}-\d{2}[a-z]?\s*·?)+$/.test(s) ? "Each is on the estate's record, with what will close it." : s;
   };
   const name = E?.name ?? v.propertyName;
+  if (fundingComplete(v.slug)) {
+    const R = read(v), plainName = name.replace(/<[^>]+>/g, "");
+    const done: SitePage = {
+      key: `${v.key}-${id}`, path, eyebrow: `${esc(plainName)} · Funding complete`, title: "Funding <span>complete.</span>",
+      lead: `${esc(plainName)} is funded and ${esc(R.delivery.toLowerCase())}.`,
+      film: E ? [E.pal, E.enquireHour || 18] : undefined,
+      blocks: [{ links: [[`Back to ${plainName}`, `/collection/${v.slug}`], ["Explore the collection", "/collection", "lead"], ["Ask Investor Relations", `/contact?estate=${v.slug}&about=estate`]] }],
+    };
+    return <Mount html={TXT(done)} />;
+  }
   const blocks: Block[] = [];
   if (c.rows.length) blocks.push({ rows: c.rows.map((r) => [esc(plain(r.label)), `${esc(plain(r.value))}${r.basis ? `<span class="tx-note">${esc(plain(r.basis))}</span>` : ""}`]) });
   if (c.withheld.length) { blocks.push({ h: "Withheld, and why" }); blocks.push({ list: c.withheld.map((w) => esc(plain(w))) }); }

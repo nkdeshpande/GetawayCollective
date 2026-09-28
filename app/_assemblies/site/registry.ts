@@ -27,6 +27,17 @@ import { COLLECTION } from "@/content/site/home";
 export const publicName = (v: Vehicle): string =>
   COLLECTION.find((c) => c.vehicleKey === v.key)?.name.replace(/<[^>]+>/g, "") ?? v.propertyName;
 
+/**
+ * FUNDING COMPLETE — founder ruling, 28 Sep 2026
+ *
+ * Where the collection marks an estate's funding complete, the site says
+ * "Funding complete" and shows no units, equity, price or waitlist for it.
+ * Read from the collection because Coffee Fields Forever has no register
+ * record to carry the fact.
+ */
+export const fundingComplete = (slug: string): boolean =>
+  COLLECTION.some((c) => c.funding === "complete" && c.href === `/collection/${slug}`);
+
 /** Who holds the estate, or will: an LLP not yet incorporated does not hold anything yet. */
 export const heldBy = (v: Vehicle): { label: string; value: string } =>
   v.llpin
@@ -57,6 +68,7 @@ const provFor = (v: Vehicle) => {
   return {
     intake: [intake, "REPORTED"] as Prov,
     deposit: ["Founder ruling, 24 Sep 2026: one flat holding deposit at every open estate", "REPORTED"] as Prov,
+    ruling: ["Founder ruling, 28 Sep 2026: funding for this estate is complete", "REPORTED"] as Prov,
     derived: [`Computed by this site from the units offered and subscribed, as stated in ${intake.replace(/^The /, "the ")}`, "INFERRED"] as Prov,
   };
 };
@@ -108,6 +120,8 @@ export interface Reading {
   readonly delivery: string;
   /** The next step this estate's state allows: [label, href]. */
   readonly action: readonly [string, string];
+  /** Funding complete (fundingComplete): nothing about the offering is shown. */
+  readonly complete: boolean;
 }
 
 export function read(v: Vehicle): Reading {
@@ -117,15 +131,20 @@ export function read(v: Vehicle): Reading {
   const unitsTotal = o.unitPrice > 0n ? Number(o.totalEquity / o.unitPrice) : o.units;
   const promoterUnits = o.unitPrice > 0n ? Number(o.promoter / o.unitPrice) : 0;
   const full = o.available <= 0 && o.subscribed > 0;
-  const status = full ? "FULLY SUBSCRIBED" : v.lifecycle === "raising" ? "RAISING" : v.lifecycle === "forming" ? "PIPELINE" : v.lifecycle.toUpperCase();
-  const price: readonly [string, string] = v.lifecycle === "forming"
+  const complete = fundingComplete(v.slug);
+  const status = complete ? "FUNDING COMPLETE" : full ? "FULLY SUBSCRIBED" : v.lifecycle === "raising" ? "RAISING" : v.lifecycle === "forming" ? "PIPELINE" : v.lifecycle.toUpperCase();
+  const price: readonly [string, string] = complete
+    ? ["Funding complete", BUILD_LABEL[v.buildStage].toLowerCase()]
+    : v.lifecycle === "forming"
     ? ["In the pipeline", "not yet open for subscription"]
     : !ok
     ? ["Offering not yet published", "its figures are still being confirmed"]
     : full
       ? [`Fully subscribed · ${o.subscribed} of ${o.units} units offered`, `${rupees(o.unitPrice)} a unit · waitlist open`]
       : [`${o.available} of ${o.units} units available`, `${rupees(o.unitPrice)} a unit`];
-  const offer = ok
+  const offer = complete
+    ? "Funding for this estate is complete."
+    : ok
     ? `${o.units} units are offered to partners at ${rupees(o.unitPrice)} each, ${rupees(o.offered)} in all; ` +
       `the sponsor holds ${rupees(o.promoter)} of the ${rupees(o.totalEquity)} equity. ` +
       `${o.available ? `${o.available} remain available.` : "All are subscribed."}` +
@@ -147,7 +166,9 @@ export function read(v: Vehicle): Reading {
     ["Land", v.landArea, undefined, P.intake],
     ["Keys", String(v.keys), undefined, P.intake],
   ];
-  if (ok) {
+  if (complete) {
+    details.push(["Funding", "Complete", undefined, P.ruling]);
+  } else if (ok) {
     details.push(
       ["Units offered", `${o.units} at ${rupees(o.unitPrice)} · ${o.subscribed} subscribed`, undefined, P.intake],
       ["Equity", `${rupees(o.totalEquity)} · sponsor ${rupees(o.promoter)}`, undefined, P.intake],
@@ -158,7 +179,8 @@ export function read(v: Vehicle): Reading {
   } else {
     details.push(["Offering", "Not yet published", 1]);
   }
-  const availability = v.lifecycle === "forming" ? "Not yet offered"
+  const availability = complete ? "Funding complete"
+    : v.lifecycle === "forming" ? "Not yet offered"
     : full ? "Fully subscribed"
     : ok && o.available > 0 ? `${o.available} of ${o.units} units available`
     : "Offering not yet published";
@@ -166,12 +188,13 @@ export function read(v: Vehicle): Reading {
   /* The brief's table: raising → the offering; subscribed with a waitlist →
      the waitlist; in delivery with nothing open → its progress; pipeline →
      the concept. */
-  const action: readonly [string, string] = v.lifecycle === "forming" ? ["Explore the concept", `/collection/${v.slug}`]
+  const action: readonly [string, string] = complete ? ["View estate progress", `/collection/${v.slug}`]
+    : v.lifecycle === "forming" ? ["Explore the concept", `/collection/${v.slug}`]
     : ok && o.available > 0 && v.lifecycle === "raising" ? ["Explore the offering", `/collection/${v.slug}/investment`]
     : full && stance.kind === "waitlist" ? ["Join the waitlist", `/collection/${v.slug}/enquire`]
     : ["View estate progress", `/collection/${v.slug}`];
   return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details, prov: P,
-    name: publicName(v), availability, delivery, action };
+    name: publicName(v), availability, delivery, action, complete };
 }
 
 /**

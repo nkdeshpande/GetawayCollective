@@ -13,7 +13,8 @@ import { VEHICLES, publishable, stanceFor } from "../constants/vehicles";
 import { COLLECTION, HOME_STACK, NEXT_ESTATES } from "../content/site/home";
 import { ESTATES } from "../content/site/estates";
 import { PAGES } from "../content/site/pages";
-import { heldBy, publicName, read, unitsByEstate } from "../app/_assemblies/site/registry";
+import { FAQX } from "../content/site/estates";
+import { fundingComplete, heldBy, publicName, read, unitsByEstate } from "../app/_assemblies/site/registry";
 
 const plain = (s: string) => s.replace(/<[^>]+>/g, "").trim();
 const NAMES = COLLECTION.map((c) => plain(c.name));
@@ -52,7 +53,8 @@ describe("where an estate stands, said once and without contradiction", () => {
   it("offers the next step the brief assigns to each state", () => {
     for (const v of VEHICLES) {
       const R = read(v), o = v.offering;
-      const want = v.lifecycle === "forming" ? "Explore the concept"
+      const want = fundingComplete(v.slug) ? "View estate progress"
+        : v.lifecycle === "forming" ? "Explore the concept"
         : publishable(v).ok && o.available > 0 && v.lifecycle === "raising" ? "Explore the offering"
         : o.available <= 0 && o.subscribed > 0 && stanceFor(v).kind === "waitlist" ? "Join the waitlist"
         : "View estate progress";
@@ -66,6 +68,34 @@ describe("where an estate stands, said once and without contradiction", () => {
       if (v.llpin) expect(h.label, v.key).toBe("Held by");
       else expect(`${h.label} ${h.value}`, v.key).toMatch(/^To be held by .*not yet incorporated$/);
     }
+  });
+});
+
+describe("funding complete: founder ruling, 28 Sep 2026", () => {
+  const FUNDED = ["slowspace-solace", "coffee-fields-forever"];
+  it("marks Solace and Coffee Fields Forever, and only them", () => {
+    expect(COLLECTION.filter((c) => c.funding === "complete").map((c) => slugOf(c.href)).sort()).toEqual([...FUNDED].sort());
+    for (const s of FUNDED) expect(fundingComplete(s), s).toBe(true);
+  });
+  it("says funding complete, and shows no units, equity, price or waitlist", () => {
+    for (const v of VEHICLES.filter((x) => fundingComplete(x.slug))) {
+      const R = read(v);
+      expect(R.availability).toBe("Funding complete");
+      expect(R.price[0]).toBe("Funding complete");
+      expect(R.action[0]).not.toMatch(/waitlist|offering|hold/i);
+      const labels = R.details.map((d) => d[0]);
+      for (const l of ["Units offered", "Equity", "Bank facility", "Project cost", "Lock-in", "Offering"]) expect(labels, v.key).not.toContain(l);
+      expect(R.tokens.OFFER).not.toMatch(/unit|₹/i);
+    }
+  });
+  it("answers the estates' own questions without a unit or a price", () => {
+    for (const k of ["solace", "cff"]) for (const [q, a] of FAQX[k]) {
+      if (!/invest/i.test(q)) continue;
+      expect(a, q).toMatch(/Funding for .* is complete/);
+      expect(a, q).not.toMatch(/\bunits?\b|₹|lock-in|waitlist/i);
+    }
+    const cff = Object.values(ESTATES).find((e) => e.slug === "coffee-fields-forever")!;
+    expect(cff.details.map((d) => String(d[0]))).not.toContain("Price per unit");
   });
 });
 

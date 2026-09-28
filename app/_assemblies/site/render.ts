@@ -16,7 +16,7 @@ import { nextFor } from "@/content/site/next";
 import { GATES, estateDocket } from "./docket";
 import { PROJECTOR, momentHour } from "./gallery";
 import type { Reading } from "./registry";
-import { heldBy, rupeesFull, src, unitsByEstate, type Prov } from "./registry";
+import { fundingComplete, heldBy, openReading, rupeesFull, src, unitsByEstate, type Prov } from "./registry";
 import { COLLECTION } from "@/content/site/home";
 import { daHTML, type DAKind } from "../da/render";
 
@@ -221,17 +221,22 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   const k = E.key, t = R?.tokens ?? {};
   const F = (s: string) => inkify(fill(s, t));
   const plain = E.name.replace(/<[^>]+>/g, "");
-  const waitlist = !!E.waitlist && (!R || R.stance.kind === "waitlist");
-  const capital = !!R && R.publishable;
-  const price = R ? R.price : ["Price set in the offering letter", "not yet open for investment here"];
+  /* Funding complete (founder ruling, 28 Sep 2026): the page says so and
+     shows no units, equity, price or waitlist. */
+  const complete = R ? R.complete : fundingComplete(E.slug);
+  const waitlist = !complete && !!E.waitlist && (!R || R.stance.kind === "waitlist");
+  const capital = !!R && R.publishable && !complete;
+  const price = complete ? ["Funding complete", R ? R.delivery.toLowerCase() : "in delivery"]
+    : R ? R.price : ["Price set in the offering letter", "not yet open for investment here"];
   /* An estate that is not yet a vehicle has no enquiry route of its own;
      its questions go to the general desk, with the estate already named. */
   const ask = R ? `/collection/${E.slug}/enquire` : `/contact?estate=${E.slug}&about=estate`;
-  const open = !!R && R.stance.kind === "open" && R.vehicle.offering.deposit !== null;
+  const open = !complete && !!R && R.stance.kind === "open" && R.vehicle.offering.deposit !== null;
   /* A fully subscribed estate takes a waitlist whether or not its page
      carries its own waitlist section; the enquiry page always does. */
-  const onWaitlist = !!R && R.stance.kind === "waitlist";
-  const cta = onWaitlist ? ["Join the waitlist", waitlist ? "#waitlist" : ask, "Join the waitlist"]
+  const onWaitlist = !complete && !!R && R.stance.kind === "waitlist";
+  const cta = complete ? ["Explore the collection", "/collection", "Other estates"]
+    : onWaitlist ? ["Join the waitlist", waitlist ? "#waitlist" : ask, "Join the waitlist"]
     : waitlist ? ["Join the waitlist", "#waitlist", "Join the waitlist"]
     : open ? [`Hold a position · ${rupeesFull(R!.vehicle.offering.deposit!)} deposit`, `${ask}#hold`, "Hold a position"]
     : R ? ["Get the offering pack", `${ask}?about=pack`, "Get the offering pack"] : ["Ask about this estate", ask, "Ask about this estate"];
@@ -245,7 +250,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     /* Availability and delivery are two answers, stated apart: an estate can
        be fully subscribed and under construction at once. Where the price line
        already says what is available, the chip says only where the building is. */
-    (R && R.vehicle.lifecycle !== "forming" ? `<span class="sold-chip">${R.publishable ? esc(R.delivery) : `${esc(R.availability)} · ${esc(R.delivery)}`}</span>` : "") +
+    (R && !complete && R.vehicle.lifecycle !== "forming" ? `<span class="sold-chip">${R.publishable ? esc(R.delivery) : `${esc(R.availability)} · ${esc(R.delivery)}`}</span>` : "") +
     /* The shortlist (Next Actions d09): kept in this browser only, and sent
        with an enquiry only if the reader leaves it ticked. */
     `<div class="row-btns"><button type="button" class="btn gray save" data-save="${E.slug}" data-name="${esc(plain)}" aria-pressed="false">Save</button>` +
@@ -300,7 +305,8 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
 
   // ── 4 · ownership ──
   const partner = R ? heldBy(R.vehicle).label === "Held by" ? esc(R.vehicle.registeredName) : `${esc(R.vehicle.registeredName)}, once it is incorporated` : esc(fill(E.vehicle, t));
-  let ow = '<section class="own"><div><b>01</b><h4>Sign in</h4><p>One email: no password, no documents. KYC runs alongside and completes before you sign. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
+  /* A funded estate has nothing to join, so its ownership layer is its answers alone. */
+  let ow = complete ? "" : '<section class="own"><div><b>01</b><h4>Sign in</h4><p>One email: no password, no documents. KYC runs alongside and completes before you sign. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
     '<div><b>02</b><h4>Commit</h4><p>Read the offering letter, the LLP agreement and the risk disclosure. Commit by holding, never by clicking.</p></div>' +
     `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${partner}. Your units are entered in the partnership's register, and your votes, papers and nights are in your partner account.</p></div></section>`;
   ow += `<section class="faq dk faq-estate" id="${k}-faq"><h2 class="h2">Questions about <span>${E.name}</span></h2>${faq}</section>`;
@@ -308,7 +314,9 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   // ── 5 · capital ──
   const cap = capital ? FIN(E, R!)
     : `<section class="fin fin-none" id="${k}-capital"><span class="eb">Capital</span>` +
-      (R && R.vehicle.lifecycle === "forming"
+      (complete
+        ? `<h2 class="h2">Funding <span>complete.</span></h2><p class="para fin-lead">${esc(plain)} is funded and ${esc(price[1])}.</p>`
+        : R && R.vehicle.lifecycle === "forming"
         ? `<h2 class="h2">In the pipeline. <span>Not yet offered.</span></h2><p class="para fin-lead">${esc(plain)} is not yet open for subscription. No figure is estimated in the meantime; the offering letter will state them.</p>`
         : R
           ? `<h2 class="h2">The offering is <span>not yet published.</span></h2><p class="para fin-lead">Its figures are still being confirmed, and none is estimated in the meantime.</p>`
@@ -323,10 +331,16 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   /* The estate's papers, as a docket: each status read from the register. */
   if (R) dc += `<section class="dkt-sec" id="${k}-papers"><span class="eb">The papers</span><h2 class="h2">What is <span>on file.</span></h2>` +
     `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as on file unless the partnership actually holds it.</p>` +
-    `${estateDocket(R.vehicle, plain, R.publishable)}</section>`;
+    `${estateDocket(R.vehicle, plain, R.publishable, complete)}</section>`;
 
   // ── 7 · next step ──
-  const nx = waitlist ? WAIT(E, R)
+  const raising = complete ? openReading() : undefined;
+  const nx = complete
+    ? `<section class="mk" id="${k}-enquire">${film(E.pal, E.enquireHour || 18)}<div class="cap"><span class="eb">Take the next step</span>` +
+      `<h2 class="h2">Funding for ${E.name} <span>is complete.</span></h2><p class="para dim">${raising ? `${esc(raising.name)} is raising now. ` : ""}` +
+      'Questions about this estate go to Investor Relations at <span class="mono sel">ir@getawaycollective.co</span>.</p>' +
+      `<div class="row-btns"><a class="btn lead" href="/collection">Explore the collection ${NE}</a><a class="btn gray" href="/contact?estate=${E.slug}&about=estate">Ask about ${esc(plain)}</a></div></div></section>`
+    : waitlist ? WAIT(E, R)
     : `<section class="mk" id="${k}-enquire">${film(E.pal, E.enquireHour || 18)}<div class="cap"><span class="eb">Take the next step</span>` +
       `<h2 class="h2">Make ${E.name} <span>yours.</span></h2><p class="para dim">${onWaitlist ? "Join the waitlist" : R ? "Request the offering pack" : "Ask about this estate"}, or write to Investor Relations at ` +
       '<span class="mono sel">ir@getawaycollective.co</span>. Capital is at risk: read the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> before committing.</p>' +

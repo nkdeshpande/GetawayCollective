@@ -13,12 +13,12 @@
  */
 
 import {
-  VEHICLES, WATERFALL_STAGES, LIFECYCLE_LABEL, publishable, stanceFor, type Vehicle,
+  VEHICLES, WATERFALL_STAGES, LIFECYCLE_LABEL, BUILD_LABEL, publishable, stanceFor, type Vehicle,
 } from "@/constants/vehicles";
 import { ORDINARY_THRESHOLD, QUORUM_THRESHOLD, SPECIAL_THRESHOLD, UNANIMOUS_THRESHOLD } from "@/constants/voting";
 import { FORMATION } from "@/content/admin";
 import { PASSPORT_PAGES } from "@/content/compositions/passport";
-import { publicName, rupees, rupeesFull } from "../site/registry";
+import { fundingComplete, publicName, rupees, rupeesFull } from "../site/registry";
 
 export type DAKind =
   | "waterfall" | "wftable" | "stack" | "units" | "position" | "entities" | "vote"
@@ -185,8 +185,9 @@ function lockin(o: { vehicle?: string }) {
 function stages() {
   const ST = ["Pipeline", "Forming", "Design", "Pre-construction", "Construction", "Operating"];
   const at = (v: Vehicle) => v.lifecycle === "live" || v.buildStage === "stabilised" ? 5 : v.buildStage === "under-construction" ? 4 : v.lifecycle === "forming" ? 1 : 3;
-  const rows: [string, number | null, string][] = VEHICLES.map((v) => [publicName(v), at(v), LIFECYCLE_LABEL[v.lifecycle]]);
-  rows.push(["Coffee Fields Forever", null, "Not yet open for investment"], ["Nine Hills", 0, "Pipeline · not yet offered"]);
+  const rows: [string, number | null, string][] = VEHICLES.map((v) => [publicName(v), at(v),
+    fundingComplete(v.slug) ? `Funding complete · ${BUILD_LABEL[v.buildStage].toLowerCase()}` : LIFECYCLE_LABEL[v.lifecycle]]);
+  rows.push(["Coffee Fields Forever", null, fundingComplete("coffee-fields-forever") ? "Funding complete · in delivery" : "Not yet open for investment"], ["Nine Hills", 0, "Pipeline · not yet offered"]);
   return shell("stages",
     `<div class="da-es-h"><span></span>${ST.map((s, i) => `<span class="da-mono">${String(i + 1).padStart(2, "0")} ${s}</span>`).join("")}</div>` +
     rows.map(([n, s, l]) => `<div class="da-es-r"><span class="da-es-n">${esc(n)}</span>${s === null ? `<span class="da-hint da-es-x">${esc(l)}</span>`

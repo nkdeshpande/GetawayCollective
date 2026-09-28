@@ -19,11 +19,18 @@ export interface CollectionEstate {
   readonly fallback: string;
   /** One short line of character. Keys and land come from the register where the estate is a vehicle. */
   readonly character: string;
+  /**
+   * Founder ruling, 28 Sep 2026: "CFF and Solace, funding complete. No
+   * need to show the equity or unit details. Just complete." An estate
+   * marked so is said to be funded and nothing more: no units, no equity,
+   * no price and no waitlist, on any surface (registry.ts fundingComplete).
+   */
+  readonly funding?: "complete";
 }
 
 export const COLLECTION: readonly CollectionEstate[] = [
-  { name: "Solace", line: "A SlowSpace estate · Chikkaballapura", spec: "6 keys · Nandi Hills corridor", region: "hills", stage: "open", pal: "solace", hour: 6.6, href: "/collection/slowspace-solace", vehicleKey: "solace", fallback: "", character: "On a granite ridge two hours north of Bengaluru; the reference estate." },
-  { name: "Coffee Fields Forever", line: "An ESKAPE estate · Suntikoppa, Kodagu", spec: "20 keys · 3.0 acres", region: "coffee", stage: "open", pal: "cff", hour: 16.5, href: "/collection/coffee-fields-forever", vehicleKey: null, fallback: "Not yet open for investment here <span>· its offering letter will set the price</span>", character: "Inside a working coffee plantation at Suntikoppa." },
+  { name: "Solace", line: "A SlowSpace estate · Chikkaballapura", spec: "6 keys · Nandi Hills corridor", region: "hills", stage: "open", pal: "solace", hour: 6.6, href: "/collection/slowspace-solace", vehicleKey: "solace", fallback: "", character: "On a granite ridge two hours north of Bengaluru; the reference estate.", funding: "complete" },
+  { name: "Coffee Fields Forever", line: "An ESKAPE estate · Suntikoppa, Kodagu", spec: "20 keys · 3.0 acres", region: "coffee", stage: "open", pal: "cff", hour: 16.5, href: "/collection/coffee-fields-forever", vehicleKey: null, fallback: "Funding complete", character: "Inside a working coffee plantation at Suntikoppa.", funding: "complete" },
   { name: "SlowSpace Creek", line: "A SlowSpace estate · Cherala, Kodagu", spec: "20 keys · five clusters · one bridge", region: "coffee", stage: "open", pal: "creek", hour: 13, href: "/collection/coorg-coffee-creek", vehicleKey: "coorgcreek", fallback: "", character: "A river-forest in Kodagu, reached on foot across one bridge." },
   { name: "Seaside Confluence", line: "A SlowSpace estate · Padubidri, Udupi", spec: "12 keys · one steel building", region: "coast", stage: "open", pal: "coast", hour: 18.6, href: "/collection/slowspace-coastal", vehicleKey: "slowspace", fallback: "", character: "Over the river where it meets the sea, on steel piles." },
   { name: "Nine Hills", line: "A SlowSpace estate · Sakleshpur hills", spec: "12–20 keys · 5 acres", region: "hills", stage: "pipe", pal: "nine", hour: 9, href: "/collection/nine-hills", vehicleKey: null, fallback: "Pipeline <span>· not yet offered</span>", character: "Sleep at the trailhead." },

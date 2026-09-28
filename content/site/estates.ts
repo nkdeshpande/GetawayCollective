@@ -2221,12 +2221,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Stage",
-    "Confirmed · in delivery · raising"
-   ],
-   [
-    "Price per unit",
-    "Set in the offering letter, once the partnership is formed",
-    1
+    "Confirmed · in delivery · funding complete"
    ],
    [
     "Operations plan",
@@ -2248,8 +2243,8 @@ export const FAQX: Record<string, [string, string, string][]> = {
  "solace": [
   [
    "Can I still invest in Solace?",
-   "Not in this offering. Every unit offered in Solace Retreats LLP, the partnership that holds Solace, has been taken, and the estate is being built. Units can change hands only after the lock-in, typically 36 months from financial close, and existing partners see them first. You can still ask Investor Relations to write to you if units are ever offered; asking commits you to nothing. SlowSpace Creek, in Kodagu, is the estate open now.",
-   "constants/vehicles.ts · legal.ts G.1–G.3"
+   "No. Funding for Solace is complete, and the estate is being built. SlowSpace Creek, in Kodagu, is the estate open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
+   "Founder ruling, 28 Sep 2026 · constants/vehicles.ts"
   ],
   [
    "When does Solace open?",
@@ -2289,12 +2284,12 @@ export const FAQX: Record<string, [string, string, string][]> = {
  "cff": [
   [
    "Can I invest in Coffee Fields Forever now?",
-   "Not on this platform yet. Its partnership is still being formed, so there is no offering letter, unit price or holding deposit to show here, and none is estimated. Ask Investor Relations and they will write when it opens; asking commits you to nothing. SlowSpace Creek, a separate estate about 1.8 km away, is open now.",
-   "properties.yaml · constants/vehicles.ts"
+   "No. Funding for Coffee Fields Forever is complete. SlowSpace Creek, a separate estate about 1.8 km away, is open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
+   "Founder ruling, 28 Sep 2026 · properties.yaml"
   ],
   [
    "Is this the same estate as Creek?",
-   "No. SlowSpace Creek is a separate estate about 1.8 km away, under a different house brand and held by its own LLP. Coffee Fields Forever will have its own partnership, its own offering letter and its own partners, and a holding in one carries no share, no vote and no nights in the other.",
+   "No. SlowSpace Creek is a separate estate about 1.8 km away, under a different house brand and held by its own LLP. The two are held separately, and a holding in one carries no share, no vote and no nights in the other.",
    "properties.yaml"
   ],
   [
