@@ -10,7 +10,28 @@
  * and never added: the register already states each total it needs.
  */
 
-import { VEHICLES, stanceFor, publishable, type Vehicle } from "@/constants/vehicles";
+import { VEHICLES, BUILD_LABEL, stanceFor, publishable, type Vehicle } from "@/constants/vehicles";
+import { COLLECTION } from "@/content/site/home";
+
+/**
+ * ONE NAME FOR ONE ESTATE — 28 Sep 2026
+ *
+ * The site said Creek, SlowSpace Creek and Coorg Coffee Creek for one
+ * estate, and Confluence, Seaside Confluence and SlowSpace Coastal for
+ * another. The public name is the collection's, which is the canon's
+ * (_CANON/facts/properties.yaml); the register's propertyName is the LLP
+ * intake's own label and is never printed as the estate's name. The legal
+ * entity is named separately, as the entity. tests/estate-record.test.ts
+ * holds every other surface to this.
+ */
+export const publicName = (v: Vehicle): string =>
+  COLLECTION.find((c) => c.vehicleKey === v.key)?.name.replace(/<[^>]+>/g, "") ?? v.propertyName;
+
+/** Who holds the estate, or will: an LLP not yet incorporated does not hold anything yet. */
+export const heldBy = (v: Vehicle): { label: string; value: string } =>
+  v.llpin
+    ? { label: "Held by", value: v.registeredName }
+    : { label: "To be held by", value: `${v.registeredName}, not yet incorporated` };
 import { TAXONOMIES } from "@/constants/taxonomies";
 
 /* ── WHERE A FIGURE COMES FROM (Next Actions d05, 25 Sep 2026) ────────
@@ -79,6 +100,14 @@ export interface Reading {
   readonly tokens: Readonly<Record<string, string>>;
   readonly details: readonly (readonly [string, string, number?, Prov?])[];
   readonly prov: ReturnType<typeof provFor>;
+  /** The public name (see publicName). */
+  readonly name: string;
+  /** Whether units can be had: two different questions from delivery, answered separately. */
+  readonly availability: string;
+  /** Where the building stands. "Fully subscribed" and "Under construction" can both be true. */
+  readonly delivery: string;
+  /** The next step this estate's state allows: [label, href]. */
+  readonly action: readonly [string, string];
 }
 
 export function read(v: Vehicle): Reading {
@@ -110,8 +139,9 @@ export function read(v: Vehicle): Reading {
     OFFER: offer,
   };
   const P = provFor(v);
+  const held = heldBy(v);
   const details: (readonly [string, string, number?, Prov?])[] = [
-    ["Held by", v.registeredName + (v.llpin ? ` · LLPIN ${v.llpin}` : ""), undefined, P.intake],
+    [held.label, held.value + (v.llpin ? ` · LLPIN ${v.llpin}` : ""), undefined, P.intake],
     ["Place", v.jurisdiction, undefined, P.intake],
     ["Coordinates", v.coordinates ? `<span class="mono">${v.coordinates}</span>` : "Not yet recorded", v.coordinates ? undefined : 1],
     ["Land", v.landArea, undefined, P.intake],
@@ -128,7 +158,39 @@ export function read(v: Vehicle): Reading {
   } else {
     details.push(["Offering", "Not yet published", 1]);
   }
-  return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details, prov: P };
+  const availability = v.lifecycle === "forming" ? "Not yet offered"
+    : full ? "Fully subscribed"
+    : ok && o.available > 0 ? `${o.available} of ${o.units} units available`
+    : "Offering not yet published";
+  const delivery = v.lifecycle === "forming" ? "Pipeline" : v.lifecycle === "live" ? "Operating" : BUILD_LABEL[v.buildStage];
+  /* The brief's table: raising → the offering; subscribed with a waitlist →
+     the waitlist; in delivery with nothing open → its progress; pipeline →
+     the concept. */
+  const action: readonly [string, string] = v.lifecycle === "forming" ? ["Explore the concept", `/collection/${v.slug}`]
+    : ok && o.available > 0 && v.lifecycle === "raising" ? ["Explore the offering", `/collection/${v.slug}/investment`]
+    : full && stance.kind === "waitlist" ? ["Join the waitlist", `/collection/${v.slug}/enquire`]
+    : ["View estate progress", `/collection/${v.slug}`];
+  return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details, prov: P,
+    name: publicName(v), availability, delivery, action };
+}
+
+/**
+ * A unit, estate by estate. The generic "one unit is 5%, twenty make the
+ * whole" was Seaside Confluence's own ladder stated as if it were every
+ * estate's; SlowSpace Creek's unit is 10% of ten. Read per estate instead.
+ */
+export function unitsByEstate(): readonly { name: string; share: string; units: number; ceiling: number | null; price: string }[] {
+  return VEHICLES.filter((v) => publishable(v).ok && v.offering.unitPrice > 0n && v.offering.totalEquity > 0n).map((v) => {
+    const o = v.offering;
+    const shareBps = Number((o.unitPrice * 10000n) / o.totalEquity);
+    return {
+      name: publicName(v),
+      share: `${(shareBps / 100).toFixed(shareBps % 100 ? 1 : 0)}%`,
+      units: Number(o.totalEquity / o.unitPrice),
+      ceiling: v.ladder.ceilingBps > 0 && shareBps > 0 ? Math.floor(v.ladder.ceilingBps / shareBps) : null,
+      price: rupees(o.unitPrice),
+    };
+  });
 }
 
 /** The first vehicle still taking capital, for the home page's pack. */

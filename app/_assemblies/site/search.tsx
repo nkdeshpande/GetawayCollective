@@ -50,6 +50,9 @@ function rank(idx: SiteIndex, q: string) {
     .map((x) => x[1]);
 }
 
+/** Opens the search box from elsewhere: the narrow screen's menu dispatches it. */
+export const OPEN_SEARCH = "gc-search-open";
+
 const typing = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
 
 export function SiteSearch() {
@@ -70,8 +73,10 @@ export function SiteSearch() {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); opener.current = document.activeElement as HTMLElement; setOpen((o) => !o); }
       else if (e.key === "/" && !typing(e.target)) { e.preventDefault(); opener.current = document.activeElement as HTMLElement; setOpen(true); }
     };
+    const fromMenu = () => { opener.current = document.querySelector<HTMLElement>(".nav-menu"); setOpen(true); };
     addEventListener("keydown", onKey);
-    return () => removeEventListener("keydown", onKey);
+    addEventListener(OPEN_SEARCH, fromMenu);
+    return () => { removeEventListener("keydown", onKey); removeEventListener(OPEN_SEARCH, fromMenu); };
   }, []);
   useEffect(() => { setOpen(false); }, [pathname]);
   useEffect(() => {
@@ -100,7 +105,7 @@ export function SiteSearch() {
       <button type="button" className="nav-srch" onClick={(e) => { opener.current = e.currentTarget; setOpen(true); }} aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13ZM15.5 15.5 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" /></svg>
         <span className="nav-srch-l">Search</span>
-        <kbd>{mac ? "⌘K" : "Ctrl K"}</kbd>
+        <kbd aria-hidden="true">{mac ? "⌘K" : "Ctrl K"}</kbd>
       </button>
       {open ? (
         <div className="srch" role="dialog" aria-modal="true" aria-label="Search the site" onMouseDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>

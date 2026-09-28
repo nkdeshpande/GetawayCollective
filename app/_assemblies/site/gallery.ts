@@ -36,15 +36,18 @@ const esc = (s: unknown) =>
   String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const two = (n: number) => String(n).padStart(2, "0");
 
-export function GALLERY(id: string, title: string, frames: readonly Frame[]): string {
+/* 28 Sep 2026: the fan says what it opens, in words, on the button itself
+   ("View all seven estates"), rather than in a hint beneath it. */
+export function GALLERY(id: string, title: string, frames: readonly Frame[], open = `Open ${title}`): string {
   if (!frames.length) return "";
   const fan = frames.slice(0, 5);
   return `<div class="gal" data-gal>` +
-    `<button type="button" class="gal-fan" data-gal-open aria-haspopup="dialog" aria-controls="${id}-ov" aria-label="Open ${esc(title)}: ${frames.length} drawn frames">` +
+    `<button type="button" class="gal-fan" data-gal-open aria-haspopup="dialog" aria-controls="${id}-ov" aria-expanded="false">` +
+    `<span class="gal-cards" aria-hidden="true">` +
     fan.map((f, i) => { const d = i - (fan.length - 1) / 2;
       return `<span class="gal-card" style="--i:${d};--a:${Math.abs(d)};z-index:${10 - Math.abs(d) * 2}">${film(f.pal, f.hour, { rain: f.rain, bp: f.bp })}</span>`; }).join("") +
-    `</button>` +
-    `<p class="mono gal-hint">${two(frames.length)} frames · drawn films, illustration · tap to open</p>` +
+    `</span><span class="gal-open-l">${esc(open)}<svg aria-hidden="true"><use href="#ne"/></svg></span></button>` +
+    `<p class="gal-hint">${frames.length} drawn frames, illustration</p>` +
     `<div class="gal-ov" id="${id}-ov" role="dialog" aria-modal="true" aria-label="${esc(title)}" hidden>` +
     `<header class="gal-hud"><span class="eb">${esc(title)}</span><span class="mono gal-idx" aria-live="polite">01 / ${two(frames.length)}</span>` +
     `<button type="button" class="gal-x" data-gal-close>Close <span class="mono">Esc</span></button></header>` +
@@ -79,7 +82,7 @@ export function PROJECTOR(id: string, title: string, frames: readonly Moment[]):
     `<div class="proj-console"><button type="button" class="proj-btn" data-proj-prev aria-controls="${id}-screen">Prev</button>` +
     `<span class="mono proj-idx" aria-live="polite">${two(1)} / ${two(frames.length)}</span>` +
     `<button type="button" class="proj-btn" data-proj-next aria-controls="${id}-screen">Next</button></div>` +
-    `<p class="mono proj-note">Drawn films, illustration: the estate's own drawing, relit for each moment. No photograph is shown until one is taken.</p>` +
+    `<p class="proj-note">Drawn films, illustration: the estate's own drawing, relit for each moment. No photograph is shown until one is taken.</p>` +
     `</div>`;
 }
 

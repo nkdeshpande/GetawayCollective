@@ -28,7 +28,7 @@ import { daHTML } from "../da/render";
 import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify } from "./render";
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
-import { openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
+import { heldBy, openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
 import type { Block, NextStep, SitePage } from "./types";
 import { DOCKET, rulebookDocket } from "./docket";
 import { APPLY, ROLES, WHY } from "@/content/site/careers";
@@ -61,32 +61,61 @@ export function siteTitle(slug: string): string | undefined {
 const COUNT: Readonly<Record<number, string>> = { 4: "FOUR", 5: "FIVE", 6: "SIX", 7: "SEVEN", 8: "EIGHT", 9: "NINE", 10: "TEN" };
 
 // ── home ──
+/**
+ * THE HOME PAGE, IN ORDER — 28 Sep 2026
+ *
+ * One rhythm, top to bottom: who we are, what owning means, four estates
+ * up close, all seven in frames, the three still to come, how the estates
+ * are built and run, then the Journal and the offering pack. The hero now
+ * says what is being offered in one line and gives one action, with a
+ * quieter second for someone who wants the mechanics first.
+ *
+ * The four featured estates no longer pin to the screen one over another:
+ * a pinned sequence holds the reader in place until it has played.
+ */
 export function SiteHome() {
   const pack = openReading();
   const journal = HOME_JOURNAL.map((j) => ({ ...j, e: JOURNAL.find((x) => x.slug === j.slug) })).filter((j) => j.e);
-  const chip = (key: string | null, fallback: string) => {
-    const R = key ? read(vehicleOf(key)!) : undefined;
-    return R ? `${R.status} · ${fallback}` : `IN DELIVERY · ${fallback}`;
+  const N = COUNT[COLLECTION.length] ?? String(COLLECTION.length);
+  const Nw = N.charAt(0) + N.slice(1).toLowerCase();
+  /* Where an estate stands: availability and delivery, the register's where
+     it is a vehicle. The featured estate that is not a vehicle is in
+     delivery by the canon (_CANON/facts/properties.yaml, in_delivery). */
+  const state = (key: string | null) => {
+    const v = vehicleOf(key);
+    if (!v) return "Not yet open for investment · In delivery";
+    const R = read(v);
+    return `${R.availability} · ${R.delivery}`;
   };
+  const facts = (c: (typeof COLLECTION)[number]) => { const v = vehicleOf(c.vehicleKey); return v ? `${v.keys} keys · ${v.landArea}` : c.spec; };
   const html =
+    // ── who we are, and what is offered ──
     `<section class="hero">${film("coast", 18.4, { label: "Drawn film: laterite cliffs and the Arabian Sea at dusk" })}` +
     '<h1 class="wm" aria-label="Getaway Collective">GETAWAY <span>COLLECTIVE</span></h1>' +
-    `<p class="tl">Sensory Retreat,<br><span>Capital Meets Curation.</span></p><span class="scroll">SCROLL · ${COUNT[COLLECTION.length] ?? COLLECTION.length} ESTATES</span></section>` +
+    '<div class="hero-foot"><p class="tl">Sensory Retreat,<br><span>Capital Meets Curation.</span></p>' +
+    '<div class="hero-own"><p>Own units in the partnership that holds a retreat. We govern it and hold none of it; an operating partner runs it.</p>' +
+    `<div class="hero-act"><a class="btn lead" href="/collection">Explore the collection ${NE}</a><a class="hero-link" href="/how-it-works">How ownership works</a></div>` +
+    '<p class="hero-risk">Capital is at risk.</p></div></div></section>' +
     `<section class="mani"><p id="mani">${MANIFESTO.split(" ").map((w) => `<span>${w}</span>`).join(" ")}</p></section>` +
+    // ── what owning means ──
+    `<section class="ref"><div>${film("solace", 7)}</div><div>${film("creek", 11)}</div><div>${film("cff", 17)}</div>` +
+    '<div class="mid"><div><span class="eb">What you own</span><b>ONE ESTATE, ONE LLP</b><p class="para para-s">Units in the partnership that holds the land and the buildings. Partners decide, by equity; one operating partner runs every estate.</p><a class="btn" href="/how-it-works">How ownership works</a></div></div></section>' +
+    // ── four estates, up close ──
     '<div class="explore-h"><span class="eb">The collection</span><h2 class="h2">Explore our <span>estates</span></h2></div>' +
     '<div class="stackfilm">' + HOME_STACK.map((s) =>
-      `<section class="sf">${film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p><span class="chip">${chip(s.vehicleKey, s.chip)}</span></div></div>` +
+      `<section class="sf">${film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey))}</span></div></div>` +
       `<a class="btn go" href="${s.href}">${s.cta} ${NE}</a></section>`).join("") + "</div>" +
-    `<section class="ref"><div>${film("solace", 7)}</div><div>${film("creek", 11)}</div><div>${film("cff", 17)}</div>` +
-    '<div class="mid"><div><span class="eb">Getaway Collective</span><b>ONE STANDARD</b><p class="para para-s">Every estate held in its own LLP, drawn to one standard, run by one operator.</p><a class="btn" href="/collection">See all</a></div></div></section>' +
-    /* The collection, in frames (./gallery.ts): the fan opens the full-screen viewer, one estate a frame. */
+    // ── all of them, in frames ──
     `<section class="gal-sec"><div class="gal-head"><span class="eb">The collection, in frames</span>` +
-    `<h2 class="h2">${(COUNT[COLLECTION.length] ?? String(COLLECTION.length)).charAt(0)}${(COUNT[COLLECTION.length] ?? "").slice(1).toLowerCase()} estates, <span>drawn.</span></h2>` +
-    '<p class="para">Open the frames and move through them: swipe, drag, or use the arrow keys. Every frame leads to its estate.</p></div>' +
-    GALLERY("gal-home", "The collection, in frames", COLLECTION.map((c) => ({ pal: c.pal, hour: c.hour, t: c.name.replace(/<[^>]+>/g, ""), line: `${c.line} · ${c.spec}`, href: c.href }))) +
+    `<h2 class="h2">${Nw} estates, <span>drawn.</span></h2>` +
+    '<p class="para">Open the frames and move through them: swipe, drag, or use the arrow keys. Every frame leads to its estate.</p>' +
+    '<p><a class="tx-u" href="/collection">Or see them listed, with where each stands</a></p></div>' +
+    GALLERY("gal-home", "The collection, in frames", COLLECTION.map((c) => ({ pal: c.pal, hour: c.hour, t: c.name.replace(/<[^>]+>/g, ""), line: `${c.line} · ${facts(c)}`, href: c.href })), `View all ${Nw.toLowerCase()} estates`) +
     "</section>" +
+    // ── still to come ──
     '<section class="next"><div class="center gut"><h2 class="h2">Next <span>estates</span></h2><p class="para mute">Named, surveyed, not yet open. Each will arrive with its own offering letter.</p></div><div class="rail">' +
     NEXT_ESTATES.map((n) => `${n.href ? `<a class="nc" href="${n.href}">` : '<article class="nc">'}<div class="im">${film(n.pal, n.hour)}</div><h4>${n.name}</h4><p>${n.line}</p>${n.href ? "</a>" : "</article>"}`).join("") + "</div></section>" +
+    // ── how they are built, and who runs them ──
     '<section class="makers"><div class="trio">' +
     TRIO.map((t) => `<figure><svg viewBox="0 0 200 200" aria-hidden="true">${inkify(t.svg)}</svg><figcaption><b>${t.name}</b><span>${t.sub}</span></figcaption></figure>`).join("") +
     '</div><div><span class="eb">Built as a system</span><h2 class="h2">Three chassis. <span>Every estate.</span></h2></div>' +
@@ -94,15 +123,16 @@ export function SiteHome() {
     '<a class="btn gray" href="/collection/slowspace-solace#concept">See them at Solace</a></div></section>' +
     `<section class="fullbleed">${film("creek", 20.5, { rain: true })}<div class="cap"><span class="eb">Run by our operating partner</span>` +
     '<h2 class="h2">You own it. <span>Nobody asks you to run it.</span></h2><p class="para">Sensory Getaways operates every estate under a Commercial Services Agreement, measured on service levels and paid from the first stage of the waterfall. Partners decide; the operator delivers.</p>' +
-    '<a class="btn" href="/how-it-works">How it works</a></div></section>' +
+    '<a class="btn" href="/operating-partner">The operating partner</a></div></section>' +
+    // ── the Journal, and the pack ──
     '<section class="news"><div class="center gut"><h2 class="h2">From the <span>Journal</span></h2></div><div class="rail">' +
     journal.map((j) => `<article class="nw"><h4>${j.e!.title}</h4><div class="im">${film(j.pal, j.hour, { bp: j.bp })}</div><div class="ft"><span class="eb">${KIND_LABEL[j.e!.kind]} · ${j.e!.minutes} min</span><a class="btn gray" href="/journal/${j.slug}">Read</a></div></article>`).join("") +
     "</div></section>" +
     (pack
       ? `<section class="pack"><div class="col">${film("creek", 12, { bp: true })}</div><div class="tx"><span class="eb">The offering pack</span>` +
-        `<h2 class="h2 h2-s">Get the <span>${esc(pack.vehicle.propertyName)} offering pack</span></h2>` +
+        `<h2 class="h2 h2-s">Get the <span>${esc(pack.name)} offering pack</span></h2>` +
         `<p class="para dim">The drawings, the structure of ${esc(pack.vehicle.registeredName)}, the waterfall and the risk disclosure, in one document. Sent after a short qualification.</p>` +
-        `<div><a class="btn lead" href="/collection/${pack.vehicle.slug}/enquire">Request the pack ${NE}</a></div></div></section>`
+        `<div><a class="btn lead" href="/collection/${pack.vehicle.slug}/enquire?about=pack">Request the pack ${NE}</a></div></div></section>`
       : "") +
     '<section class="who"><div><span class="eb">Who we are</span><p class="q"><b>You own.</b> We steward.<br>You decide.</p></div>' + // vocab-lint-ignore — ratified brand line, L1-02 §514
     '<div><p class="para">Getaway Collective is an investment platform for collective ownership of exceptional retreats in India. We structure each estate as its own LLP, govern it on behalf of its partners, and hold no equity in any of them. We are builders, not brokers.</p><a class="btn dark" href="/about">Learn more</a></div></section>';
@@ -126,8 +156,6 @@ function groupOf(key: string | null): Group {
   const st = read(v).status;
   return st === "RAISING" ? "raising" : st === "FULLY SUBSCRIBED" ? "subscribed" : "later";
 }
-const enquireHref = (slug: string) => `/collection/${slug}/enquire`;
-const NEXT_STEP: Readonly<Record<Group, string>> = { raising: "Hold a unit", subscribed: "Join the waitlist", later: "Register interest" };
 
 function compareHTML(): string {
   const cols = COLLECTION.flatMap((e) => {
@@ -142,30 +170,26 @@ function compareHTML(): string {
     ["Place", (c) => esc(c.v.jurisdiction), (c) => c.R.prov.intake],
     ["Keys", (c) => String(c.v.keys), (c) => c.R.prov.intake],
     ["Land", (c) => esc(c.v.landArea), (c) => c.R.prov.intake],
-    ["Stage", (c) => c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase(), (c) => c.R.prov.derived],
+    ["Availability", (c) => esc(c.R.availability), (c) => c.R.prov.derived],
+    ["Delivery", (c) => esc(c.R.delivery), (c) => c.R.prov.intake],
     ["Units", (c) => (c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Figures being confirmed")), (c) => (c.R.publishable ? c.R.prov.derived : undefined)],
     ["A unit", (c) => (c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
     ["Lock-in", (c) => (c.R.publishable ? esc(c.v.offering.lockIn) : gap("Set in the offering letter")), (c) => (c.R.publishable ? c.R.prov.intake : undefined)],
-    ["Held by", (c) => esc(c.v.registeredName), (c) => c.R.prov.intake],
+    ["Held by", (c) => esc(heldBy(c.v).value), (c) => c.R.prov.intake],
   ];
   return '<section class="cmp" id="compare"><span class="eb">Compare</span><h2 class="h2">The estates, <span>side by side.</span></h2>' +
     '<p class="para dim">Every figure is read from each estate\'s own record. Capital is at risk; the offering letter governs.</p>' +
     `<div class="cmp-wrap" tabindex="0" role="region" aria-label="The estates compared"><table class="cmp-t"><thead><tr><th scope="col"><span class="sr">Measure</span></th>${cols.map((c) =>
-      `<th scope="col" class="g-${c.g}"><span class="cmp-st">${c.R.status.charAt(0) + c.R.status.slice(1).toLowerCase()}</span><a href="${c.e.href}">${c.e.name}</a></th>`).join("")}</tr></thead>` +
+      `<th scope="col" class="g-${c.g}"><span class="cmp-st">${esc(c.R.availability)}</span><a href="${c.e.href}">${c.e.name}</a></th>`).join("")}</tr></thead>` +
     `<tbody>${rows.map(([k, f, p]) => `<tr><th scope="row">${k}</th>${cols.map((c) => `<td class="g-${c.g}"><span${src(p(c))}>${f(c)}</span></td>`).join("")}</tr>`).join("")}` +
-    `<tr class="cmp-go"><th scope="row">Next step</th>${cols.map((c) => `<td class="g-${c.g}"><a class="btn ${c.g === "raising" ? "lead" : "gray"}" href="${enquireHref(c.v.slug)}${c.g === "raising" ? "#hold" : ""}">${NEXT_STEP[c.g]}</a></td>`).join("")}</tr>` +
+    /* The same next step the estate's card and page offer (registry.ts read().action). */
+    `<tr class="cmp-go"><th scope="row">Next step</th>${cols.map((c) => `<td class="g-${c.g}"><a class="btn ${c.g === "raising" ? "lead" : "gray"}" href="${c.R.action[1]}">${esc(c.R.action[0])}</a></td>`).join("")}</tr>` +
     `</tbody></table></div>` +
-    '<p class="mono cmp-note">Tap a figure for where it comes from and how far it can be relied on.</p></section>';
+    '<p class="cmp-note">Tap a figure for where it comes from and how far it can be relied on.</p></section>';
 }
 
 // ── the collection ──
 export function SiteCollection() {
-  const price = (key: string | null, fallback: string) => {
-    const v = vehicleOf(key);
-    if (!v) return fallback;
-    const R = read(v);
-    return `${R.price[0]} <span>· ${R.price[1]}</span>`;
-  };
   const stage = (key: string | null, s: "open" | "pipe") => {
     const v = vehicleOf(key);
     return v ? read(v).status : s === "pipe" ? "PIPELINE" : "IN DELIVERY";
@@ -176,10 +200,22 @@ export function SiteCollection() {
      each on their own tab, counted. Where an estate stands comes from the
      register (read().status), never from the card's own copy. */
   const counts = { raising: 0, subscribed: 0, later: 0 };
+  /* A card answers six questions in the same order every time (brief of
+     28 Sep): name and place, character, keys and land, availability,
+     delivery, and what to do next. Keys, land, availability and delivery
+     are the register's wherever the estate is a vehicle. */
   const cards = COLLECTION.map((e) => {
     const g = groupOf(e.vehicleKey);
     counts[g]++;
-    return { e, g, st: stage(e.vehicleKey, e.stage) };
+    const v = vehicleOf(e.vehicleKey);
+    const R = v ? read(v) : undefined;
+    return {
+      e, g, st: stage(e.vehicleKey, e.stage), slug: e.href.replace("/collection/", ""),
+      facts: v ? `${v.keys} keys · ${v.landArea}` : e.spec,
+      availability: R ? R.availability + (R.publishable && v!.offering.unitPrice > 0n ? ` · ${rupees(v!.offering.unitPrice)} a unit` : "") : e.stage === "pipe" ? "Not yet offered" : "Not yet open for investment",
+      delivery: R ? R.delivery : e.stage === "pipe" ? "Pipeline" : "In delivery",
+      action: R ? R.action : e.stage === "pipe" ? (["Explore the concept", e.href] as const) : (["View estate progress", e.href] as const),
+    };
   });
   const tabs: readonly (readonly [Group | "all", string])[] = [
     ["raising", "Raising now"], ["subscribed", "Fully subscribed"], ["later", "Not yet open"], ["all", "All"],
@@ -193,9 +229,12 @@ export function SiteCollection() {
       return `<button role="tab" aria-selected="${k === open}" data-s="${k}"${n ? "" : " disabled"}>${label} <span class="n">${n}</span></button>`;
     }).join("")}</div>` +
     '<section class="short" data-shortlist hidden aria-label="Your shortlist"></section>' +
-    '<div class="cgrid" id="cgrid">' + cards.map(({ e, g, st }) =>
-      `<a class="cc cc-${g}" href="${e.href}" data-f="${e.region}" data-s="${g}"${open !== "all" && g !== open ? " hidden" : ""}><div class="im">${film(e.pal, e.hour)}<span class="st st-${g}">${st}</span></div>` +
-      `<h3>${e.name}</h3><p>${e.line}</p><p>${e.spec}</p><p class="pr">${price(e.vehicleKey, e.fallback)}</p></a>`,
+    '<div class="cgrid" id="cgrid">' + cards.map(({ e, g, st, slug, facts, availability, delivery, action }) =>
+      `<article class="cc cc-${g}" data-f="${e.region}" data-s="${g}" data-slug="${slug}"${open !== "all" && g !== open ? " hidden" : ""}>` +
+      `<a class="cc-main" href="${e.href}"><div class="im">${film(e.pal, e.hour)}<span class="st st-${g}">${st}</span></div>` +
+      `<h3>${e.name}</h3><p class="cc-loc">${e.line}</p><p class="cc-char">${esc(e.character)}</p>` +
+      `<dl class="cc-facts"><div><dt>Keys and land</dt><dd>${esc(facts)}</dd></div><div><dt>Availability</dt><dd>${esc(availability)}</dd></div><div><dt>Delivery</dt><dd>${esc(delivery)}</dd></div></dl></a>` +
+      `<a class="cc-act" href="${action[1]}">${esc(action[0])} ${NE}</a></article>`,
     ).join("") + "</div>" +
     `<section class="mk">${film("solace", 17.8)}<div class="cap"><span class="eb">Take the next step</span><h2 class="h2">Make one <span>yours.</span></h2><p class="para dim">Talk to Investor Relations, or start qualification. Every conversation about capital continues in writing.</p><div><a class="btn" href="/contact">Make an enquiry</a></div></div></section>` +
     '<section class="ben"><div class="l"><h2 class="h2 h2-s">Three things <span>that are different here</span></h2><p class="para dim">Most ways to own a retreat sell nights. This one governs an asset.</p><div><a class="btn" href="#faq">Read the questions</a></div></div>' +
@@ -384,7 +423,7 @@ export function SiteQualify() {
     { h: "What you own" },
     { html: `<div class="own-tiles">` +
       tile("A share of a real place", "Your units are a share of the partnership that holds the land and the buildings, registered in its own name.") +
-      tile("Nights of your own", lead && one ? `The estate's nights each year are shared by equity. One unit at ${esc(lead.name)} is about ${one.nightsPerYear[0]} to ${one.nightsPerYear[1]} nights a year, from handover.` : "The estate's nights each year are shared among its partners by equity, from handover.") +
+      tile("Nights of your own", lead && one ? `Each estate's nights are shared among its partners from handover. If they are shared by equity, one unit at ${esc(lead.name)} is about ${one.nightsPerYear[0]} to ${one.nightsPerYear[1]} nights a year: an illustration, because the rule that allocates nights is not yet decided and each offering letter will state it.` : "Each estate's nights are shared among its partners from handover. The rule that allocates them is not yet decided; each offering letter will state it.") +
       tile("Income, modelled", lead ? `Distributions follow the waterfall. At ${esc(lead.name)} the modelled yield is ${lead.yieldPct}% a year, ${lead.yieldClass.toLowerCase()}, ${esc(lead.basis)}. Not promised.` : "Distributions follow the waterfall, from stabilised occupancy. Not promised.") +
       tile("Nothing to run", "The operating partner runs every estate day to day, measured on service levels and paid from the waterfall. You decide; it delivers.") +
       tile("A vote", "The partners decide the matters that matter, each vote weighted by equity.") +
@@ -534,9 +573,10 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
     blocks.push({ h: R.stance.kind === "waitlist" ? "Join the waitlist" : "Request the offering pack" });
     blocks.push({ form: {
       id: `${v.key}-enq`, addr: "ir@getawaycollective.co",
+      about: `${esc(name.replace(/<[^>]+>/g, ""))} · ${R.stance.kind === "waitlist" ? "joining the waitlist" : "the offering pack"}`,
       fields: [["Name", "text", "name"], ["Email", "email", "email"], ["City", "text", "address-level2"], ["Anything we should know", "area"]],
       submit: R.stance.kind === "waitlist" ? "Join the waitlist" : "Request the pack",
-      ok: "Received. Investor Relations will write to you on the next working day. Nothing about capital is decided by email alone.",
+      ok: "Received. Investor Relations will reply to you in writing. Nothing about capital is decided by email alone.",
       note: "Capital is at risk. Read the Risk Factors before committing.", to: "dossier", vehicle: v.slug,
     } });
   }

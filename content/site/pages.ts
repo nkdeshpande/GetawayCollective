@@ -130,36 +130,54 @@ export const PAGES: Record<string, SitePage> =  {
     "q": "Modern luxury is the absence of noise."
    },
    {
-    "p": "The doctrine first, then the arithmetic that has to survive it."
+    "p": "The doctrine first, then the arithmetic that has to survive it. Four chapters: what you own, how you become a partner, where the money goes, and how partners decide, use the estate and leave."
    },
    {
     "src": "public.ts 252–258"
    },
    {
-    "figs": [
+    "toc": [
      [
-      "5%",
-      "one unit of an estate's LLP"
+      "own",
+      "What you own"
      ],
      [
-      "20",
-      "units make the whole equity layer"
+      "become",
+      "Becoming a partner"
      ],
      [
-      "1–10",
-      "units a partner may hold"
+      "money",
+      "Where the money goes"
      ],
      [
-      "0%",
-      "equity held by Getaway Collective"
+      "decide",
+      "Deciding, using and leaving"
      ]
-    ]
+    ],
+    "tocLabel": "Four chapters"
    },
    {
-    "src": "public.ts 285, 306 · legal.ts 132"
+    "h": "<span class=\"tx-ch\">Chapter 1</span>What you own",
+    "id": "own"
    },
    {
-    "h": "The path to becoming a partner"
+    "p": "A unit is a fixed share of one estate's LLP. Each estate sets its own: how large a share a unit is, what it costs, and the most one partner may hold. They differ, so they are read estate by estate from each offering's record, never stated once for all."
+   },
+   {
+    "units": true
+   },
+   {
+    "p": "Getaway Collective holds none of the equity in any estate. It governs each partnership and is paid from one disclosed stage of its waterfall."
+   },
+   {
+    "src": "constants/vehicles.ts offering, ladder · legal.ts 132"
+   },
+   {
+    "h": "<span class=\"tx-ch\">Chapter 2</span>Becoming a partner",
+    "id": "become"
+   },
+   {
+    "p": "Sign in with one email and read everything. The checks that follow run alongside your reading, and each stage can be resumed where you left it."
    },
    {
     "da": "path"
@@ -171,10 +189,17 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "public.ts 310–322 · content/member.ts"
    },
    {
-    "h": "Where the money goes"
+    "h": "<span class=\"tx-ch\">Chapter 3</span>Where the money goes",
+    "id": "money"
    },
    {
     "p": "Revenue flows through six stages, in order, each a share of the estate's gross revenue, and the six always add up to exactly 100%: nothing leaves outside them. There is no preferred return, no catch-up and no carried interest, so no class of investor is paid ahead of the others and no one takes a performance fee on top."
+   },
+   {
+    "da": "wftable"
+   },
+   {
+    "p": "The same shares, drawn and applied to each estate's modelled revenue. The amounts are an illustration, not a forecast."
    },
    {
     "da": "waterfall",
@@ -184,25 +209,20 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "L1-16 28–57"
    },
    {
-    "h": "Deciding, together"
+    "h": "<span class=\"tx-ch\">Chapter 4</span>Deciding, using and leaving",
+    "id": "decide"
    },
    {
-    "p": "Votes are weighted by equity, never one partner, one vote. Resolutions are recorded in a register that is append-only: a correction is a new entry, never an edit."
+    "p": "<b class=\"tx-strong\">Deciding.</b> Votes are weighted by equity, never one partner, one vote. Resolutions are recorded in a register that is append-only: a correction is a new entry, never an edit."
    },
    {
     "da": "vote"
    },
    {
-    "src": "public.ts 932–938"
+    "src": "public.ts 932–938 · AGENTS.md 115 · Rule 11"
    },
    {
-    "src": "AGENTS.md 115 · Rule 11"
-   },
-   {
-    "h": "Time at the estate"
-   },
-   {
-    "p": "Nights follow your position; they are an incident of ownership, never the product. The exact allocation rule is not yet decided and each offering letter will state it."
+    "p": "<b class=\"tx-strong\">Using the estate.</b> Nights follow your position; they are an incident of ownership, never the product. The rule that allocates them is not yet decided and each offering letter will state it, so the figures below are an illustration only."
    },
    {
     "da": "position"
@@ -211,10 +231,7 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "public.ts 184 · DECISIONS.md D-08"
    },
    {
-    "h": "Leaving"
-   },
-   {
-    "p": "There is no public market for units. After the lock-in, partners can post units on a noticeboard that other partners see first; it is not a market, and nothing guarantees a buyer."
+    "p": "<b class=\"tx-strong\">Leaving.</b> There is no public market for units. After the lock-in, partners can post units on a noticeboard that other partners see first; it is not a market, and nothing guarantees a buyer."
    },
    {
     "src": "public.ts 330–333"
@@ -307,7 +324,10 @@ export const PAGES: Record<string, SitePage> =  {
         "Solace",
         "Seaside Confluence",
         "SlowSpace Creek",
-        "Coffee Fields Forever"
+        "Coffee Fields Forever",
+        "Nine Hills",
+        "Wildwood",
+        "Tidal Club"
        ]
       ],
       [
@@ -316,7 +336,7 @@ export const PAGES: Record<string, SitePage> =  {
       ]
      ],
      "submit": "Send to Investor Relations",
-     "ok": "Received. Investor Relations will write to you on the next working day. Nothing about capital is decided by email alone.",
+     "ok": "Received. Investor Relations will reply to you in writing. Nothing about capital is decided by email alone.",
      "note": "Capital is at risk; read the Terms, Part L, before committing."
     }
    }
@@ -964,19 +984,19 @@ export const PAGES: Record<string, SitePage> =  {
     "rows": [
      [
       "Solace",
-      "Six keys on a granite ridge two hours north of Bengaluru; the reference estate, in delivery."
+      "Six keys on a granite ridge two hours north of Bengaluru; the reference estate."
      ],
      [
       "Seaside Confluence",
-      "Twelve keys over the river where it meets the sea, on steel piles; fully subscribed."
+      "Twelve keys over the river where it meets the sea, on steel piles."
      ],
      [
       "SlowSpace Creek",
-      "Twenty keys in a river-forest in Kodagu, reached on foot across one bridge; raising."
+      "Twenty keys in a river-forest in Kodagu, reached on foot across one bridge."
      ],
      [
       "Coffee Fields Forever",
-      "Twenty keys inside a working coffee plantation at Suntikoppa; raising."
+      "Twenty keys inside a working coffee plantation at Suntikoppa."
      ]
     ]
    },

@@ -18,10 +18,10 @@ import {
 import { ORDINARY_THRESHOLD, QUORUM_THRESHOLD, SPECIAL_THRESHOLD, UNANIMOUS_THRESHOLD } from "@/constants/voting";
 import { FORMATION } from "@/content/admin";
 import { PASSPORT_PAGES } from "@/content/compositions/passport";
-import { rupees, rupeesFull } from "../site/registry";
+import { publicName, rupees, rupeesFull } from "../site/registry";
 
 export type DAKind =
-  | "waterfall" | "stack" | "units" | "position" | "entities" | "vote"
+  | "waterfall" | "wftable" | "stack" | "units" | "position" | "entities" | "vote"
   | "path" | "lockin" | "stages" | "formation" | "chassis" | "search";
 
 const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -33,7 +33,7 @@ const STAGE_TONE = ["t1", "t2", "t3", "t4", "t5", "t6"];
 export const shown = (): Vehicle[] => VEHICLES.filter((v) => publishable(v).ok);
 const byKey = (k?: string) => (k ? VEHICLES.find((v) => v.key === k || v.slug === k) : undefined);
 const pick = (vs: Vehicle[], cur: string) => vs.length < 2 ? "" :
-  `<div class="da-pick" role="group" aria-label="Estate">${vs.map((v) => `<button type="button" class="da-pill" data-k="${v.key}" aria-pressed="${v.key === cur}">${esc(v.propertyName)}</button>`).join("")}</div>`;
+  `<div class="da-pick" role="group" aria-label="Estate">${vs.map((v) => `<button type="button" class="da-pill" data-k="${v.key}" aria-pressed="${v.key === cur}">${esc(publicName(v))}</button>`).join("")}</div>`;
 const shell = (kind: DAKind, body: string, data?: unknown, cls = "") =>
   `<div class="da da-${kind}${cls ? " " + cls : ""}" data-da="${kind}"${data === undefined ? "" : ` data-json="${json(data)}"`}>${body}</div>`;
 
@@ -57,10 +57,29 @@ function waterfall(o: { vehicle?: string; money?: boolean }) {
     return `<div class="da-wf-row"><span class="da-wf-n">${r.n}</span><span class="da-wf-t"><i class="${r.tone}" style="left:${left / 100}%;width:${r.bps / 100}%"></i></span><span class="da-mono">${r.pct}</span>${o.money ? `<span class="da-mono da-cu">${r.amt}</span>` : ""}</div>`; }).join(""); };
   return shell("waterfall",
     pick(vs, d.key) +
-    `<div class="da-top"><div><span class="da-lbl">Reaches partners</span><div class="da-big" data-f="partners">${d.partners}</div></div>${o.money ? '<span class="da-chip">Forecast</span>' : ""}</div>` +
+    `<div class="da-top"><div><span class="da-lbl">Reaches partners</span><div class="da-big" data-f="partners">${d.partners}</div></div>${o.money ? '<span class="da-chip">Illustration</span>' : ""}</div>` +
     `<div class="da-wf" data-f="rows">${rows(d)}</div>` +
-    (o.money ? `<p class="da-note">On a modelled gross revenue of <b data-f="gross">${d.gross}</b> a year. The offering letter governs.</p>` : ""),
+    (o.money ? `<p class="da-note">Illustration: the shares applied to a modelled gross revenue of <b data-f="gross">${d.gross}</b> a year. Not a forecast; the offering letter governs.</p>` : ""),
     { money: !!o.money, set: data.map((x) => ({ ...x, html: rows(x) })) });
+}
+
+/**
+ * The waterfall as a table — 28 Sep 2026. The bars show the shape; a table
+ * is what someone reads: each stage's share of gross revenue, estate by
+ * estate, closing to 100%. Shares only: they are the offering's stated
+ * terms, where an amount would be a model.
+ */
+function wftable() {
+  const vs = shown().filter((v) => v.operating.waterfall);
+  if (!vs.length) return shell("wftable", '<p class="da-none">No estate has published its waterfall yet.</p>');
+  const W = vs.map((v) => v.operating.waterfall!);
+  const cell = (b: number | null | undefined) => (b === null || b === undefined ? "Not stated" : pct(b));
+  return shell("wftable",
+    `<div class="da-tw" tabindex="0" role="region" aria-label="The waterfall, estate by estate"><table class="da-t"><caption class="sr">Each stage's share of an estate's gross revenue, in order</caption>` +
+    `<thead><tr><th scope="col">Stage</th>${vs.map((v) => `<th scope="col">${esc(publicName(v))}</th>`).join("")}</tr></thead><tbody>` +
+    WATERFALL_STAGES.map(([k, n]) => `<tr><th scope="row">${esc(n.replace(/^(\d) /, "$1 · "))}</th>${W.map((w) => `<td>${cell(w[k])}</td>`).join("")}</tr>`).join("") +
+    `</tbody><tfoot><tr><th scope="row">Total</th>${W.map((w) => `<td>${pct(WATERFALL_STAGES.reduce((t, [k]) => t + (w[k] ?? 0), 0))}</td>`).join("")}</tr></tfoot></table></div>` +
+    `<p class="da-note">Shares of gross revenue, paid in this order. Each estate's offering letter states its own and governs.</p>`);
 }
 
 // ── the capital stack: what it is spent on, beside where it comes from ──
@@ -102,7 +121,7 @@ function positionData(v: Vehicle) {
     rows.push({ u, cap: rupees(of.unitPrice * BigInt(u)), share: `${(share * 100).toFixed(1)}%`,
       nights: e ? `${Math.floor(e.nightPoolMin * share)}–${Math.floor(e.nightPoolMax * share)}` : "Not yet set" });
   }
-  return { key: v.key, rows, begins: e ? e.begins : "The allocation rule is not yet set for this estate" };
+  return { key: v.key, rows, begins: e ? e.begins : "not yet set for this estate" };
 }
 function position(o: { vehicle?: string }) {
   const vs = (o.vehicle ? [byKey(o.vehicle)!] : shown()).filter((v) => v && publishable(v).ok);
@@ -111,9 +130,9 @@ function position(o: { vehicle?: string }) {
   return shell("position",
     pick(vs, d.key) +
     `<div class="da-pb"><div class="da-tile"><span class="da-lbl">Capital</span><b data-f="cap">${r.cap}</b></div><div class="da-tile"><span class="da-lbl">Share of equity</span><b data-f="share">${r.share}</b></div>` +
-    `<div class="da-tile"><span class="da-lbl">Vote weight</span><b data-f="vote">${r.share}</b></div><div class="da-tile"><span class="da-lbl">Nights a year</span><b data-f="nights">${r.nights}</b></div></div>` +
+    `<div class="da-tile"><span class="da-lbl">Vote weight</span><b data-f="vote">${r.share}</b></div><div class="da-tile"><span class="da-lbl">Nights a year · illustration</span><b data-f="nights">${r.nights}</b></div></div>` +
     `<label class="da-range"><span class="da-lbl"><b data-f="u">1</b> <span data-f="uw">unit</span></span><input type="range" min="1" max="${d.rows.length}" value="1" aria-label="Units held"></label>` +
-    `<p class="da-note">Nights follow the share of equity, beginning: <span data-f="begins">${esc(d.begins)}</span>. Illustration only; the offering letter governs.</p>`,
+    `<p class="da-note">Nights are an illustration: the estate's night pool shared in proportion to equity. The rule that allocates nights is not yet decided; each offering letter will state it. Nights begin: <span data-f="begins">${esc(d.begins)}</span>.</p>`,
     { set: data });
 }
 
@@ -141,12 +160,13 @@ function vote(o: { vehicle?: string }) {
 function path() {
   const S = Object.entries(PASSPORT_PAGES).filter(([p, e]) => p.startsWith("/passport/") && typeof e !== "function")
     .map(([p, e]) => (typeof e === "function" ? p : e.title).replace(/^\d+\s*·\s*/, ""));
+  /* 28 Sep 2026: the sixteen stages are folded. What a reader needs first is
+     how many there are and that each can be resumed; the list is one tap away,
+     and /how-it-works#stages opens it. */
   return shell("path",
-    `<div class="da-top"><div><span class="da-lbl">Stage <b data-f="i">1</b> of ${S.length}</span><div class="da-big-s" data-f="n">${esc(S[0])}</div></div><button type="button" class="da-pill da-go">Next</button></div>` +
-    `<div class="da-ap">${S.map((_, i) => `<i class="${i === 0 ? "now" : ""}"></i>`).join("")}</div>` +
-    `<ol class="da-ap-l">${S.map((s, i) => `<li class="${i === 0 ? "now" : ""}"><i></i>${esc(s)}</li>`).join("")}</ol>` +
-    '<p class="da-note">About fifteen working days from a complete file. Resumable at every stage.</p>',
-    { stages: S });
+    `<div class="da-top"><div><span class="da-lbl">From signing in to becoming a partner</span><div class="da-big-s">${S.length} stages, resumable at every one</div></div></div>` +
+    `<details class="da-fold" id="stages"><summary>Read all ${S.length} stages</summary><ol class="da-ap-l">${S.map((s) => `<li><i></i>${esc(s)}</li>`).join("")}</ol></details>` +
+    '<p class="da-note">About fifteen working days from a complete file.</p>');
 }
 
 // ── from deposit to the first day a unit can move ──
@@ -165,7 +185,7 @@ function lockin(o: { vehicle?: string }) {
 function stages() {
   const ST = ["Pipeline", "Forming", "Design", "Pre-construction", "Construction", "Operating"];
   const at = (v: Vehicle) => v.lifecycle === "live" || v.buildStage === "stabilised" ? 5 : v.buildStage === "under-construction" ? 4 : v.lifecycle === "forming" ? 1 : 3;
-  const rows: [string, number | null, string][] = VEHICLES.map((v) => [v.propertyName, at(v), LIFECYCLE_LABEL[v.lifecycle]]);
+  const rows: [string, number | null, string][] = VEHICLES.map((v) => [publicName(v), at(v), LIFECYCLE_LABEL[v.lifecycle]]);
   rows.push(["Coffee Fields Forever", null, "Not yet open for investment"], ["Nine Hills", 0, "Pipeline · not yet offered"]);
   return shell("stages",
     `<div class="da-es-h"><span></span>${ST.map((s, i) => `<span class="da-mono">${String(i + 1).padStart(2, "0")} ${s}</span>`).join("")}</div>` +
@@ -200,6 +220,7 @@ function search() {
 export function daHTML(kind: DAKind, o: { vehicle?: string; money?: boolean } = {}): string {
   switch (kind) {
     case "waterfall": return waterfall(o);
+    case "wftable": return wftable();
     case "stack": return stack(o);
     case "units": return units(o);
     case "position": return position(o);

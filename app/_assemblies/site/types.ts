@@ -68,6 +68,8 @@ export interface FormSpec {
   readonly vehicle?: string;
   /** Two steps: what you are asking about, then who you are (Next Actions d11). */
   readonly steps?: boolean;
+  /** What the form is already about, stated at its head: the estate and the purpose it was opened for. */
+  readonly about?: string;
 }
 
 /* A block is one of these shapes; the renderer reads whichever key is set. */
@@ -110,6 +112,10 @@ export interface Block {
   /** Markup built from tokens by the site itself (the Journal's drawings). */
   readonly html?: string;
   readonly toc?: readonly (readonly [string, string])[];
+  /** What the contents strip calls itself. "In this piece" when absent. */
+  readonly tocLabel?: string;
+  /** A unit, estate by estate, read from the register. */
+  readonly units?: boolean;
   readonly lede?: string;
   readonly pull?: string;
   readonly inspire?: { readonly text: string; readonly who: string; readonly where: string };

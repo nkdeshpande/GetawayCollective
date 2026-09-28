@@ -24,7 +24,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "eyebrow": "Getaway Collective · Nandi Hills corridor",
   "credit": "A SlowSpace estate · the reference vehicle",
   "spec": "{{KEYS}} keys · {{LAND}} · 65% of the land kept as it is · 2 h from Bengaluru",
-  "intro": "Six keys on six-tenths of an acre, on a granite ridge two hours from Bengaluru. Two-thirds of the land stays exactly as it is. Solace is the first estate the collective will deliver, and the one every other estate will be measured against.",
+  "intro": "Six keys on a granite ridge two hours from Bengaluru, the buildings on a fifth of an acre. Nearly two-thirds of the land stays exactly as it is. Solace is the first estate the collective will deliver, and the one every other estate will be measured against.",
   "place": {
    "film": [
     "solace",
@@ -538,7 +538,7 @@ export const ESTATES: Record<string, SiteEstate> = {
  },
  "confluence": {
   "key": "confluence",
-  "name": "Confluence",
+  "name": "Seaside Confluence",
   "vehicle": "{{vehicle}}",
   "pal": "coast",
   "hour": 18.5,
@@ -1111,7 +1111,7 @@ export const ESTATES: Record<string, SiteEstate> = {
  },
  "creek": {
   "key": "creek",
-  "name": "Creek",
+  "name": "SlowSpace Creek",
   "vehicle": "{{vehicle}}",
   "pal": "creek",
   "hour": 13,
@@ -1768,7 +1768,7 @@ export const ESTATES: Record<string, SiteEstate> = {
  },
  "cff": {
   "key": "cff",
-  "name": "Coffee Fields",
+  "name": "Coffee Fields Forever",
   "vehicle": "the Coffee Fields Forever LLP, being formed",
   "pal": "cff",
   "hour": 16.5,

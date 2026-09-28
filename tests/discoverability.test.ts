@@ -27,7 +27,7 @@ describe("structured data describes the page it is on", () => {
   it("gives an estate its own place, located, with a breadcrumb", () => {
     const g = pageGraph("/collection/coorg-coffee-creek")["@graph"] as Record<string, unknown>[];
     const place = g.find((n) => n["@type"] === "Place") as { name: string; geo?: { latitude: number } };
-    expect(place.name).toBe("Creek");
+    expect(place.name).toBe("SlowSpace Creek");
     expect(place.geo?.latitude).toBeCloseTo(12.39, 1);
     expect(types("/collection/coorg-coffee-creek")).toContain("BreadcrumbList");
     expect(types("/collection/coorg-coffee-creek/risk")).toContain("Place");
@@ -51,8 +51,8 @@ describe("titles name the place", () => {
   it("leads the home page with the brand and what it is", () =>
     expect(pageMeta("/", {}, "x").title).toBe("Getaway Collective · Collective ownership of retreats in India"));
   it("says where an estate is, in the names people search", () => {
-    expect(pageMeta("/collection/[vehicle]", { vehicle: "coorg-coffee-creek" }, "x").title).toBe("Creek · Kodagu (Coorg), Karnataka · Getaway Collective");
-    expect(pageMeta("/collection/[vehicle]", { vehicle: "slowspace-coastal" }, "x").title).toBe("Confluence · Udupi coast, Karnataka · Getaway Collective");
+    expect(pageMeta("/collection/[vehicle]", { vehicle: "coorg-coffee-creek" }, "x").title).toBe("SlowSpace Creek · Kodagu (Coorg), Karnataka · Getaway Collective");
+    expect(pageMeta("/collection/[vehicle]", { vehicle: "slowspace-coastal" }, "x").title).toBe("Seaside Confluence · Udupi coast, Karnataka · Getaway Collective");
   });
   it("does not double a name already given", () => expect(placeOf("Getaway Collective · Suntikoppa, Coorg", undefined)).toBe("Suntikoppa, Coorg"));
   it("keeps a noindex page out of search but gives it a canonical", () => {

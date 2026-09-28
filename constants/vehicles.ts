@@ -108,7 +108,7 @@ export type Tenure =
 /** What each tenure position may be SAID, in public, in full. */
 export const TENURE_LABEL: Record<Tenure, string> = {
   possession: "In possession · title not yet established",
-  "diligence-complete": "Diligence complete",
+  "diligence-complete": "Diligence complete · title not yet verified",
   "title-verified": "Title verified",
   "conveyance-complete": "Conveyance complete",
 };

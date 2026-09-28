@@ -16,7 +16,8 @@ import { nextFor } from "@/content/site/next";
 import { GATES, estateDocket } from "./docket";
 import { PROJECTOR, momentHour } from "./gallery";
 import type { Reading } from "./registry";
-import { rupeesFull, src, type Prov } from "./registry";
+import { heldBy, rupeesFull, src, unitsByEstate, type Prov } from "./registry";
+import { COLLECTION } from "@/content/site/home";
 import { daHTML, type DAKind } from "../da/render";
 
 const INK = FILM.ink as Readonly<Record<string, string>>;
@@ -33,8 +34,13 @@ export const fill = (s: string, t: Readonly<Record<string, string>> = {}) =>
 
 export const NE = '<svg aria-hidden="true"><use href="#ne"/></svg>';
 
+/* The film's own ground, painted before the canvas draws: on a slow
+   connection, with script off, or where a canvas cannot draw, the frame is
+   still the estate's colour and never an empty hole (brief of 28 Sep). */
+const GROUND = FILM as unknown as Readonly<Record<string, { readonly bg?: string }>>;
 export function film(pal: string, hour: number, o: { rain?: unknown; bp?: unknown; label?: string } = {}) {
-  return `<canvas class="film" data-pal="${pal}" data-hour="${hour}"${o.rain ? ' data-rain="1"' : ""}${o.bp ? ' data-bp="1"' : ""}` +
+  const bg = GROUND[pal]?.bg;
+  return `<canvas class="film" data-pal="${pal}" data-hour="${hour}"${bg ? ` style="background-color:${bg}"` : ""}${o.rain ? ' data-rain="1"' : ""}${o.bp ? ' data-bp="1"' : ""}` +
     `${o.label ? ` role="img" aria-label="${esc(o.label)}"` : ' aria-hidden="true"'}></canvas>`;
 }
 const fr = (f: FilmRef, o: { bp?: boolean } = {}) => film(f[0], f[1], { rain: f[2], bp: o.bp ? f[2] : f[3] });
@@ -114,10 +120,11 @@ function mapSVG(M: MapSpec) {
   return s + `<text x="24" y="${H - 12}" font-family="Space Mono" font-size="10" fill="${SITE.ash2}">THE ROUTE IS ILLUSTRATIVE</text>`;
 }
 
-/* ── the estate select on the enquiry form names estates; the API takes slugs ── */
+/* ── the estate select on the enquiry form names estates; the API takes slugs ──
+   Read from the collection, so a renamed or added estate cannot drift. */
 const OPTION_SLUG: Readonly<Record<string, string>> = {
-  "Any estate": "", Solace: "slowspace-solace", "Seaside Confluence": "slowspace-coastal",
-  "SlowSpace Creek": "coorg-coffee-creek", "Coffee Fields Forever": "coffee-fields-forever",
+  "Any estate": "",
+  ...Object.fromEntries(COLLECTION.map((c) => [c.name.replace(/<[^>]+>/g, ""), c.href.replace("/collection/", "")])),
 };
 const fieldName = (label: string) =>
   /^name$/i.test(label) ? "name" : /email/i.test(label) ? "email" : /estate/i.test(label) ? "vehicle" : /city/i.test(label) ? "city" : "note";
@@ -125,12 +132,16 @@ const fieldName = (label: string) =>
 export function FORM(f: FormSpec, plain = false) {
   const field = (fd: FormSpec["fields"][number], i: number) => {
     const id = `${f.id}-${i}`, label = String(fd[0]), kind = fd[1], name = fieldName(label);
+    const req = name === "email" || name === "name";
+    /* Each field carries its own message slot: a mistake is named beside the
+       field it is in, not only at the foot of the form (brief of 28 Sep). */
+    const err = `<span class="fld-err" id="${id}-err" hidden></span>`;
     const input = kind === "area"
       ? `<textarea id="${id}" name="${name}" rows="3" maxlength="2000"></textarea>`
       : kind === "select"
         ? `<select id="${id}" name="${name}">${(fd[2] as readonly string[]).map((o) => `<option value="${OPTION_SLUG[o] ?? ""}">${o}</option>`).join("")}</select>`
-        : `<input id="${id}" name="${name}" type="${kind}" autocomplete="${fd[2] || "off"}"${name === "email" || name === "name" ? " required" : ""}>`;
-    return `<label class="fld" for="${id}"><span>${label}</span>${input}</label>`;
+        : `<input id="${id}" name="${name}" type="${kind}" autocomplete="${fd[2] || "off"}"${req ? ` required aria-describedby="${id}-err"` : ""}>`;
+    return `<label class="fld" for="${id}"><span>${label}${req ? "" : ' <em class="fld-opt">optional</em>'}</span>${input}${req ? err : ""}</label>`;
   };
   const chips = f.chips ? `<span class="eb">${f.chipsLabel}</span><div class="chips-row">${f.chips.map((c, i) => `<button class="chip" type="button" aria-pressed="${i === 0}">${c}</button>`).join("")}</div>` : "";
   const submit = `<button class="btn lead" type="submit">${f.submit} ${NE}</button>`;
@@ -138,19 +149,22 @@ export function FORM(f: FormSpec, plain = false) {
      names the first, so nothing typed is out of sight when it is sent. */
   const who = (fd: FormSpec["fields"][number]) => ["name", "email", "city"].includes(fieldName(String(fd[0])));
   const body = f.steps
-    ? `<fieldset class="fstep" data-step="1"><legend class="eb">Step 1 of 2 · What you are asking about</legend>${chips}` +
+    ? `<fieldset class="fstep" data-step="1"><legend><span class="fprog">Step 1 of 2</span> What you are asking about</legend>${chips}` +
       f.fields.map((fd, i) => (who(fd) ? "" : field(fd, i))).join("") +
       '<div class="fstep-short" data-short hidden></div>' +
       `<div><button class="btn lead" type="button" data-next>Continue ${NE}</button></div></fieldset>` +
-      '<fieldset class="fstep" data-step="2" hidden><legend class="eb">Step 2 of 2 · Who you are</legend>' +
+      '<fieldset class="fstep" data-step="2" hidden><legend><span class="fprog">Step 2 of 2</span> Who you are</legend>' +
       '<p class="fstep-sum" data-sum></p>' +
       f.fields.map((fd, i) => (who(fd) ? field(fd, i) : "")).join("") +
       `<div class="fstep-act">${submit}<button class="btn gray" type="button" data-back>Back</button></div></fieldset>`
     : chips + f.fields.map(field).join("") + '<div class="fstep-short" data-short hidden></div>' + `<div>${submit}</div>`;
   return `<form class="tx-form${plain ? " tx-form-plain" : ""}${f.steps ? " tx-form-steps" : ""}" novalidate data-form data-to="${f.to || "dossier"}"${f.vehicle ? ` data-vehicle="${f.vehicle}"` : ""}>` +
     `<div class="direct-row"><span class="eb">Or write directly</span><span class="mono sel">${f.addr}</span></div>` +
+    (f.about ? `<p class="fstep-sum f-about">${f.about}</p>` : "") +
     body +
-    `<p class="tx-ok" hidden>${f.ok}</p><p class="tx-err" hidden>That did not go through. Write to <span class="mono sel">${f.addr}</span> and it will reach the same desk.</p>` +
+    /* Said only once the server has confirmed it (behaviour.tsx): a
+       confirmation shown on anything less is a promise the site cannot keep. */
+    `<p class="tx-ok" role="status" tabindex="-1" hidden>${f.ok}</p><p class="tx-err" role="alert" hidden data-addr="${f.addr}">That did not go through. Write to <span class="mono sel">${f.addr}</span> and it will reach the same desk.</p>` +
     `<p class="tx-src">${f.note}</p></form>`;
 }
 
@@ -160,7 +174,7 @@ export function FIN(E: SiteEstate, R: Reading) {
   const full = o.available <= 0;
   let h = `<section class="fin" id="${k}-capital"><span class="eb">Capital</span>` +
     `<h2 class="h2">${o.units} units offered. <span>${full ? "All held." : `${o.available} available.`}</span></h2>` +
-    `<p class="para fin-lead">${esc(v.registeredName)} holds ${esc(E.name)}. The offering letter governs every figure below.</p>`;
+    `<p class="para fin-lead">${heldBy(v).label === "Held by" ? `${esc(v.registeredName)} holds ${E.name}.` : `${E.name} is to be held by ${esc(v.registeredName)}, which is not yet incorporated.`} The offering letter governs every figure below.</p>`;
   /* The capital, drawn: what the estate is spent on beside where the money
      comes from, every unit and who holds it, the waterfall on this
      vehicle's own stages, and a position built from its own unit price. */
@@ -183,54 +197,91 @@ export function WAIT(E: SiteEstate, R: Reading | undefined) {
 }
 
 // ── the property template ──
+/**
+ * AN ESTATE IN SEVEN LAYERS — 28 Sep 2026
+ *
+ * The page was one long corridor of twelve sections with a row of unlabelled
+ * dots beside it. It is now seven named layers, in the order a person
+ * deciding asks them: what it is, what it is like to be there, how it is
+ * made, how owning it works, the capital, the papers, and what to do next.
+ * One bar carries the estate's name, the seven layers and its one action.
+ * It sits in the page's flow and sticks at the top once reached, at every
+ * width: at the foot of a phone it covered the last lines of whatever was
+ * being read, and the form fields at the enquiry.
+ *
+ * "The place" is the second layer's name: the brief of 28 Sep used a word
+ * the vocabulary forbids for it (constants/vocabulary.ts).
+ */
+export const LAYERS = [
+  ["overview", "Overview"], ["place", "The place"], ["design", "Design"], ["ownership", "Ownership"],
+  ["capital", "Capital"], ["documents", "Documents"], ["next-step", "Next step"],
+] as const;
+
 export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   const k = E.key, t = R?.tokens ?? {};
   const F = (s: string) => inkify(fill(s, t));
+  const plain = E.name.replace(/<[^>]+>/g, "");
   const waitlist = !!E.waitlist && (!R || R.stance.kind === "waitlist");
   const capital = !!R && R.publishable;
-  const secs = ["hero", "place", "concept", ...E.chapters.map((c) => c.id), "materials", "day", "getting", "plan", "details",
-    ...(R ? ["papers"] : []), ...(capital ? ["capital"] : []), waitlist ? "waitlist" : "enquire"];
-  const idOf = (s: string) => (s === "waitlist" ? "waitlist" : s === "concept" ? "concept" : `${k}-${s}`);
-  let h = `<nav class="pager" aria-label="Sections">${secs.map((s) => `<a href="#${idOf(s)}" aria-label="${s}"></a>`).join("")}</nav>`;
   const price = R ? R.price : ["Price set in the offering letter", "not yet open for investment here"];
   /* An estate that is not yet a vehicle has no enquiry route of its own;
-     its questions go to the general desk. */
-  const ask = R ? `/collection/${E.slug}/enquire` : "/contact";
+     its questions go to the general desk, with the estate already named. */
+  const ask = R ? `/collection/${E.slug}/enquire` : `/contact?estate=${E.slug}&about=estate`;
   const open = !!R && R.stance.kind === "open" && R.vehicle.offering.deposit !== null;
-  const cta = waitlist ? ["Join the waitlist", "#waitlist"]
-    : open ? [`Hold a position · ${rupeesFull(R!.vehicle.offering.deposit!)} deposit`, `${ask}#hold`]
-    : [R ? "Get the offering pack" : "Ask about this estate", ask];
-  h += `<section class="phero" id="${k}-hero">${film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain })}` +
+  /* A fully subscribed estate takes a waitlist whether or not its page
+     carries its own waitlist section; the enquiry page always does. */
+  const onWaitlist = !!R && R.stance.kind === "waitlist";
+  const cta = onWaitlist ? ["Join the waitlist", waitlist ? "#waitlist" : ask, "Join the waitlist"]
+    : waitlist ? ["Join the waitlist", "#waitlist", "Join the waitlist"]
+    : open ? [`Hold a position · ${rupeesFull(R!.vehicle.offering.deposit!)} deposit`, `${ask}#hold`, "Hold a position"]
+    : R ? ["Get the offering pack", `${ask}?about=pack`, "Get the offering pack"] : ["Ask about this estate", ask, "Ask about this estate"];
+  const layer = (id: string, label: string, body: string) =>
+    `<div class="layer" id="${id}" data-layer="${label}">${body}</div>`;
+
+  // ── 1 · overview ──
+  let ov = `<section class="phero" id="${k}-hero">${film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain })}` +
     `<div class="top"><div><span class="eb">${E.eyebrow}</span><h1>${E.name}</h1><span class="credit">${E.credit}</span></div></div>` +
     `<div class="strip"><div class="pr"${R?.publishable ? src(R.prov.intake) : ""}>${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div>` +
-    (R ? `<span class="sold-chip">${R.status}</span>` : "") +
+    /* Availability and delivery are two answers, stated apart: an estate can
+       be fully subscribed and under construction at once. Where the price line
+       already says what is available, the chip says only where the building is. */
+    (R && R.vehicle.lifecycle !== "forming" ? `<span class="sold-chip">${R.publishable ? esc(R.delivery) : `${esc(R.availability)} · ${esc(R.delivery)}`}</span>` : "") +
     /* The shortlist (Next Actions d09): kept in this browser only, and sent
        with an enquiry only if the reader leaves it ticked. */
-    `<button type="button" class="btn gray save" data-save="${E.slug}" data-name="${esc(E.name.replace(/<[^>]+>/g, ""))}" aria-pressed="false">Save</button>` +
-    `<a class="btn lead" href="${cta[1]}">${cta[0]} ${NE}</a></div></section>`;
-  /* The estate bar (Next Actions d02): once the hero has scrolled away, the
-     name, where it stands and the same one action remain in reach — under the
-     site bar on a wide screen, along the bottom on a phone. Hidden until
-     SiteBehaviour sees the hero leave, so a reader who never scrolls never
-     sees it. */
-  h += `<div class="ebar" data-ebar aria-hidden="true"><div class="ebar-in"><b>${E.name}</b>` +
-    (R ? `<span class="ebar-st">${R.status}</span>` : "") +
-    `<span class="ebar-pr">${price[0]}</span><a class="btn lead btn-s" href="${cta[1]}" tabindex="-1">${cta[0]}</a></div></div>`;
-  h += `<section class="intro"><p class="para center narrow intro-p">${F(E.intro)}</p></section>`;
-  h += `<section class="chap" id="${k}-place"><div class="film">${fr(E.place.film)}<div class="tag"><h3>${E.place.title}</h3></div>` +
+    `<div class="row-btns"><button type="button" class="btn gray save" data-save="${E.slug}" data-name="${esc(plain)}" aria-pressed="false">Save</button>` +
+    `<a class="btn lead" href="${cta[1]}">${cta[0]} ${NE}</a></div></div></section>`;
+  ov += `<section class="intro"><p class="para center narrow intro-p">${F(E.intro)}</p></section>`;
+
+  // ── 2 · the place ──
+  let pl = `<section class="chap" id="${k}-place"><div class="film">${fr(E.place.film)}<div class="tag"><h3>${E.place.title}</h3></div>` +
     `<div class="side"><p class="para">${F(E.place.text)}</p><p class="mono coords">${R?.vehicle.coordinates || E.place.coords}</p></div></div></section>`;
-  const C = E.concept;
-  h += `<section class="concept" id="concept"><span class="eb">Concept</span><h2 class="h2">${C.title}</h2>` +
-    (C.lead ? `<p class="para concept-lead">${F(C.lead)}</p>` : "") +
-    `<div class="axo"><svg viewBox="0 0 760 520" class="axo-svg" role="img" aria-label="Axonometric drawing of ${esc(E.name)}">${axoSVG(C)}</svg><div class="zl">` +
-    C.zones.map((z) => `<button type="button" aria-pressed="true" data-z="${z.k}"><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></button>`).join("") +
-    "</div></div></section>";
   E.chapters.forEach((c, i) => {
-    h += `<section class="chamber" id="${k}-${c.id}"><div class="ttl"><span class="ch-n mono">${String(i + 1).padStart(2, "0")} / ${String(E.chapters.length).padStart(2, "0")}</span><h3>${c.title}</h3></div><div class="film">${fr(c.film)}</div>` +
+    pl += `<section class="chamber" id="${k}-${c.id}"><div class="ttl"><span class="ch-n mono">${String(i + 1).padStart(2, "0")} / ${String(E.chapters.length).padStart(2, "0")}</span><h3>${c.title}</h3></div><div class="film">${fr(c.film)}</div>` +
       `<p class="para">${F(c.para)}</p><div class="meta">${c.meta.map((m) => `<span>${F(m)}</span>`).join("")}</div>` +
       `<div class="pc-rail">${c.cards.map((x) => card({ ...x, s: x.s && F(x.s), v: x.v && F(x.v) })).join("")}</div></section>`;
   });
-  h += `<section class="coll" id="${k}-materials"><span class="eb">Materials</span><h2 class="h2">What ${E.name} <span>is made of</span></h2><div class="cgr">` +
+  /* The day, as the estate's centred gallery (./gallery.ts PROJECTOR): each
+     moment is the estate's own film relit at that hour, captioned below. */
+  const strip = (s: string) => s.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&");
+  pl += `<section class="day" id="${k}-day"><span class="eb">${E.day.eyebrow}</span><h2 class="h2">${E.day.title}</h2>` +
+    PROJECTOR(`pj-${k}`, strip(E.day.eyebrow), E.day.items.map((d, i) => {
+      const m = momentHour(String(d[0]), i);
+      return { pal: E.pal, hour: m.hour, rain: m.rain, label: String(d[0]), t: strip(String(d[1])), line: strip(F(String(d[2]))) };
+    })) +
+    `<p class="para day-note">${F(E.day.note)}</p></section>`;
+  const G = E.getting;
+  pl += `<section class="getting" id="${k}-getting"><div><span class="eb">Getting there</span><h2 class="h2">${G.title}</h2><p class="para dim">${F(G.sub)}</p><div class="tcards">` +
+    G.cards.map((c, i) => `<button type="button" aria-pressed="${i === 0}"><b>${c[0]}</b><em>${c[1]}</em><span>${F(c[2])}</span></button>`).join("") +
+    `</div></div><div class="map"><svg viewBox="0 0 700 520" role="img" aria-label="Map of the way to ${esc(plain)}">${mapSVG(G.map)}</svg></div></section>`;
+
+  // ── 3 · design ──
+  const C = E.concept;
+  let dz = `<section class="concept" id="concept"><span class="eb">Concept</span><h2 class="h2">${C.title}</h2>` +
+    (C.lead ? `<p class="para concept-lead">${F(C.lead)}</p>` : "") +
+    `<div class="axo"><svg viewBox="0 0 760 520" class="axo-svg" role="img" aria-label="Axonometric drawing of ${esc(plain)}, illustrative">${axoSVG(C)}</svg><div class="zl">` +
+    C.zones.map((z) => `<button type="button" aria-pressed="true" data-z="${z.k}"><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></button>`).join("") +
+    "</div></div></section>";
+  dz += `<section class="coll" id="${k}-materials"><span class="eb">Materials</span><h2 class="h2">What ${E.name} <span>is made of</span></h2><div class="cgr">` +
     E.materials.map((m, i) => {
       let bars = "";
       for (let j = 0; j < 18; j++) {
@@ -239,49 +290,59 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
       }
       return `<div><div class="t"><span>${m[0]}</span><b>${m[1]}</b><p>${F(m[2])}</p></div><svg viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">${bars}</svg></div>`;
     }).join("") + "</div></section>";
-  /* The day, as the estate's centred gallery (./gallery.ts PROJECTOR): each
-     moment is the estate's own film relit at that hour, captioned below. */
-  const strip = (s: string) => s.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&");
-  h += `<section class="day" id="${k}-day"><span class="eb">${E.day.eyebrow}</span><h2 class="h2">${E.day.title}</h2>` +
-    PROJECTOR(`pj-${k}`, strip(E.day.eyebrow), E.day.items.map((d, i) => {
-      const m = momentHour(String(d[0]), i);
-      return { pal: E.pal, hour: m.hour, rain: m.rain, label: String(d[0]), t: strip(String(d[1])), line: strip(F(String(d[2]))) };
-    })) +
-    `<p class="para day-note">${F(E.day.note)}</p></section>`;
-  const G = E.getting;
-  h += `<section class="getting" id="${k}-getting"><div><span class="eb">Getting there</span><h2 class="h2">${G.title}</h2><p class="para dim">${F(G.sub)}</p><div class="tcards">` +
-    G.cards.map((c, i) => `<button type="button" aria-pressed="${i === 0}"><b>${c[0]}</b><em>${c[1]}</em><span>${F(c[2])}</span></button>`).join("") +
-    `</div></div><div class="map"><svg viewBox="0 0 700 520" role="img" aria-label="Map of the way to ${esc(E.name)}">${mapSVG(G.map)}</svg></div></section>`;
-  h += `<section class="plan" id="${k}-plan"><span class="eb">Masterplan</span><h2 class="h2">${E.plan.title}</h2><div class="bar" role="tablist">` +
+  dz += `<section class="plan" id="${k}-plan"><span class="eb">Masterplan</span><h2 class="h2">${E.plan.title}</h2><div class="bar" role="tablist" aria-label="Masterplan views">` +
     E.plan.tabs.map((tb, i) => `<button role="tab" aria-selected="${i === 0}" data-p="${i}">${tb.tab}</button>`).join("") +
     '</div><div class="pv"><div class="dw">' +
     E.plan.tabs.map((tb, i) => `<svg viewBox="0 0 600 420" class="pdraw" data-p="${i}"${i ? " hidden" : ""} role="img" aria-label="Schematic plan: ${esc(tb.tab)}">${inkify(tb.svg)}</svg>`).join("") +
     '</div><div class="info">' +
     E.plan.tabs.map((tb, i) => `<div class="pinfo" data-p="${i}"${i ? " hidden" : ""}><h4>${tb.t}</h4>${tb.rows.map((r) => `<div><span>${r[0]}</span><span${r[2] ? ' class="ab"' : ""}>${F(String(r[1]))}</span></div>`).join("")}</div>`).join("") +
-    `</div></div><p class="mono plan-note">${F(E.plan.note)}</p></section>`;
-  const rows = [...(R ? R.details : []), ...E.details];
-  h += `<section class="details" id="${k}-details"><span class="eb">Property details</span><h2 class="h2">Everything <span>on record.</span></h2><div class="dt">` +
-    rows.map((d) => `<div><span>${d[0]}</span><span${d[2] ? ' class="ab"' : ""}${Array.isArray(d[3]) ? src(d[3] as unknown as Prov) : ""}>${F(String(d[1]))}</span></div>`).join("") + "</div>" +
-    (E.detailsNote ? `<p class="mono plan-note">${F(E.detailsNote)}</p>` : "") + "</section>";
-  /* The estate's papers, as a docket: each status read from the register. */
-  if (R) h += `<section class="dkt-sec" id="${k}-papers"><span class="eb">The papers</span><h2 class="h2">What is <span>on file.</span></h2>` +
-    `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as on file unless the partnership actually holds it.</p>` +
-    `${estateDocket(R.vehicle, E.name.replace(/<[^>]+>/g, ""), R.publishable)}</section>`;
-  if (capital) h += FIN(E, R!);
-  h += '<section class="own"><div><b>01</b><h4>Sign in</h4><p>One email: no password, no documents. KYC runs alongside and completes before you sign. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
+    `</div></div><p class="plan-note">${F(E.plan.note)}</p></section>`;
+
+  // ── 4 · ownership ──
+  const partner = R ? heldBy(R.vehicle).label === "Held by" ? esc(R.vehicle.registeredName) : `${esc(R.vehicle.registeredName)}, once it is incorporated` : esc(fill(E.vehicle, t));
+  let ow = '<section class="own"><div><b>01</b><h4>Sign in</h4><p>One email: no password, no documents. KYC runs alongside and completes before you sign. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
     '<div><b>02</b><h4>Commit</h4><p>Read the offering letter, the LLP agreement and the risk disclosure. Commit by holding, never by clicking.</p></div>' +
-    `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${esc(R ? R.vehicle.registeredName : fill(E.vehicle, t))}. Your units are entered in the partnership's register, and your votes, papers and nights are in your partner account.</p></div></section>`;
-  h += `<section class="faq dk faq-estate" id="${k}-faq"><h2 class="h2">Questions about <span>${E.name}</span></h2>${faq}</section>`;
-  if (waitlist) h += WAIT(E, R);
-  else h += `<section class="mk" id="${k}-enquire">${film(E.pal, E.enquireHour || 18)}<div class="cap"><span class="eb">Take the next step</span>` +
-    `<h2 class="h2">Make ${E.name} <span>yours.</span></h2><p class="para dim">Request the offering pack, or write to Investor Relations at ` +
-    '<span class="mono sel">ir@getawaycollective.co</span>. Capital is at risk: read the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> before committing.</p>' +
-    `<div class="row-btns"><a class="btn lead" href="${ask}">${R ? "Request the offering pack" : "Ask about this estate"} ${NE}</a><a class="btn gray" href="/collection">Other estates</a></div></div></section>`;
+    `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${partner}. Your units are entered in the partnership's register, and your votes, papers and nights are in your partner account.</p></div></section>`;
+  ow += `<section class="faq dk faq-estate" id="${k}-faq"><h2 class="h2">Questions about <span>${E.name}</span></h2>${faq}</section>`;
+
+  // ── 5 · capital ──
+  const cap = capital ? FIN(E, R!)
+    : `<section class="fin fin-none" id="${k}-capital"><span class="eb">Capital</span>` +
+      (R && R.vehicle.lifecycle === "forming"
+        ? `<h2 class="h2">In the pipeline. <span>Not yet offered.</span></h2><p class="para fin-lead">${esc(plain)} is not yet open for subscription. No figure is estimated in the meantime; the offering letter will state them.</p>`
+        : R
+          ? `<h2 class="h2">The offering is <span>not yet published.</span></h2><p class="para fin-lead">Its figures are still being confirmed, and none is estimated in the meantime.</p>`
+          : `<h2 class="h2">Not yet <span>a vehicle.</span></h2><p class="para fin-lead">${esc(plain)} has no partnership or offering yet, so there are no figures to show, and none is estimated.</p>`) +
+      "</section>";
+
+  // ── 6 · documents ──
+  const rows = [...(R ? R.details : []), ...E.details];
+  let dc = `<section class="details" id="${k}-details"><span class="eb">Property details</span><h2 class="h2">Everything <span>on record.</span></h2><div class="dt">` +
+    rows.map((d) => `<div><span>${d[0]}</span><span${d[2] ? ' class="ab"' : ""}${Array.isArray(d[3]) ? src(d[3] as unknown as Prov) : ""}>${F(String(d[1]))}</span></div>`).join("") + "</div>" +
+    (E.detailsNote ? `<p class="plan-note">${F(E.detailsNote)}</p>` : "") + "</section>";
+  /* The estate's papers, as a docket: each status read from the register. */
+  if (R) dc += `<section class="dkt-sec" id="${k}-papers"><span class="eb">The papers</span><h2 class="h2">What is <span>on file.</span></h2>` +
+    `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as on file unless the partnership actually holds it.</p>` +
+    `${estateDocket(R.vehicle, plain, R.publishable)}</section>`;
+
+  // ── 7 · next step ──
+  const nx = waitlist ? WAIT(E, R)
+    : `<section class="mk" id="${k}-enquire">${film(E.pal, E.enquireHour || 18)}<div class="cap"><span class="eb">Take the next step</span>` +
+      `<h2 class="h2">Make ${E.name} <span>yours.</span></h2><p class="para dim">${onWaitlist ? "Join the waitlist" : R ? "Request the offering pack" : "Ask about this estate"}, or write to Investor Relations at ` +
+      '<span class="mono sel">ir@getawaycollective.co</span>. Capital is at risk: read the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> before committing.</p>' +
+      `<div class="row-btns"><a class="btn lead" href="${onWaitlist || !R ? ask : `${ask}?about=pack`}">${onWaitlist ? "Join the waitlist" : R ? "Request the offering pack" : "Ask about this estate"} ${NE}</a><a class="btn gray" href="/collection">Other estates</a></div></div></section>`;
+
+  const bar = `<nav class="ebar" aria-label="${esc(plain)}, on this page"><div class="ebar-in"><b class="ebar-n">${E.name}</b>` +
+    `<ol class="ebar-l">${LAYERS.map(([id, label]) => `<li><a href="#${id}">${label}</a></li>`).join("")}</ol>` +
+    `<a class="btn lead btn-s ebar-go" href="${cta[1]}">${cta[2]}</a></div></nav>`;
   /* 25 Sep 2026, founder: the estate pages read as one dark corridor. The
      page now wears its own landscape: the palette its film is drawn in
      sets an accent, a night and a paper (site.css, .est[data-pal]), so
      Creek reads green, Confluence reads sea-slate, Solace reads granite. */
-  return `<div class="est" data-pal="${E.pal}">${h}</div>`;
+  return `<div class="est" data-pal="${E.pal}">${bar}` +
+    layer("overview", "Overview", ov) + layer("place", "The place", pl) + layer("design", "Design", dz) +
+    layer("ownership", "Ownership", ow) + layer("capital", "Capital", cap) + layer("documents", "Documents", dc) +
+    layer("next-step", "Next step", nx) + "</div>";
 }
 
 /* ── the holding deposit: stated in full before the button, paid online,
@@ -294,19 +355,33 @@ export function DEPOSIT(d: NonNullable<Block["deposit"]>) {
     "<li>Refundable in full until the Vehicle Agreement is signed.</li>" +
     "<li>It holds your position; it buys nothing and makes nobody a partner.</li>" +
     `<li>Identity checks, the balance at ${d.unitPrice} a unit and the Agreement all complete offline, with Investor Relations.</li></ul></div>` +
-    `<label class="fld" for="dep-u"><span>Units you intend to take</span><select id="dep-u" name="units">${units.map((u) => `<option value="${u}">${u} unit${u === 1 ? "" : "s"}</option>`).join("")}</select></label>` +
-    '<label class="fld" for="dep-n"><span>Name</span><input id="dep-n" name="name" type="text" autocomplete="name" required></label>' +
-    '<label class="fld" for="dep-e"><span>Email</span><input id="dep-e" name="email" type="email" autocomplete="email" required></label>' +
-    '<label class="fld" for="dep-p"><span>Mobile</span><input id="dep-p" name="phone" type="tel" autocomplete="tel" required></label>' +
-    '<label class="fld" for="dep-c"><span>City</span><input id="dep-c" name="city" type="text" autocomplete="address-level2"></label>' +
+    `<label class="fld" for="dep-u"><span>Units you intend to take</span><select id="dep-u" name="units">${units.map((u) => `<option value="${u}">${u} unit${u === 1 ? "" : "s"}</option>`).join("")}</select></label>` + [
+    ["n", "Name", "name", "text", "name"], ["e", "Email", "email", "email", "email"], ["p", "Mobile", "phone", "tel", "tel"],
+    ].map(([k, label, name, type, ac]) => `<label class="fld" for="dep-${k}"><span>${label}</span><input id="dep-${k}" name="${name}" type="${type}" autocomplete="${ac}" required aria-describedby="dep-${k}-err"><span class="fld-err" id="dep-${k}-err" hidden></span></label>`).join("") +
+    '<label class="fld" for="dep-c"><span>City <em class="fld-opt">optional</em></span><input id="dep-c" name="city" type="text" autocomplete="address-level2"></label>' +
     '<label class="ack"><input type="checkbox" name="acknowledged" required> <span>I have read the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> and the <a class="tx-u" href="/legal/terms">Terms</a>. Capital is at risk.</span></label>' +
     `<div><button class="btn lead" type="submit">Pay the ${d.amount} deposit ${NE}</button></div>` +
-    '<p class="tx-ok" hidden></p><p class="tx-err" hidden></p>' +
+    '<p class="tx-ok" role="status" tabindex="-1" hidden></p><p class="tx-err" role="alert" hidden></p>' +
     '<p class="tx-src">Payments are taken by Razorpay. Card, UPI and netbanking details never reach this site.</p></form>';
 }
 
 export function faqHTML(list: readonly (readonly string[])[], t: Readonly<Record<string, string>> = {}) {
-  return list.map((f) => `<details><summary>${f[0]}<i aria-hidden="true">+</i></summary><p>${fill(f[1], t)}</p></details>`).join("");
+  const seen = new Set<string>();
+  return list.map((f) => {
+    let id = "q-" + f[0].replace(/<[^>]+>/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+    while (seen.has(id)) id += "-2";
+    seen.add(id);
+    return `<details id="${id}"><summary>${f[0]}<i aria-hidden="true">+</i></summary><p>${fill(f[1], t)}</p></details>`;
+  }).join("");
+}
+
+/** A unit, estate by estate, from the register (registry.ts unitsByEstate). */
+function unitsTable(): string {
+  const U = unitsByEstate();
+  if (!U.length) return "";
+  return `<div class="tx-tw" tabindex="0" role="region" aria-label="A unit, estate by estate"><table class="tx-t"><thead><tr><th scope="col">Estate</th><th scope="col">One unit is</th><th scope="col">Units in all</th><th scope="col">Most one partner may hold</th><th scope="col">A unit costs</th></tr></thead><tbody>` +
+    U.map((u) => `<tr><th scope="row">${esc(u.name)}</th><td>${u.share} of the equity</td><td>${u.units}</td><td>${u.ceiling === null ? "Set in the offering letter" : `${u.ceiling} unit${u.ceiling === 1 ? "" : "s"}`}</td><td>${u.price}</td></tr>`).join("") +
+    `</tbody></table></div>`;
 }
 
 // ── the text-page template ──
@@ -316,7 +391,7 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
   const headHTML = `<div class="tx-head"><span class="eb">${P.eyebrow}</span><h1 class="tx-h1">${P.title}</h1>${P.lead ? `<p class="tx-lead">${P.lead}</p>` : ""}${P.meta ? `<p class="mono tx-meta">${P.meta}</p>` : ""}</div>`;
   let h = "";
   const block = (b: Block) => {
-    if (b.toc) h += `<nav class="tx-toc" aria-label="In this piece"><span class="eb">In this piece</span>${b.toc.map((t) => `<a href="#${t[0]}">${t[1]}</a>`).join("")}</nav>`;
+    if (b.toc) h += `<nav class="tx-toc" aria-label="${b.tocLabel ?? "In this piece"}"><span class="eb">${b.tocLabel ?? "In this piece"}</span>${b.toc.map((t) => `<a href="#${t[0]}">${t[1]}</a>`).join("")}</nav>`;
     if (b.lede) h += `<p class="tx-p tx-lede">${b.lede}</p>`;
     if (b.h) h += `<h2 class="tx-h2"${b.id ? ` id="${b.id}"` : ""}>${b.h}</h2>`;
     if (b.p) h += `<p class="tx-p">${b.p}</p>`;
@@ -327,6 +402,7 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
     /* Sources are kept in the content for whoever maintains it, and never
        printed: a file name or a clause number is our filing, not the reader's. */
     if (b.list) h += `<ul class="tx-list">${b.list.map((li) => `<li>${li}</li>`).join("")}</ul>`;
+    if (b.units) h += unitsTable();
     if (b.figs) h += `<div class="tx-figs">${b.figs.map((f) => `<div><b>${f[0]}</b><span>${f[1]}</span></div>`).join("")}</div>`;
     if (b.steps && b.stepsAs === "gates") h += GATES(`g-${P.key}`, b.h || P.eyebrow, b.steps.map((s) => ({ t: String(s[0]), text: String(s[1]) })));
     else if (b.gates) h += GATES(`g-${P.key}-${b.gates.id}`, b.gates.label, b.gates.items);
