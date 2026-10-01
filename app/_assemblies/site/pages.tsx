@@ -25,7 +25,7 @@ import { calcHTML, compareHTML as fourWaysHTML, simulate, DEFAULTS as CALC_DEFAU
 import { chapterContent } from "../propertychapter";
 import type { ChapterId } from "@/constants/property-chapters";
 import { daHTML } from "../da/render";
-import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify } from "./render";
+import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify, plate } from "./render";
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
 import { fundingComplete, heldBy, openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
@@ -88,6 +88,8 @@ export function SiteHome() {
     return `${R.availability} · ${R.delivery}`;
   };
   const facts = (c: (typeof COLLECTION)[number]) => { const v = vehicleOf(c.vehicleKey); return v ? `${v.keys} keys · ${v.landArea}` : c.spec; };
+  /* An estate's own picture, where it has one (content/site/media.ts); its drawn film otherwise. */
+  const imgOf = (href: string) => COLLECTION.find((c) => c.href === href)?.img;
   const html =
     // ── who we are, and what is offered ──
     `<section class="hero">${film("coast", 18.4, { label: "Drawn film: laterite cliffs and the Arabian Sea at dusk" })}` +
@@ -103,14 +105,14 @@ export function SiteHome() {
     // ── four estates, up close ──
     '<div class="explore-h"><span class="eb">The collection</span><h2 class="h2">Explore our <span>estates</span></h2></div>' +
     '<div class="stackfilm">' + HOME_STACK.map((s) =>
-      `<section class="sf">${film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey, s.href))}</span></div></div>` +
+      `<section class="sf">${imgOf(s.href) ? plate(imgOf(s.href)!) : film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey, s.href))}</span></div></div>` +
       `<a class="btn go" href="${s.href}">${s.cta} ${NE}</a></section>`).join("") + "</div>" +
     // ── all of them, in frames ──
     `<section class="gal-sec"><div class="gal-head"><span class="eb">The collection, in frames</span>` +
     `<h2 class="h2">${Nw} estates, <span>drawn.</span></h2>` +
     '<p class="para">Open the frames and move through them: swipe, drag, or use the arrow keys. Every frame leads to its estate.</p>' +
     '<p><a class="tx-u" href="/collection">Or see them listed, with where each stands</a></p></div>' +
-    GALLERY("gal-home", "The collection, in frames", COLLECTION.map((c) => ({ pal: c.pal, hour: c.hour, t: c.name.replace(/<[^>]+>/g, ""), line: `${c.line} · ${facts(c)}`, href: c.href })), `View all ${Nw.toLowerCase()} estates`) +
+    GALLERY("gal-home", "The collection, in frames", COLLECTION.map((c) => ({ pal: c.pal, hour: c.hour, img: c.img, t: c.name.replace(/<[^>]+>/g, ""), line: `${c.line} · ${facts(c)}`, href: c.href })), `View all ${Nw.toLowerCase()} estates`) +
     "</section>" +
     // ── still to come ──
     '<section class="next"><div class="center gut"><h2 class="h2">Next <span>estates</span></h2><p class="para mute">Named, surveyed, not yet open. Each will arrive with its own offering letter.</p></div><div class="rail">' +
@@ -129,7 +131,7 @@ export function SiteHome() {
     journal.map((j) => `<article class="nw"><h4>${j.e!.title}</h4><div class="im">${film(j.pal, j.hour, { bp: j.bp })}</div><div class="ft"><span class="eb">${KIND_LABEL[j.e!.kind]} · ${j.e!.minutes} min</span><a class="btn gray" href="/journal/${j.slug}">Read</a></div></article>`).join("") +
     "</div></section>" +
     (pack
-      ? `<section class="pack"><div class="col">${film("creek", 12, { bp: true })}</div><div class="tx"><span class="eb">The offering pack</span>` +
+      ? `<section class="pack"><div class="col">${imgOf(`/collection/${pack.vehicle.slug}`) ? plate(imgOf(`/collection/${pack.vehicle.slug}`)!, { sizes: "(max-width: 900px) 100vw, 52vw" }) : film("creek", 12, { bp: true })}</div><div class="tx"><span class="eb">The offering pack</span>` +
         `<h2 class="h2 h2-s">Get the <span>${esc(pack.name)} offering pack</span></h2>` +
         `<p class="para dim">The drawings, the structure of ${esc(pack.vehicle.registeredName)}, the waterfall and the risk disclosure, in one document. Sent after a short qualification.</p>` +
         `<div><a class="btn lead" href="/collection/${pack.vehicle.slug}/enquire?about=pack">Request the pack ${NE}</a></div></div></section>`
@@ -234,7 +236,7 @@ export function SiteCollection() {
     '<section class="short" data-shortlist hidden aria-label="Your shortlist"></section>' +
     '<div class="cgrid" id="cgrid">' + cards.map(({ e, g, st, slug, facts, availability, delivery, action }) =>
       `<article class="cc cc-${g}" data-f="${e.region}" data-s="${g}" data-slug="${slug}"${open !== "all" && g !== open ? " hidden" : ""}>` +
-      `<a class="cc-main" href="${e.href}"><div class="im">${film(e.pal, e.hour)}<span class="st st-${g}">${st}</span></div>` +
+      `<a class="cc-main" href="${e.href}"><div class="im">${e.img ? plate(e.img, { sizes: "(max-width: 900px) 100vw, 46vw", tag: "tl" }) : film(e.pal, e.hour)}<span class="st st-${g}">${st}</span></div>` +
       `<h3>${e.name}</h3><p class="cc-loc">${e.line}</p><p class="cc-char">${esc(e.character)}</p>` +
       `<dl class="cc-facts"><div><dt>Keys and land</dt><dd>${esc(facts)}</dd></div><div><dt>Availability</dt><dd>${esc(availability)}</dd></div><div><dt>Delivery</dt><dd>${esc(delivery)}</dd></div></dl></a>` +
       `<a class="cc-act" href="${action[1]}">${esc(action[0])} ${NE}</a></article>`,
@@ -257,7 +259,7 @@ export function SiteEstate({ slug }: { slug: string }) {
     const v = vehicleOf(E.vehicleKey);
     const R = v ? read(v) : undefined;
     /* A funded estate answers its own questions only: the general ones are about investing, and it takes none. */
-    const faq = faqHTML([...(FAQX[E.key] ?? []), ...(fundingComplete(E.slug) ? [] : FAQ)], R?.tokens);
+    const faq = faqHTML([...(FAQX[E.key] ?? []), ...(fundingComplete(E.slug) || E.ownAnswers ? [] : FAQ)], R?.tokens);
     return <Mount html={PROP(E, R, faq)} />;
   }
   const P = pageByPath(`/collection/${slug}`);
@@ -581,7 +583,7 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
     const R = read(v);
     if (R.stance.kind === "open" && v.offering.deposit !== null) {
       blocks.push({ h: "Hold a position" });
-      blocks.push({ deposit: { vehicle: v.slug, payee: v.registeredName, amount: rupeesFull(v.offering.deposit), available: R.stance.unitsAvailable, unitPrice: rupees(v.offering.unitPrice) } });
+      blocks.push({ deposit: { vehicle: v.slug, payee: v.registeredName, incorporated: !!v.llpin, amount: rupeesFull(v.offering.deposit), available: R.stance.unitsAvailable, unitPrice: rupees(v.offering.unitPrice) } });
       blocks.push({ h: "Or ask first" });
     }
     blocks.push({ h: R.stance.kind === "waitlist" ? "Join the waitlist" : "Request the offering pack" });
@@ -597,7 +599,7 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
   blocks.push({ links: [[`Back to ${name}`, `/collection/${v.slug}`], ["Investment", `/collection/${v.slug}/investment`], ["Risk", `/collection/${v.slug}/risk`], ["Enquire", `/collection/${v.slug}/enquire`, "lead"]] });
   const P: SitePage = {
     key: `${v.key}-${id}`, path, eyebrow: `${esc(name)} · ${esc(c.eyebrow.replace(/^CHAPTER \d+ · /, ""))}`, title: esc(plain(c.title)), lead: esc(plain(c.lead)),
-    film: E ? [E.pal, E.enquireHour || 18] : undefined, blocks,
+    film: E ? [E.pal, E.enquireHour || 18] : undefined, img: E?.media?.enquire, blocks,
   };
   return <Mount html={fill(TXT(P))} />;
 }

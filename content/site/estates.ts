@@ -1119,473 +1119,300 @@ export const ESTATES: Record<string, SiteEstate> = {
   "enquireHour": 20,
   "heroLabel": "Drawn film: rain over the river-forest, Coorg",
   "eyebrow": "Getaway Collective · Kodagu",
-  "credit": "SlowSpace Creek · the riverine flagship",
+  "credit": "SlowSpace Creek · twenty keys over a stream",
   "spec": "{{KEYS}} keys · {{LAND}}",
-  "intro": "A winding refuge hidden beneath the canopy, where water pulls you slowly away from the world. The water is the site, not the planting: a stream splits the estate into an escarpment and a riparian terrace, and the only way across is on foot.",
+  "media": {
+   "hero": "creek/hero",
+   "heroTall": "creek/hero-tall",
+   "enquire": "creek/lake"
+  },
+  "intro": "Twenty keys over a stream. Five clusters of four are set down along the contour of a coffee slope in Kodagu, each under one thin roof, with a yard and a private pool in the shade below. Nothing here is built yet: every picture on this page is an illustration.",
   "place": {
    "film": [
     "creek",
     9,
     1
    ],
-   "title": "It rains ninety days a year. <b>We built for the ninety.</b>",
-   "text": "Creek lies at Cherala, near Sunticoppa and Kushalnagara in Kodagu, in the river-forest of Coorg. Between 2,500 and 4,000 millimetres of rain fall each year. The last engine you hear is your own car, at the gate: from there you walk down, and cross the water.",
+   "img": "creek/place",
+   "title": "Eight acres <b>on a stream.</b>",
+   "text": "Shade-grown coffee on both banks of a perennial stream at Cherala, in Kodagu. The land is on a registered deed of June 2024 and falls naturally at 20 to 25 degrees. The coffee is left standing.",
    "coords": "12.385716°N 75.836097°E"
   },
   "concept": {
-   "title": "The river is <span>the operating system.</span>",
-   "lead": "Four clusters on the escarpment, one over the bank, one bridge between them. Every walk holds a 1:20 gradient; the car stops at the top.",
-   "ground": [
-    {
-     "c": "{ink:river}",
-     "w": 10,
-     "pts": [
-      [
-       -300,
-       40,
-       0
-      ],
-      [
-       -120,
-       60,
-       0
-      ],
-      [
-       40,
-       20,
-       0
-      ],
-      [
-       180,
-       70,
-       0
-      ],
-      [
-       320,
-       40,
-       0
-      ]
-     ]
-    }
-   ],
+   "title": "Five clusters, <span>set down along a stream.</span>",
+   "lead": "A descent from the road to the water. Four keys share one thin roof and three party walls; the yard and a private pool sit below, in the shade of the keys above. Five of these are placed on the contour, and the coffee on both banks is left standing.",
+   "img": "creek/masterplan",
    "zones": [
     {
-     "k": "ridge",
-     "name": "Ridge clusters",
-     "sub": "C1–C4 · escarpment",
-     "text": "Sixteen keys in four clusters of four, on a pier field at +100 and +98.",
-     "c": "{ink:canopy}",
-     "vols": [
-      {
-       "t": "box",
-       "x": -260,
-       "y": -240,
-       "z": 40,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      },
-      {
-       "t": "box",
-       "x": -200,
-       "y": -240,
-       "z": 40,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      },
-      {
-       "t": "box",
-       "x": -120,
-       "y": -250,
-       "z": 40,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      },
-      {
-       "t": "box",
-       "x": -60,
-       "y": -250,
-       "z": 40,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      },
-      {
-       "t": "box",
-       "x": 30,
-       "y": -240,
-       "z": 30,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      },
-      {
-       "t": "box",
-       "x": 90,
-       "y": -240,
-       "z": 30,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      },
-      {
-       "t": "box",
-       "x": 170,
-       "y": -230,
-       "z": 30,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      },
-      {
-       "t": "box",
-       "x": 230,
-       "y": -230,
-       "z": 30,
-       "dx": 50,
-       "dy": 44,
-       "dz": 24
-      }
-     ]
+     "k": "top",
+     "name": "The gate and the court",
+     "sub": "At the top",
+     "text": "A gate at the corner of the land, an arrival court above everything else, and the commons beside it.",
+     "c": "{ink:bone}"
     },
     {
-     "k": "bank",
-     "name": "The bank cluster",
-     "sub": "C5 · riparian",
-     "text": "Four keys on a steel platform over the bank, decks facing north over the water.",
-     "c": "{ink:canopy2}",
-     "vols": [
-      {
-       "t": "box",
-       "x": -60,
-       "y": 100,
-       "z": 10,
-       "dx": 50,
-       "dy": 44,
-       "dz": 22
-      },
-      {
-       "t": "box",
-       "x": 0,
-       "y": 100,
-       "z": 10,
-       "dx": 50,
-       "dy": 44,
-       "dz": 22
-      }
-     ]
-    },
-    {
-     "k": "commons",
-     "name": "Roastery and sauna",
-     "sub": "the shared terrace",
-     "text": "A roastery behind a mass wall, and a wood-fired sauna cantilevered over the lake.",
-     "c": "{ink:ember}",
-     "vols": [
-      {
-       "t": "box",
-       "x": 120,
-       "y": 120,
-       "z": 0,
-       "dx": 70,
-       "dy": 62,
-       "dz": 30
-      },
-      {
-       "t": "box",
-       "x": 220,
-       "y": 190,
-       "z": 0,
-       "dx": 34,
-       "dy": 54,
-       "dz": 22
-      }
-     ]
+     "k": "slope",
+     "name": "Four clusters",
+     "sub": "Down the slope",
+     "text": "Sixteen keys in four clusters along the contour, joined by one walk.",
+     "c": "{ink:canopy}"
     },
     {
      "k": "water",
-     "name": "The water",
-     "sub": "stream and lake",
-     "text": "The stream splits the estate; the lake sits at +92.5 on the lower terrace.",
-     "c": "{ink:river}",
-     "vols": [
-      {
-       "t": "water",
-       "x": 200,
-       "y": 230,
-       "dx": 130,
-       "dy": 90
-      }
-     ]
+     "name": "The fifth cluster",
+     "sub": "At the water",
+     "text": "Four more keys, reached by a timber crossing over the stream.",
+     "c": "{ink:river}"
+    },
+    {
+     "k": "apart",
+     "name": "The sauna and the lake",
+     "sub": "Set apart",
+     "text": "Quietly apart from the keys, at the water's edge.",
+     "c": "{ink:sage}"
+    },
+    {
+     "k": "work",
+     "name": "The working routes",
+     "sub": "Out of sight",
+     "text": "They run apart from the walks and never cross them.",
+     "c": "{ink:stone3}"
     }
-   ],
-   "labels": [
-    [
-     30,
-     470,
-     "ESCARPMENT · C1–C4"
-    ],
-    [
-     430,
-     470,
-     "TERRACE · C5, ROASTERY, SAUNA, LAKE"
-    ]
    ]
   },
   "chapters": [
    {
-    "id": "crossing",
-    "title": "The crossing",
+    "id": "gate",
+    "title": "The gate",
     "film": [
      "creek",
-     18.7
+     17,
+     0
     ],
-    "para": "Arrival is a court under a single steel plate, where the car stops and never goes further. After a pause of a minute or so, you walk down the escarpment at a gradient that never exceeds one in twenty, and cross the stream on the estate's one bridge. Luggage goes through a hatch in the wall.",
+    "img": "creek/arrival",
+    "para": "The car stops at the gate, at the corner of the land, and you walk down. An arrival court stands above everything else, and your bag is sent ahead by a working route that never crosses yours. The first ten minutes are drawn as carefully as the key itself.",
     "meta": [
-     "BRIDGE +95.6",
-     "PARKING +102",
-     "ONE IN TWENTY",
-     "THE CAR NEVER ENTERS"
+     "THE CAR STOPS AT THE GATE",
+     "ONE WALK DOWN",
+     "BAGS GO AHEAD"
     ],
     "cards": [
      {
-      "k": "The court",
-      "v": "6.0 × 4.8 m, under a 12.0 × 8.7 m plate"
+      "k": "The gate",
+      "v": "At the corner of the land, where the road reaches it"
      },
      {
-      "k": "The rill",
-      "v": "A 300 mm channel of water beside the path"
+      "img": "creek/court",
+      "b": "The arrival court",
+      "s": "Above everything else"
      },
      {
-      "film": [
-       "creek",
-       18.9,
-       1
-      ],
-      "b": "Dusk on the bridge",
-      "s": "The first ritual, on arrival"
+      "k": "Your bag",
+      "v": "Sent ahead by a route that never crosses yours"
      },
      {
-      "k": "Operations",
-      "v": "A separate bridge and a ford that guests never use"
+      "img": "creek/table",
+      "b": "The commons",
+      "s": "One long table, beside the court"
      }
     ]
    },
    {
-    "id": "ridge",
-    "title": "Ridge",
+    "id": "cluster",
+    "title": "The cluster",
     "film": [
      "creek",
-     8.2
+     11,
+     0
     ],
-    "para": "Sixteen keys sit in four clusters of four on the escarpment, each on a steel pier field above the forest floor. A key is a 7.2 by 6.0 metre plate on a 1,200 millimetre grid, with a deck the same width and a shallow mirror pool on every deck. Half the keys add a loft at +3.6 metres.",
-    "meta": [
-     "465 SQ FT · 43.2 M²",
-     "PLATE 7.2 × 6.0 M",
-     "DECK 7.2 × 4.8 M",
-     "LOFT TYPE UNDER REVIEW"
-    ],
-    "cards": [
-     {
-      "k": "Two types",
-      "v": "TYPE-G, 3.3 m clear · TYPE-GL, with a loft at +3.6 m"
-     },
-     {
-      "k": "Mirror pool",
-      "v": "6.0 × 2.4 m, 0.3 m deep, on every deck"
-     },
-     {
-      "film": [
-       "creek",
-       11,
-       1
-      ],
-      "b": "The deck",
-      "s": "A 1.8 m cantilever over the slope"
-     },
-     {
-      "k": "Views",
-      "v": "15° view cones, so no key looks at another"
-     },
-     {
-      "k": "Chassis",
-      "v": "Ridge"
-     }
-    ]
-   },
-   {
-    "id": "bank",
-    "title": "The bank",
-    "film": [
-     "creek",
-     6.5
-    ],
-    "para": "The fifth cluster stands on a steel platform over the stream's bank, carried on forty-five tension piles, its four decks facing north over the water and its entries turned away to the south. It is the closest any key comes to the river, and the reason the estate is called what it is.",
+    "img": "creek/cluster",
+    "para": "Four keys share one thin roof and three party walls. They stand three metres past the fall of the slope, and beneath them the yard and a private pool lie in shade. In the wet months the cantilever becomes the shelter: rain on three sides, and dry underfoot.",
     "meta": [
      "4 KEYS",
-     "45 TENSION PILES",
-     "DECKS NORTH",
-     "OVER THE BANK"
+     "1 ROOF",
+     "3 M CANTILEVER",
+     "1 POOL A CLUSTER"
     ],
     "cards": [
      {
-      "k": "Platform",
-      "v": "Steel, on 45 tension piles"
+      "img": "creek/cluster-west",
+      "b": "Under one roof",
+      "s": "Four keys, three party walls"
      },
      {
-      "film": [
-       "creek",
-       5.8
-      ],
-      "b": "First light over the water",
-      "s": "From the bank cluster decks"
+      "k": "The slope",
+      "v": "A natural fall of about 22 degrees, left as it is"
      },
      {
-      "k": "Orientation",
-      "v": "Decks north to the water; entries south"
+      "img": "creek/yard",
+      "b": "The yard",
+      "s": "In the shade of the keys above"
      },
      {
-      "k": "Level",
-      "v": "+96.5 m, provisional until the flood line is surveyed"
+      "k": "Five clusters",
+      "v": "Four on the contour, one across the stream"
      }
     ]
    },
    {
-    "id": "commons",
-    "title": "Roastery",
+    "id": "key",
+    "title": "The key",
     "film": [
      "creek",
-     16.8
+     15,
+     0
     ],
-    "para": "On the lower terrace a roastery stands behind a mass wall twelve metres long: estate coffee, roasted where it grows, poured at dawn. Beyond it, a wood-fired sauna for eight cantilevers two and a half metres over the lake. The water is the plunge.",
+    "img": "creek/keys-plan",
+    "para": "One key, drawn once and built twenty times. Yard, bath, bed, living and a deck with a plunge, in one line, with a nest above the bath. A ladder inside, and no stair outside. One drawing means one price, one crew and one standard.",
     "meta": [
-     "ROASTERY 12.0 × 10.8 M",
-     "SAUNA 5.4 × 8.4 M",
-     "80 °C UPPER BENCH",
-     "OVER THE LAKE"
+     "465 SQ FT ENCLOSED",
+     "3.6 M WIDE",
+     "600 MM GRID",
+     "NO OUTSIDE STAIR"
     ],
     "cards": [
      {
-      "k": "The roastery",
-      "v": "Behind a 300 mm mass wall, at +96.0"
+      "img": "creek/keys",
+      "b": "Four in a row",
+      "s": "Each opens to its own deck"
      },
      {
-      "film": [
-       "creek",
-       7.1
-      ],
-      "b": "The morning pour",
-      "s": "Coffee roasted on the estate, at dawn"
+      "k": "The nest",
+      "v": "Above the bath, reached by a ladder inside"
      },
      {
-      "k": "The sauna",
-      "v": "Wood-fired, eight people, 80 °C at the upper bench"
+      "k": "The plunge",
+      "v": "On the deck of every key"
      },
      {
-      "k": "The lake",
-      "v": "About 1,672 m², at +92.5"
+      "img": "creek/cluster-plan",
+      "b": "From above",
+      "s": "The roof, the yard and the pool"
+     }
+    ]
+   },
+   {
+    "id": "water",
+    "title": "The water",
+    "film": [
+     "creek",
+     7,
+     1
+    ],
+    "img": "creek/water",
+    "para": "A perennial stream is the spine of the estate. A timber crossing leads to the fifth cluster, and the sauna and the lake are set quietly apart, at the water's edge.",
+    "meta": [
+     "1 STREAM",
+     "A TIMBER CROSSING",
+     "THE SAUNA",
+     "THE LAKE"
+    ],
+    "cards": [
+     {
+      "img": "creek/crossing",
+      "b": "The crossing",
+      "s": "Timber, to the fifth cluster"
+     },
+     {
+      "img": "creek/sauna-lake",
+      "b": "The sauna",
+      "s": "At the edge of the lake"
+     },
+     {
+      "k": "The coffee",
+      "v": "Left standing on both banks"
+     },
+     {
+      "img": "creek/stream",
+      "b": "The stream",
+      "s": "Between the clusters"
      }
     ]
    }
   ],
+  "made": [
+   "The standard",
+   "Quiet is <span>a number here.</span>"
+  ],
   "materials": [
    [
-    "No. 1",
-    "River-cast concrete",
-    "Cast with the stream's own aggregate.",
-    "{ink:sage}"
-   ],
-   [
-    "No. 2",
-    "Driftwood oak",
-    "Silvered, not stained.",
-    "{ink:oat}"
-   ],
-   [
-    "No. 3",
-    "Corten",
-    "Inland, where the air allows it.",
-    "{ink:rust}"
-   ],
-   [
-    "No. 4",
-    "Laterite",
-    "The red stone of the region.",
-    "{ink:ember}"
-   ],
-   [
-    "No. 5",
-    "River basalt",
-    "Underfoot at the water's edge.",
-    "{ink:stone3}"
-   ],
-   [
-    "No. 6",
-    "Linen and wool",
-    "Undyed linen, iron-grey wool, one indigo or canopy-green note.",
-    "{ink:slateGrey}"
-   ],
-   [
-    "No. 7",
-    "Canopy green",
-    "Grown or woven, never painted.",
+    "Sound",
+    "NC-25 at night",
+    "Each key is tested for it before anyone sleeps there.",
     "{ink:canopy}"
    ],
    [
-    "No. 8",
-    "Lime plaster",
-    "No gypsum.",
+    "Dark",
+    "0.5 lux or less",
+    "Blackout, measured, in every key.",
+    "{ink:coal}"
+   ],
+   [
+    "Light",
+    "2200–2700 K",
+    "Evening light, warm and low.",
+    "{ink:oat}"
+   ],
+   [
+    "One key",
+    "465 sq ft, enclosed",
+    "3.6 m wide on a 600 mm grid. Drawn once, built twenty times.",
     "{ink:bone}"
    ],
    [
-    "No. 11",
-    "EPDM gaskets",
-    "Joints that move with the rain. No sealant.",
-    "{ink:coal}"
+    "The cantilever",
+    "3 m past the fall",
+    "The yard and the pool lie in its shade, dry underfoot in the rain.",
+    "{ink:sage}"
+   ],
+   [
+    "The build",
+    "15 packages, 5 movements",
+    "Prepare, cast, close, fit out, prove. The first cluster teaches the other four.",
+    "{ink:stone3}"
    ]
   ],
   "day": {
    "eyebrow": "The day at Creek",
-   "title": "Four movements. <span>One river.</span>",
+   "title": "Nothing <span>is scheduled.</span>",
    "items": [
     [
+     "MORNING",
+     "Mist, and the stream",
+     "A walk along the water."
+    ],
+    [
+     "MIDDAY",
+     "The yard and the pool",
+     "In shade, under the keys."
+    ],
+    [
      "DUSK",
-     "The crossing",
-     "The one bridge, on foot, on arrival."
+     "The commons",
+     "One long table."
     ],
     [
-     "DAWN",
-     "The morning pour",
-     "Estate coffee, roasted on site."
-    ],
-    [
-     "AFTERNOON",
-     "The thermal reset",
-     "The sauna at 80 °C, then the lake."
-    ],
-    [
-     "MONSOON",
-     "The rain sit",
-     "Two chairs, angled at thirty degrees."
-    ],
-    [
-     "21:00",
-     "The star court",
-     "The drying yard, after dark."
+     "NIGHT",
+     "A dark sky",
+     "Lamp light only."
     ]
    ],
-   "note": "Each ritual is offered once; declining counts as done. Who runs them is not yet appointed. The coracle drift waits on a water-safety review and is not offered here."
+   "imgs": [
+    "creek/stream-walk",
+    "creek/yard",
+    "creek/table",
+    "creek/night"
+   ],
+   "note": "A day with four good hours in it, and nobody telling you which."
   },
   "getting": {
-   "title": "A day's <span>drive west.</span>",
-   "sub": "Approximate road distances.",
+   "title": "A morning's drive, <span>once the road is finished.</span>",
+   "sub": "Road distances are approximate. Drive times are planning estimates.",
    "cards": [
     [
      "~250 km",
      "BENGALURU",
-     "Five to six hours by road."
+     "Five to six hours by road today. A planning estimate of 2.5 to 3.5 hours once the Mysuru to Kushalnagar stretch opens; the finished road sets the final time."
     ],
     [
      "110 km",
@@ -1630,89 +1457,155 @@ export const ESTATES: Record<string, SiteEstate> = {
    }
   },
   "plan": {
-   "title": "Five clusters, <span>one bridge.</span>",
-   "note": "Schematic, not to scale. Positions follow the planning rules, not a survey, and no flood line is drawn yet.",
+   "title": "Five clusters, <span>one stream.</span>",
+   "note": "Illustrations, not to scale. A survey of the land exists and is still to be read by a surveyor against the deed, so positions may move.",
    "tabs": [
     {
-     "tab": "Site",
-     "t": "Site",
+     "tab": "The estate",
+     "t": "The estate",
+     "img": "creek/masterplan",
+     "svg": "",
      "rows": [
       [
-       "Covenant",
-       "At least 65% kept as it is"
+       "Land",
+       "{{LAND}}"
       ],
       [
-       "Clusters",
-       "5 × 4 keys"
+       "Keys",
+       "20, in five clusters of four"
       ],
       [
-       "Crossing",
-       "One bridge at +95.6"
+       "At the top",
+       "The gate, the arrival court, the commons"
       ],
       [
-       "Lake",
-       "~1,672 m² at +92.5"
+       "At the water",
+       "A timber crossing, the sauna, the lake"
       ]
-     ],
-     "svg": "<rect x=\"20\" y=\"20\" width=\"560\" height=\"380\" fill=\"{ink:ink}\" fill-opacity=\".04\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><path d=\"M20 210C140 180 220 250 320 210S480 170 580 200\" fill=\"none\" stroke=\"{ink:sea}\" stroke-width=\"12\" stroke-opacity=\".45\"/><text x=\"30\" y=\"198\" font-family=\"Space Mono\" font-size=\"11\">STREAM</text><g transform=\"translate(60,60)\"><rect x=\"0\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"0\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><text x=\"0\" y=\"68\" font-family=\"Space Mono\" font-size=\"10\">C1</text></g><g transform=\"translate(170,50)\"><rect x=\"0\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"0\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><text x=\"0\" y=\"68\" font-family=\"Space Mono\" font-size=\"10\">C2</text></g><g transform=\"translate(300,60)\"><rect x=\"0\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"0\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><text x=\"0\" y=\"68\" font-family=\"Space Mono\" font-size=\"10\">C3</text></g><g transform=\"translate(420,55)\"><rect x=\"0\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"0\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"26\" width=\"24\" height=\"20\" fill=\"{ink:canopy}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><text x=\"0\" y=\"68\" font-family=\"Space Mono\" font-size=\"10\">C4</text></g><g transform=\"translate(160,245)\"><rect x=\"0\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy2}\" fill-opacity=\".5\" stroke=\"{ink:ink}\"/><rect x=\"28\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy2}\" fill-opacity=\".5\" stroke=\"{ink:ink}\"/><rect x=\"56\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy2}\" fill-opacity=\".5\" stroke=\"{ink:ink}\"/><rect x=\"84\" y=\"0\" width=\"24\" height=\"20\" fill=\"{ink:canopy2}\" fill-opacity=\".5\" stroke=\"{ink:ink}\"/><text x=\"0\" y=\"36\" font-family=\"Space Mono\" font-size=\"10\">C5 · BANK</text></g><line x1=\"330\" y1=\"150\" x2=\"330\" y2=\"270\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><text x=\"336\" y=\"240\" font-family=\"Space Mono\" font-size=\"10\">BRIDGE</text><rect x=\"400\" y=\"260\" width=\"60\" height=\"50\" fill=\"{ink:ember}\" fill-opacity=\".4\" stroke=\"{ink:ink}\"/><text x=\"402\" y=\"325\" font-family=\"Space Mono\" font-size=\"10\">ROASTERY</text><ellipse cx=\"510\" cy=\"330\" rx=\"55\" ry=\"40\" fill=\"{ink:sea}\" fill-opacity=\".35\" stroke=\"{ink:ink}\"/><text x=\"486\" y=\"334\" font-family=\"Space Mono\" font-size=\"10\">LAKE</text>"
+     ]
     },
     {
-     "tab": "Key · TYPE-G",
-     "t": "TYPE-G",
+     "tab": "A cluster",
+     "t": "A cluster",
+     "img": "creek/cluster-plan",
+     "svg": "",
      "rows": [
       [
-       "Plate",
-       "7.2 × 6.0 m"
+       "Keys",
+       "Four, under one roof"
       ],
+      [
+       "Party walls",
+       "Three"
+      ],
+      [
+       "Cantilever",
+       "3 m past the fall"
+      ],
+      [
+       "Below",
+       "The yard and one private pool"
+      ]
+     ]
+    },
+    {
+     "tab": "A key",
+     "t": "A key",
+     "img": "creek/keys-plan",
+     "svg": "",
+     "rows": [
       [
        "Enclosed",
-       "465 sq ft · 43.2 m²"
+       "465 sq ft"
       ],
       [
-       "Clear height",
-       "3.30 m"
+       "Width",
+       "3.6 m, on a 600 mm grid"
       ],
       [
-       "Deck",
-       "7.2 × 4.8 m"
+       "In one line",
+       "Yard, bath, bed, living, deck with a plunge"
       ],
       [
-       "Mirror pool",
-       "6.0 × 2.4 × 0.3 m"
+       "Above the bath",
+       "A nest, by a ladder inside"
       ]
-     ],
-     "svg": "<rect x=\"80\" y=\"60\" width=\"440\" height=\"200\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><rect x=\"80\" y=\"260\" width=\"440\" height=\"110\" fill=\"{ink:canopy}\" fill-opacity=\".12\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><rect x=\"120\" y=\"290\" width=\"360\" height=\"50\" fill=\"{ink:sea}\" fill-opacity=\".35\" stroke=\"{ink:ink}\"/><text x=\"130\" y=\"320\" font-family=\"Space Mono\" font-size=\"11\">MIRROR POOL 6.0 × 2.4</text><rect x=\"110\" y=\"90\" width=\"150\" height=\"120\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"120\" y=\"150\" font-family=\"Space Mono\" font-size=\"11\">KING</text><rect x=\"380\" y=\"90\" width=\"110\" height=\"100\" fill=\"none\" stroke=\"{ink:ink}\"/><text x=\"388\" y=\"145\" font-family=\"Space Mono\" font-size=\"11\">BATH</text><text x=\"86\" y=\"52\" font-family=\"Space Mono\" font-size=\"11\">PLATE 7.2 × 6.0 M · 1,200 MM GRID</text>"
+     ]
     },
     {
-     "tab": "Key · TYPE-GL",
-     "t": "TYPE-GL",
+     "tab": "The water",
+     "t": "The water",
+     "img": "creek/lake-plan",
+     "svg": "",
      "rows": [
       [
-       "Plate",
-       "7.2 × 6.0 m"
+       "The stream",
+       "Perennial; the spine of the estate"
       ],
       [
-       "Loft",
-       "7.2 × 2.4 m at +3.60 m"
+       "The crossing",
+       "Timber, to the fifth cluster"
       ],
       [
-       "Living",
-       "6.0 m clear"
-      ],
-      [
-       "Total",
-       "651 sq ft · under review",
-       1
-      ],
-      [
-       "Deck",
-       "7.2 × 4.8 m"
+       "Set apart",
+       "The sauna and the lake"
       ]
-     ],
-     "svg": "<g font-family=\"Space Mono\" font-size=\"11\"><path d=\"M80 330V110L300 60L520 110V330Z\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><rect x=\"80\" y=\"200\" width=\"180\" height=\"10\" fill=\"{ink:canopy}\" fill-opacity=\".6\"/><text x=\"90\" y=\"192\">LOFT +3.60</text><line x1=\"540\" y1=\"110\" x2=\"540\" y2=\"330\" stroke=\"{ink:ink}\"/><text x=\"546\" y=\"220\">6.0 CLEAR</text><line x1=\"40\" y1=\"330\" x2=\"560\" y2=\"330\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"90\" y=\"360\">SECTION · SCHEMATIC</text></g>"
+     ]
     }
    ]
   },
+  "own": [
+   [
+    "Start a conversation",
+    "Ask for the cost plan and the structure, and visit the estate and the stream. Getaway Collective introduces you. It gives no advice on whether this suits you, and it holds no money."
+   ],
+   [
+    "Read the plan and its doubts",
+    "The cost plan, the order of payment, and the list of what is still open. Nothing is signed before counsel has cleared the structure and your identity checks are complete."
+   ],
+   [
+    "Sign into the estate's own vehicle",
+    "You become a partner of {{PARTNER}}, directly, and you pay the partnership itself. It owns the land and the buildings and owes the bank. Nothing is pooled with another estate."
+   ]
+  ],
+  "ownAnswers": true,
+  "capitalNote": "Seven items of the build still await a quotation; they stand inside the undrawn part of the bank loan and are not in the figures above. The land is counted at the founders' own figure, which no independent valuer has yet confirmed.",
+  "gates": [
+   [
+    "Before the loan is sanctioned",
+    "The partnership formed; the title report; the valuation."
+   ],
+   [
+    "Before the first drawdown",
+    "The building plan and the licence; the contractor appointed; the equity in."
+   ],
+   [
+    "During the build",
+    "A report every month; each draw certified against the works."
+   ],
+   [
+    "At completion",
+    "The occupancy certificate; repayment of the loan begins."
+   ]
+  ],
+  "risks": [
+   [
+    "The monsoon",
+    "The cantilever keeps the yard and the pool dry underfoot, and the plan carries the season in its numbers."
+   ],
+   [
+    "The build cost",
+    "A measured bill, a fixed ceiling, and one key repeated twenty times."
+   ],
+   [
+    "Too few nights sold",
+    "The plan is tested against a cautious case with fewer nights at a lower rate. In its first year that case leans on a reserve of six months' instalments."
+   ],
+   [
+    "Permissions",
+    "The building plan, the licence, and the panchayat, fire, pollution and electrical approvals all come before the first drawdown."
+   ]
+  ],
   "details": [
    [
     "House brand",
@@ -1723,12 +1616,16 @@ export const ESTATES: Record<string, SiteEstate> = {
     "Cherala, Sunticoppa, Kushalnagara, Kodagu"
    ],
    [
-    "Covenant",
-    "At least 65% kept as it is; 66.1% on the deed geometry, to be confirmed by survey"
+    "Slope",
+    "A natural fall of 20 to 25 degrees"
+   ],
+   [
+    "Clusters",
+    "Five, of four keys each, with one pool a cluster"
    ],
    [
     "Key",
-    "465 sq ft · loft type 651 sq ft, under review"
+    "465 sq ft enclosed · 3.6 m wide on a 600 mm grid"
    ],
    [
     "Rainfall",
@@ -1740,11 +1637,21 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Stage",
-    "Specification; nothing built"
+    "Design and costing; nothing built"
    ],
    [
     "Survey",
-    "No total station, flood line or bathymetry yet",
+    "A survey exists; it is still to be read by a surveyor against the deed",
+    1
+   ],
+   [
+    "Valuation",
+    "None yet; the land is counted at the founders' own figure",
+    1
+   ],
+   [
+    "Permissions",
+    "Building plan, licence and approvals, to come before the first drawdown",
     1
    ],
    [
@@ -1754,7 +1661,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Operator",
-    "Not yet appointed for rituals",
+    "Sensory Getaways; the management agreement and its fee are not yet ruled",
     1
    ],
    [
@@ -2271,14 +2178,34 @@ export const FAQX: Record<string, [string, string, string][]> = {
    "constants/vehicles.ts"
   ],
   [
+   "What would I hold?",
+   "Units in the partnership that will own the land and the estate. There are twenty units of five per cent each, in one class, with equal rights for every unit; eight are offered. Each partner signs into the partnership directly, with limited liability, and the founders are its designated partners. No return, yield or exit is promised, and you may lose the whole amount.",
+   "CRK-09-CT-001 P-02, P-03, P-09, P-10, P-17"
+  ],
+  [
+   "Who is paid before the partners?",
+   "Cash is paid down a list, each tier in full before the next. First what the sales channels, the card networks and the taxes keep, and the estate's running costs. Then the bank, interest before principal. Then a reserve of six months' instalments, and four per cent of gross revenue set aside for furniture and equipment. The partners come last, pro rata by units, with no preference and no fixed return. The order is proposed in the draft terms, and the LLP agreement will state it.",
+   "CRK-09-CA-006 WATERFALL"
+  ],
+  [
+   "Is the bank loan in place?",
+   "No. A loan of up to ₹10 Cr has been applied for, to be drawn against certified works, interest-only for the eighteen months of the build and then repaid in 120 level monthly instalments. It is not sanctioned: the sanction follows the title report and the valuation. Nothing on this page says it is secured.",
+   "CRK-09-CT-001 L-02, L-04, L-05, L-13"
+  ],
+  [
+   "What is still open?",
+   "The partnership is not yet incorporated. The land is counted at the founders' own figure and has no independent valuation yet. A survey of the land exists and is still to be read by a surveyor against the deed. Counsel has not yet cleared the structure. Seven items of the build await a quotation. Each of these comes before anything is signed.",
+   "CRK-09-CT-001 P-16 · constants/vehicles.ts C-18"
+  ],
+  [
    "Is Creek the same as Coffee Fields Forever?",
-   "No. They are two separate estates about 1.8 km apart in Kodagu, each with its own partnership, its own offering and its own house brand: Creek is a SlowSpace estate, and Coffee Fields Forever an ESKAPE estate. Holding units in one gives you no share, no vote and no nights in the other.",
+   "No. They are two separate estates about 1.8 km apart in Kodagu, each held separately and each with its own house brand: Creek is a SlowSpace estate, and Coffee Fields Forever an ESKAPE estate. Holding units in one gives you no share and no vote in the other.",
    "properties.yaml"
   ],
   [
    "When does it open?",
-   "No opening date has been set, and this page will not guess one. Creek is in pre-construction: nothing is built yet, and the survey that fixes the flood line along the creek is still to come. That line decides where each building may stand. Once it is drawn and the design is fixed, a construction programme and a handover date can be stated. Partners' nights begin at handover.",
-   "CN-004 sheet 02 · legal.ts F.2"
+   "No opening date has been set, and this page will not guess one. Nothing is built yet. The plan allows eighteen months to build once works begin, and works begin only after the gates before them have closed.",
+   "CRK-09-CA-006 LOAN"
   ]
  ],
  "cff": [

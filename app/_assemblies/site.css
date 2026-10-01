@@ -45,6 +45,14 @@
 .site .btn.dark{background:var(--ink);color:var(--paper)}
 .site .btn svg{width:15px;height:15px}
 .site canvas.film{display:block;width:100%;height:100%}
+/* An estate's own picture stands where its film would (render.ts plate()). */
+.site .film-img{display:block;width:100%;height:100%;object-fit:cover}
+.site picture{display:contents}
+.site .plate-tag{position:absolute;left:var(--gc-sp-s);bottom:var(--gc-sp-s);z-index:1;padding:calc(var(--gc-sp-3xs) * 1.25) var(--gc-sp-2xs);background:var(--gc-paper-panel);color:var(--gc-s-night);font:600 10px/1.2 var(--text);letter-spacing:.14em;text-transform:uppercase;pointer-events:none}
+.site .plate-tag-tl{bottom:auto;top:var(--gc-sp-s)}
+.site :is(.mk,.tx-film,.sf,.pack .col,.proj-plate,.gal-m,.gal-card)>.film-img,.site :is(.mk,.tx-film,.sf,.pack .col)>picture>.film-img{position:absolute;inset:0}
+.site .cc .im .film-img{transition:transform .3s var(--ease)}
+.site .cc:hover .im .film-img{transform:scale(1.035)}
 .site .pg[hidden]{display:none}
 .site .nav{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:calc(var(--gc-sp-3xs) * 6.5);padding:0 var(--gut);height:58px;background:var(--gc-s-veil);border-bottom:1px solid var(--gc-s-rim)}
 .site .nav .brand{display:flex;align-items:center;gap:calc(var(--gc-sp-3xs) * 2.5);font:100 14px/1 var(--display);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
@@ -1178,6 +1186,26 @@
 .site .tx-form :is(input,textarea)[aria-invalid=true]{border-bottom-color:var(--gc-hazard-deep)}
 .site .tx-form button[aria-busy=true]{cursor:progress}
 .site .tx-ok:focus{outline:2px solid var(--electric);outline-offset:3px}
+
+/* ── An estate's own pictures, and its capital in its own shape — 2 Oct 2026 ── */
+/* the concept, drawn: the picture, with its parts listed beside it */
+.site .axo-img{align-items:start}
+.site .axo-fig{position:relative;margin:0;overflow:hidden;background:var(--gc-s-coal);aspect-ratio:16/9}
+.site .zl-static{list-style:none;margin:0;padding:0}
+.site .zl-static li{display:grid;grid-template-columns:14px 1fr auto;gap:calc(var(--gc-sp-3xs) * 3.5);align-items:baseline;border-top:1px solid var(--line);padding:calc(var(--gc-sp-3xs) * 4.5) 0}
+.site .zl-static i{width:14px;height:14px;align-self:center}
+.site .zl-static b{font:800 clamp(18px,1.8vw,24px)/1.05 var(--display);text-transform:uppercase;letter-spacing:-.01em}
+.site .zl-static span{font:400 12px var(--mono);color:var(--mute)}
+.site .zl-static p{grid-column:2/-1;margin:calc(var(--gc-sp-3xs) * 1.5) 0 0;color:var(--gc-s-fog);font-size:14.5px}
+/* a plan tab that is a picture */
+.site .pv .dw:has(.pdraw-img){padding:0;min-height:0;place-items:stretch}
+.site .pv .dw .pdraw-img{position:relative;margin:0;width:100%}
+.site .pv .dw .pdraw-img .film-img{height:auto;aspect-ratio:16/9}
+/* the gates and the risks, inside the capital layer */
+.site .fin-more{margin-top:var(--gc-sp-xl)}
+.site .fin-h3{margin:0 0 var(--gc-sp-s);font:800 clamp(22px,2.4vw,32px)/1.05 var(--display);letter-spacing:-.025em}
+.site .fin .stgs{margin-top:0}
+.site .fin .plan-note a{color:inherit}
 
 /* IRIS keeps clear of the bars and of the phone's own edge. What rests at
    the foot of a hero stands above the launcher (--iris-h), and the launcher

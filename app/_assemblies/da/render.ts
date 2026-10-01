@@ -49,7 +49,20 @@ function waterfallData(v: Vehicle) {
     partners: pct(w.toPartners ?? 0),
   };
 }
+/* An order of payment (constants/vehicles.ts, Operating.cascade): each tier
+   in full before the next, the partners last. No bar and no amount, because
+   the order fixes no share in advance. */
+function cascade(v: Vehicle) {
+  const C = v.operating.cascade!;
+  return shell("waterfall",
+    `<div class="da-top"><div><span class="da-lbl">Who is paid, in order</span><div class="da-big-s">${C.length} tiers, the partners last</div></div><span class="da-chip">Proposed</span></div>` +
+    `<ol class="da-cas">${C.map((t, i) => `<li${i === C.length - 1 ? ' class="last"' : ""}><b class="da-mono">${i + 1}</b><div><h4>${esc(t.what)}</h4><p>${esc(t.rule)}</p></div></li>`).join("")}</ol>` +
+    '<p class="da-note">Each tier is paid in full before the next. The order is proposed in the draft terms; the LLP agreement will state it, and governs. No return is assured.</p>',
+    undefined, "da-cascade");
+}
 function waterfall(o: { vehicle?: string; money?: boolean }) {
+  const one = o.vehicle ? byKey(o.vehicle) : undefined;
+  if (one && publishable(one).ok && !one.operating.waterfall && one.operating.cascade?.length) return cascade(one);
   const vs = (o.vehicle ? [byKey(o.vehicle)!] : shown()).filter((v) => v && v.operating.waterfall && publishable(v).ok);
   if (!vs.length) return shell("waterfall", '<p class="da-none">The waterfall is not yet stated for this vehicle.</p>');
   const data = vs.map(waterfallData), d = data[0];
@@ -88,8 +101,13 @@ function stack(o: { vehicle?: string }) {
   if (!v || !publishable(v).ok) return shell("stack", '<p class="da-none">The capital stack is not yet published for this vehicle.</p>');
   const s = v.stack, T = s.projectTotal, rest = T - s.land - s.formation > 0n ? T - s.land - s.formation : 0n;
   const share = (x: bigint) => T > 0n ? Number((x * 1000n) / T) / 10 : 0;
-  const U: [string, bigint, string][] = [["Land", s.land, "t1"], ["Formation", s.formation, "t2"], ["Balance of the project", rest, "t0"]];
-  const S: [string, bigint, string][] = [["Equity", s.equityLayer, "t6"], ["Bank facility", s.facility, "t3"]];
+  const TONE = ["t1", "t2", "t0", "t4"], STONE = ["t1", "t6", "t3"];
+  const U: [string, bigint, string][] = s.uses
+    ? s.uses.map(([n, x], i) => [n, x, TONE[i % TONE.length]])
+    : [["Land", s.land, "t1"], ["Formation", s.formation, "t2"], ["Balance of the project", rest, "t0"]];
+  const S: [string, bigint, string][] = s.sources
+    ? s.sources.map(([n, x], i) => [n, x, STONE[i % STONE.length]])
+    : [["Equity", s.equityLayer, "t6"], ["Bank facility", s.facility, "t3"]];
   const col = (L: typeof U) => L.map(([n, x, t]) => `<i class="${t}" style="flex:${share(x)}" title="${n}"></i>`).join("");
   return shell("stack",
     `<div class="da-cs"><div class="da-cs-cols"><div><div class="da-cs-bar">${col(U)}</div><span class="da-hint">Uses</span></div><div><div class="da-cs-bar">${col(S)}</div><span class="da-hint">Sources</span></div></div>` +
@@ -119,9 +137,14 @@ function positionData(v: Vehicle) {
   for (let u = 1; u <= Math.max(1, of.units); u++) {
     const share = u / total;
     rows.push({ u, cap: rupees(of.unitPrice * BigInt(u)), share: `${(share * 100).toFixed(1)}%`,
-      nights: e ? `${Math.floor(e.nightPoolMin * share)}–${Math.floor(e.nightPoolMax * share)}` : "Not yet set" });
+      nights: e ? `${Math.floor(e.nightPoolMin * share)}–${Math.floor(e.nightPoolMax * share)}` : "Not stated" });
   }
-  return { key: v.key, rows, begins: e ? e.begins : "not yet set for this estate" };
+  return {
+    key: v.key, rows,
+    note: e
+      ? `Nights are an illustration: the estate's night pool shared in proportion to equity. The rule that allocates nights is not yet decided; each offering letter will state it. Nights begin: ${e.begins}.`
+      : "This estate's terms state no nights for a partner, so none is shown. The offering letter governs.",
+  };
 }
 function position(o: { vehicle?: string }) {
   const vs = (o.vehicle ? [byKey(o.vehicle)!] : shown()).filter((v) => v && publishable(v).ok);
@@ -130,9 +153,11 @@ function position(o: { vehicle?: string }) {
   return shell("position",
     pick(vs, d.key) +
     `<div class="da-pb"><div class="da-tile"><span class="da-lbl">Capital</span><b data-f="cap">${r.cap}</b></div><div class="da-tile"><span class="da-lbl">Share of equity</span><b data-f="share">${r.share}</b></div>` +
-    `<div class="da-tile"><span class="da-lbl">Vote weight</span><b data-f="vote">${r.share}</b></div><div class="da-tile"><span class="da-lbl">Nights a year · illustration</span><b data-f="nights">${r.nights}</b></div></div>` +
+    `<div class="da-tile"><span class="da-lbl">Vote weight</span><b data-f="vote">${r.share}</b></div>` +
+    /* Nights are shown only where at least one estate's terms state them. */
+    (vs.some((v) => v.entitlement) ? `<div class="da-tile"><span class="da-lbl">Nights a year · illustration</span><b data-f="nights">${r.nights}</b></div>` : "") + "</div>" +
     `<label class="da-range"><span class="da-lbl"><b data-f="u">1</b> <span data-f="uw">unit</span></span><input type="range" min="1" max="${d.rows.length}" value="1" aria-label="Units held"></label>` +
-    `<p class="da-note">Nights are an illustration: the estate's night pool shared in proportion to equity. The rule that allocates nights is not yet decided; each offering letter will state it. Nights begin: <span data-f="begins">${esc(d.begins)}</span>.</p>`,
+    `<p class="da-note" data-f="note">${esc(d.note)}</p>`,
     { set: data });
 }
 
@@ -171,13 +196,18 @@ function path() {
 
 // ── from deposit to the first day a unit can move ──
 function lockin(o: { vehicle?: string }) {
-  const v = byKey(o.vehicle) ?? VEHICLES.find((x) => stanceFor(x).kind === "open") ?? VEHICLES[0];
+  /* An estate whose record states a lock-in period; one that states none
+     (The Creek, since 2 Oct 2026) has nothing to draw here. */
+  const states = (x: Vehicle) => parseInt(x.offering.lockIn, 10) > 0;
+  const named = byKey(o.vehicle);
+  const v = (named && states(named) ? named : undefined)
+    ?? VEHICLES.find((x) => stanceFor(x).kind === "open" && states(x)) ?? VEHICLES.find(states) ?? VEHICLES[0];
   const lock = parseInt(v.offering.lockIn, 10) || 36;
   return shell("lockin",
     '<div class="da-top"><div><span class="da-lbl" data-f="s">Months until a unit can move</span><div class="da-big" data-f="v"></div></div><span class="da-tag" data-f="t"></span></div>' +
     `<div class="da-lk"><i></i></div><div class="da-lk-m"><span>Deposit</span><span>Settlement</span><span>Transfer opens</span></div>` +
     `<label class="da-range"><input type="range" min="-2" max="${lock + 6}" value="12" aria-label="Months since settlement"></label>` +
-    `<p class="da-note">Deposit ${v.offering.deposit === null ? "not yet set" : rupeesFull(v.offering.deposit)}, refundable in full until the Vehicle Agreement is signed · lock-in ${esc(v.offering.lockIn)}.</p>`,
+    `<p class="da-note">At ${esc(publicName(v))}: deposit ${v.offering.deposit === null ? "not yet set" : rupeesFull(v.offering.deposit)}, refundable in full until the Vehicle Agreement is signed · lock-in ${esc(v.offering.lockIn)}. Each estate states its own.</p>`,
     { lock });
 }
 

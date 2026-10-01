@@ -167,7 +167,7 @@ export const PAGES: Record<string, SitePage> =  {
     "units": true
    },
    {
-    "p": "Getaway Collective holds none of the equity in any estate. It governs each partnership and is paid from one disclosed stage of its waterfall."
+    "p": "Getaway Collective holds none of the equity in any estate. What it does at each estate, and what it is paid, are stated in that estate's own terms."
    },
    {
     "src": "constants/vehicles.ts offering, ladder · legal.ts 132"
@@ -197,6 +197,9 @@ export const PAGES: Record<string, SitePage> =  {
    },
    {
     "da": "wftable"
+   },
+   {
+    "p": "One estate states its waterfall differently. SlowSpace Creek sets out an order of payment, with the bank ahead of every partner and no share fixed in advance; <a class=\"tx-u\" href=\"/collection/coorg-coffee-creek#capital\">its page shows the order</a>."
    },
    {
     "p": "The same shares, drawn and applied to each estate's modelled revenue. The amounts are an illustration, not a forecast."
@@ -992,7 +995,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "SlowSpace Creek",
-      "Twenty keys in a river-forest in Kodagu, reached on foot across one bridge."
+      "Twenty keys in five clusters, over a stream at Cherala in Kodagu."
      ],
      [
       "Coffee Fields Forever",

@@ -20,12 +20,24 @@ describe("investor dossier", () => {
     }
   });
 
-  it("derives the yield from the record, on its stated basis", () => {
-    const y = modelledYield(creek)!;
-    expect(y.bps).toBe(1204); // 25% of ₹4.818 Cr over the ₹10 Cr equity layer
-    const fin = dossierFor(creek, "financials")!;
-    expect(JSON.stringify(fin)).toContain("12.04%");
-    expect(JSON.stringify(fin)).toContain(creek.operating.yieldBasis!);
+  it("derives a yield only from a waterfall stated as shares, on its stated basis", () => {
+    /* A vehicle with six closing shares: the yield is stage six of gross over the equity. */
+    const shared = VEHICLES.find((v) => v.operating.waterfall?.toPartners != null && modelledYield(v) !== null)!;
+    const y = modelledYield(shared)!;
+    const stage6 = (shared.operating.grossRevenue * BigInt(shared.operating.waterfall!.toPartners!)) / 10000n;
+    expect(y.partnerShare).toBe(stage6);
+    expect(y.bps).toBe(Number((stage6 * 10000n) / shared.offering.totalEquity));
+  });
+
+  it("states no yield, rate or revenue for a vehicle that states an order of payment", () => {
+    /* The Creek, re-struck 2 Oct 2026: an order, the partners last, and no share fixed. */
+    expect(modelledYield(creek)).toBeNull();
+    const fin = JSON.stringify(dossierFor(creek, "financials")!);
+    expect(fin).toContain("order of payment");
+    expect(fin).toContain("Applied for, not sanctioned");
+    expect(fin).not.toContain("Modelled yield");
+    expect(fin).not.toContain("Average daily rate");
+    expect(fin).not.toMatch(/₹12,000/);
   });
 
   it("reconciles the capital stack it prints", () => {

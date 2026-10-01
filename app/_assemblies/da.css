@@ -78,7 +78,7 @@
 .da-ub i { flex: 1; height: 88px; }
 
 /* position */
-.da-pb { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gc-sp-2xs); }
+.da-pb { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--gc-sp-2xs); }
 
 /* three entities */
 .da-te { width: 100%; height: auto; max-width: 760px; }
@@ -110,6 +110,14 @@
 .da-fold > summary { cursor: pointer; padding: var(--gc-sp-xs) 0; font: 600 15px var(--gc-font-body); color: var(--da-ink); }
 .da-fold[open] > summary { margin-bottom: var(--gc-sp-xs); }
 .da-fold[open] { padding-bottom: var(--gc-sp-s); }
+
+/* an order of payment: tiers, the partners last */
+.da-cas { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--da-line); }
+.da-cas li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--gc-sp-s); padding: var(--gc-sp-xs) 0; border-bottom: 1px solid var(--da-line); align-items: baseline; }
+.da-cas li > b { font-size: 13px; color: var(--da-mute); }
+.da-cas h4 { margin: 0; font: 700 16px/1.25 var(--gc-font-display); color: var(--da-ink); }
+.da-cas p { margin: calc(var(--gc-sp-3xs) / 2) 0 0; font-size: 14px; line-height: 1.5; color: var(--da-dim); max-width: 62ch; }
+.da-cas li.last h4 { color: var(--da-cu); }
 
 /* the waterfall as a table */
 .da-tw { overflow-x: auto; }

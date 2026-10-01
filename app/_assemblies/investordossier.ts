@@ -147,7 +147,9 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
             rows: [
               { label: "Keys", value: String(v.keys), basis: SOURCE },
               { label: "Stage", value: BUILD_LABEL[v.buildStage], basis: "Construction is financed by the facility once the equity raise closes." },
-              { label: "Night pool", value: `${v.entitlement?.nightPoolMin}–${v.entitlement?.nightPoolMax} nights`, basis: v.entitlement?.begins ?? NOT_STATED },
+              v.entitlement
+                ? { label: "Night pool", value: `${v.entitlement.nightPoolMin}–${v.entitlement.nightPoolMax} nights`, basis: v.entitlement.begins }
+                : { label: "Night pool", value: NOT_STATED, basis: "The vehicle's terms state no nights for a partner." },
             ],
           },
         ],
@@ -157,41 +159,72 @@ export function dossierFor(v: Vehicle, key: DossierKey): Dossier | null {
 
     case "financials": {
       const wf = v.operating.waterfall;
+      /* An order of payment, where the vehicle states one instead of
+         shares (constants/vehicles.ts, Operating.cascade). No rate,
+         occupancy or revenue is printed for such a vehicle: its term
+         sheets rule that the platform states none. */
+      const cascade = wf === null ? v.operating.cascade : undefined;
       const stageRows: Row[] = wf
         ? WATERFALL_STAGES.map(([k, label]) => ({
             label,
             value: wf[k] === null ? NOT_STATED : pct(wf[k] as number),
             basis: `Share of gross revenue · ${SOURCE}`,
           }))
-        : [];
+        : (cascade ?? []).map((t, i, all) => ({
+            label: `${i + 1} ${t.what}`,
+            value: i === all.length - 1 ? "Pro rata by units" : "Paid in full first",
+            basis: t.rule,
+          }));
+      const loan = s.facilityStatus === "applied-for" ? "Applied for, not sanctioned" : null;
+      const stackRows: Row[] = s.uses && s.sources
+        ? [
+            ...s.uses.map(([label, x]) => ({ label: `Use · ${label}`, value: inr(x), basis: SOURCE })),
+            ...s.sources.map(([label, x]) => ({ label: `Source · ${label}`, value: inr(x), basis: SOURCE })),
+            ...(s.facilityLimit ? [{ label: "Loan limit", value: inr(s.facilityLimit), basis: plainTerms(`${loan ? loan + " · " : ""}${s.moratorium} · covenant: ${s.covenant}`) }] : []),
+            {
+              label: "Project total", value: inr(s.projectTotal),
+              basis: s.equityLayer + s.facility === s.projectTotal
+                && s.uses.reduce((n, [, x]) => n + x, 0n) === s.projectTotal
+                && s.sources.reduce((n, [, x]) => n + x, 0n) === s.projectTotal
+                ? "Uses, sources, and equity + facility: reconciles" : "Uses and sources: DOES NOT RECONCILE",
+            },
+          ]
+        : [
+            { label: "Land", value: inr(s.land), basis: SOURCE },
+            { label: "Formation and pre-development", value: inr(s.formation), basis: SOURCE },
+            { label: "Facility", value: inr(s.facility), basis: plainTerms(`${loan ? loan + " · " : ""}${s.moratorium} · covenant: ${s.covenant}`) },
+            { label: "Equity layer", value: inr(s.equityLayer), basis: "Sponsor plus partners" },
+            { label: "Project total", value: inr(s.projectTotal), basis: s.equityLayer + s.facility === s.projectTotal ? "Equity + facility: reconciles" : "Equity + facility: DOES NOT RECONCILE" },
+          ];
       return {
         title: "Economics, with their basis beside them.",
         lead:
           y
             ? `A modelled ${pct(y.bps)} to partners from year 3 at stabilised occupancy, ${v.operating.yieldBasis}. ` +
               `It is a forecast from a model on an asset that does not exist yet. It is not a promise and it is not a return.`
-            : "The waterfall is not complete, so no yield is stated.",
+            : cascade
+              ? "This vehicle states an order of payment, not shares of revenue: each tier is paid in full before the next, and the partners share only the last. No yield, rate or return is stated."
+              : "The waterfall is not complete, so no yield is stated.",
         sections: [
-          {
-            heading: "The capital stack",
-            rows: [
-              { label: "Land", value: inr(s.land), basis: SOURCE },
-              { label: "Formation and pre-development", value: inr(s.formation), basis: SOURCE },
-              { label: "Facility", value: inr(s.facility), basis: plainTerms(`${s.moratorium} · covenant: ${s.covenant}`) },
-              { label: "Equity layer", value: inr(s.equityLayer), basis: "Sponsor plus partners" },
-              { label: "Project total", value: inr(s.projectTotal), basis: s.equityLayer + s.facility === s.projectTotal ? "Equity + facility: reconciles" : "Equity + facility: DOES NOT RECONCILE" },
-            ],
-          },
-          {
-            heading: "The operating model (forecast)",
-            rows: [
-              { label: "Average daily rate", value: inr(v.operating.adr), basis: SOURCE },
-              { label: "Occupancy", value: pct(v.operating.occupancyBps), basis: "Stabilised · assumption" },
-              { label: "Gross revenue", value: inr(v.operating.grossRevenue), basis: "Rate × keys × 365 × occupancy" },
-              { label: "Reserve floor", value: v.operating.reserveFloor === null ? NOT_STATED : inr(v.operating.reserveFloor), basis: SOURCE },
-            ],
-          },
-          { heading: "Where each rupee of gross goes", rows: stageRows },
+          { heading: "The capital stack", rows: stackRows },
+          cascade
+            ? {
+                heading: "The operating plan",
+                rows: [
+                  { label: "Rate, occupancy and revenue", value: "Not stated here", basis: "The vehicle's terms rule that the platform states no rate, yield or return. The planning basis is in the investor narrative and the cost plan." },
+                  { label: "Reserve floor", value: v.operating.reserveFloor === null ? NOT_STATED : inr(v.operating.reserveFloor), basis: SOURCE },
+                ],
+              }
+            : {
+                heading: "The operating model (forecast)",
+                rows: [
+                  { label: "Average daily rate", value: inr(v.operating.adr), basis: SOURCE },
+                  { label: "Occupancy", value: pct(v.operating.occupancyBps), basis: "Stabilised · assumption" },
+                  { label: "Gross revenue", value: inr(v.operating.grossRevenue), basis: "Rate × keys × 365 × occupancy" },
+                  { label: "Reserve floor", value: v.operating.reserveFloor === null ? NOT_STATED : inr(v.operating.reserveFloor), basis: SOURCE },
+                ],
+              },
+          { heading: cascade ? "Who is paid, in order" : "Where each rupee of gross goes", rows: stageRows },
           ...(y
             ? [{
                 heading: "The yield",

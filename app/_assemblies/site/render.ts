@@ -16,8 +16,9 @@ import { nextFor } from "@/content/site/next";
 import { GATES, estateDocket } from "./docket";
 import { PROJECTOR, momentHour } from "./gallery";
 import type { Reading } from "./registry";
-import { fundingComplete, heldBy, openReading, rupeesFull, src, unitsByEstate, type Prov } from "./registry";
+import { fundingComplete, heldBy, loanLine, openReading, rupees, rupeesFull, src, unitsByEstate, type Prov } from "./registry";
 import { COLLECTION } from "@/content/site/home";
+import { plateOf } from "@/content/site/media";
 import { daHTML, type DAKind } from "../da/render";
 
 const INK = FILM.ink as Readonly<Record<string, string>>;
@@ -45,7 +46,33 @@ export function film(pal: string, hour: number, o: { rain?: unknown; bp?: unknow
 }
 const fr = (f: FilmRef, o: { bp?: boolean } = {}) => film(f[0], f[1], { rain: f[2], bp: o.bp ? f[2] : f[3] });
 
+/**
+ * AN ESTATE'S OWN PICTURE — 2 Oct 2026
+ *
+ * An illustration from the estate's media register (content/site/media.ts),
+ * in two widths, with its intrinsic size so the page does not jump, and
+ * loaded lazily unless it is the first thing on the page. Every one is an
+ * illustration of something unbuilt, and is tagged so on the picture and in
+ * its alt text: a drawing shown as a photograph is the commonest
+ * misrepresentation in this industry (content/public.ts, Plate).
+ *
+ * `tall` names a portrait cut to serve a narrow screen. An unknown name is
+ * an error at render, not a blank: tests/site-media.test.ts resolves every
+ * reference before that can happen.
+ */
+export function plate(ref: string, o: { sizes?: string; eager?: boolean; tall?: string; tag?: "tl" | "bl" | "none" } = {}) {
+  const p = plateOf(ref);
+  if (!p) throw new Error(`[site] no such picture: ${ref}`);
+  const set = (x: NonNullable<ReturnType<typeof plateOf>>) => `${x.base}-${x.small}.webp ${x.small}w, ${x.base}-${x.w}.webp ${x.w}w`;
+  const img = `<img class="film-img" src="${p.base}-${p.w}.webp" srcset="${set(p)}" sizes="${o.sizes ?? "100vw"}" width="${p.w}" height="${p.h}" ` +
+    `alt="${esc(`Illustration, unbuilt: ${p.alt}`)}" loading="${o.eager ? "eager" : "lazy"}" decoding="async"${o.eager ? ' fetchpriority="high"' : ""}>`;
+  const t = o.tall ? plateOf(o.tall) : undefined;
+  const pic = t ? `<picture><source media="(max-width: 700px)" srcset="${set(t)}" sizes="100vw" width="${t.w}" height="${t.h}">${img}</picture>` : img;
+  return pic + (o.tag === "none" ? "" : `<span class="plate-tag${o.tag === "tl" ? " plate-tag-tl" : ""}">Illustration · unbuilt</span>`);
+}
+
 function card(c: Card) {
+  if (c.img) return `<div class="pcard">${plate(c.img, { sizes: "340px", tag: "tl" })}<div class="lb"><b>${c.b}</b><span>${c.s}</span></div></div>`;
   return c.film
     ? `<div class="pcard">${film(c.film[0], c.film[1], { rain: c.film[2] })}<div class="lb"><b>${c.b}</b><span>${c.s}</span></div></div>`
     : `<div class="pcard solid"><span class="k">${c.k}</span><span class="v">${c.v}</span></div>`;
@@ -80,7 +107,7 @@ function axoSVG(C: Concept) {
   });
   C.zones.forEach((z) => {
     sv += `<g class="z" data-z="${z.k}">`;
-    z.vols.forEach((v) => {
+    (z.vols ?? []).forEach((v) => {
       const fs = v.t === "gable" ? vgable(v) : v.t === "water" ? vwater(v) : vbox(v);
       fs.forEach((pts, i) => {
         sv += `<polygon points="${pts}" fill="${inkify(z.c)}" fill-opacity="${v.t === "water" ? 0.45 : i === 2 ? 0.95 : i === 1 ? 0.7 : 0.5}"/>`;
@@ -174,7 +201,9 @@ export function FIN(E: SiteEstate, R: Reading) {
   const full = o.available <= 0;
   let h = `<section class="fin" id="${k}-capital"><span class="eb">Capital</span>` +
     `<h2 class="h2">${o.units} units offered. <span>${full ? "All held." : `${o.available} available.`}</span></h2>` +
-    `<p class="para fin-lead">${heldBy(v).label === "Held by" ? `${esc(v.registeredName)} holds ${E.name}.` : `${E.name} is to be held by ${esc(v.registeredName)}, which is not yet incorporated.`} The offering letter governs every figure below.</p>`;
+    `<p class="para fin-lead">${heldBy(v).label === "Held by" ? `${esc(v.registeredName)} holds ${E.name}.` : `${E.name} is to be held by ${esc(v.registeredName)}, which is not yet incorporated.`} ` +
+    (v.stack.uses ? `${rupees(v.stack.projectTotal - v.stack.land)} in cash builds it; with the land, ${rupees(v.stack.projectTotal)} in all. ` : "") +
+    `The offering letter governs every figure below.</p>`;
   /* The capital, drawn: what the estate is spent on beside where the money
      comes from, every unit and who holds it, the waterfall on this
      vehicle's own stages, and a position built from its own unit price. */
@@ -182,8 +211,15 @@ export function FIN(E: SiteEstate, R: Reading) {
   h += `<div class="fin-da">${daHTML("waterfall", { vehicle: v.key, money: true })}${daHTML("position", { vehicle: v.key })}</div>`;
   const lc = (x: string) => x.charAt(0).toLowerCase() + x.slice(1);
   h += `<p class="note">Holding deposit ${o.deposit ? rupeesFull(o.deposit) : "not yet set"}, refundable in full until the Vehicle Agreement is signed · ` +
-    `Lock-in ${esc(o.lockIn)} · Bank loan ${esc(lc(v.stack.moratorium))} · Capital is at risk, and nothing here forecasts a return.</p></section>`;
-  return h;
+    `${/^\d/.test(o.lockIn) ? `Lock-in ${esc(o.lockIn)}` : "Transfer terms not yet set"} · Bank loan ${esc(loanLine(v))}, ${esc(lc(v.stack.moratorium))} · Capital is at risk, and nothing here forecasts a return.</p>`;
+  if (E.capitalNote) h += `<p class="para fin-lead">${E.capitalNote}</p>`;
+  /* The gates money moves through, and what could go wrong: the estate's own, where it states them. */
+  if (E.gates) h += `<div class="fin-more"><h3 class="fin-h3">The gates, in order</h3>` +
+    GATES(`g-${k}-gates`, "The gates, in order", E.gates.map(([t, text]) => ({ t, text }))) + "</div>";
+  if (E.risks) h += `<div class="fin-more"><h3 class="fin-h3">What could go wrong</h3><div class="own-tiles">` +
+    E.risks.map(([t, text]) => `<div class="own-tile"><h3>${t}</h3><p>${text}</p></div>`).join("") +
+    `</div><p class="plan-note">Read the <a class="tx-u" href="/collection/${E.slug}/risk">risks of this estate</a> and the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> in full.</p></div>`;
+  return h + "</section>";
 }
 
 export function WAIT(E: SiteEstate, R: Reading | undefined) {
@@ -244,7 +280,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     `<div class="layer" id="${id}" data-layer="${label}">${body}</div>`;
 
   // ── 1 · overview ──
-  let ov = `<section class="phero" id="${k}-hero">${film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain })}` +
+  let ov = `<section class="phero${E.media ? " phero-img" : ""}" id="${k}-hero">${E.media ? plate(E.media.hero, { eager: true, tall: E.media.heroTall, tag: "tl" }) : film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain })}` +
     `<div class="top"><div><span class="eb">${E.eyebrow}</span><h1>${E.name}</h1><span class="credit">${E.credit}</span></div></div>` +
     `<div class="strip"><div class="pr"${R?.publishable ? src(R.prov.intake) : ""}>${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div>` +
     /* Availability and delivery are two answers, stated apart: an estate can
@@ -258,10 +294,10 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   ov += `<section class="intro"><p class="para center narrow intro-p">${F(E.intro)}</p></section>`;
 
   // ── 2 · the place ──
-  let pl = `<section class="chap" id="${k}-place"><div class="film">${fr(E.place.film)}<div class="tag"><h3>${E.place.title}</h3></div>` +
+  let pl = `<section class="chap" id="${k}-place"><div class="film">${E.place.img ? plate(E.place.img) : fr(E.place.film)}<div class="tag"><h3>${E.place.title}</h3></div>` +
     `<div class="side"><p class="para">${F(E.place.text)}</p><p class="mono coords">${R?.vehicle.coordinates || E.place.coords}</p></div></div></section>`;
   E.chapters.forEach((c, i) => {
-    pl += `<section class="chamber" id="${k}-${c.id}"><div class="ttl"><span class="ch-n mono">${String(i + 1).padStart(2, "0")} / ${String(E.chapters.length).padStart(2, "0")}</span><h3>${c.title}</h3></div><div class="film">${fr(c.film)}</div>` +
+    pl += `<section class="chamber" id="${k}-${c.id}"><div class="ttl"><span class="ch-n mono">${String(i + 1).padStart(2, "0")} / ${String(E.chapters.length).padStart(2, "0")}</span><h3>${c.title}</h3></div><div class="film">${c.img ? plate(c.img) : fr(c.film)}</div>` +
       `<p class="para">${F(c.para)}</p><div class="meta">${c.meta.map((m) => `<span>${F(m)}</span>`).join("")}</div>` +
       `<div class="pc-rail">${c.cards.map((x) => card({ ...x, s: x.s && F(x.s), v: x.v && F(x.v) })).join("")}</div></section>`;
   });
@@ -271,7 +307,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   pl += `<section class="day" id="${k}-day"><span class="eb">${E.day.eyebrow}</span><h2 class="h2">${E.day.title}</h2>` +
     PROJECTOR(`pj-${k}`, strip(E.day.eyebrow), E.day.items.map((d, i) => {
       const m = momentHour(String(d[0]), i);
-      return { pal: E.pal, hour: m.hour, rain: m.rain, label: String(d[0]), t: strip(String(d[1])), line: strip(F(String(d[2]))) };
+      return { pal: E.pal, hour: m.hour, rain: m.rain, img: E.day.imgs?.[i], label: String(d[0]), t: strip(String(d[1])), line: strip(F(String(d[2]))) };
     })) +
     `<p class="para day-note">${F(E.day.note)}</p></section>`;
   const G = E.getting;
@@ -283,10 +319,14 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   const C = E.concept;
   let dz = `<section class="concept" id="concept"><span class="eb">Concept</span><h2 class="h2">${C.title}</h2>` +
     (C.lead ? `<p class="para concept-lead">${F(C.lead)}</p>` : "") +
-    `<div class="axo"><svg viewBox="0 0 760 520" class="axo-svg" role="img" aria-label="Axonometric drawing of ${esc(plain)}, illustrative">${axoSVG(C)}</svg><div class="zl">` +
-    C.zones.map((z) => `<button type="button" aria-pressed="true" data-z="${z.k}"><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></button>`).join("") +
-    "</div></div></section>";
-  dz += `<section class="coll" id="${k}-materials"><span class="eb">Materials</span><h2 class="h2">What ${E.name} <span>is made of</span></h2><div class="cgr">` +
+    (C.img
+      /* The estate drawn, with its parts listed beside it: nothing to switch on or off. */
+      ? `<div class="axo axo-img"><figure class="axo-fig">${plate(C.img, { sizes: "(max-width: 900px) 100vw, 56vw" })}</figure><ul class="zl zl-static">` +
+        C.zones.map((z) => `<li><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></li>`).join("") + "</ul></div></section>"
+      : `<div class="axo"><svg viewBox="0 0 760 520" class="axo-svg" role="img" aria-label="Axonometric drawing of ${esc(plain)}, illustrative">${axoSVG(C)}</svg><div class="zl">` +
+        C.zones.map((z) => `<button type="button" aria-pressed="true" data-z="${z.k}"><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></button>`).join("") +
+        "</div></div></section>");
+  dz += `<section class="coll" id="${k}-materials"><span class="eb">${E.made ? E.made[0] : "Materials"}</span><h2 class="h2">${E.made ? E.made[1] : `What ${E.name} <span>is made of</span>`}</h2><div class="cgr">` +
     E.materials.map((m, i) => {
       let bars = "";
       for (let j = 0; j < 18; j++) {
@@ -298,15 +338,20 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   dz += `<section class="plan" id="${k}-plan"><span class="eb">Masterplan</span><h2 class="h2">${E.plan.title}</h2><div class="bar" role="tablist" aria-label="Masterplan views">` +
     E.plan.tabs.map((tb, i) => `<button role="tab" aria-selected="${i === 0}" data-p="${i}">${tb.tab}</button>`).join("") +
     '</div><div class="pv"><div class="dw">' +
-    E.plan.tabs.map((tb, i) => `<svg viewBox="0 0 600 420" class="pdraw" data-p="${i}"${i ? " hidden" : ""} role="img" aria-label="Schematic plan: ${esc(tb.tab)}">${inkify(tb.svg)}</svg>`).join("") +
+    E.plan.tabs.map((tb, i) => tb.img
+      ? `<figure class="pdraw pdraw-img" data-p="${i}"${i ? " hidden" : ""}>${plate(tb.img, { sizes: "(max-width: 900px) 100vw, 56vw" })}</figure>`
+      : `<svg viewBox="0 0 600 420" class="pdraw" data-p="${i}"${i ? " hidden" : ""} role="img" aria-label="Schematic plan: ${esc(tb.tab)}">${inkify(tb.svg)}</svg>`).join("") +
     '</div><div class="info">' +
     E.plan.tabs.map((tb, i) => `<div class="pinfo" data-p="${i}"${i ? " hidden" : ""}><h4>${tb.t}</h4>${tb.rows.map((r) => `<div><span>${r[0]}</span><span${r[2] ? ' class="ab"' : ""}>${F(String(r[1]))}</span></div>`).join("")}</div>`).join("") +
     `</div></div><p class="plan-note">${F(E.plan.note)}</p></section>`;
 
   // ── 4 · ownership ──
   const partner = R ? heldBy(R.vehicle).label === "Held by" ? esc(R.vehicle.registeredName) : `${esc(R.vehicle.registeredName)}, once it is incorporated` : esc(fill(E.vehicle, t));
-  /* A funded estate has nothing to join, so its ownership layer is its answers alone. */
-  let ow = complete ? "" : '<section class="own"><div><b>01</b><h4>Sign in</h4><p>One email: no password, no documents. KYC runs alongside and completes before you sign. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
+  /* A funded estate has nothing to join, so its ownership layer is its answers alone.
+     An estate whose own way in differs from the platform's states its own three steps. */
+  let ow = complete ? "" : E.own
+    ? `<section class="own">${E.own.map(([title, text], i) => `<div><b>0${i + 1}</b><h4>${title}</h4><p>${F(text).replace("{{PARTNER}}", partner)}</p></div>`).join("")}</section>`
+    : '<section class="own"><div><b>01</b><h4>Sign in</h4><p>One email: no password, no documents. KYC runs alongside and completes before you sign. <a class="tx-u" href="/how-to-qualify">Three steps, and what you get</a>.</p></div>' +
     '<div><b>02</b><h4>Commit</h4><p>Read the offering letter, the LLP agreement and the risk disclosure. Commit by holding, never by clicking.</p></div>' +
     `<div><b>03</b><h4>Hold</h4><p>On settlement you are a partner of ${partner}. Your units are entered in the partnership's register, and your votes, papers and nights are in your partner account.</p></div></section>`;
   ow += `<section class="faq dk faq-estate" id="${k}-faq"><h2 class="h2">Questions about <span>${E.name}</span></h2>${faq}</section>`;
@@ -341,7 +386,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
       'Questions about this estate go to Investor Relations at <span class="mono sel">ir@getawaycollective.co</span>.</p>' +
       `<div class="row-btns"><a class="btn lead" href="/collection">Explore the collection ${NE}</a><a class="btn gray" href="/contact?estate=${E.slug}&about=estate">Ask about ${esc(plain)}</a></div></div></section>`
     : waitlist ? WAIT(E, R)
-    : `<section class="mk" id="${k}-enquire">${film(E.pal, E.enquireHour || 18)}<div class="cap"><span class="eb">Take the next step</span>` +
+    : `<section class="mk" id="${k}-enquire">${E.media?.enquire ? plate(E.media.enquire) : film(E.pal, E.enquireHour || 18)}<div class="cap"><span class="eb">Take the next step</span>` +
       `<h2 class="h2">Make ${E.name} <span>yours.</span></h2><p class="para dim">${onWaitlist ? "Join the waitlist" : R ? "Request the offering pack" : "Ask about this estate"}, or write to Investor Relations at ` +
       '<span class="mono sel">ir@getawaycollective.co</span>. Capital is at risk: read the <a class="tx-u" href="/legal/risk-disclosure">Risk Factors</a> before committing.</p>' +
       `<div class="row-btns"><a class="btn lead" href="${onWaitlist || !R ? ask : `${ask}?about=pack`}">${onWaitlist ? "Join the waitlist" : R ? "Request the offering pack" : "Ask about this estate"} ${NE}</a><a class="btn gray" href="/collection">Other estates</a></div></div></section>`;
@@ -365,7 +410,8 @@ export function DEPOSIT(d: NonNullable<Block["deposit"]>) {
   const units = Array.from({ length: Math.max(1, d.available) }, (_, i) => i + 1);
   return `<form class="tx-form dep" id="hold" novalidate data-form data-to="deposit" data-vehicle="${d.vehicle}" data-theme-hex="${INK.ink}">` +
     `<div class="dep-terms"><div><span class="eb">Holding deposit</span><b>${d.amount}</b><span>Flat, whatever size you take</span></div>` +
-    `<ul><li>Paid online, to <b>${esc(d.payee)}</b>, the partnership that owns the estate. Getaway Collective holds none of it.</li>` +
+    /* A partnership that is not yet incorporated does not own anything yet, and the line says so. */
+    `<ul><li>Paid online, to <b>${esc(d.payee)}</b>, ${d.incorporated === false ? "the partnership that will own the estate; it is not yet incorporated" : "the partnership that owns the estate"}. Getaway Collective holds none of it.</li>` +
     "<li>Refundable in full until the Vehicle Agreement is signed.</li>" +
     "<li>It holds your position; it buys nothing and makes nobody a partner.</li>" +
     `<li>Identity checks, the balance at ${d.unitPrice} a unit and the Agreement all complete offline, with Investor Relations.</li></ul></div>` +
@@ -401,7 +447,8 @@ function unitsTable(): string {
 // ── the text-page template ──
 export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
   const lt = !!P.light;
-  const filmHTML = P.film ? `<div class="tx-film">${film(P.film[0], P.film[1], { rain: P.film[2], bp: P.film[3] })}</div>` : "";
+  const filmHTML = P.img ? `<div class="tx-film">${plate(P.img)}</div>`
+    : P.film ? `<div class="tx-film">${film(P.film[0], P.film[1], { rain: P.film[2], bp: P.film[3] })}</div>` : "";
   const headHTML = `<div class="tx-head"><span class="eb">${P.eyebrow}</span><h1 class="tx-h1">${P.title}</h1>${P.lead ? `<p class="tx-lead">${P.lead}</p>` : ""}${P.meta ? `<p class="mono tx-meta">${P.meta}</p>` : ""}</div>`;
   let h = "";
   const block = (b: Block) => {

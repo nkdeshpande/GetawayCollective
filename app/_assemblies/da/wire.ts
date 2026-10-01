@@ -54,7 +54,7 @@ export function wireDA(root: ParentNode): () => void {
         const row = set.rows[Math.min(+r.value, set.rows.length) - 1];
         setText(el, "cap", row.cap); setText(el, "share", row.share); setText(el, "vote", row.share);
         setText(el, "nights", row.nights); setText(el, "u", String(row.u)); setText(el, "uw", row.u === 1 ? "unit" : "units");
-        setText(el, "begins", set.begins);
+        setText(el, "note", set.note);
       };
       pills.forEach((b) => on(b, "click", () => { press(pills, b); set = data.set.find((x: { key: string }) => x.key === b.dataset.k) ?? set; r.max = String(set.rows.length); if (+r.value > set.rows.length) r.value = "1"; draw(); }));
       on(r, "input", draw); draw();
