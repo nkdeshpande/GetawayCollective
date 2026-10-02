@@ -149,7 +149,16 @@
 @media (max-width:900px){.site .foot .cols{grid-template-columns:1fr 1fr}.site .foot .sub{grid-column:1/-1}
 .site .foot .base{grid-template-columns:1fr}
 .site .foot .base .legal{justify-content:flex-start}}
-.site .pg-col{background:var(--light);color:var(--ink)}
+/* THE GREYS FOLLOW THE GROUND — 2 Oct 2026. --mute and --line are the
+   night's (.site, above). A light ground restates both in the rule that
+   paints it, and a night panel set inside a light ground restates the
+   night's, so a label never has to know what it is standing on
+   (constants/tokens.ts, NEUTRAL_ROLE). They used to be restated section by
+   section, and every light text page was missing from the list: an eyebrow
+   there was the night's grey on paper, 3.02:1 on the light ground, 2.78:1
+   on manila and 3.33:1 on white. Measured on the rendered pages; the pairs
+   are held by tests/site-grounds.test.ts. */
+.site .pg-col{background:var(--light);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
 .site .col-head{padding:calc(var(--gc-sp-3xs) * 17.5) var(--gut) calc(var(--gc-sp-3xs) * 4.5);border-bottom:1px solid var(--gc-s-rule)}
 .site .col-head h1{margin:0;font:700 clamp(34px,3.6vw,46px)/1 var(--display);letter-spacing:-.025em}
 .site .filters{display:flex;justify-content:space-between;align-items:center;gap:var(--gc-sp-s);flex-wrap:wrap;padding:calc(var(--gc-sp-3xs) * 4.5) var(--gut) 0}
@@ -157,7 +166,7 @@
 .site .fl button{--c:5px;border:0;background:var(--gc-s-chip);padding:calc(var(--gc-sp-3xs) * 2.25) var(--gc-sp-s);cursor:pointer;font:600 13.5px var(--text);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
 .site .fl button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
 .site .subtabs{display:flex;gap:var(--gc-sp-m);padding:calc(var(--gc-sp-3xs) * 5.5) var(--gut) 0}
-.site .subtabs button{background:none;border:0;border-bottom:2px solid transparent;padding:0 0 calc(var(--gc-sp-3xs) * 2.5);cursor:pointer;font:600 14px var(--text);color:var(--gc-s-mute)}
+.site .subtabs button{background:none;border:0;border-bottom:2px solid transparent;padding:0 0 calc(var(--gc-sp-3xs) * 2.5);cursor:pointer;font:600 14px var(--text);color:var(--mute)}
 .site .subtabs button[aria-selected=true]{color:var(--ink);border-color:var(--ink)}
 .site .cgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gc-sp-xl) calc(var(--gc-sp-3xs) * 7);padding:calc(var(--gc-sp-3xs) * 9) var(--gut) var(--sec)}
 .site .cc{display:grid;gap:var(--gc-sp-3xs);cursor:pointer}
@@ -167,10 +176,10 @@
 .site .cc .im .st.dk{background:var(--gc-s-night);color:var(--gc-paper-panel)}
 .site .cc h3{margin:0;font:800 19px var(--display);letter-spacing:.02em;text-transform:uppercase}
 .site .cc p{margin:0;font-size:14px;color:var(--gc-s-ash)}
-.site .mk{position:relative;height:88vh;min-height:520px;overflow:hidden;background:var(--gc-s-night);color:var(--paper)}
+.site .mk{position:relative;height:88vh;min-height:520px;overflow:hidden;background:var(--gc-s-night);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line)}
 .site .mk .cap{position:absolute;left:var(--gut);bottom:9vh;max-width:560px;background:var(--gc-s-night);padding:calc(var(--gc-sp-3xs) * 6.5) calc(var(--gc-sp-3xs) * 7.5);display:grid;gap:var(--gc-sp-xs)}
 .site .ben{margin:var(--sec) var(--gut);display:grid;grid-template-columns:1fr 1.2fr}
-.site .ben .l{background:var(--ink);color:var(--paper);padding:clamp(calc(var(--gc-sp-3xs) * 7),4vw,calc(var(--gc-sp-3xs) * 14));display:grid;gap:var(--gc-sp-s);align-content:center}
+.site .ben .l{background:var(--ink);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line);padding:clamp(calc(var(--gc-sp-3xs) * 7),4vw,calc(var(--gc-sp-3xs) * 14));display:grid;gap:var(--gc-sp-s);align-content:center}
 .site .ben .r{background:var(--gc-paper-panel);padding:clamp(calc(var(--gc-sp-3xs) * 5),3vw,calc(var(--gc-sp-3xs) * 10));display:grid;gap:0}
 .site .ben .r>div{display:grid;grid-template-columns:52px 1fr;gap:calc(var(--gc-sp-3xs) * 4.5);padding:calc(var(--gc-sp-3xs) * 5.5) 0;border-bottom:1px solid var(--gc-s-hair)}
 .site .ben .r>div:last-child{border:0}
@@ -203,7 +212,7 @@
 .site .faq details[open] summary i{transform:rotate(45deg)}
 .site .faq details p{margin:0 0 calc(var(--gc-sp-3xs) * 5.5);max-width:70ch;color:var(--gc-s-stone);font-size:15.5px}
 .site .faq.dk details p{color:var(--gc-s-fog)}
-.site .faq .src{display:block;margin-top:6px;font:400 11px var(--mono);color:var(--gc-s-mute)}
+.site .faq .src{display:block;margin-top:6px;font:400 11px var(--mono);color:var(--mute)}
 .site .phero{position:relative;height:calc(100vh - 58px);min-height:600px;overflow:hidden}
 .site .phero .top{position:absolute;left:0;right:0;top:5vh;text-align:center;pointer-events:none}
 .site .phero .top div{display:inline-block;background:var(--gc-s-night);padding:var(--gc-sp-s) calc(var(--gc-sp-3xs) * 6.5) calc(var(--gc-sp-3xs) * 4.5)}
@@ -250,7 +259,7 @@
 .site .pcard.solid .v{font:300 28px/1.15 var(--display);letter-spacing:-.02em}
 .site .coll{margin-top:var(--sec);background:var(--panel);padding:var(--sec) var(--gut)}
 .site .cgr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(var(--gc-sp-3xs) * 3.5);margin-top:44px}
-.site .cgr div{--c:12px;background:var(--gc-s-coal);aspect-ratio:4/5;position:relative;overflow:hidden;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
+.site .cgr div{--c:12px;background:var(--gc-s-coal);--mute:var(--gc-s-mute);--line:var(--gc-s-line);aspect-ratio:4/5;position:relative;overflow:hidden;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
 .site .cgr .t{position:absolute;left:18px;top:18px;right:18px;z-index:2}
 .site .cgr .t span{display:block;font:400 10.5px var(--mono);letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
 .site .cgr .t b{display:block;font:700 20px/1.15 var(--display);margin-top:6px}
@@ -300,7 +309,7 @@
 .site .own p{margin:0;color:var(--gc-s-fog);font-size:14.5px}
 @media (max-width:900px){.site .own{grid-template-columns:1fr}}
 .site .tx-hero{position:relative;min-height:62vh;display:grid;align-items:end;overflow:hidden;background:var(--gc-s-night)}
-.site .tx-hero.lt{min-height:auto;background:var(--light);color:var(--ink);padding-top:70px}
+.site .tx-hero.lt{min-height:auto;background:var(--light);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline);padding-top:70px}
 .site .tx-film{position:absolute;inset:0}
 .site .tx-head{position:relative;margin:0 var(--gut) var(--gc-sp-l);background:var(--gc-s-night);padding:calc(var(--gc-sp-3xs) * 6.5) calc(var(--gc-sp-3xs) * 7.5);max-width:880px}
 .site .tx-hero.lt .tx-head{background:none;padding:0;margin-bottom:34px}
@@ -310,7 +319,7 @@
 .site .tx-hero.lt .tx-lead{color:var(--gc-s-stone)}
 .site .tx-meta{margin:calc(var(--gc-sp-3xs) * 3.5) 0 0;font-size:11.5px;color:var(--mute);letter-spacing:.06em}
 .site .tx-body{max-width:860px;margin:0 auto;padding:var(--sec) var(--gut) var(--sec);display:grid;gap:calc(var(--gc-sp-3xs) * 5.5)}
-.site .tx-body.lt{max-width:none;background:var(--light);color:var(--ink);padding:0 var(--gut) var(--sec)}
+.site .tx-body.lt{max-width:none;background:var(--light);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline);padding:0 var(--gut) var(--sec)}
 .site .mk>canvas.film{position:absolute;inset:0;height:100%}
 .site .tx-h2{margin:calc(var(--gc-sp-3xs) * 8.5) 0 0;font:800 clamp(26px,3vw,40px)/1 var(--display);letter-spacing:-.03em}
 .site .tx-p{margin:0;font:500 17px/1.7 var(--text);color:var(--gc-s-rule);max-width:65ch}
@@ -338,8 +347,9 @@
 .site .tx-rows .ab:before{content:"— ";color:var(--mute)}
 .site .tx-legal{background:var(--panel);padding:calc(var(--gc-sp-3xs) * 6.5) calc(var(--gc-sp-3xs) * 7);font:500 15.5px/1.7 var(--text);color:var(--gc-s-hair);white-space:pre-line}
 .site .tx-assets{display:grid;border-top:1px solid var(--line);margin-top:14px}
-.site .tx-asset{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:calc(var(--gc-sp-3xs) * 4.5);align-items:center;padding:calc(var(--gc-sp-3xs) * 3.5) calc(var(--gc-sp-3xs) * 2);border-bottom:1px solid var(--line);transition:background .2s}
-.site .tx-asset:hover,.site .tx-asset:focus-visible{background:var(--panel)}
+.site .tx-asset{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:calc(var(--gc-sp-3xs) * 4.5);align-items:center;padding:calc(var(--gc-sp-3xs) * 3.5) calc(var(--gc-sp-3xs) * 2);border-bottom:1px solid var(--line);transition:background .2s,color .2s}
+/* Under the pointer a row is a night panel on any page, so it carries the night's text and greys with it: on a light page its name was ink on the panel. */
+.site .tx-asset:hover,.site .tx-asset:focus-visible{background:var(--panel);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line)}
 .site .tx-asset-n{display:grid;gap:calc(var(--gc-sp-3xs) / 2);min-width:0}
 .site .tx-asset-n b{font:600 15px var(--text)}
 .site .tx-asset-n em{font-style:normal;font-size:13.5px;color:var(--mute)}
@@ -410,15 +420,18 @@
 .site .tx-cards{grid-template-columns:1fr}
 .site .fin .units div{grid-template-columns:1fr 1fr}}
 .site .tx-assert{margin:calc(var(--gc-sp-3xs) * 2.5) 0;padding:calc(var(--gc-sp-3xs) * 5.5) calc(var(--gc-sp-3xs) * 6.5);background:var(--paper);color:var(--ink);font:700 clamp(19px,2vw,24px)/1.35 var(--display);letter-spacing:-.01em}
-.site .lt .tx-assert{background:var(--ink);color:var(--paper)}
-/* Figures and steps on a light page: the dark-ground colours read as nothing on paper. */
+.site .lt .tx-assert{background:var(--ink);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line)}
+/* Figures and steps on a light page: the dark-ground colours read as nothing on paper.
+   A step's assertion is an ink panel, so the step's own stone is not for it: it was stone on ink. */
 .site .lt .tx-figs div{background:var(--gc-paper-panel);border:1px solid var(--gc-s-rule)}
-.site .lt .tx-figs span,.site .lt .tx-steps p,.site .lt .tx-steps em{color:var(--gc-s-stone)}
+.site .lt .tx-figs span,.site .lt .tx-steps p:not(.tx-assert),.site .lt .tx-steps em{color:var(--gc-s-stone)}
 .site .lt .tx-steps li{border-top-color:var(--gc-s-rule)}
+/* What is absent, and why, is read like any other fact: the night's fog was 1.89:1 on paper. */
+.site .lt .tx-rows .ab{color:var(--gc-s-ash)}
 .site .tx-figs:has(> div:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:560px){.site .tx-figs:has(> div:nth-child(3):last-child){grid-template-columns:1fr}}
 .site .tx-people{display:grid;gap:calc(var(--gc-sp-3xs) * 3.5)}
-.site .person{--c:14px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:calc(var(--gc-sp-3xs) * 7);background:var(--panel);padding:calc(var(--gc-sp-3xs) * 7);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
+.site .person{--c:14px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:calc(var(--gc-sp-3xs) * 7);background:var(--panel);--mute:var(--gc-s-mute);--line:var(--gc-s-line);padding:calc(var(--gc-sp-3xs) * 7);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
 .site .person.lead{grid-template-columns:220px minmax(0,1fr);background:var(--gc-s-rim)}
 .site .person .pm{aspect-ratio:1;background:var(--gc-s-coal);display:grid;place-items:center;border:1px solid var(--gc-s-line)}
 .site .person .pm span{font:100 clamp(34px,4vw,60px)/1 var(--display);letter-spacing:-.04em}
@@ -446,7 +459,7 @@
 .site .jrow:hover{padding-left:10px}
 .site .jrow b{display:block;font:800 clamp(20px,2.2vw,28px)/1.1 var(--display);letter-spacing:-.02em;margin-bottom:6px}
 .site .jrow em{font-style:normal;color:var(--gc-s-ash);font-size:15px}
-.site .jrow .mono{font-size:11.5px;color:var(--gc-s-mute);line-height:1.6}
+.site .jrow .mono{font-size:11.5px;color:var(--mute);line-height:1.6}
 .site .jrow span:last-child{text-align:right}
 @media (max-width:760px){.site .jrow{grid-template-columns:1fr}
 .site .jrow span:last-child{text-align:left}}
@@ -518,7 +531,7 @@
 .site .tx-legal h3{margin:0;font:700 18px/1.3 var(--display)}
 .site .tx-legal .cl-n{font-size:11px;color:var(--mute)}
 .site .lt .tx-legal{background:var(--gc-paper-panel);color:var(--gc-ink);border:1px solid var(--gc-s-rule)}
-.site .lt .tx-legal-assert{background:var(--gc-ink);color:var(--paper);border-color:var(--gc-ink)}
+.site .lt .tx-legal-assert{background:var(--gc-ink);color:var(--paper);border-color:var(--gc-ink);--mute:var(--gc-s-mute);--line:var(--gc-s-line)}
 .site .lt .tx-legal-assert .cl-n{color:var(--gc-s-mist)}
 .site .foot .foot-addr{display:block;padding:var(--gc-sp-3xs) 0;font:400 13px var(--mono);color:var(--mute)}
 .site .foot .foot-p{font-size:14px;color:var(--gc-s-fog)}
@@ -531,7 +544,7 @@
 
 /* ── the holding deposit ── */
 .site .dep{max-width:720px}
-.site .dep-terms{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:var(--gc-sp-m);background:var(--gc-ink);color:var(--paper);padding:var(--gc-sp-m)}
+.site .dep-terms{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:var(--gc-sp-m);background:var(--gc-ink);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line);padding:var(--gc-sp-m)}
 .site .dep-terms>div{display:grid;gap:var(--gc-sp-3xs);align-content:start}
 .site .dep-terms b{font:400 clamp(30px,3.4vw,44px)/1 var(--mono);letter-spacing:-.05em;color:var(--copper)}
 .site .dep-terms>div>span:last-child{font-size:13px;color:var(--gc-s-fog)}
@@ -553,13 +566,13 @@
 .site .tx-h2{scroll-margin-top:80px}
 .site .tx-pull{margin:var(--gc-sp-l) 0;padding:var(--gc-sp-m) 0;border-top:2px solid var(--copper);border-bottom:1px solid var(--line)}
 .site .tx-pull p{margin:0;font:200 clamp(28px,3.6vw,46px)/1.12 var(--display);letter-spacing:-.03em;color:var(--paper);text-wrap:balance}
-.site .tx-inspire{margin:var(--gc-sp-xl) 0 var(--gc-sp-m);padding:var(--gc-sp-l) var(--gc-sp-l) var(--gc-sp-m);background:var(--panel);position:relative}
+.site .tx-inspire{margin:var(--gc-sp-xl) 0 var(--gc-sp-m);padding:var(--gc-sp-l) var(--gc-sp-l) var(--gc-sp-m);background:var(--panel);--mute:var(--gc-s-mute);--line:var(--gc-s-line);position:relative}
 .site .tx-inspire:before{content:"\201C";position:absolute;left:var(--gc-sp-s);top:calc(var(--gc-sp-3xs) * -4);font:800 96px/1 var(--display);color:var(--copper)}
 .site .tx-inspire blockquote{margin:0;font:300 clamp(22px,2.6vw,32px)/1.25 var(--display);letter-spacing:-.02em;color:var(--paper)}
 .site .tx-inspire figcaption{margin-top:var(--gc-sp-s);display:grid;gap:calc(var(--gc-sp-3xs) * .5);font-size:13.5px}
 .site .tx-inspire figcaption b{font-weight:600;color:var(--paper)}
 .site .tx-inspire figcaption span{color:var(--mute);font-style:italic}
-.site .ig{margin:var(--gc-sp-m) 0;padding:var(--gc-sp-m);background:var(--gc-s-coal);border:1px solid var(--line)}
+.site .ig{margin:var(--gc-sp-m) 0;padding:var(--gc-sp-m);background:var(--gc-s-coal);--mute:var(--gc-s-mute);--line:var(--gc-s-line);border:1px solid var(--line)}
 .site .ig-svg{display:block;width:100%;height:auto}
 .site .ig-narrow{max-width:520px;margin:0 auto}
 .site .ig-cap{margin:var(--gc-sp-s) 0 0;font:500 13px/1.6 var(--text);color:var(--mute)}
@@ -619,7 +632,7 @@
 .site .idn-film canvas.film{position:absolute;inset:0;height:100%}
 .site .idn-cap{position:absolute;left:var(--gut);bottom:var(--gc-sp-xl);background:var(--gc-s-night);padding:var(--gc-sp-s) var(--gc-sp-m);display:grid;gap:var(--gc-sp-3xs);max-width:380px}
 .site .idn-cap p{margin:0;font-size:14.5px;color:var(--gc-s-mist)}
-.site .idn-panel{background:var(--light);color:var(--ink);padding:clamp(32px,6vw,96px) var(--gut);display:grid;gap:var(--gc-sp-m);align-content:center;max-width:620px}
+.site .idn-panel{background:var(--light);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline);padding:clamp(32px,6vw,96px) var(--gut);display:grid;gap:var(--gc-sp-m);align-content:center;max-width:620px}
 .site .idn-panel .eb{color:var(--gc-s-ash)}
 .site .idn-panel .tx-h1{margin:0}
 .site .idn-panel .tx-p{color:var(--gc-s-stone);margin:0}
@@ -660,7 +673,7 @@
 /* the next step: one wide link at the foot of a text page */
 .site .nxt{padding:0 var(--gut) var(--sec)}
 .site .pg:not(.pg-col) .nxt{padding-top:0}
-.site .nxt a{--c:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:var(--gc-sp-m);row-gap:var(--gc-sp-2xs);align-items:end;max-width:980px;margin:0 auto;padding:calc(var(--gc-sp-3xs) * 8) calc(var(--gc-sp-3xs) * 9);background:var(--gc-s-night);color:var(--paper);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
+.site .nxt a{--c:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:var(--gc-sp-m);row-gap:var(--gc-sp-2xs);align-items:end;max-width:980px;margin:0 auto;padding:calc(var(--gc-sp-3xs) * 8) calc(var(--gc-sp-3xs) * 9);background:var(--gc-s-night);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
 .site .pg:not(.pg-col) .nxt a{background:var(--panel)}
 .site .nxt .eb{grid-column:1;color:var(--copper)}
 .site .nxt b{grid-column:1;font:800 clamp(28px,3.6vw,46px)/1 var(--display);letter-spacing:-.035em}
@@ -796,6 +809,8 @@
 .site .cc-act:hover{color:var(--cd);border-bottom-color:var(--cd)}
 .site .cc.cc-raising .cc-act{color:var(--cd);border-bottom-color:var(--cd)}
 .site .ben{margin:0;background:var(--gc-s-sage);padding:var(--sec) var(--gut)}
+/* Its left half is an ink panel inside the sage: the paper section's stone there was 2.23:1. */
+.site .ben .l .para{color:var(--gc-s-fog)}
 .site .cmp{background:var(--gc-s-manila);padding:var(--sec) var(--gut)}
 
 /* text pages: a narrower measure, more air, and a paper header */
@@ -981,7 +996,7 @@
    on a dark page), the facts, and the form on a white card with a copper
    edge. Fields are boxed, not underlined, so each one is a target. */
 .site .tx-split{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-areas:"head form" "facts form";column-gap:clamp(24px,4vw,64px);row-gap:calc(var(--gc-sp-3xs) * 6);align-items:start;padding:calc(var(--gc-sp-3xs) * 12) var(--gut) calc(var(--gc-sp-3xs) * 16);overflow:hidden}
-.site .tx-split.lt{background:var(--gc-s-manila);color:var(--ink)}
+.site .tx-split.lt{background:var(--gc-s-manila);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
 .site .tx-split.dk{background:var(--gc-s-night);color:var(--paper)}
 .site .tx-split>.tx-film{position:absolute;inset:0;opacity:.55;pointer-events:none}
 .site .tx-split-head,.site .tx-split-facts,.site .tx-split-form{position:relative;min-width:0}
@@ -993,7 +1008,6 @@
 .site .tx-split .tx-h1{font-size:clamp(34px,4.4vw,62px)}
 .site .tx-split.lt .tx-lead{color:var(--gc-s-stone)}
 .site .tx-split .tx-lead{margin-bottom:0}
-.site .tx-split.lt .tx-split-facts{--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
 .site .tx-split.lt .tx-split-facts .tx-rows div span:last-child{color:var(--ink);font-weight:600}
 .site .tx-split.dk .tx-split-facts{background:var(--gc-s-night);padding:calc(var(--gc-sp-3xs) * 5) calc(var(--gc-sp-3xs) * 7)}
 .site .tx-split .tx-split-facts .tx-h2{margin:0}
@@ -1353,7 +1367,7 @@
 .site .est.est-day .details{background:var(--est-paper);margin-top:0;border-top:0}
 .site .est.est-day .dkt-sec{background:var(--gc-s-light)}
 .site .est.est-day .dkt-sec .dkt-lead{color:var(--gc-s-stone)}
-.site .est.est-day .mk .cap{background:var(--gc-paper-panel);color:var(--ink)}
+.site .est.est-day .mk .cap{background:var(--gc-paper-panel);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
 
 /* the home frame of an estate with a picture: the name on a paper plate at the foot, and the picture left alone */
 .site .sf.sf-img .ov{place-items:end start;text-align:left;padding:0 var(--gut) var(--gc-sp-l)}
