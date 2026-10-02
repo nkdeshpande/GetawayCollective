@@ -1001,7 +1001,9 @@
 .site .tx-formcard .tx-h2{margin:0;color:var(--ink)}
 .site .tx-formcard .tx-p{color:var(--gc-s-stone)}
 .site .tx-formcard .tx-form{max-width:none}
-.site .tx-formcard .tx-form .direct-row{background:var(--gc-s-light)}
+/* 2 Oct 2026: stated for a night page too. There the night-page rule out-ranked
+   this one, and the address beside the form was ink on a night panel. */
+.site .tx-formcard .tx-form .direct-row,.site .pg:not(.pg-col) .tx-formcard .tx-form .direct-row{background:var(--gc-s-light)}
 .site .tx-formcard .tx-form .chip{background:var(--gc-s-light);color:var(--ink);box-shadow:inset 0 0 0 1px var(--gc-hairline)}
 .site .tx-formcard .tx-form .chip[aria-pressed=true]{background:var(--ink);color:var(--paper);box-shadow:none}
 .site .tx-formcard .tx-form .fld span{color:var(--gc-s-ash)}
@@ -1058,10 +1060,11 @@
    landscape leans to), a night for the dark sections, a paper for the
    light ones. Accent text only ever appears large (numerals, the thin half
    of a heading), where it clears 3:1; small text keeps the ink. */
-.site .est{--est-acc:var(--gc-copper-deep);--est-deep:var(--gc-s-umber);--est-paper:var(--gc-s-manila);background:var(--est-deep)}
-.site .est:is([data-pal=creek],[data-pal=wild]){--est-acc:var(--gc-s-moss);--est-deep:var(--gc-s-pine);--est-paper:var(--gc-s-sage)}
-.site .est:is([data-pal=coast],[data-pal=nine]){--est-acc:var(--gc-s-slate);--est-deep:var(--gc-s-tide);--est-paper:var(--gc-s-haze)}
-.site .est[data-pal=cff]{--est-acc:var(--gc-s-ember);--est-paper:var(--gc-s-clay)}
+.site :is(.est,.tx-pic){--est-acc:var(--gc-copper-deep);--est-deep:var(--gc-s-umber);--est-paper:var(--gc-s-manila)}
+.site .est{background:var(--est-deep)}
+.site :is(.est,.tx-pic):is([data-pal=creek],[data-pal=wild]){--est-acc:var(--gc-s-moss);--est-deep:var(--gc-s-pine);--est-paper:var(--gc-s-sage)}
+.site :is(.est,.tx-pic):is([data-pal=coast],[data-pal=nine]){--est-acc:var(--gc-s-slate);--est-deep:var(--gc-s-tide);--est-paper:var(--gc-s-haze)}
+.site :is(.est,.tx-pic)[data-pal=cff]{--est-acc:var(--gc-s-ember);--est-paper:var(--gc-s-clay)}
 .site .est :is(.phero .top div,.phero .strip,.chap .tag,.chap .side,.mk .cap){background:var(--est-deep)}
 .site .est :is(.phero .strip,.mk .cap,.chap .side){border-top:3px solid var(--est-acc)}
 .site .est .eb::before{content:"";display:inline-block;width:18px;height:2px;margin-right:calc(var(--gc-sp-3xs) * 2.5);vertical-align:middle;background:var(--est-acc)}
@@ -1214,3 +1217,160 @@
 .site .est .phero .strip{bottom:calc(var(--gc-sp-s) + var(--iris-h))}
 :root:has(.consent) .site :is(.iris-open,.iris){display:none}
 .site:has(.nav.menu-open) :is(.iris-open,.iris),.site:has(.gal-ov:not([hidden])) :is(.iris-open,.iris){display:none}
+
+/* ── A PICTURE ESTATE WEARS THE DAY — 2 Oct 2026 (render.ts PROP, .est-day) ──
+   The estate page was drawn for films: night grounds, and solid night boxes
+   over a dark canvas. An illustration is bright and full of detail, so for
+   an estate with pictures of its own the page turns to day:
+     grounds   paper and the estate's own paper tint, with ink for the text;
+     pictures  whole, at their own proportion, with nothing laid over them
+               but one small paper plate for the name and the tag that says
+               what they are;
+     ledger    capital alone stays deep, so the figures still read as a
+               different kind of thing from the story.
+   Every pairing below is held to AA by tests/estate-day.test.ts, from the
+   tokens themselves. The accent (--est-acc) is for rules, chips and large
+   numerals only: on paper it does not carry small text. */
+.site .phero .strip-l{display:grid;gap:inherit;justify-items:inherit}
+.site .est.est-day{--ink:var(--est-deep);--mute:var(--gc-s-ash);--line:var(--gc-hairline);background:var(--gc-s-light);color:var(--ink)}
+.site .est.est-day :is(.para,.dim){color:var(--gc-s-stone)}
+.site .est.est-day .coords{color:var(--gc-s-ash)}
+
+/* the site bar is a veil over a film; over paper it would show the page's ink through it, so here it is solid */
+.site:has(.est-day,.tx-pic) .nav{background:var(--gc-s-night)}
+
+/* the estate's own bar, on paper */
+.site .est.est-day .ebar{background:var(--gc-paper-panel);border-bottom-color:var(--gc-hairline)}
+.site .est.est-day .ebar-l a{color:var(--gc-s-ash)}
+.site .est.est-day .ebar-l a:hover,.site .est.est-day .ebar-l a[aria-current]{color:var(--ink)}
+
+/* the ledger: capital stays deep */
+.site .est.est-day .fin{background:var(--est-deep);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line);padding-bottom:var(--sec)}
+.site .est.est-day .fin .para{color:var(--gc-s-rule)}
+.site .est.est-day .fin :is(.dim,.fin-lead){color:var(--gc-s-fog)}
+.site .est.est-day .fin .plan-note{color:var(--gc-s-fog)}
+.site .est.est-day .fin .stg.on{background:var(--gc-paper-panel);color:var(--ink)}
+.site .est.est-day .fin .stg.on :is(.mono,em){color:var(--gc-s-ash)}
+.site .est.est-day .fin .stg-d{border-left-color:var(--est-acc)}
+.site .est.est-day .fin .stg-d :is(.para,p){color:var(--gc-s-stone)}
+
+/* the hero: the picture, then the facts and the action under it */
+.site .est.est-day .phero{height:auto;min-height:0;overflow:visible;background:var(--gc-paper-panel)}
+.site .est.est-day .phero-pic{position:relative;height:clamp(340px,calc(100svh - var(--nav-h) - var(--ebar-h) - var(--gc-sp-4xl)),56.25vw);overflow:hidden;background:var(--est-paper)}
+.site .est.est-day .phero .top{left:var(--gut);right:auto;top:auto;bottom:var(--gc-sp-m);text-align:left;pointer-events:auto}
+.site .est.est-day .phero .top div{display:grid;gap:var(--gc-sp-3xs);background:var(--gc-paper-panel);color:var(--ink);padding:var(--gc-sp-s) var(--gc-sp-m)}
+.site .est.est-day .phero h1{margin:0;font-size:clamp(34px,5vw,80px);line-height:.9}
+.site .est.est-day .phero .credit{color:var(--gc-s-stone)}
+.site .est.est-day .phero .strip{position:static;transform:none;width:auto;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;justify-items:start;text-align:left;gap:var(--gc-sp-xs) var(--gc-sp-m);padding:var(--gc-sp-s) var(--gut);background:var(--gc-paper-panel);color:var(--ink);border-bottom:1px solid var(--gc-hairline)}
+.site .est.est-day .phero .strip-l{gap:var(--gc-sp-3xs)}
+.site .est.est-day .phero .strip .pr{font-size:clamp(17px,1.5vw,21px)}
+.site .est.est-day .phero .strip .pr span{color:var(--gc-s-ash)}
+.site .est.est-day .phero .strip .sp{color:var(--gc-s-stone)}
+.site .est.est-day .phero .strip .row-btns{justify-content:flex-start;flex-wrap:nowrap}
+.site .est.est-day .btn.gray{background:var(--gc-s-chip);color:var(--ink)}
+.site .est.est-day .save[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+@media (max-width:900px){.site .est.est-day .phero .strip{grid-template-columns:minmax(0,1fr)}.site .est.est-day .phero .strip .row-btns{flex-wrap:wrap}}
+@media (max-width:700px){.site .est.est-day .phero-pic{height:clamp(360px,64svh,150vw)}}
+
+/* the figures, and the one sentence a section leaves behind */
+.site .ch-figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gc-sp-s) var(--gc-sp-m);align-content:start}
+.site .ch-figs div{display:grid;gap:var(--gc-sp-2xs);align-content:start;padding-top:var(--gc-sp-xs);border-top:2px solid currentColor}
+.site .ch-figs b{font:200 clamp(30px,3.4vw,54px)/1 var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.site .ch-figs span{font:600 11.5px/1.35 var(--text);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.site .ch-so{margin:var(--gc-sp-m) 0 0;padding-left:var(--gc-sp-s);border-left:3px solid var(--est-acc,var(--copper));font:600 clamp(18px,1.6vw,22px)/1.35 var(--display);letter-spacing:-.01em;max-width:46ch}
+@media (max-width:560px){.site .ch-figs{grid-template-columns:minmax(0,1fr)}.site .ch-figs div{grid-template-columns:minmax(0,.5fr) minmax(0,1fr);align-items:baseline;gap:var(--gc-sp-s)}}
+
+/* the place: the picture whole, the words beneath it */
+.site .chap-pic{position:relative;margin:0;overflow:hidden;aspect-ratio:16/9;max-height:84vh;width:100%;background:var(--est-paper)}
+.site .chap-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:var(--gc-sp-m) clamp(var(--gc-sp-m),6vw,var(--gc-sp-3xl));align-items:start;padding:var(--sec) var(--gut) 0}
+.site .chap-body h3{margin:0;font:300 clamp(32px,4.6vw,68px)/1 var(--display);letter-spacing:-.035em}
+.site .chap-body h3 b{font-weight:800}
+.site .chap-body .para{font-size:clamp(17px,1.35vw,20px);line-height:1.6;max-width:var(--read)}
+.site .chap-foot{padding:var(--gc-sp-xl) var(--gut) 0}
+.site .chap-foot .ch-so{margin-top:var(--gc-sp-l)}
+@media (max-width:900px){.site .chap-body{grid-template-columns:minmax(0,1fr)}}
+
+/* a chapter: its name on paper, its picture whole, then the words and the figures side by side */
+.site .est.est-day .chamber .ttl{margin-bottom:var(--gc-sp-m)}
+.site .est.est-day .chamber .ttl h3{font-size:clamp(44px,7.6vw,128px)}
+.site .est.est-day .chamber .film{height:auto;min-height:0;aspect-ratio:16/9;max-height:84vh;width:calc(100% - 2 * var(--gut));margin-inline:var(--gut);background:var(--est-paper)}
+@media (max-width:700px){.site .est.est-day .chamber .film{width:100%;margin-inline:0;aspect-ratio:4/3}.site .chap-pic{aspect-ratio:4/3}}
+.site .ch-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:var(--gc-sp-l) clamp(var(--gc-sp-m),6vw,var(--gc-sp-3xl));align-items:start;padding:var(--gc-sp-xl) var(--gut) 0}
+.site .ch-body-1{grid-template-columns:minmax(0,1fr)}
+.site .est.est-day .ch-body .para{margin:0;padding:0;text-align:left;font-size:clamp(17px,1.35vw,20px);line-height:1.6;max-width:var(--read)}
+.site .est.est-day .chamber .meta{justify-content:flex-start;margin:var(--gc-sp-m) 0 0;padding:0 var(--gut)}
+.site .est.est-day .pc-rail{padding-top:var(--gc-sp-xl)}
+.site .est.est-day .pcard{background:var(--est-paper)}
+.site .est.est-day .pcard .lb{background:var(--gc-paper-panel);color:var(--ink)}
+.site .est.est-day .pcard .lb span{color:var(--gc-s-stone)}
+.site .est.est-day .pcard.solid{background:var(--est-paper);color:var(--ink);border-top:3px solid var(--est-acc)}
+.site .est.est-day .pcard.solid .v{font-size:clamp(24px,2.1vw,30px)}
+@media (max-width:900px){.site .ch-body{grid-template-columns:minmax(0,1fr)}}
+
+/* the day, as a light table and not a dark screen */
+.site .est.est-day .day{background:var(--est-paper);margin-top:var(--sec);padding-bottom:var(--sec)}
+.site .est.est-day .proj-screen{background:transparent;padding-block:0}
+.site .est.est-day .proj-plate{box-shadow:none;background:var(--gc-s-light)}
+.site .est.est-day .proj-f figcaption .mono{color:var(--gc-s-ash)}
+.site .est.est-day .proj-f figcaption em{color:var(--gc-s-stone)}
+.site .est.est-day .proj-console{border-top-color:var(--ink)}
+.site .est.est-day .proj-btn{border-color:var(--ink);color:var(--ink)}
+.site .est.est-day .proj-btn:hover,.site .est.est-day .proj-btn:focus-visible{background:var(--ink);color:var(--paper)}
+.site .est.est-day .proj-idx{color:var(--ink)}
+.site .est.est-day :is(.proj-note,.day-note){color:var(--gc-s-ash)}
+.site .est.est-day .day-note{text-align:center}
+
+/* getting there: the chart keeps its night, in the estate's own deep */
+.site .est.est-day .getting{padding-bottom:var(--sec)}
+.site .est.est-day .tcards button{background:var(--gc-paper-panel);color:var(--ink)}
+.site .est.est-day .tcards button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.site .est.est-day .map{background:var(--est-deep)}
+
+/* design: the concept, the standard, the plan */
+.site .est.est-day .concept{background:var(--est-paper)}
+.site .est.est-day .axo-fig{background:var(--gc-s-light)}
+.site .est.est-day .zl-static p{color:var(--gc-s-stone)}
+.site .est.est-day .concept .chap-foot{padding-inline:0}
+.site .est.est-day .coll{background:var(--gc-s-light);color:var(--ink);margin-top:0;border-top:0}
+.site .cgr-std{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gc-sp-s);margin-top:var(--gc-sp-xl)}
+.site .cgr-std>div{display:grid;gap:var(--gc-sp-2xs);align-content:start;padding:var(--gc-sp-m);background:var(--gc-paper-panel);color:var(--ink);border-top:3px solid var(--est-acc,var(--copper))}
+.site .cgr-std span{font:600 11.5px/1.3 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--gc-s-ash)}
+.site .cgr-std b{font:800 clamp(22px,2.2vw,30px)/1.05 var(--display);letter-spacing:-.025em}
+.site .cgr-std p{margin:0;font-size:14.5px;line-height:1.5;color:var(--gc-s-stone)}
+.site .coll-std .ch-so{margin-top:var(--gc-sp-xl)}
+@media (max-width:900px){.site .cgr-std{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media (max-width:560px){.site .cgr-std{grid-template-columns:minmax(0,1fr)}}
+.site .est.est-day .plan{background:var(--est-paper);padding-bottom:var(--sec)}
+.site .est.est-day .plan .bar button{background:var(--gc-paper-panel);color:var(--ink)}
+.site .est.est-day .plan .bar button[aria-selected=true]{background:var(--ink);color:var(--paper)}
+.site .est.est-day .pv .info{background:var(--gc-paper-panel);color:var(--ink)}
+.site .est.est-day .pv .info div{border-top-color:var(--gc-hairline)}
+.site .est.est-day .pinfo .ab{color:var(--gc-s-ash)}
+.site .est.est-day .plan-note{color:var(--gc-s-ash)}
+
+/* ownership, the record, the papers and the next step */
+.site .est.est-day .faq-estate{background:var(--est-paper)}
+.site .est.est-day .details{background:var(--est-paper);margin-top:0;border-top:0}
+.site .est.est-day .dkt-sec{background:var(--gc-s-light)}
+.site .est.est-day .dkt-sec .dkt-lead{color:var(--gc-s-stone)}
+.site .est.est-day .mk .cap{background:var(--gc-paper-panel);color:var(--ink)}
+
+/* the home frame of an estate with a picture: the name on a paper plate at the foot, and the picture left alone */
+.site .sf.sf-img .ov{place-items:end start;text-align:left;padding:0 var(--gut) var(--gc-sp-l)}
+.site .sf.sf-img .ov div{background:var(--gc-paper-panel);color:var(--ink);padding:var(--gc-sp-s) var(--gc-sp-m)}
+.site .sf.sf-img .ov h3{font-size:clamp(32px,4.6vw,76px)}
+.site .sf.sf-img .ov p{color:var(--gc-s-stone)}
+.site .sf.sf-img .ov .sf-d{color:var(--ink)}
+.site .sf.sf-img .ov .chip{border-color:var(--gc-s-ash);color:var(--ink)}
+
+/* a text page with a picture of its own (render.ts TXT, .tx-pic): the picture stands by itself, and the heading and the facts go on the estate's paper */
+.site .tx-pic{--ink:var(--est-deep);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
+.site .tx-hero.tx-pic{padding-top:0;background:var(--est-paper)}
+.site .tx-hero.tx-pic .tx-film{position:relative;inset:auto;height:clamp(240px,46vh,520px);margin-bottom:var(--sec);overflow:hidden}
+.site .tx-split.tx-pic{background:var(--est-paper);grid-template-areas:"head form" "pic form" "facts form";grid-template-rows:auto auto 1fr}
+.site .tx-split.tx-pic>.tx-film{position:relative;inset:auto;opacity:1;grid-area:pic;aspect-ratio:16/9;overflow:hidden}
+.site .tx-pic .tx-formcard{border-top-color:var(--est-acc)}
+.site .tx-pic .dep-terms{background:var(--est-deep)}
+.site .tx-pic .btn.gray{background:var(--gc-s-chip);color:var(--ink)}
+.site .tx-body.tx-pic>.tx-h2::before{background:var(--est-acc)}
+@media (max-width:960px){.site .tx-split.tx-pic{grid-template-areas:"head" "form" "pic" "facts";grid-template-rows:none}}

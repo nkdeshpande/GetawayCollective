@@ -84,7 +84,7 @@ async function payDeposit(f: HTMLFormElement) {
    Walks the prose of the page (never headings, links, buttons or figures)
    and marks the first use of each defined term. A tap opens one small
    card with the definition and a way to the whole glossary. */
-const PROSE = ".tx-body .tx-p, .tx-body .tx-lede, .tx-body .tx-list li, .tx-body .tx-steps p, .intro-p, .chamber > .para, .chap .side .para, .concept-lead, .fin-lead";
+const PROSE = ".tx-body .tx-p, .tx-body .tx-lede, .tx-body .tx-list li, .tx-body .tx-steps p, .intro-p, .chamber > .para, .chap .side .para, .ch-body .para, .chap-body .para, .concept-lead, .fin-lead";
 const SKIP = "a, button, b, strong, code, h1, h2, h3, h4, .mono, .gl-t";
 function glossary(root: HTMLElement, terms: readonly (readonly [string, string])[]): () => void {
   const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -506,11 +506,12 @@ function prefill(root: HTMLElement) {
 const REVEAL = [
   ".tx-body > :not(.tx-toc)", ".tx-split-facts > *",
   ".est .intro-p", ".est .chap .tag", ".est .chap .side", ".est .concept > .eb", ".est .concept > .h2", ".est .concept-lead", ".est .axo",
-  ".est .chamber .ttl", ".est .chamber .para", ".est .chamber .meta", ".est .pc-rail > *",
-  ".est .coll > .eb", ".est .coll > .h2", ".est .cgr > div", ".est :is(.day, .getting, .plan, .details, .fin) > *", ".est .own > div", ".est .faq-estate > .h2", ".est .mk .cap",
+  ".est .chamber .ttl", ".est .chamber > .para", ".est .chamber .meta", ".est .pc-rail > *",
+  ".est .chap-body > *", ".est .chap-foot > *", ".est .ch-body > *",
+  ".est .coll > .eb", ".est .coll > .h2", ".est .coll > .ch-so", ".est .cgr > div", ".est .cgr-std > div", ".est :is(.day, .getting, .plan, .details, .fin) > *", ".est .own > div", ".est .faq-estate > .h2", ".est .mk .cap",
   ".cgrid > .cc", ".ben .r > div", ".cmp > *", ".col-stages > *", ".faq > .h2", ".calc", ".calc-cmp",
 ].join(",");
-const STAGGER = ".cgrid, .cgr, .pc-rail, .own, .tx-figs, .own-tiles, .tx-steps, .ben .r";
+const STAGGER = ".cgrid, .cgr, .cgr-std, .pc-rail, .own, .tx-figs, .own-tiles, .tx-steps, .ben .r";
 
 function wireReveal(root: HTMLElement, still: boolean): () => void {
   if (still || typeof IntersectionObserver === "undefined") return () => {};

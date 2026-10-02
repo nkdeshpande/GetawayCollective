@@ -15,6 +15,9 @@ export type FilmRef = readonly [string, number, (number | boolean)?, (number | b
  */
 export type ImgRef = string;
 
+/** A figure and what it counts, as the estate's own narrative states it: ["20", "keys"]. */
+export type Fig = readonly [string, string];
+
 export interface Card { readonly film?: FilmRef; readonly img?: ImgRef; readonly b?: string; readonly s?: string; readonly k?: string; readonly v?: string }
 
 export interface Volume {
@@ -28,8 +31,15 @@ export interface Concept {
   readonly ground?: readonly Ground[]; readonly labels?: readonly (readonly [number, number, string])[];
   /** The estate drawn, in place of the schematic volumes; the zones are then a plain list. */
   readonly img?: ImgRef;
+  readonly figs?: readonly Fig[];
+  /** The one sentence a reader should leave the section with. */
+  readonly so?: string;
 }
-export interface Chapter { readonly id: string; readonly title: string; readonly film: FilmRef; readonly img?: ImgRef; readonly para: string; readonly meta: readonly string[]; readonly cards: readonly Card[] }
+export interface Chapter {
+  readonly id: string; readonly title: string; readonly film: FilmRef; readonly img?: ImgRef; readonly para: string;
+  readonly meta: readonly string[]; readonly cards: readonly Card[];
+  readonly figs?: readonly Fig[]; readonly so?: string;
+}
 export interface MapSpec {
   readonly bounds: readonly number[];
   readonly pts: readonly (readonly (string | number | boolean)[])[];
@@ -56,7 +66,10 @@ export interface SiteEstate {
   readonly credit: string;
   readonly spec: string;
   readonly intro: string;
-  readonly place: { readonly film: FilmRef; readonly img?: ImgRef; readonly title: string; readonly text: string; readonly coords: string };
+  readonly place: {
+    readonly film: FilmRef; readonly img?: ImgRef; readonly title: string; readonly text: string; readonly coords: string;
+    readonly figs?: readonly Fig[]; readonly so?: string;
+  };
   /** The estate's own pictures for the page's two full-width frames. */
   readonly media?: { readonly hero: ImgRef; readonly heroTall?: ImgRef; readonly enquire?: ImgRef };
   readonly concept: Concept;
@@ -65,6 +78,8 @@ export interface SiteEstate {
   readonly day: { readonly eyebrow: string; readonly title: string; readonly items: readonly (readonly string[])[]; readonly note: string; readonly imgs?: readonly ImgRef[] };
   /** The heading over `materials`, where the section is not about materials: [eyebrow, title]. */
   readonly made?: readonly [string, string];
+  /** The one sentence under that section. */
+  readonly madeSo?: string;
   /** The three steps to holding, where an estate's own differ from the platform's: [title, text]. */
   readonly own?: readonly (readonly [string, string])[];
   /** Show only the estate's own answers: the general ones describe a structure this estate does not have. */

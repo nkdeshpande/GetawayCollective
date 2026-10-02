@@ -137,7 +137,9 @@ function mapSVG(M: MapSpec) {
       s += `<g transform="translate(${q[0] - 14},${q[1] - 14}) scale(.28)"><use href="#gcm" width="100" height="100" fill="${INK.paper}"/><use href="#gcc" width="100" height="100" fill="${INK.copper}"/></g>` +
         `<text x="${q[0] + 22}" y="${q[1] + 6}" fill="${INK.paper}" font-family="Inter Tight" font-weight="700" font-size="18">${p[2]}</text>`;
     } else {
-      s += `<rect x="${q[0] - 5}" y="${q[1] - 5}" width="10" height="10" fill="${SITE.mute}"/><text x="${q[0] + 12}" y="${q[1] + 4}" fill="${SITE.fog}" font-family="Satoshi" font-size="14">${p[2]}</text>`;
+      /* A neighbour too close to the estate to be named on the same side is named on the west (p[4] === "w"). */
+      const west = p[4] === "w";
+      s += `<rect x="${q[0] - 5}" y="${q[1] - 5}" width="10" height="10" fill="${SITE.mute}"/><text x="${q[0] + (west ? -12 : 12)}" y="${q[1] + 4}"${west ? ' text-anchor="end"' : ""} fill="${SITE.fog}" font-family="Satoshi" font-size="14">${p[2]}</text>`;
     }
   });
   if (M.tag) {
@@ -232,6 +234,12 @@ export function WAIT(E: SiteEstate, R: Reading | undefined) {
     "</div></section>";
 }
 
+/** Three figures and what each counts, as the estate's own narrative states them. */
+const figsHTML = (f?: readonly (readonly [string, string])[]) =>
+  f?.length ? `<div class="ch-figs">${f.map(([n, l]) => `<div><b>${n}</b><span>${l}</span></div>`).join("")}</div>` : "";
+/** The one sentence a reader should leave a section with. */
+const soHTML = (s?: string) => (s ? `<p class="ch-so">${s}</p>` : "");
+
 // ── the property template ──
 /**
  * AN ESTATE IN SEVEN LAYERS — 28 Sep 2026
@@ -280,9 +288,23 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     `<div class="layer" id="${id}" data-layer="${label}">${body}</div>`;
 
   // ── 1 · overview ──
-  let ov = `<section class="phero${E.media ? " phero-img" : ""}" id="${k}-hero">${E.media ? plate(E.media.hero, { eager: true, tall: E.media.heroTall, tag: "tl" }) : film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain })}` +
-    `<div class="top"><div><span class="eb">${E.eyebrow}</span><h1>${E.name}</h1><span class="credit">${E.credit}</span></div></div>` +
-    `<div class="strip"><div class="pr"${R?.publishable ? src(R.prov.intake) : ""}>${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div>` +
+  /* A PICTURE ESTATE WEARS THE DAY (2 Oct 2026). The page was drawn for
+     films: night grounds, and solid night boxes laid over a dark canvas. An
+     illustration is the opposite, bright and full of detail, and the same
+     boxes hid half of it. So where an estate has pictures of its own:
+       - the picture comes first and is left alone: the name sits on one
+         small paper plate, and the facts and the action go under it;
+       - no paragraph is laid over a picture, anywhere;
+       - the grounds between pictures are papers, with ink for the text,
+         and only the ledger (capital, the papers) stays deep;
+       - each section carries its narrative's own figures and one sentence.
+     An estate still wearing films is rendered exactly as before. */
+  const day = !!E.media;
+  const top = `<div class="top"><div><span class="eb">${E.eyebrow}</span><h1>${E.name}</h1><span class="credit">${E.credit}</span></div></div>`;
+  let ov = `<section class="phero${day ? " phero-img" : ""}" id="${k}-hero">` +
+    (day ? `<div class="phero-pic">${plate(E.media!.hero, { eager: true, tall: E.media!.heroTall, tag: "tl" })}${top}</div>`
+      : film(E.pal, E.hour, { label: E.heroLabel, rain: E.heroRain }) + top) +
+    `<div class="strip"><div class="strip-l"><div class="pr"${R?.publishable ? src(R.prov.intake) : ""}>${price[0]} <span>· ${price[1]}</span></div><div class="sp">${F(E.spec)}</div></div>` +
     /* Availability and delivery are two answers, stated apart: an estate can
        be fully subscribed and under construction at once. Where the price line
        already says what is available, the chip says only where the building is. */
@@ -294,11 +316,20 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   ov += `<section class="intro"><p class="para center narrow intro-p">${F(E.intro)}</p></section>`;
 
   // ── 2 · the place ──
-  let pl = `<section class="chap" id="${k}-place"><div class="film">${E.place.img ? plate(E.place.img) : fr(E.place.film)}<div class="tag"><h3>${E.place.title}</h3></div>` +
-    `<div class="side"><p class="para">${F(E.place.text)}</p><p class="mono coords">${R?.vehicle.coordinates || E.place.coords}</p></div></div></section>`;
+  const coords = `<p class="mono coords">${R?.vehicle.coordinates || E.place.coords}</p>`;
+  let pl = E.place.img
+    /* The picture whole, and the words beneath it. */
+    ? `<section class="chap chap-day" id="${k}-place"><figure class="chap-pic">${plate(E.place.img)}</figure>` +
+      `<div class="chap-body"><h3>${E.place.title}</h3><div><p class="para">${F(E.place.text)}</p>${coords}</div></div>` +
+      `<div class="chap-foot">${figsHTML(E.place.figs)}${soHTML(E.place.so)}</div></section>`
+    : `<section class="chap" id="${k}-place"><div class="film">${fr(E.place.film)}<div class="tag"><h3>${E.place.title}</h3></div>` +
+      `<div class="side"><p class="para">${F(E.place.text)}</p>${coords}</div></div></section>`;
   E.chapters.forEach((c, i) => {
-    pl += `<section class="chamber" id="${k}-${c.id}"><div class="ttl"><span class="ch-n mono">${String(i + 1).padStart(2, "0")} / ${String(E.chapters.length).padStart(2, "0")}</span><h3>${c.title}</h3></div><div class="film">${c.img ? plate(c.img) : fr(c.film)}</div>` +
-      `<p class="para">${F(c.para)}</p><div class="meta">${c.meta.map((m) => `<span>${F(m)}</span>`).join("")}</div>` +
+    const meta = c.meta.length ? `<div class="meta">${c.meta.map((m) => `<span>${F(m)}</span>`).join("")}</div>` : "";
+    pl += `<section class="chamber${c.img ? " chamber-day" : ""}" id="${k}-${c.id}"><div class="ttl"><span class="ch-n mono">${String(i + 1).padStart(2, "0")} / ${String(E.chapters.length).padStart(2, "0")}</span><h3>${c.title}</h3></div><div class="film">${c.img ? plate(c.img) : fr(c.film)}</div>` +
+      (c.img
+        ? `<div class="ch-body${c.figs?.length ? "" : " ch-body-1"}"><div><p class="para">${F(c.para)}</p>${soHTML(c.so)}</div>${figsHTML(c.figs)}</div>${meta}`
+        : `<p class="para">${F(c.para)}</p>${meta}`) +
       `<div class="pc-rail">${c.cards.map((x) => card({ ...x, s: x.s && F(x.s), v: x.v && F(x.v) })).join("")}</div></section>`;
   });
   /* The day, as the estate's centred gallery (./gallery.ts PROJECTOR): each
@@ -322,11 +353,17 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     (C.img
       /* The estate drawn, with its parts listed beside it: nothing to switch on or off. */
       ? `<div class="axo axo-img"><figure class="axo-fig">${plate(C.img, { sizes: "(max-width: 900px) 100vw, 56vw" })}</figure><ul class="zl zl-static">` +
-        C.zones.map((z) => `<li><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></li>`).join("") + "</ul></div></section>"
+        C.zones.map((z) => `<li><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></li>`).join("") + "</ul></div>" +
+        (C.figs?.length || C.so ? `<div class="chap-foot">${figsHTML(C.figs)}${soHTML(C.so)}</div>` : "") + "</section>"
       : `<div class="axo"><svg viewBox="0 0 760 520" class="axo-svg" role="img" aria-label="Axonometric drawing of ${esc(plain)}, illustrative">${axoSVG(C)}</svg><div class="zl">` +
         C.zones.map((z) => `<button type="button" aria-pressed="true" data-z="${z.k}"><i style="background:${inkify(z.c)}"></i><b>${z.name}</b><span>${z.sub}</span><p>${F(z.text)}</p></button>`).join("") +
         "</div></div></section>");
-  dz += `<section class="coll" id="${k}-materials"><span class="eb">${E.made ? E.made[0] : "Materials"}</span><h2 class="h2">${E.made ? E.made[1] : `What ${E.name} <span>is made of</span>`}</h2><div class="cgr">` +
+  /* Where the section is a standard and not a palette of materials, its tiles
+     are a measure and what it measures: the swatch bars would say nothing. */
+  dz += E.made
+    ? `<section class="coll coll-std" id="${k}-materials"><span class="eb">${E.made[0]}</span><h2 class="h2">${E.made[1]}</h2><div class="cgr-std">` +
+      E.materials.map((m) => `<div><span>${m[0]}</span><b>${m[1]}</b><p>${F(m[2])}</p></div>`).join("") + "</div>" + soHTML(E.madeSo) + "</section>"
+    : `<section class="coll" id="${k}-materials"><span class="eb">Materials</span><h2 class="h2">What ${E.name} <span>is made of</span></h2><div class="cgr">` +
     E.materials.map((m, i) => {
       let bars = "";
       for (let j = 0; j < 18; j++) {
@@ -398,7 +435,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
      page now wears its own landscape: the palette its film is drawn in
      sets an accent, a night and a paper (site.css, .est[data-pal]), so
      Creek reads green, Confluence reads sea-slate, Solace reads granite. */
-  return `<div class="est" data-pal="${E.pal}">${bar}` +
+  return `<div class="est${day ? " est-day" : ""}" data-pal="${E.pal}">${bar}` +
     layer("overview", "Overview", ov) + layer("place", "The place", pl) + layer("design", "Design", dz) +
     layer("ownership", "Ownership", ow) + layer("capital", "Capital", cap) + layer("documents", "Documents", dc) +
     layer("next-step", "Next step", nx) + "</div>";
@@ -446,7 +483,11 @@ function unitsTable(): string {
 
 // ── the text-page template ──
 export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
-  const lt = !!P.light;
+  /* A page with a picture of its own wears the day, as its estate does (PROP):
+     the picture stands by itself, and the heading and the facts go on paper. */
+  const lt = !!P.light || !!P.img;
+  const pic = P.img ? " tx-pic" : "";
+  const pal = P.img && P.film ? ` data-pal="${P.film[0]}"` : "";
   const filmHTML = P.img ? `<div class="tx-film">${plate(P.img)}</div>`
     : P.film ? `<div class="tx-film">${film(P.film[0], P.film[1], { rain: P.film[2], bp: P.film[3] })}</div>` : "";
   const headHTML = `<div class="tx-head"><span class="eb">${P.eyebrow}</span><h1 class="tx-h1">${P.title}</h1>${P.lead ? `<p class="tx-lead">${P.lead}</p>` : ""}${P.meta ? `<p class="mono tx-meta">${P.meta}</p>` : ""}</div>`;
@@ -509,14 +550,14 @@ export function TXT(P: SitePage, faqs: Readonly<Record<string, string>> = {}) {
     let end = P.blocks.length - 1;
     while (end > first && !isForm(P.blocks[end])) end--;
     const facts = run(P.blocks.slice(0, start)), form = run(P.blocks.slice(start, end + 1)), tail = run(P.blocks.slice(end + 1));
-    return `<section class="tx-split${lt ? " lt" : " dk"}">${filmHTML}` +
+    return `<section class="tx-split${lt ? " lt" : " dk"}${pic}"${pal}>${filmHTML}` +
       `<div class="tx-split-head">${headHTML}</div>` +
       `<div class="tx-split-form"><div class="tx-formcard">${form}</div></div>` +
       (facts ? `<div class="tx-split-facts">${facts}</div>` : "") + `</section>` +
-      (tail ? `<article class="tx-body${lt ? " lt" : ""}">${tail}</article>` : "") + next;
+      (tail ? `<article class="tx-body${lt ? " lt" : ""}${pic}"${pal}>${tail}</article>` : "") + next;
   }
-  return `<section class="tx-hero${lt ? " lt" : ""}">${filmHTML}${headHTML}</section>` +
-    `<article class="tx-body${lt ? " lt" : ""}">${run(P.blocks)}</article>` + next;
+  return `<section class="tx-hero${lt ? " lt" : ""}${pic}"${pal}>${filmHTML}${headHTML}</section>` +
+    `<article class="tx-body${lt ? " lt" : ""}${pic}"${pal}>${run(P.blocks)}</article>` + next;
 }
 
 /** The next step, as one wide link. The stage is named so the reader can see the path. */

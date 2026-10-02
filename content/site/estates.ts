@@ -1136,7 +1136,22 @@ export const ESTATES: Record<string, SiteEstate> = {
    "img": "creek/place",
    "title": "Eight acres <b>on a stream.</b>",
    "text": "Shade-grown coffee on both banks of a perennial stream at Cherala, in Kodagu. The land is on a registered deed of June 2024 and falls naturally at 20 to 25 degrees. The coffee is left standing.",
-   "coords": "12.385716°N 75.836097°E"
+   "coords": "12.385716°N 75.836097°E",
+   "figs": [
+    [
+     "8.00",
+     "acres on the deed"
+    ],
+    [
+     "20–25°",
+     "natural fall"
+    ],
+    [
+     "1",
+     "stream, the spine"
+    ]
+   ],
+   "so": "Every figure in this plan stands on the 8.00 acres on the deed."
   },
   "concept": {
    "title": "Five clusters, <span>set down along a stream.</span>",
@@ -1178,7 +1193,22 @@ export const ESTATES: Record<string, SiteEstate> = {
      "text": "They run apart from the walks and never cross them.",
      "c": "{ink:stone3}"
     }
-   ]
+   ],
+   "figs": [
+    [
+     "20",
+     "keys"
+    ],
+    [
+     "5",
+     "clusters of four"
+    ],
+    [
+     "1",
+     "private pool a cluster"
+    ]
+   ],
+   "so": "Light on the land: the coffee on both banks is left standing."
   },
   "chapters": [
    {
@@ -1190,12 +1220,8 @@ export const ESTATES: Record<string, SiteEstate> = {
      0
     ],
     "img": "creek/arrival",
-    "para": "The car stops at the gate, at the corner of the land, and you walk down. An arrival court stands above everything else, and your bag is sent ahead by a working route that never crosses yours. The first ten minutes are drawn as carefully as the key itself.",
-    "meta": [
-     "THE CAR STOPS AT THE GATE",
-     "ONE WALK DOWN",
-     "BAGS GO AHEAD"
-    ],
+    "para": "The car stops at the gate, at the corner of the land, and you walk down. An arrival court stands above everything else, and your bag is sent ahead by a working route that never crosses yours.",
+    "meta": [],
     "cards": [
      {
       "k": "The gate",
@@ -1215,7 +1241,8 @@ export const ESTATES: Record<string, SiteEstate> = {
       "b": "The commons",
       "s": "One long table, beside the court"
      }
-    ]
+    ],
+    "so": "The first ten minutes are drawn as carefully as the key itself."
    },
    {
     "id": "cluster",
@@ -1226,13 +1253,8 @@ export const ESTATES: Record<string, SiteEstate> = {
      0
     ],
     "img": "creek/cluster",
-    "para": "Four keys share one thin roof and three party walls. They stand three metres past the fall of the slope, and beneath them the yard and a private pool lie in shade. In the wet months the cantilever becomes the shelter: rain on three sides, and dry underfoot.",
-    "meta": [
-     "4 KEYS",
-     "1 ROOF",
-     "3 M CANTILEVER",
-     "1 POOL A CLUSTER"
-    ],
+    "para": "Four keys share one thin roof and three party walls. They stand three metres past the fall of the slope, and beneath them the yard and a private pool lie in shade. In the wet months the cantilever becomes the shelter.",
+    "meta": [],
     "cards": [
      {
       "img": "creek/cluster-west",
@@ -1252,7 +1274,22 @@ export const ESTATES: Record<string, SiteEstate> = {
       "k": "Five clusters",
       "v": "Four on the contour, one across the stream"
      }
-    ]
+    ],
+    "figs": [
+     [
+      "3 m",
+      "cantilever, past the fall"
+     ],
+     [
+      "22°",
+      "natural slope"
+     ],
+     [
+      "1",
+      "private pool a cluster"
+     ]
+    ],
+    "so": "Rain on three sides, and dry underfoot."
    },
    {
     "id": "key",
@@ -1263,13 +1300,8 @@ export const ESTATES: Record<string, SiteEstate> = {
      0
     ],
     "img": "creek/keys-plan",
-    "para": "One key, drawn once and built twenty times. Yard, bath, bed, living and a deck with a plunge, in one line, with a nest above the bath. A ladder inside, and no stair outside. One drawing means one price, one crew and one standard.",
-    "meta": [
-     "465 SQ FT ENCLOSED",
-     "3.6 M WIDE",
-     "600 MM GRID",
-     "NO OUTSIDE STAIR"
-    ],
+    "para": "One key, drawn once and built twenty times. Yard, bath, bed, living and a deck with a plunge, in one line, with a nest above the bath. A ladder inside, and no stair outside.",
+    "meta": [],
     "cards": [
      {
       "img": "creek/keys",
@@ -1289,7 +1321,22 @@ export const ESTATES: Record<string, SiteEstate> = {
       "b": "From above",
       "s": "The roof, the yard and the pool"
      }
-    ]
+    ],
+    "figs": [
+     [
+      "465",
+      "square feet, enclosed"
+     ],
+     [
+      "3.6 m",
+      "wide, on a 600 mm grid"
+     ],
+     [
+      "0",
+      "outside stairs"
+     ]
+    ],
+    "so": "One drawing means one price, one crew and one standard."
    },
    {
     "id": "water",
@@ -1301,12 +1348,7 @@ export const ESTATES: Record<string, SiteEstate> = {
     ],
     "img": "creek/water",
     "para": "A perennial stream is the spine of the estate. A timber crossing leads to the fifth cluster, and the sauna and the lake are set quietly apart, at the water's edge.",
-    "meta": [
-     "1 STREAM",
-     "A TIMBER CROSSING",
-     "THE SAUNA",
-     "THE LAKE"
-    ],
+    "meta": [],
     "cards": [
      {
       "img": "creek/crossing",
@@ -1334,6 +1376,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    "The standard",
    "Quiet is <span>a number here.</span>"
   ],
+  "madeSo": "A promise that can be measured can be kept at the twentieth key as at the first.",
   "materials": [
    [
     "Sound",
@@ -1447,7 +1490,9 @@ export const ESTATES: Record<string, SiteEstate> = {
      [
       12.390446,
       75.820505,
-      "Coffee Fields Forever"
+      "Coffee Fields Forever",
+      0,
+      "w"
      ]
     ],
     "route": [

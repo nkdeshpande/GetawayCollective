@@ -105,7 +105,7 @@ export function SiteHome() {
     // ── four estates, up close ──
     '<div class="explore-h"><span class="eb">The collection</span><h2 class="h2">Explore our <span>estates</span></h2></div>' +
     '<div class="stackfilm">' + HOME_STACK.map((s) =>
-      `<section class="sf">${imgOf(s.href) ? plate(imgOf(s.href)!) : film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey, s.href))}</span></div></div>` +
+      `<section class="sf${imgOf(s.href) ? " sf-img" : ""}">${imgOf(s.href) ? plate(imgOf(s.href)!, { tag: "tl" }) : film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey, s.href))}</span></div></div>` +
       `<a class="btn go" href="${s.href}">${s.cta} ${NE}</a></section>`).join("") + "</div>" +
     // ── all of them, in frames ──
     `<section class="gal-sec"><div class="gal-head"><span class="eb">The collection, in frames</span>` +
@@ -601,7 +601,7 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
     key: `${v.key}-${id}`, path, eyebrow: `${esc(name)} · ${esc(c.eyebrow.replace(/^CHAPTER \d+ · /, ""))}`, title: esc(plain(c.title)), lead: esc(plain(c.lead)),
     film: E ? [E.pal, E.enquireHour || 18] : undefined, img: E?.media?.enquire, blocks,
   };
-  return <Mount html={fill(TXT(P))} />;
+  return <Mount html={fill(TXT(P))} light={!!P.img} />;
 }
 
 /** The enquiry desk at /contact, with the prototype's form. */
