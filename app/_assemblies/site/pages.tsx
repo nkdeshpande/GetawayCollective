@@ -133,7 +133,7 @@ export function SiteHome() {
     (pack
       ? `<section class="pack"><div class="col">${imgOf(`/collection/${pack.vehicle.slug}`) ? plate(imgOf(`/collection/${pack.vehicle.slug}`)!, { sizes: "(max-width: 900px) 100vw, 52vw" }) : film("creek", 12, { bp: true })}</div><div class="tx"><span class="eb">The offering pack</span>` +
         `<h2 class="h2 h2-s">Get the <span>${esc(pack.name)} offering pack</span></h2>` +
-        `<p class="para dim">The drawings, the structure of ${esc(pack.vehicle.registeredName)}, the waterfall and the risk disclosure, in one document. Sent after a short qualification.</p>` +
+        `<p class="para dim">The drawings, the structure of ${esc(pack.vehicle.registeredName)}, ${pack.vehicle.operating.cascade?.length ? "the order of payment" : "the waterfall"} and the risk disclosure, in one document. Sent after a short qualification.</p>` +
         `<div><a class="btn lead" href="/collection/${pack.vehicle.slug}/enquire?about=pack">Request the pack ${NE}</a></div></div></section>`
       : "") +
     '<section class="who"><div><span class="eb">Who we are</span><p class="q"><b>You own.</b> We steward.<br>You decide.</p></div>' + // vocab-lint-ignore — ratified brand line, L1-02 §514

@@ -182,6 +182,9 @@
 
 @media (max-width: 760px) {
   .da-cs, .da-fm, .da-ch { grid-template-columns: 1fr; }
+  /* Stacked, the two columns of the capital chart had no height of their own,
+     so every band fell to its 4px minimum and the chart read as a few lines. */
+  .da-cs-cols { min-height: clamp(180px, 52vw, 240px); }
   .da-pb { grid-template-columns: 1fr 1fr; }
   .da-ap-l { grid-template-columns: 1fr 1fr; }
   .da-wf-row { grid-template-columns: 96px 1fr 52px; }

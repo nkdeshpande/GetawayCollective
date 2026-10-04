@@ -552,6 +552,27 @@ function wireReveal(root: HTMLElement, still: boolean): () => void {
   };
 }
 
+/* ── Pictures behind a tab, a frame or the edge of a rail — 4 Oct 2026 ──
+   A lazy picture is fetched when it comes near the screen. One that is
+   hidden (the projector's other frames, the plan's other tabs, the open
+   gallery) or off to the side of a rail never comes near it, so it was
+   fetched only when asked for, and on a phone's connection the frame stood
+   empty meanwhile. Each such group now fetches its pictures as the group
+   itself comes near. */
+const PICTURE_GROUPS = ".proj, .plan .pv, .pc-rail, .gal";
+function wirePictures(root: HTMLElement): () => void {
+  const lazy = 'img[loading="lazy"]';
+  const groups = $$<HTMLElement>(PICTURE_GROUPS, root).filter((g) => g.querySelector(lazy));
+  if (!groups.length) return () => {};
+  const fetchAll = (g: Element) => g.querySelectorAll<HTMLImageElement>(lazy).forEach((i) => { i.loading = "eager"; });
+  if (typeof IntersectionObserver === "undefined") { groups.forEach(fetchAll); return () => {}; }
+  const io = new IntersectionObserver((es) => es.forEach((en) => {
+    if (en.isIntersecting) { fetchAll(en.target); io.unobserve(en.target); }
+  }), { rootMargin: "900px 0px" });
+  groups.forEach((g) => io.observe(g));
+  return () => io.disconnect();
+}
+
 export function SiteBehaviour() {
   const pathname = usePathname();
   const router = useRouter();
@@ -570,6 +591,9 @@ export function SiteBehaviour() {
 
     /* sections arrive as they are reached */
     off.push(wireReveal(root, still));
+
+    /* pictures behind a tab or a frame are fetched before they are asked for */
+    off.push(wirePictures(root));
 
     /* the returns calculator (./calc.ts), where a page carries one */
     off.push(wireCalc(root));

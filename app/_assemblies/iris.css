@@ -68,15 +68,17 @@
   appearance: none;
   text-align: left;
   font: 400 14px/1.4 var(--gc-font-body);
-  color: var(--gc-fg);
+  /* The panel is paper (.on-paper): ink, and the hairline that shows on it.
+     The night hairline drew no edge here, so the questions read as loose text. */
+  color: var(--gc-ink);
   background: transparent;
-  border: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
+  border: var(--gc-stroke-idle) solid var(--gc-hairline);
   border-radius: var(--gc-radius);
   padding: var(--gc-sp-2xs) var(--gc-sp-s);
   cursor: pointer;
   transition: border-color var(--gc-dur-fast) var(--gc-ease-shutter);
 }
 .iris-starter:hover,
-.iris-starter:focus-visible { border-color: var(--gc-fg); outline: none; }
+.iris-starter:focus-visible { border-color: var(--gc-ink); outline: none; }
 .iris-starter:disabled { opacity: 0.5; cursor: default; }
 .iris-bound { margin-top: var(--gc-sp-s); }

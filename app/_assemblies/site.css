@@ -14,9 +14,7 @@
 .site .brand{border-bottom:revert;padding:revert}
 .site .btn{align-items:revert;background:revert;border:revert;color:revert;display:revert;font:revert;gap:revert;justify-content:revert;letter-spacing:revert;padding:revert;text-transform:revert;transition:revert}
 .site .btn:hover{background:revert;border-color:revert;color:revert}
-.site .col-stages{padding:revert}
 .site .dim{color:revert}
-.site .fin-da{display:revert;gap:revert;grid-template-columns:revert;margin-top:revert}
 .site .foot{border-top:revert;margin-top:revert;padding:revert}
 .site .gal{overflow:revert;padding:revert;position:revert}
 .site .hero{align-items:revert;border-bottom:revert;display:revert;min-height:revert;overflow:revert;position:revert}
@@ -1388,3 +1386,25 @@
 .site .tx-pic .btn.gray{background:var(--gc-s-chip);color:var(--ink)}
 .site .tx-body.tx-pic>.tx-h2::before{background:var(--est-acc)}
 @media (max-width:960px){.site .tx-split.tx-pic{grid-template-areas:"head" "form" "pic" "facts";grid-template-rows:none}}
+
+/* ── On a phone — 4 Oct 2026, from the founder's own test ─────────────────
+   The launcher stood over the text being read: it now leaves with the bar
+   as one reads down, and returns with it on the first scroll up. And the
+   home frame of an estate with a picture keeps its plate above its button,
+   where the button had been sitting on the plate. */
+@media (max-width:700px){
+  .site .sf.sf-img .ov{padding-bottom:var(--gc-sp-3xl)}
+  /* the next step of a picture estate: the picture, then the words under it,
+     where the plate had been covering most of the picture */
+  .site .est.est-day .mk{height:auto;min-height:0;background:var(--gc-paper-panel);color:var(--ink)}
+  .site .est.est-day .mk>.film-img,.site .est.est-day .mk>picture>.film-img{position:relative;inset:auto;height:auto;aspect-ratio:4/3}
+  .site .est.est-day .mk .cap{position:static;max-width:none;padding:var(--gc-sp-m) var(--gut) var(--gc-sp-l)}
+  .site .est.est-day .mk .plate-tag{top:var(--gc-sp-s);bottom:auto}
+}
+/* IRIS is a paper panel standing on a night page: its quiet text takes the
+   paper's grey. The site's own .dim is a night grey and was out-ranking it. */
+.site .iris :is(.dim,.label){color:var(--gc-s-ash)}
+@media (max-width:700px) and (prefers-reduced-motion:no-preference){
+  .site .iris-open{transition:transform .3s var(--ease),opacity .3s var(--ease),background .14s,color .14s}
+  .site:has(.nav.away) .iris-open{transform:translate3d(0,calc(100% + var(--gc-sp-xl)),0);opacity:0;pointer-events:none}
+}

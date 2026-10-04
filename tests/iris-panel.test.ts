@@ -11,6 +11,9 @@ import { describe, it, expect } from "vitest";
 import {
   IRIS_BOUNDARY, IRIS_CORPUS, IRIS_GREETING, IRIS_STARTERS, matchIris,
 } from "../content/iris";
+import { COLLECTION } from "../content/site/home";
+import { ROUTES } from "../constants/routes";
+import { read, vehicleOf } from "../app/_assemblies/site/registry";
 
 describe("every starter is a question IRIS answers", () => {
   it("matches a corpus entry, so the first tap is never a refusal", () => {
@@ -73,5 +76,58 @@ describe("the visitor reads the visitor's words", () => {
   it("opens in one sentence, not two paragraphs", () => {
     expect(IRIS_GREETING.split(/[.!?](\s|$)/).filter((x) => x.trim().length > 3)).toHaveLength(1);
     expect(IRIS_GREETING.length).toBeLessThan(120);
+  });
+});
+
+/* 4 Oct 2026, from the founder's own test on a phone. Asked what is in the
+   Collection, IRIS described the Collection page, named no estate, and said
+   it carried photography. Asked about returns, it answered in the platform's
+   shorthand. Matching the right entry was tested; what the entry SAID was not. */
+describe("an answer says what the site says", () => {
+  const plain = (name: string) => name.replace(/<[^>]+>/g, "");
+  const collection = IRIS_CORPUS.find((e) => e.asks.includes("properties"))!;
+  const sentenceOf = (name: string) => collection.answer.split(/(?<=\.)\s+/).find((x) => x.includes(name)) ?? "";
+
+  it("names every estate when asked what is in the Collection", () => {
+    for (const e of COLLECTION) expect(collection.answer, e.name).toContain(plain(e.name));
+    expect(collection.answer.startsWith(`${["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"][COLLECTION.length]} estates.`)).toBe(true);
+  });
+
+  it("places each estate where the register places it", () => {
+    /* The same reading the Collection page groups by (pages.tsx groupOf). */
+    for (const e of COLLECTION) {
+      const v = vehicleOf(e.vehicleKey);
+      const status = v ? read(v).status : "";
+      const word = e.funding === "complete" ? "funded" : status === "RAISING" ? "open now" : status === "FULLY SUBSCRIBED" ? "waitlist" : "pipeline";
+      expect(sentenceOf(plain(e.name)), `${e.name}: ${word}`).toContain(word);
+    }
+  });
+
+  it("promises no picture the site does not carry, and quotes no figure", () => {
+    for (const e of IRIS_CORPUS) {
+      expect(e.answer, e.id).not.toMatch(/photograph/i);
+      expect(e.answer, e.id).not.toMatch(/₹|\d\s?%|\bCr\b|\blakh/i);
+    }
+  });
+
+  it("keeps the platform's shorthand out of every answer", () => {
+    for (const e of IRIS_CORPUS) {
+      for (const internal of ["confidence class", "derivation", "six-stage", "enquiry surface", "constituted", "projection", "vantage"]) {
+        expect(e.answer.toLowerCase(), `${e.id}: ${internal}`).not.toContain(internal);
+      }
+    }
+  });
+
+  it("points every answer at a page that exists", () => {
+    const exists = (to: string) => ROUTES.some((r) => {
+      const a = r.path.split("/"), b = to.split("/");
+      return a.length === b.length && a.every((seg, i) => seg === b[i] || /^\[.+\]$/.test(seg));
+    });
+    for (const e of IRIS_CORPUS) expect(exists(e.source.to), `${e.id} → ${e.source.to}`).toBe(true);
+  });
+
+  it("sends nobody to one estate for an answer about all of them", () => {
+    /* Four answers used to open Seaside Confluence's own pages, whatever was asked. */
+    for (const e of IRIS_CORPUS) expect(e.source.to, e.id).not.toMatch(/^\/collection\/./);
   });
 });

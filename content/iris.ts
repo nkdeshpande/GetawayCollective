@@ -99,88 +99,109 @@ export const IRIS_REFUSAL =
   "I do not hold a published answer to that, and I will not guess at one. Leave an address and " +
   "somebody who can answer properly will come back to you.";
 
+/*
+ * REWRITTEN 4 Oct 2026, from the founder's own test on a phone.
+ *
+ * Asked "What properties are in the Collection?", IRIS described the
+ * Collection page instead of naming a single estate, and said it carried
+ * photography, which no page does. Asked how returns work, it answered in
+ * the platform's own shorthand (a "six-stage waterfall", a "confidence
+ * class", a "derivation"), which the content sweep of 25 Sep had already
+ * taken out of every page and had missed here.
+ *
+ * So each answer now does three things: it answers the question that was
+ * asked, in the words a visitor would use; it says only what a page says;
+ * and it points at a page that exists. tests/iris-panel.test.ts holds all
+ * three: every estate in the collection is named and placed where the
+ * register places it, no answer promises a picture or a figure, and every
+ * source is a live route.
+ */
 export const IRIS_CORPUS: readonly IrisAnswer[] = [
   {
     id: "IR-01",
     asks: ["what is getaway collective", "what is gc", "who are you", "what do you do"],
     answer:
-      "Getaway Collective is an investment platform. It raises and governs capital for remarkable " +
-      "places, held through clear, vehicle-specific ownership. It does not operate the properties — " +
-      "Sensory Getaways does that under a Management Agreement.",
+      "Getaway Collective is an investment platform for small retreats in India. Each estate is " +
+      "held by its own partnership, and you own units in that partnership. We govern it for the " +
+      "people who own it and hold none of it ourselves. Sensory Getaways runs the estates under contract.",
     source: { label: "How it works", to: "/how-it-works" },
   },
   {
     id: "IR-02",
     asks: ["how does ownership work", "what do i own", "what is the structure", "llp"],
     answer:
-      "Each place is held by its own investment vehicle, and participation is a position in that " +
-      "vehicle rather than a share of a pooled fund. What the vehicle owns, what it owes and how " +
-      "it is governed are stated per vehicle, not averaged across a portfolio.",
-    source: { label: "Ownership", to: "/collection/slowspace-coastal/ownership" },
+      "You own units in the partnership, an LLP, that holds one estate: its land and its buildings. " +
+      "It is not a share of a pooled fund, and nothing is averaged across estates. Each partnership " +
+      "has its own agreement, its own accounts and its own partners, who decide by equity.",
+    source: { label: "How it works", to: "/how-it-works" },
   },
   {
     id: "IR-03",
     asks: ["what places", "what is available", "the collection", "properties", "what can i invest in"],
     answer:
-      "The Collection lists every place that exists, with photography and the argument for it " +
-      "before any figure. Each one carries its own chapters — the place, the life, the idea, the " +
-      "asset, ownership, the investment and the risk.",
+      "Seven estates. SlowSpace Creek, in Coorg, is open now. Seaside Confluence, on the Udupi coast, " +
+      "is fully subscribed and takes a waitlist. Solace, near Nandi Hills, and Coffee Fields Forever, " +
+      "in Coorg, are funded and in delivery. Nine Hills, Wildwood and Tidal Club are in the pipeline " +
+      "and not yet open. The Collection shows each one: its place, its design, who owns it and its capital.",
     source: { label: "The Collection", to: "/collection" },
   },
   {
     id: "IR-04",
     asks: ["how do returns work", "what return", "yield", "waterfall", "distributions"],
     answer:
-      "Returns follow a six-stage waterfall stated per vehicle, and every forward figure carries " +
-      "its confidence class so you can see which numbers are observed and which are modelled. " +
-      "I will not quote a number here — the vehicle's own investment chapter states it with its " +
-      "derivation beside it.",
-    source: { label: "The Investment", to: "/collection/slowspace-coastal/investment" },
+      "An estate earns from the nights it sells. That money is paid out in a fixed order: the cost " +
+      "of running the estate and the operating partner first, the reserves and any bank loan next, " +
+      "and the partners last, in proportion to their units. Each estate states its own order in full. " +
+      "No return is promised, and I do not quote figures: each estate's page shows them, and says " +
+      "which are estimates.",
+    source: { label: "How it works", to: "/how-it-works" },
   },
   {
     id: "IR-05",
     asks: ["what are the risks", "how do i lose money", "risk", "is it safe"],
     answer:
-      "Capital is at risk, and how a vehicle loses money is stated before anyone is asked for " +
-      "anything. The standing risk disclosure covers the position in full, and it is deliberately " +
-      "reachable before commitment rather than after it.",
+      "Your capital is at risk, and you can lose money. Building can cost more or take longer than " +
+      "planned. An estate can sell fewer nights than planned. Where there is a bank loan, the bank " +
+      "is paid before the partners. And units are hard to sell on, so your money can be tied up for " +
+      "years. Each estate lists its own risks, and the risk disclosure sets them out in full. Read " +
+      "it before you commit.",
     source: { label: "Risk disclosure", to: "/legal/risk-disclosure" },
   },
   {
     id: "IR-06",
     asks: ["how do i invest", "how do i start", "can i invest", "next step", "join"],
     answer:
-      "Participation runs through qualification first, then a private diligence path, then a " +
-      "private commitment step. I cannot start or confirm any of it. The enquiry surface on a " +
-      "vehicle carries your interest to a person along with the vehicle it concerns.",
-    source: { label: "Enquire", to: "/collection/slowspace-coastal/enquire" },
+      "In three steps. Sign in with your email. Read the estate's offering letter, its partnership " +
+      "agreement and the risk disclosure, while your identity checks run alongside. Then sign the " +
+      "agreement and pay in, with Investor Relations; once that settles, you are a partner. I cannot " +
+      "start or confirm any of it for you. To begin, enquire from the estate's page and a person will reply.",
+    source: { label: "How to qualify", to: "/how-to-qualify" },
   },
   {
     id: "IR-07",
     asks: ["who runs it", "who is behind", "team", "governance", "who decides"],
     answer:
-      "Authority at Getaway Collective is a grant, never a title. Decisions sit with constituted " +
-      "offices and committees, each holding named rights that can be granted and revoked, rather " +
-      "than with job descriptions.",
-    source: { label: "About", to: "/about" },
+      "Three parties, each with its own part. The partners of an estate own it and decide its " +
+      "major matters, by equity. Getaway Collective sets each partnership up and governs it for " +
+      "them. Sensory Getaways operates the estates under contract. The Team page names the people.",
+    source: { label: "Team", to: "/team" },
   },
   {
     id: "IR-08",
     asks: ["contact", "speak to someone", "talk to a person", "human", "email"],
     answer:
-      "The contact page carries the general addresses. If your question is about a specific " +
-      "vehicle, the enquiry surface on that vehicle is better — it arrives with its subject, so " +
-      "nobody has to reconstruct what you were asking about.",
+      "The contact page takes your question to a person, who replies in writing. If it is about " +
+      "one estate, enquire from that estate's page, so your question arrives with the estate named.",
     source: { label: "Contact", to: "/contact" },
   },
   {
     id: "IR-09",
     asks: ["can i use it", "visit", "time", "when can i use", "allocation"],
     answer:
-      "Time in a place is derived from the position held in its vehicle, and the allocation is " +
-      "stated per vehicle. Operating the properties is Sensory Getaways' responsibility rather " +
-      "than ours, so anything about a place already in operation belongs with them.",
-    source: { label: "How it works", to: "/how-it-works" },
+      "Nights are shared among an estate's partners in proportion to what each holds, and they begin " +
+      "once the estate is built: an unbuilt estate carries no nights. The rule that shares them out is " +
+      "still being decided, and each estate's offering letter will set it.",
+    source: { label: "Answers", to: "/answers" },
   },
 ];
 

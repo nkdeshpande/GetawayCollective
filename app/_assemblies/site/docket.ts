@@ -125,7 +125,7 @@ export function estateDocket(v: Vehicle, name: string, publishable: boolean, com
       purpose: complete
         ? "Funding for this estate is complete. The offering is closed."
         : publishable
-        ? "The drawings, the structure of the LLP, the waterfall and the risk disclosure, in one document. Sent after a short qualification."
+        ? `The drawings, the structure of the LLP, ${v.operating.cascade?.length ? "the order of payment" : "the waterfall"} and the risk disclosure, in one document. Sent after a short qualification.`
         : "Not yet published: the figures it would be priced from are still being confirmed.",
       links: publishable && !complete ? [["Request the pack", `/collection/${v.slug}/enquire`], ["How to qualify", "/how-to-qualify"]] : [],
     },
