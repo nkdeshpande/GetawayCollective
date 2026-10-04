@@ -10,7 +10,52 @@
  * and never added: the register already states each total it needs.
  */
 
-import { VEHICLES, stanceFor, publishable, type Vehicle } from "@/constants/vehicles";
+import { VEHICLES, BUILD_LABEL, stanceFor, publishable, type Vehicle } from "@/constants/vehicles";
+import { COLLECTION } from "@/content/site/home";
+
+/**
+ * ONE NAME FOR ONE ESTATE — 28 Sep 2026
+ *
+ * The site said Creek, SlowSpace Creek and Coorg Coffee Creek for one
+ * estate, and Confluence, Seaside Confluence and SlowSpace Coastal for
+ * another. The public name is the collection's, which is the canon's
+ * (_CANON/facts/properties.yaml); the register's propertyName is the LLP
+ * intake's own label and is never printed as the estate's name. The legal
+ * entity is named separately, as the entity. tests/estate-record.test.ts
+ * holds every other surface to this.
+ */
+export const publicName = (v: Vehicle): string =>
+  COLLECTION.find((c) => c.vehicleKey === v.key)?.name.replace(/<[^>]+>/g, "") ?? v.propertyName;
+
+/**
+ * FUNDING COMPLETE — founder ruling, 28 Sep 2026
+ *
+ * Where the collection marks an estate's funding complete, the site says
+ * "Funding complete" and shows no units, equity, price or waitlist for it.
+ * Read from the collection because Coffee Fields Forever has no register
+ * record to carry the fact.
+ */
+export const fundingComplete = (slug: string): boolean =>
+  COLLECTION.some((c) => c.funding === "complete" && c.href === `/collection/${slug}`);
+
+/**
+ * The bank loan, said as it stands. A loan that is applied for is called
+ * that on every surface; nobody is told it is in place before a sanction
+ * letter says so (constants/vehicles.ts, CapitalStack.facilityStatus).
+ */
+export const loanLine = (v: Vehicle): string => {
+  const s = v.stack;
+  return rupees(s.facility) + (s.facilityLimit ? ` of a ${rupees(s.facilityLimit)} limit` : "") +
+    (s.facilityStatus === "applied-for" ? " · applied for, not sanctioned" : "");
+};
+const loanRow = (v: Vehicle, p: Prov): readonly [string, string, number?, Prov?] =>
+  [v.stack.facilityStatus === "applied-for" ? "Bank loan" : "Bank facility", loanLine(v), undefined, p];
+
+/** Who holds the estate, or will: an LLP not yet incorporated does not hold anything yet. */
+export const heldBy = (v: Vehicle): { label: string; value: string } =>
+  v.llpin
+    ? { label: "Held by", value: v.registeredName }
+    : { label: "To be held by", value: `${v.registeredName}, not yet incorporated` };
 import { TAXONOMIES } from "@/constants/taxonomies";
 
 /* ── WHERE A FIGURE COMES FROM (Next Actions d05, 25 Sep 2026) ────────
@@ -32,10 +77,13 @@ const attr = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").rep
 export const src = (p: Prov | undefined) =>
   p ? ` data-src="${attr(p[0])}" data-cls="${p[1]}" data-clm="${attr(MEANING[p[1]] ?? "")}"` : "";
 const provFor = (v: Vehicle) => {
-  const intake = v.key === "wildwood" ? "The LLP intake, 11 Aug 2026, with the founder's structure of 20 Sep 2026" : "The vehicle's LLP intake sheet, 4 Aug 2026";
+  const intake = v.key === "wildwood" ? "The LLP intake, 11 Aug 2026, with the founder's structure of 20 Sep 2026"
+    : v.key === "coorgcreek" ? "The estate's capital structure and cost plan of 2 Oct 2026, as proposed; the term sheets are a draft for counsel"
+    : "The vehicle's LLP intake sheet, 4 Aug 2026";
   return {
     intake: [intake, "REPORTED"] as Prov,
     deposit: ["Founder ruling, 24 Sep 2026: one flat holding deposit at every open estate", "REPORTED"] as Prov,
+    ruling: ["Founder ruling, 28 Sep 2026: funding for this estate is complete", "REPORTED"] as Prov,
     derived: [`Computed by this site from the units offered and subscribed, as stated in ${intake.replace(/^The /, "the ")}`, "INFERRED"] as Prov,
   };
 };
@@ -79,6 +127,16 @@ export interface Reading {
   readonly tokens: Readonly<Record<string, string>>;
   readonly details: readonly (readonly [string, string, number?, Prov?])[];
   readonly prov: ReturnType<typeof provFor>;
+  /** The public name (see publicName). */
+  readonly name: string;
+  /** Whether units can be had: two different questions from delivery, answered separately. */
+  readonly availability: string;
+  /** Where the building stands. "Fully subscribed" and "Under construction" can both be true. */
+  readonly delivery: string;
+  /** The next step this estate's state allows: [label, href]. */
+  readonly action: readonly [string, string];
+  /** Funding complete (fundingComplete): nothing about the offering is shown. */
+  readonly complete: boolean;
 }
 
 export function read(v: Vehicle): Reading {
@@ -88,20 +146,28 @@ export function read(v: Vehicle): Reading {
   const unitsTotal = o.unitPrice > 0n ? Number(o.totalEquity / o.unitPrice) : o.units;
   const promoterUnits = o.unitPrice > 0n ? Number(o.promoter / o.unitPrice) : 0;
   const full = o.available <= 0 && o.subscribed > 0;
-  const status = full ? "FULLY SUBSCRIBED" : v.lifecycle === "raising" ? "RAISING" : v.lifecycle === "forming" ? "PIPELINE" : v.lifecycle.toUpperCase();
-  const price: readonly [string, string] = v.lifecycle === "forming"
+  const complete = fundingComplete(v.slug);
+  const status = complete ? "FUNDING COMPLETE" : full ? "FULLY SUBSCRIBED" : v.lifecycle === "raising" ? "RAISING" : v.lifecycle === "forming" ? "PIPELINE" : v.lifecycle.toUpperCase();
+  const price: readonly [string, string] = complete
+    ? ["Funding complete", BUILD_LABEL[v.buildStage].toLowerCase()]
+    : v.lifecycle === "forming"
     ? ["In the pipeline", "not yet open for subscription"]
     : !ok
     ? ["Offering not yet published", "its figures are still being confirmed"]
     : full
       ? [`Fully subscribed · ${o.subscribed} of ${o.units} units offered`, `${rupees(o.unitPrice)} a unit · waitlist open`]
       : [`${o.available} of ${o.units} units available`, `${rupees(o.unitPrice)} a unit`];
-  const offer = ok
+  /* A lock-in is a period ("36 months from…"); where the record states none, the sentence says so. */
+  const locked = /^\d/.test(o.lockIn);
+  const offer = complete
+    ? "Funding for this estate is complete."
+    : ok
     ? `${o.units} units are offered to partners at ${rupees(o.unitPrice)} each, ${rupees(o.offered)} in all; ` +
-      `the sponsor holds ${rupees(o.promoter)} of the ${rupees(o.totalEquity)} equity. ` +
+      `the sponsor holds ${rupees(o.promoter)} of the ${rupees(o.totalEquity)} equity${o.promoterIs ? `, as ${o.promoterIs}` : ""}. ` +
       `${o.available ? `${o.available} remain available.` : "All are subscribed."}` +
       (o.deposit !== null ? ` A position is held online with a ${rupeesFull(o.deposit)} deposit, refundable in full until the Vehicle Agreement is signed.` : "") +
-      ` Units are then locked in for ${o.lockIn}. The offering letter governs every figure.`
+      (locked ? ` Units are then locked in for ${o.lockIn}.` : " The transfer terms are not yet set; the LLP agreement will state them.") +
+      " The offering letter governs every figure."
     : "The offering is not yet published: its figures are still being confirmed, and none is estimated in the meantime.";
   const tokens = {
     vehicle: v.registeredName,
@@ -110,25 +176,62 @@ export function read(v: Vehicle): Reading {
     OFFER: offer,
   };
   const P = provFor(v);
+  const held = heldBy(v);
   const details: (readonly [string, string, number?, Prov?])[] = [
-    ["Held by", v.registeredName + (v.llpin ? ` · LLPIN ${v.llpin}` : ""), undefined, P.intake],
+    [held.label, held.value + (v.llpin ? ` · LLPIN ${v.llpin}` : ""), undefined, P.intake],
     ["Place", v.jurisdiction, undefined, P.intake],
     ["Coordinates", v.coordinates ? `<span class="mono">${v.coordinates}</span>` : "Not yet recorded", v.coordinates ? undefined : 1],
     ["Land", v.landArea, undefined, P.intake],
     ["Keys", String(v.keys), undefined, P.intake],
   ];
-  if (ok) {
+  if (complete) {
+    details.push(["Funding", "Complete", undefined, P.ruling]);
+  } else if (ok) {
     details.push(
       ["Units offered", `${o.units} at ${rupees(o.unitPrice)} · ${o.subscribed} subscribed`, undefined, P.intake],
-      ["Equity", `${rupees(o.totalEquity)} · sponsor ${rupees(o.promoter)}`, undefined, P.intake],
-      ["Bank facility", rupees(v.stack.facility), undefined, P.intake],
+      ["Equity", `${rupees(o.totalEquity)} · sponsor ${rupees(o.promoter)}${o.promoterIs ? ", land in kind" : ""}`, undefined, P.intake],
+      loanRow(v, P.intake),
       ["Project cost", rupees(v.stack.projectTotal), undefined, P.intake],
       ["Lock-in", o.lockIn, undefined, P.intake],
     );
   } else {
     details.push(["Offering", "Not yet published", 1]);
   }
-  return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details, prov: P };
+  const availability = complete ? "Funding complete"
+    : v.lifecycle === "forming" ? "Not yet offered"
+    : full ? "Fully subscribed"
+    : ok && o.available > 0 ? `${o.available} of ${o.units} units available`
+    : "Offering not yet published";
+  const delivery = v.lifecycle === "forming" ? "Pipeline" : v.lifecycle === "live" ? "Operating" : BUILD_LABEL[v.buildStage];
+  /* The brief's table: raising → the offering; subscribed with a waitlist →
+     the waitlist; in delivery with nothing open → its progress; pipeline →
+     the concept. */
+  const action: readonly [string, string] = complete ? ["View estate progress", `/collection/${v.slug}`]
+    : v.lifecycle === "forming" ? ["Explore the concept", `/collection/${v.slug}`]
+    : ok && o.available > 0 && v.lifecycle === "raising" ? ["Explore the offering", `/collection/${v.slug}/investment`]
+    : full && stance.kind === "waitlist" ? ["Join the waitlist", `/collection/${v.slug}/enquire`]
+    : ["View estate progress", `/collection/${v.slug}`];
+  return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details, prov: P,
+    name: publicName(v), availability, delivery, action, complete };
+}
+
+/**
+ * A unit, estate by estate. The generic "one unit is 5%, twenty make the
+ * whole" was Seaside Confluence's own ladder stated as if it were every
+ * estate's; SlowSpace Creek's unit is 10% of ten. Read per estate instead.
+ */
+export function unitsByEstate(): readonly { name: string; share: string; units: number; ceiling: number | null; price: string }[] {
+  return VEHICLES.filter((v) => publishable(v).ok && v.offering.unitPrice > 0n && v.offering.totalEquity > 0n).map((v) => {
+    const o = v.offering;
+    const shareBps = Number((o.unitPrice * 10000n) / o.totalEquity);
+    return {
+      name: publicName(v),
+      share: `${(shareBps / 100).toFixed(shareBps % 100 ? 1 : 0)}%`,
+      units: Number(o.totalEquity / o.unitPrice),
+      ceiling: v.ladder.ceilingBps > 0 && shareBps > 0 ? Math.floor(v.ladder.ceilingBps / shareBps) : null,
+      price: rupees(o.unitPrice),
+    };
+  });
 }
 
 /** The first vehicle still taking capital, for the home page's pack. */

@@ -13,7 +13,7 @@ describe("an estate page", () => {
   for (const E of Object.values(ESTATES)) {
     const v = vehicleOf(E.vehicleKey);
     const h = PROP(E, v ? read(v) : undefined, "");
-    it(`${E.name} wears its own palette`, () => expect(h.startsWith(`<div class="est" data-pal="${E.pal}">`)).toBe(true));
+    it(`${E.name} wears its own palette`, () => expect(h.startsWith(`<div class="est${E.media ? " est-day" : ""}" data-pal="${E.pal}">`)).toBe(true));
     it(`${E.name} counts its chapters`, () => {
       const n = String(E.chapters.length).padStart(2, "0");
       expect(h).toContain(`01 / ${n}`);

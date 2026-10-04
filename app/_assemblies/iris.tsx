@@ -148,7 +148,7 @@ export function IrisPanel({ vehicleSlug }: { vehicleSlug?: string }) {
   }
 
   return (
-    <aside className="iris" role="complementary" aria-label="IRIS">
+    <aside className="iris on-paper" role="complementary" aria-label="IRIS">
       <div className="iris-head">
         <div>
           {/* Was "IRIS · Relationship Intelligence" over "9 approved answers ·
@@ -239,7 +239,9 @@ export function IrisPanel({ vehicleSlug }: { vehicleSlug?: string }) {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Ask about the properties, ownership or returns"
+          /* 4 Oct 2026: "Ask about the properties, ownership or returns" was cut
+             off mid-word on a phone. The starters above already say what can be asked. */
+          placeholder="Ask a question"
           aria-label="Ask IRIS a question"
           maxLength={500}
         />

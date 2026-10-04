@@ -47,10 +47,15 @@ if (siteClasses.size < 40) {
   process.exit(2);
 }
 
-/* Every stylesheet globals.css imports, except the site's own. */
+/* Every stylesheet globals.css imports, except the site's own: site.css, and
+   da.css, the digital assemblies the site draws on purpose. 4 Oct 2026: da.css
+   was being read as the platform's, so the two layout rules of it the site
+   relies on were reverted: .col-stages lost its gutter (the track on
+   /collection ran to the edge of a phone's screen) and .fin-da lost its grid. */
+const OWN = ["site.css", "da.css"];
 const globals = read("app/globals.css");
 const sheets = [...globals.matchAll(/@import url\("\.\/(_assemblies\/[\w.-]+\.css)"\)/g)]
-  .map((m) => "app/" + m[1]).filter((f) => !f.endsWith("site.css"));
+  .map((m) => "app/" + m[1]).filter((f) => !OWN.some((o) => f.endsWith("/" + o)));
 if (sheets.length < 5) {
   console.error(`[site-reset] found ${sheets.length} stylesheets in globals.css. Refusing to run.`);
   process.exit(2);

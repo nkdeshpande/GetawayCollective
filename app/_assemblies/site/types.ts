@@ -8,26 +8,45 @@
 /** [palette, hour, rain?, blueprint?] — a drawn film, relit by the hour. */
 export type FilmRef = readonly [string, number, (number | boolean)?, (number | boolean)?];
 
-export interface Card { readonly film?: FilmRef; readonly b?: string; readonly s?: string; readonly k?: string; readonly v?: string }
+/**
+ * A picture of the estate's own, as "<estate>/<name>" (content/site/media.ts).
+ * Wherever a slot has both a film and an `img`, the picture is shown: a
+ * drawn film is what an estate wears until it has pictures.
+ */
+export type ImgRef = string;
+
+/** A figure and what it counts, as the estate's own narrative states it: ["20", "keys"]. */
+export type Fig = readonly [string, string];
+
+export interface Card { readonly film?: FilmRef; readonly img?: ImgRef; readonly b?: string; readonly s?: string; readonly k?: string; readonly v?: string }
 
 export interface Volume {
   readonly t?: string; readonly x: number; readonly y: number; readonly z?: number;
   readonly dx: number; readonly dy: number; readonly dz?: number; readonly rz?: number;
 }
-export interface Zone { readonly k: string; readonly name: string; readonly sub: string; readonly text: string; readonly c: string; readonly vols: readonly Volume[] }
+export interface Zone { readonly k: string; readonly name: string; readonly sub: string; readonly text: string; readonly c: string; readonly vols?: readonly Volume[] }
 export interface Ground { readonly c: string; readonly w?: number; readonly dash?: string; readonly pts: readonly (readonly number[])[] }
 export interface Concept {
   readonly title: string; readonly lead?: string; readonly zones: readonly Zone[];
   readonly ground?: readonly Ground[]; readonly labels?: readonly (readonly [number, number, string])[];
+  /** The estate drawn, in place of the schematic volumes; the zones are then a plain list. */
+  readonly img?: ImgRef;
+  readonly figs?: readonly Fig[];
+  /** The one sentence a reader should leave the section with. */
+  readonly so?: string;
 }
-export interface Chapter { readonly id: string; readonly title: string; readonly film: FilmRef; readonly para: string; readonly meta: readonly string[]; readonly cards: readonly Card[] }
+export interface Chapter {
+  readonly id: string; readonly title: string; readonly film: FilmRef; readonly img?: ImgRef; readonly para: string;
+  readonly meta: readonly string[]; readonly cards: readonly Card[];
+  readonly figs?: readonly Fig[]; readonly so?: string;
+}
 export interface MapSpec {
   readonly bounds: readonly number[];
   readonly pts: readonly (readonly (string | number | boolean)[])[];
   readonly route?: readonly number[];
   readonly tag?: readonly (string | number)[];
 }
-export interface PlanTab { readonly tab: string; readonly t: string; readonly rows: readonly (readonly (string | number)[])[]; readonly svg: string }
+export interface PlanTab { readonly tab: string; readonly t: string; readonly rows: readonly (readonly (string | number)[])[]; readonly svg: string; readonly img?: ImgRef }
 
 export interface Waitlist { readonly chip: string; readonly title: string; readonly text: string; readonly chips: readonly string[]; readonly ok: string; readonly note: string }
 
@@ -47,11 +66,30 @@ export interface SiteEstate {
   readonly credit: string;
   readonly spec: string;
   readonly intro: string;
-  readonly place: { readonly film: FilmRef; readonly title: string; readonly text: string; readonly coords: string };
+  readonly place: {
+    readonly film: FilmRef; readonly img?: ImgRef; readonly title: string; readonly text: string; readonly coords: string;
+    readonly figs?: readonly Fig[]; readonly so?: string;
+  };
+  /** The estate's own pictures for the page's two full-width frames. */
+  readonly media?: { readonly hero: ImgRef; readonly heroTall?: ImgRef; readonly enquire?: ImgRef };
   readonly concept: Concept;
   readonly chapters: readonly Chapter[];
   readonly materials: readonly (readonly string[])[];
-  readonly day: { readonly eyebrow: string; readonly title: string; readonly items: readonly (readonly string[])[]; readonly note: string };
+  readonly day: { readonly eyebrow: string; readonly title: string; readonly items: readonly (readonly string[])[]; readonly note: string; readonly imgs?: readonly ImgRef[] };
+  /** The heading over `materials`, where the section is not about materials: [eyebrow, title]. */
+  readonly made?: readonly [string, string];
+  /** The one sentence under that section. */
+  readonly madeSo?: string;
+  /** The three steps to holding, where an estate's own differ from the platform's: [title, text]. */
+  readonly own?: readonly (readonly [string, string])[];
+  /** Show only the estate's own answers: the general ones describe a structure this estate does not have. */
+  readonly ownAnswers?: boolean;
+  /** Said under the capital stack: what the figures leave out, or stand on. */
+  readonly capitalNote?: string;
+  /** The gates money moves through, in order: [when, what]. */
+  readonly gates?: readonly (readonly [string, string])[];
+  /** What could go wrong, and the plan's answer: [risk, answer]. */
+  readonly risks?: readonly (readonly [string, string])[];
   readonly getting: { readonly title: string; readonly sub: string; readonly cards: readonly (readonly string[])[]; readonly map: MapSpec };
   readonly plan: { readonly title: string; readonly tabs: readonly PlanTab[]; readonly note: string };
   readonly details: readonly (readonly (string | number)[])[];
@@ -68,6 +106,8 @@ export interface FormSpec {
   readonly vehicle?: string;
   /** Two steps: what you are asking about, then who you are (Next Actions d11). */
   readonly steps?: boolean;
+  /** What the form is already about, stated at its head: the estate and the purpose it was opened for. */
+  readonly about?: string;
 }
 
 /* A block is one of these shapes; the renderer reads whichever key is set. */
@@ -110,12 +150,18 @@ export interface Block {
   /** Markup built from tokens by the site itself (the Journal's drawings). */
   readonly html?: string;
   readonly toc?: readonly (readonly [string, string])[];
+  /** What the contents strip calls itself. "In this piece" when absent. */
+  readonly tocLabel?: string;
+  /** A unit, estate by estate, read from the register. */
+  readonly units?: boolean;
   readonly lede?: string;
   readonly pull?: string;
   readonly inspire?: { readonly text: string; readonly who: string; readonly where: string };
   /** The holding deposit, for an offering that is open. Figures are the register's. */
   readonly deposit?: {
     readonly vehicle: string; readonly payee: string; readonly amount: string;
+    /** False where the payee partnership has no LLPIN yet. */
+    readonly incorporated?: boolean;
     readonly available: number; readonly unitPrice: string;
   };
 }
@@ -134,6 +180,8 @@ export interface SitePage {
   readonly meta?: string;
   readonly light?: number | boolean;
   readonly film?: FilmRef;
+  /** The estate's own picture, in place of the film. */
+  readonly img?: ImgRef;
   readonly blocks: readonly Block[];
   /** Overrides content/site/next.ts for this page. `null` means none. */
   readonly next?: NextStep | null;

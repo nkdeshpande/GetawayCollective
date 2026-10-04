@@ -173,8 +173,8 @@ function cards(res: CalcResult, i: CalcInputs): string {
 
 export function readout(res: CalcResult, i: CalcInputs): string {
   return `<div class="calc-cards">${cards(res, i)}</div>${chartSVG(res, i.countNights)}` +
-    `<p class="calc-nights"><b class="mono">${res.nightsPerYear[0]}–${res.nightsPerYear[1]}</b> nights a year at ${i.estate.name}, yours to spend, from year ${i.estate.fromYear}. ` +
-    `No deposit, fund or flat you let out gives you that.</p>`;
+    `<p class="calc-nights"><b class="mono">${res.nightsPerYear[0]}–${res.nightsPerYear[1]}</b> nights a year at ${i.estate.name}, yours to spend, from year ${i.estate.fromYear}, if nights are shared by equity. ` +
+    `An illustration: the rule that allocates nights is not yet decided, and each offering letter will state it.</p>`;
 }
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");

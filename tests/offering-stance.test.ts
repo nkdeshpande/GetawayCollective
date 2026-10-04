@@ -9,7 +9,7 @@
  */
 import { describe, it, expect } from "vitest";
 import {
-  CONFLICTS, VEHICLES, blockingFor, isOpen, openVehicles, publishable,
+  CONFLICTS, VEHICLES, blockingFor, endsWithPartners, isOpen, openVehicles, publishable,
   stanceFor, vehicleByKey,
 } from "../constants/vehicles";
 import { dossierFor } from "../app/_assemblies/investordossier";
@@ -42,7 +42,7 @@ describe("exactly one vehicle is open", () => {
 
   it("states The Creek's remaining capacity rather than implying it", () => {
     const s = stanceFor(creek);
-    expect(s).toEqual({ kind: "open", unitsAvailable: 4 });
+    expect(s).toEqual({ kind: "open", unitsAvailable: 8 });   // eight of twenty, re-struck 2 Oct 2026
     expect(creek.lifecycle).toBe("raising");
   });
 });
@@ -66,6 +66,33 @@ describe("a closed vehicle's numbers reconcile, or it is not closed", () => {
     for (const v of VEHICLES) {
       expect(v.stack.equityLayer + v.stack.facility).toBe(v.stack.projectTotal);
     }
+  });
+
+  it("The Creek, re-struck 2 Oct 2026: twenty units of 5%, eight offered, and every line closes", () => {
+    const o = creek.offering, s = creek.stack;
+    expect(o.unitPrice * BigInt(o.units)).toBe(o.offered);            // 8 x 62.5 L = 5.00 Cr
+    expect(o.promoter + o.offered).toBe(o.totalEquity);               // 7.50 + 5.00 = 12.50 Cr
+    expect(o.totalEquity / o.unitPrice).toBe(20n);                    // twenty units in all
+    expect(o.promoter).toBe(s.land);                                  // the founders' stake is the land, in kind
+    expect(o.totalEquity).toBe(s.equityLayer);
+    const sum = (rows: readonly (readonly [string, bigint])[]) => rows.reduce((n, [, x]) => n + x, 0n);
+    expect(sum(s.uses!)).toBe(s.projectTotal);                        // 7.50 + 12.07 + 0.49 + 0.80 = 20.86 Cr
+    expect(sum(s.sources!)).toBe(s.projectTotal);                     // 7.50 + 5.00 + 8.36 = 20.86 Cr
+    expect(s.facility <= s.facilityLimit!).toBe(true);                // inside the limit applied for
+  });
+
+  it("says a loan is applied for until a sanction exists, and never more", () => {
+    expect(creek.stack.facilityStatus).toBe("applied-for");
+    expect(creek.commitments).toMatch(/applied for and not sanctioned/);
+  });
+
+  it("carries an order of payment that ends with the partners, and no yield from it", () => {
+    expect(creek.operating.waterfall).toBeNull();
+    expect(endsWithPartners(creek.operating.cascade)).toBe(true);
+    expect(endsWithPartners([{ what: "The bank", rule: "" }, { what: "The operator", rule: "" }])).toBe(false);
+    expect(endsWithPartners(undefined)).toBe(false);
+    expect(creek.operating.yieldBasis).toBeNull();
+    expect(publishable(creek).ok).toBe(true);
   });
 });
 
@@ -119,7 +146,7 @@ describe("the commit page will not invite a commitment that cannot be made", () 
     expect(d.action).toBe("Speak with Investor Relations");
     expect(d.actionHref).toBeUndefined();   // an open vehicle walks on through diligence
     expect(d.note).toContain("Nothing on this page creates a commitment");
-    expect(JSON.stringify(d)).toContain("4 of 4 units");
+    expect(JSON.stringify(d)).toContain("8 of 8 units");
   });
 });
 

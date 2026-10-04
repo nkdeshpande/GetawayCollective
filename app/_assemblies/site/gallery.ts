@@ -20,13 +20,15 @@
  * Every frame is in the page, so it works without script as a plain list.
  */
 
-import { film } from "./render";
+import { film, plate } from "./render";
 
 export interface Frame {
   readonly pal: string;
   readonly hour: number;
   readonly rain?: boolean | number;
   readonly bp?: boolean | number;
+  /** The estate's own picture, in place of the drawn film (content/site/media.ts). */
+  readonly img?: string;
   readonly t: string;
   readonly line: string;
   readonly href?: string;
@@ -36,22 +38,25 @@ const esc = (s: unknown) =>
   String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const two = (n: number) => String(n).padStart(2, "0");
 
-export function GALLERY(id: string, title: string, frames: readonly Frame[]): string {
+/* 28 Sep 2026: the fan says what it opens, in words, on the button itself
+   ("View all seven estates"), rather than in a hint beneath it. */
+export function GALLERY(id: string, title: string, frames: readonly Frame[], open = `Open ${title}`): string {
   if (!frames.length) return "";
   const fan = frames.slice(0, 5);
   return `<div class="gal" data-gal>` +
-    `<button type="button" class="gal-fan" data-gal-open aria-haspopup="dialog" aria-controls="${id}-ov" aria-label="Open ${esc(title)}: ${frames.length} drawn frames">` +
+    `<button type="button" class="gal-fan" data-gal-open aria-haspopup="dialog" aria-controls="${id}-ov" aria-expanded="false">` +
+    `<span class="gal-cards" aria-hidden="true">` +
     fan.map((f, i) => { const d = i - (fan.length - 1) / 2;
-      return `<span class="gal-card" style="--i:${d};--a:${Math.abs(d)};z-index:${10 - Math.abs(d) * 2}">${film(f.pal, f.hour, { rain: f.rain, bp: f.bp })}</span>`; }).join("") +
-    `</button>` +
-    `<p class="mono gal-hint">${two(frames.length)} frames · drawn films, illustration · tap to open</p>` +
+      return `<span class="gal-card" style="--i:${d};--a:${Math.abs(d)};z-index:${10 - Math.abs(d) * 2}">${f.img ? plate(f.img, { sizes: "200px", tag: "none" }) : film(f.pal, f.hour, { rain: f.rain, bp: f.bp })}</span>`; }).join("") +
+    `</span><span class="gal-open-l">${esc(open)}<svg aria-hidden="true"><use href="#ne"/></svg></span></button>` +
+    `<p class="gal-hint">${frames.length} drawn frames, illustration</p>` +
     `<div class="gal-ov" id="${id}-ov" role="dialog" aria-modal="true" aria-label="${esc(title)}" hidden>` +
     `<header class="gal-hud"><span class="eb">${esc(title)}</span><span class="mono gal-idx" aria-live="polite">01 / ${two(frames.length)}</span>` +
     `<button type="button" class="gal-x" data-gal-close>Close <span class="mono">Esc</span></button></header>` +
     `<div class="gal-vp" data-gal-vp tabindex="0" aria-roledescription="carousel" aria-label="${esc(title)}, use the arrow keys">` +
     frames.map((f, i) => `<figure class="gal-f${i === 0 ? " on" : ""}" aria-roledescription="slide" aria-label="${i + 1} of ${frames.length}: ${esc(f.t)}">` +
-      `<div class="gal-m">${film(f.pal, f.hour, { rain: f.rain, bp: f.bp, label: `Drawn film, illustration: ${f.t}` })}</div>` +
-      `<figcaption><span class="mono">${two(i + 1)} · drawn film, illustration</span><b>${esc(f.t)}</b><em>${esc(f.line)}</em>` +
+      `<div class="gal-m">${f.img ? plate(f.img, { sizes: "76vw", tag: "none" }) : film(f.pal, f.hour, { rain: f.rain, bp: f.bp, label: `Drawn film, illustration: ${f.t}` })}</div>` +
+      `<figcaption><span class="mono">${two(i + 1)} · ${f.img ? "illustration, unbuilt" : "drawn film, illustration"}</span><b>${esc(f.t)}</b><em>${esc(f.line)}</em>` +
       (f.href ? `<a class="btn btn-s" href="${f.href}">Open the estate</a>` : "") + `</figcaption></figure>`).join("") +
     `</div>` +
     `<footer class="gal-foot"><button type="button" class="gal-step" data-gal-prev aria-label="Previous frame">←</button>` +
@@ -73,13 +78,13 @@ export function PROJECTOR(id: string, title: string, frames: readonly Moment[]):
   return `<div class="proj" data-proj>` +
     `<div class="proj-screen" id="${id}-screen" aria-roledescription="carousel" aria-label="${esc(title)}">` +
     frames.map((f, i) => `<figure class="proj-f" aria-roledescription="slide" aria-label="${i + 1} of ${frames.length}: ${esc(f.t)}"${i ? " hidden" : ""}>` +
-      `<div class="proj-plate">${film(f.pal, f.hour, { rain: f.rain, bp: f.bp, label: `Drawn film, illustration: ${f.label.toLowerCase()} at the estate` })}</div>` +
+      `<div class="proj-plate">${f.img ? plate(f.img, { sizes: "(max-width: 900px) 100vw, 860px", tag: "none" }) : film(f.pal, f.hour, { rain: f.rain, bp: f.bp, label: `Drawn film, illustration: ${f.label.toLowerCase()} at the estate` })}</div>` +
       `<figcaption><span class="mono">FIG. ${two(i + 1)} — ${esc(f.label)}</span><b>${esc(f.t)}</b><em>${esc(f.line)}</em></figcaption></figure>`).join("") +
     `</div>` +
     `<div class="proj-console"><button type="button" class="proj-btn" data-proj-prev aria-controls="${id}-screen">Prev</button>` +
     `<span class="mono proj-idx" aria-live="polite">${two(1)} / ${two(frames.length)}</span>` +
     `<button type="button" class="proj-btn" data-proj-next aria-controls="${id}-screen">Next</button></div>` +
-    `<p class="mono proj-note">Drawn films, illustration: the estate's own drawing, relit for each moment. No photograph is shown until one is taken.</p>` +
+    `<p class="proj-note">${frames.some((f) => f.img) ? "Illustrations of an estate not yet built. No photograph is shown until one is taken." : "Drawn films, illustration: the estate's own drawing, relit for each moment. No photograph is shown until one is taken."}</p>` +
     `</div>`;
 }
 

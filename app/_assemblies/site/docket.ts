@@ -92,7 +92,7 @@ export function rulebookDocket(): string {
  * One estate's papers. Each tab's stamp is decided by the register field
  * behind it, so a paper the register does not hold can never read as held.
  */
-export function estateDocket(v: Vehicle, name: string, publishable: boolean): string {
+export function estateDocket(v: Vehicle, name: string, publishable: boolean, complete = false): string {
   const g = v.governance;
   const titled = v.tenure === "title-verified" || v.tenure === "conveyance-complete";
   const tabs: DocketTab[] = [
@@ -121,11 +121,13 @@ export function estateDocket(v: Vehicle, name: string, publishable: boolean): st
     },
     {
       label: "Offering", eyebrow: "The offering pack", title: `The ${name} offering pack`,
-      stamp: publishable ? "On request" : "Not yet", stampTone: publishable ? "wait" : "open",
-      purpose: publishable
-        ? "The drawings, the structure of the LLP, the waterfall and the risk disclosure, in one document. Sent after a short qualification."
+      stamp: complete ? "Complete" : publishable ? "On request" : "Not yet", stampTone: complete ? "ok" : publishable ? "wait" : "open",
+      purpose: complete
+        ? "Funding for this estate is complete. The offering is closed."
+        : publishable
+        ? `The drawings, the structure of the LLP, ${v.operating.cascade?.length ? "the order of payment" : "the waterfall"} and the risk disclosure, in one document. Sent after a short qualification.`
         : "Not yet published: the figures it would be priced from are still being confirmed.",
-      links: publishable ? [["Request the pack", `/collection/${v.slug}/enquire`], ["How to qualify", "/how-to-qualify"]] : [],
+      links: publishable && !complete ? [["Request the pack", `/collection/${v.slug}/enquire`], ["How to qualify", "/how-to-qualify"]] : [],
     },
     {
       label: "Land", eyebrow: "Land and title", title: v.landArea,

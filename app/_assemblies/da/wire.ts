@@ -54,7 +54,7 @@ export function wireDA(root: ParentNode): () => void {
         const row = set.rows[Math.min(+r.value, set.rows.length) - 1];
         setText(el, "cap", row.cap); setText(el, "share", row.share); setText(el, "vote", row.share);
         setText(el, "nights", row.nights); setText(el, "u", String(row.u)); setText(el, "uw", row.u === 1 ? "unit" : "units");
-        setText(el, "begins", set.begins);
+        setText(el, "note", set.note);
       };
       pills.forEach((b) => on(b, "click", () => { press(pills, b); set = data.set.find((x: { key: string }) => x.key === b.dataset.k) ?? set; r.max = String(set.rows.length); if (+r.value > set.rows.length) r.value = "1"; draw(); }));
       on(r, "input", draw); draw();
@@ -96,17 +96,6 @@ export function wireDA(root: ParentNode): () => void {
           .map(([n, ok]) => `<span class="da-tag ${ok ? "ok" : ""}">${n} · ${ok ? "carries" : "fails"}</span>`).join("");
       };
       on(r, "input", draw); draw();
-    }
-
-    if (kind === "path") {
-      let cur = 0; const S: string[] = data.stages, bars = qa("i", q(".da-ap", el)!), items = qa("li", el);
-      const draw = () => {
-        setText(el, "i", String(cur + 1)); setText(el, "n", S[cur]);
-        bars.forEach((b, i) => { b.className = i < cur ? "done" : i === cur ? "now" : ""; });
-        items.forEach((b, i) => { b.className = i < cur ? "done" : i === cur ? "now" : ""; });
-      };
-      const go = q(".da-go", el); if (go) on(go, "click", () => { cur = (cur + 1) % S.length; draw(); });
-      items.forEach((li, i) => on(li, "click", () => { cur = i; draw(); }));
     }
 
     if (kind === "lockin") {

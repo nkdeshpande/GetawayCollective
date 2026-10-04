@@ -78,7 +78,7 @@
 .da-ub i { flex: 1; height: 88px; }
 
 /* position */
-.da-pb { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gc-sp-2xs); }
+.da-pb { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--gc-sp-2xs); }
 
 /* three entities */
 .da-te { width: 100%; height: auto; max-width: 760px; }
@@ -102,14 +102,33 @@
 .da-res { display: grid; gap: calc(var(--gc-sp-3xs) * 1.5); justify-items: end; }
 
 /* path */
-.da-ap { display: grid; grid-template-columns: repeat(16, 1fr); gap: calc(var(--gc-sp-3xs) * 0.75); }
-.da-ap i { height: 26px; background: var(--da-track); }
-.da-ap i.done { background: var(--da-ink); } .da-ap i.now { background: var(--gc-electric); }
 .da-ap-l { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gc-sp-2xs) var(--gc-sp-s); }
-.da-ap-l li { display: flex; gap: var(--gc-sp-2xs); align-items: center; font-size: 13.5px; color: var(--da-mute); cursor: pointer; }
+.da-ap-l li { display: flex; gap: var(--gc-sp-2xs); align-items: center; font-size: 14px; color: var(--da-dim); }
 .da-ap-l li i { width: 9px; height: 9px; background: var(--da-track); flex: none; }
-.da-ap-l li.done { color: var(--da-dim); } .da-ap-l li.done i { background: var(--da-dim); }
-.da-ap-l li.now { color: var(--da-ink); font-weight: 600; } .da-ap-l li.now i { background: var(--gc-electric); }
+/* 28 Sep 2026: the stages fold, and a link to #stages opens them. */
+.da-fold { border-top: 1px solid var(--da-line); border-bottom: 1px solid var(--da-line); }
+.da-fold > summary { cursor: pointer; padding: var(--gc-sp-xs) 0; font: 600 15px var(--gc-font-body); color: var(--da-ink); }
+.da-fold[open] > summary { margin-bottom: var(--gc-sp-xs); }
+.da-fold[open] { padding-bottom: var(--gc-sp-s); }
+
+/* an order of payment: tiers, the partners last */
+.da-cas { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--da-line); }
+.da-cas li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--gc-sp-s); padding: var(--gc-sp-xs) 0; border-bottom: 1px solid var(--da-line); align-items: baseline; }
+.da-cas li > b { font-size: 13px; color: var(--da-mute); }
+.da-cas h4 { margin: 0; font: 700 16px/1.25 var(--gc-font-display); color: var(--da-ink); }
+.da-cas p { margin: calc(var(--gc-sp-3xs) / 2) 0 0; font-size: 14px; line-height: 1.5; color: var(--da-dim); max-width: 62ch; }
+.da-cas li.last h4 { color: var(--da-cu); }
+
+/* the waterfall as a table */
+.da-tw { overflow-x: auto; }
+.da-tw:focus-visible { outline: 2px solid var(--gc-electric); outline-offset: 4px; }
+.da-t { width: 100%; min-width: 480px; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+.da-t th, .da-t td { text-align: left; padding: var(--gc-sp-xs) var(--gc-sp-s) var(--gc-sp-xs) 0; border-bottom: 1px solid var(--da-line); vertical-align: baseline; }
+.da-t thead th { font: 700 15px var(--gc-font-display); border-bottom: 2px solid var(--da-ink); }
+.da-t th { font-family: var(--gc-font-body); text-transform: none; letter-spacing: 0; }
+.da-t tbody th { font-size: 14.5px; font-weight: 500; color: var(--da-dim); }
+.da-t td { font-size: 15px; color: var(--da-ink); }
+.da-t tfoot th, .da-t tfoot td { font-weight: 700; border-bottom: 0; color: var(--da-ink); }
 
 /* lock-in */
 .da-lk { position: relative; height: 10px; background: var(--da-track); }
@@ -163,6 +182,9 @@
 
 @media (max-width: 760px) {
   .da-cs, .da-fm, .da-ch { grid-template-columns: 1fr; }
+  /* Stacked, the two columns of the capital chart had no height of their own,
+     so every band fell to its 4px minimum and the chart read as a few lines. */
+  .da-cs-cols { min-height: clamp(180px, 52vw, 240px); }
   .da-pb { grid-template-columns: 1fr 1fr; }
   .da-ap-l { grid-template-columns: 1fr 1fr; }
   .da-wf-row { grid-template-columns: 96px 1fr 52px; }

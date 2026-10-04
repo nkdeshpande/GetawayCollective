@@ -68,7 +68,7 @@ async function payDeposit(f: HTMLFormElement) {
       handler: async (res: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
         const v = await fetch("/api/deposit/verify", { method: "POST", headers: { "content-type": "application/json" },
           body: JSON.stringify({ orderId: res.razorpay_order_id, paymentId: res.razorpay_payment_id, signature: res.razorpay_signature, email: body.email, vehicle, reference: j.reference }) });
-        if (v.ok) say(ok, `Deposit received. Your position is held; reference ${String(j.reference).slice(0, 8)}. Investor Relations will write within one working day about identity checks, the balance and the Vehicle Agreement.`);
+        if (v.ok) say(ok, `Deposit received. Your position is held; reference ${String(j.reference).slice(0, 8)}. Investor Relations will write to you about identity checks, the balance and the Vehicle Agreement.`);
         else say(err, `Razorpay took the payment (${res.razorpay_payment_id}) but this site could not confirm it. Keep that id; Investor Relations will reconcile it.`);
         f.reset();
       },
@@ -84,7 +84,7 @@ async function payDeposit(f: HTMLFormElement) {
    Walks the prose of the page (never headings, links, buttons or figures)
    and marks the first use of each defined term. A tap opens one small
    card with the definition and a way to the whole glossary. */
-const PROSE = ".tx-body .tx-p, .tx-body .tx-lede, .tx-body .tx-list li, .tx-body .tx-steps p, .intro-p, .chamber > .para, .chap .side .para, .concept-lead, .fin-lead";
+const PROSE = ".tx-body .tx-p, .tx-body .tx-lede, .tx-body .tx-list li, .tx-body .tx-steps p, .intro-p, .chamber > .para, .chap .side .para, .ch-body .para, .chap-body .para, .concept-lead, .fin-lead";
 const SKIP = "a, button, b, strong, code, h1, h2, h3, h4, .mono, .gl-t";
 function glossary(root: HTMLElement, terms: readonly (readonly [string, string])[]): () => void {
   const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -214,7 +214,7 @@ function shortlist(root: HTMLElement): () => void {
       b.textContent = on ? "Saved" : "Save";
       b.setAttribute("aria-label", on ? `Remove ${b.dataset.name} from your shortlist` : `Save ${b.dataset.name} to your shortlist`);
     });
-    $$<HTMLAnchorElement>(".cc", root).forEach((c) => c.classList.toggle("cc-saved", has((c.getAttribute("href") || "").replace("/collection/", ""))));
+    $$<HTMLElement>(".cc[data-slug]", root).forEach((c) => c.classList.toggle("cc-saved", has(c.dataset.slug || "")));
     $$("[data-shortlist]", root).forEach((p) => {
       p.hidden = !l.length;
       p.replaceChildren();
@@ -227,7 +227,7 @@ function shortlist(root: HTMLElement): () => void {
         chip.append(link(`/collection/${i.slug}`, i.name), x);
         row.append(chip);
       });
-      const ask = link("/contact", "Ask about these"); ask.className = "btn btn-s";
+      const ask = link("/contact?about=estate", "Ask about these"); ask.className = "btn btn-s";
       p.append(el("span", `Your shortlist · ${l.length}`), row, ask, el("p", "Kept in this browser only."));
       p.firstElementChild!.className = "eb";
       p.lastElementChild!.className = "short-note";
@@ -431,6 +431,73 @@ function steps(root: HTMLElement): () => void {
   return () => off.forEach((x) => x());
 }
 
+/* ── A LINK OPENS WHAT IT POINTS AT — 28 Sep 2026 ──────────────────────
+   A deep link into something folded (an answer, the sixteen stages, a
+   docket tab, a gate) used to land on the closed fold and show nothing. It
+   now opens every fold around its target, selects the tab whose panel
+   holds it, scrolls to it and moves focus there, whether the link was
+   followed on this page, typed, or arrived from another. */
+export function reveal(t: HTMLElement) {
+  for (let d = t.closest("details"); d; d = d.parentElement?.closest("details") ?? null) d.open = true;
+  if (t instanceof HTMLDetailsElement) t.open = true;
+  for (let pnl = t.closest<HTMLElement>('[role="tabpanel"]'); pnl; pnl = pnl.parentElement?.closest<HTMLElement>('[role="tabpanel"]') ?? null) {
+    if (pnl.hidden) document.querySelector<HTMLElement>(`[role="tab"][aria-controls="${pnl.id}"]`)?.click();
+  }
+}
+function goTo(t: HTMLElement, still: boolean) {
+  reveal(t);
+  t.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" });
+  if (!t.matches("a[href], button, input, select, textarea, summary, [tabindex]")) t.setAttribute("tabindex", "-1");
+  t.focus({ preventScroll: true });
+}
+
+/* ── FORMS: WHAT IS WRONG, WHERE, AND ONLY TRUE CONFIRMATIONS ──────────
+   28 Sep 2026. Each required field says what it needs beside itself, when
+   it is left or when the form is sent; the button says it is sending and
+   cannot be pressed twice; and the confirmation appears only when the
+   server has answered { ok: true }. A slow connection is given twenty
+   seconds and then told plainly that the send could not be confirmed. */
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function fieldError(i: HTMLInputElement): string {
+  const v = i.value.trim();
+  if (i.name === "email") return !v ? "Enter your email address." : EMAIL.test(v) ? "" : "Enter an email address like name@example.com.";
+  if (i.name === "name") return v ? "" : "Enter your name.";
+  if (i.name === "phone") return v.replace(/\D/g, "").length >= 8 ? "" : "Enter a mobile number of at least eight digits.";
+  return i.required && !v ? "This is needed." : "";
+}
+function showError(i: HTMLInputElement, msg: string) {
+  const slot = i.id ? document.getElementById(`${i.id}-err`) : null;
+  i.setAttribute("aria-invalid", String(!!msg));
+  if (slot) { slot.textContent = msg; slot.hidden = !msg; }
+}
+/** True when every required field in `scope` holds; otherwise marks each and focuses the first. */
+function validate(scope: ParentNode): boolean {
+  let first: HTMLInputElement | null = null;
+  $$<HTMLInputElement>("input[required]", scope).forEach((i) => {
+    if (i.type === "checkbox") return;
+    const msg = fieldError(i);
+    showError(i, msg);
+    if (msg && !first) first = i;
+  });
+  if (first) (first as HTMLInputElement).focus();
+  return !first;
+}
+const ABOUT: Readonly<Record<string, string>> = {
+  structure: "The structure", estate: "A specific estate", accreditation: "Accreditation", pack: "The offering pack", press: "Press",
+};
+/** An enquiry opened for a purpose arrives with it chosen: ?estate=<slug>&about=<topic>. */
+function prefill(root: HTMLElement) {
+  const q = new URLSearchParams(location.search);
+  const estate = q.get("estate"), about = q.get("about");
+  $$<HTMLFormElement>("form[data-form]", root).forEach((f) => {
+    const sel = $<HTMLSelectElement>('select[name="vehicle"]', f);
+    if (estate && sel && [...sel.options].some((o) => o.value === estate)) sel.value = estate;
+    const want = about ? ABOUT[about] : estate ? ABOUT.estate : undefined;
+    const chips = $$<HTMLButtonElement>(".chip", f);
+    if (want && chips.some((c) => (c.textContent || "").trim() === want)) chips.forEach((c) => c.setAttribute("aria-pressed", String((c.textContent || "").trim() === want)));
+  });
+}
+
 /* ── Motion: sections arrive as they are reached — 25 Sep 2026 ────────
    Marks what may move, reveals at once whatever is already on screen, and
    only then adds .rv to the page (site.css), so nothing is hidden without
@@ -439,30 +506,30 @@ function steps(root: HTMLElement): () => void {
 const REVEAL = [
   ".tx-body > :not(.tx-toc)", ".tx-split-facts > *",
   ".est .intro-p", ".est .chap .tag", ".est .chap .side", ".est .concept > .eb", ".est .concept > .h2", ".est .concept-lead", ".est .axo",
-  ".est .chamber .ttl", ".est .chamber .para", ".est .chamber .meta", ".est .pc-rail > *",
-  ".est .coll > .eb", ".est .coll > .h2", ".est .cgr > div", ".est :is(.day, .getting, .plan, .details, .fin) > *", ".est .own > div", ".est .faq-estate > .h2", ".est .mk .cap",
+  ".est .chamber .ttl", ".est .chamber > .para", ".est .chamber .meta", ".est .pc-rail > *",
+  ".est .chap-body > *", ".est .chap-foot > *", ".est .ch-body > *",
+  ".est .coll > .eb", ".est .coll > .h2", ".est .coll > .ch-so", ".est .cgr > div", ".est .cgr-std > div", ".est :is(.day, .getting, .plan, .details, .fin) > *", ".est .own > div", ".est .faq-estate > .h2", ".est .mk .cap",
   ".cgrid > .cc", ".ben .r > div", ".cmp > *", ".col-stages > *", ".faq > .h2", ".calc", ".calc-cmp",
 ].join(",");
-const FILMS = ".est .chap .film > canvas, .est .chamber .film > canvas";
-const STAGGER = ".cgrid, .cgr, .pc-rail, .own, .tx-figs, .own-tiles, .tx-steps, .ben .r";
+const STAGGER = ".cgrid, .cgr, .cgr-std, .pc-rail, .own, .tx-figs, .own-tiles, .tx-steps, .ben .r";
 
 function wireReveal(root: HTMLElement, still: boolean): () => void {
   if (still || typeof IntersectionObserver === "undefined") return () => {};
-  const skip = ".phero, .tx-hero, .tx-split-head, .tx-formcard, .ebar, .pager, form";
-  const els = [...$$<HTMLElement>(REVEAL, root), ...$$<HTMLElement>(FILMS, root)].filter((el) => !el.closest(skip));
+  const skip = ".phero, .tx-hero, .tx-split-head, .tx-formcard, .ebar, form";
+  const els = $$<HTMLElement>(REVEAL, root).filter((el) => !el.closest(skip));
   const io = new IntersectionObserver((es) => es.forEach((en) => {
     if (en.isIntersecting) { en.target.classList.add("rv-in"); io.unobserve(en.target); }
   }), { rootMargin: "0px 0px -8% 0px" });
   const vh = innerHeight;
   els.forEach((el) => {
-    el.dataset.rv = el.tagName === "CANVAS" ? "film" : "";
+    el.dataset.rv = "";
     const r = el.getBoundingClientRect();
     if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add("rv-in");
     else io.observe(el);
     const p = el.parentElement;
     if (p && p.matches(STAGGER)) {
       const i = [...p.children].indexOf(el);
-      if (i > 0) el.style.transitionDelay = `${Math.min(i, 5) * 70}ms`;
+      if (i > 0) el.style.transitionDelay = `${Math.min(i, 4) * 40}ms`;
     }
   });
   root.classList.add("rv");
@@ -485,6 +552,28 @@ function wireReveal(root: HTMLElement, still: boolean): () => void {
   };
 }
 
+/* ── Pictures behind a tab, a frame or the edge of a rail — 4 Oct 2026 ──
+   A lazy picture is fetched when it comes near the screen. One that is
+   hidden (the projector's other frames, the plan's other tabs, the open
+   gallery, the collection's other groups) or off to the side of a rail never
+   comes near it, so it was
+   fetched only when asked for, and on a phone's connection the frame stood
+   empty meanwhile. Each such group now fetches its pictures as the group
+   itself comes near. */
+const PICTURE_GROUPS = ".proj, .plan .pv, .pc-rail, .gal, .cgrid";
+function wirePictures(root: HTMLElement): () => void {
+  const lazy = 'img[loading="lazy"]';
+  const groups = $$<HTMLElement>(PICTURE_GROUPS, root).filter((g) => g.querySelector(lazy));
+  if (!groups.length) return () => {};
+  const fetchAll = (g: Element) => g.querySelectorAll<HTMLImageElement>(lazy).forEach((i) => { i.loading = "eager"; });
+  if (typeof IntersectionObserver === "undefined") { groups.forEach(fetchAll); return () => {}; }
+  const io = new IntersectionObserver((es) => es.forEach((en) => {
+    if (en.isIntersecting) { fetchAll(en.target); io.unobserve(en.target); }
+  }), { rootMargin: "900px 0px" });
+  groups.forEach((g) => io.observe(g));
+  return () => io.disconnect();
+}
+
 export function SiteBehaviour() {
   const pathname = usePathname();
   const router = useRouter();
@@ -504,6 +593,9 @@ export function SiteBehaviour() {
     /* sections arrive as they are reached */
     off.push(wireReveal(root, still));
 
+    /* pictures behind a tab or a frame are fetched before they are asked for */
+    off.push(wirePictures(root));
+
     /* the returns calculator (./calc.ts), where a page carries one */
     off.push(wireCalc(root));
 
@@ -520,7 +612,7 @@ export function SiteBehaviour() {
       /* a link within the page glides there rather than jumping */
       if (href.length > 1 && href.startsWith("#")) {
         const t = document.getElementById(decodeURIComponent(href.slice(1)));
-        if (t) { ev.preventDefault(); t.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" }); history.replaceState(null, "", href); }
+        if (t) { ev.preventDefault(); goTo(t, still); history.replaceState(null, "", href); }
         return;
       }
       if (!href.startsWith("/") || href.startsWith("//") || href.startsWith("/api/")) return;
@@ -545,10 +637,25 @@ export function SiteBehaviour() {
     /* collection filters */
     const cg = $("#cgrid", root);
     if (cg) {
+      /* 28 Sep 2026: the filter and the tab are kept for this visit, so a
+         reader who opens an estate and comes back finds the grid as they
+         left it. Session storage only; nothing leaves the browser. */
+      const KEY = "gc-collection-view";
       let cf = "all", cs = $<HTMLButtonElement>('.subtabs button[aria-selected="true"]', root)?.dataset.s || "all";
-      const apply = () => $$<HTMLElement>(".cc", cg).forEach((c) => { c.hidden = !((cf === "all" || c.dataset.f === cf) && (cs === "all" || c.dataset.s === cs)); });
-      $$<HTMLButtonElement>(".fl button", root).forEach((b, _, all) => on(b, "click", () => { all.forEach((x) => x.setAttribute("aria-pressed", String(x === b))); cf = b.dataset.f || "all"; apply(); }));
-      $$<HTMLButtonElement>(".subtabs button", root).forEach((b, _, all) => on(b, "click", () => { all.forEach((x) => x.setAttribute("aria-selected", String(x === b))); cs = b.dataset.s || "all"; apply(); }));
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(KEY) || "null") as { f?: string; s?: string } | null;
+        if (saved?.f && $(`.fl button[data-f="${saved.f}"]`, root)) cf = saved.f;
+        if (saved?.s && $<HTMLButtonElement>(`.subtabs button[data-s="${saved.s}"]:not(:disabled)`, root)) cs = saved.s;
+      } catch { /* storage refused: the grid opens as served */ }
+      const fls = $$<HTMLButtonElement>(".fl button", root), tabs = $$<HTMLButtonElement>(".subtabs button", root);
+      const apply = () => {
+        fls.forEach((x) => x.setAttribute("aria-pressed", String((x.dataset.f || "all") === cf)));
+        tabs.forEach((x) => x.setAttribute("aria-selected", String((x.dataset.s || "all") === cs)));
+        $$<HTMLElement>(".cc", cg).forEach((c) => { c.hidden = !((cf === "all" || c.dataset.f === cf) && (cs === "all" || c.dataset.s === cs)); });
+        try { sessionStorage.setItem(KEY, JSON.stringify({ f: cf, s: cs })); } catch { /* the view lasts the page */ }
+      };
+      fls.forEach((b) => on(b, "click", () => { cf = b.dataset.f || "all"; apply(); }));
+      tabs.forEach((b) => on(b, "click", () => { cs = b.dataset.s || "all"; apply(); }));
       apply();
     }
 
@@ -584,15 +691,6 @@ export function SiteBehaviour() {
       }));
     });
 
-    /* the section pager */
-    const pager = $$<HTMLAnchorElement>(".pager a", root);
-    if (pager.length && typeof IntersectionObserver !== "undefined") {
-      const io = new IntersectionObserver((es) => es.forEach((en) => {
-        if (en.isIntersecting) pager.forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + en.target.id));
-      }), { rootMargin: "-45% 0px -50% 0px" });
-      pager.forEach((a) => { const t = document.getElementById((a.getAttribute("href") || "#").slice(1)); if (t) io.observe(t); });
-      off.push(() => io.disconnect());
-    }
 
     /* a long read: how far through, and which part (Digital Visuals · Journal) */
     const toc = $(".tx-toc", root), body = $(".tx-body", root);
@@ -613,25 +711,27 @@ export function SiteBehaviour() {
       on(window, "scroll", tick, { passive: true }); tick();
     }
 
-    /* the estate bar: shown once the hero has gone, hidden again at the enquiry */
-    const ebar = $("[data-ebar]", root), hero = $(".phero", root);
-    if (ebar && hero && typeof IntersectionObserver !== "undefined") {
-      const cta = $<HTMLAnchorElement>("a", ebar);
-      let past = false, atEnd = false;
-      const set = () => {
-        const on = past && !atEnd;
-        ebar.classList.toggle("on", on);
-        ebar.setAttribute("aria-hidden", String(!on));
-        if (cta) cta.tabIndex = on ? 0 : -1;
-      };
-      const io = new IntersectionObserver((es) => es.forEach((en) => {
-        if (en.target === hero) past = !en.isIntersecting && en.boundingClientRect.top < 0;
-        else atEnd = en.isIntersecting;
-        set();
-      }));
-      io.observe(hero);
-      $$(".mk, .mk-wait", root).forEach((m) => io.observe(m));
-      off.push(() => io.disconnect());
+    /* the estate bar (render.ts PROP): the layer being read is marked, and
+       on a narrow screen its link is kept in view inside the bar */
+    const ebar = $(".ebar", root);
+    if (ebar) {
+      const list = $<HTMLElement>(".ebar-l", ebar), links = $$<HTMLAnchorElement>(".ebar-l a", ebar);
+      const mark = (id: string) => links.forEach((a) => {
+        const cur = a.getAttribute("href") === "#" + id;
+        if (cur) {
+          a.setAttribute("aria-current", "location");
+          if (list && list.scrollWidth > list.clientWidth) {
+            const x = a.getBoundingClientRect().left - list.getBoundingClientRect().left + list.scrollLeft;
+            list.scrollTo({ left: Math.max(0, x - 12), behavior: "auto" });
+          }
+        }
+        else a.removeAttribute("aria-current");
+      });
+      if (typeof IntersectionObserver !== "undefined") {
+        const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) mark(en.target.id); }), { rootMargin: "-40% 0px -55% 0px" });
+        $$(".layer", root).forEach((l) => io.observe(l));
+        off.push(() => io.disconnect());
+      }
       /* how far through the estate, drawn in its accent under the bar */
       const prog = () => ebar.style.setProperty("--sp", String(Math.min(1, Math.max(0, scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)))));
       on(window, "scroll", prog, { passive: true }); prog();
@@ -671,16 +771,22 @@ export function SiteBehaviour() {
     });
 
     /* forms: the platform's own endpoints */
+    prefill(root);
     $$<HTMLFormElement>("form[data-form]", root).forEach((f) => {
       $$<HTMLButtonElement>(".chip", f).forEach((c) => on(c, "click", () => c.setAttribute("aria-pressed", String(c.getAttribute("aria-pressed") !== "true"))));
+      /* a field left wrong says so as it is left; corrected, the message goes */
+      $$<HTMLInputElement>("input[required]:not([type=checkbox])", f).forEach((i) => {
+        on(i, "blur", () => { if (i.value.trim() || i.getAttribute("aria-invalid") === "true") showError(i, fieldError(i)); });
+        on(i, "input", () => { if (i.getAttribute("aria-invalid") === "true") showError(i, fieldError(i)); });
+      });
       on(f, "submit", (async (ev: Event) => {
         ev.preventDefault();
-        if (f.dataset.to === "deposit") { await payDeposit(f); return; }
+        if (f.dataset.to === "deposit") { if (validate(f)) await payDeposit(f); return; }
         const ok = $<HTMLElement>(".tx-ok", f), err = $<HTMLElement>(".tx-err", f);
         const btn = $<HTMLButtonElement>("button[type=submit]", f);
         const val = (n: string) => ($<HTMLInputElement>(`[name="${n}"]`, f)?.value || "").trim();
+        if (!validate(f)) return;
         const email = val("email");
-        if (!email || !/.+@.+\..+/.test(email)) { $<HTMLInputElement>('[name="email"]', f)?.focus(); return; }
         const to = f.dataset.to === "signal" ? "signal" : "dossier";
         const topics = $$<HTMLButtonElement>('.chip[aria-pressed="true"]', f).map((c) => c.textContent || "").filter(Boolean);
         const shortBox = $<HTMLElement>("[data-short]", f);
@@ -689,26 +795,41 @@ export function SiteBehaviour() {
         const body = to === "signal"
           ? { email }
           : { name: val("name") || email, email, vehicle: f.dataset.vehicle || val("vehicle") || undefined, city: val("city") || undefined, note: note || undefined };
-        if (btn) btn.disabled = true;
+        const label = btn?.innerHTML ?? "";
+        if (btn) { btn.disabled = true; btn.setAttribute("aria-busy", "true"); btn.textContent = "Sending…"; }
         if (ok) ok.hidden = true; if (err) err.hidden = true;
+        const addr = err?.dataset.addr || "ir@getawaycollective.co";
+        const fail = (why: string) => { if (err) { err.textContent = `${why} Write to ${addr} and it will reach the same desk.`; err.hidden = false; } };
+        const ctl = new AbortController(), timer = window.setTimeout(() => ctl.abort(), 20000);
         try {
-          const r = await fetch(`/api/${to}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
-          if (r.ok) {
-            if (ok) ok.hidden = false;
+          if (navigator.onLine === false) { fail("You appear to be offline, so nothing was sent."); return; }
+          const r = await fetch(`/api/${to}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: ctl.signal });
+          const j = await r.json().catch(() => ({})) as { ok?: boolean };
+          if (r.ok && j.ok === true) {
             f.reset();
             /* A stepped enquiry that has gone says so and nothing else. */
             $$<HTMLElement>(".fstep", f).forEach((s) => { s.hidden = true; });
-          } else if (err) err.hidden = false;
-        } catch { if (err) err.hidden = false; }
-        if (btn) btn.disabled = false;
+            if (ok) { ok.hidden = false; ok.focus(); }
+          } else if (r.status === 429) fail("Too many sends from this connection in a short time; nothing more was sent. Wait a minute and try again.");
+          else if (r.status === 400) fail("The form could not be read, so nothing was sent. Check the email address and try again.");
+          else fail("That did not go through, so nothing was sent.");
+        } catch (e) {
+          fail((e as Error)?.name === "AbortError" ? "The connection is slow and the send could not be confirmed. It may not have gone through." : "That did not go through, so nothing was sent.");
+        } finally {
+          window.clearTimeout(timer);
+          if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); btn.innerHTML = label; }
+        }
       }) as EventListener);
     });
 
-    /* a hash on arrival scrolls to its section once the page has laid out */
-    if (location.hash.length > 1) {
+    /* a hash on arrival, or a later change of it, opens and shows its target */
+    const toHash = (smooth: boolean) => {
+      if (location.hash.length < 2) return;
       const t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-      if (t) requestAnimationFrame(() => t.scrollIntoView());
-    }
+      if (t) goTo(t, still || !smooth);
+    };
+    toHash(false);
+    on(window, "hashchange", () => toHash(true));
 
     return () => off.forEach((f) => f());
   }, [pathname, router]);

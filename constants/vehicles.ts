@@ -108,7 +108,7 @@ export type Tenure =
 /** What each tenure position may be SAID, in public, in full. */
 export const TENURE_LABEL: Record<Tenure, string> = {
   possession: "In possession · title not yet established",
-  "diligence-complete": "Diligence complete",
+  "diligence-complete": "Diligence complete · title not yet verified",
   "title-verified": "Title verified",
   "conveyance-complete": "Conveyance complete",
 };
@@ -127,6 +127,21 @@ export interface CapitalStack {
   readonly projectTotal: bigint;
   readonly moratorium: string;
   readonly covenant: string;
+  /**
+   * What the project is spent on, and what pays for it, line by line, where
+   * the record states them (2 Oct 2026, The Creek). Each sums to
+   * projectTotal; tests/offering-stance.test.ts holds them to it.
+   */
+  readonly uses?: readonly (readonly [string, bigint])[];
+  readonly sources?: readonly (readonly [string, bigint])[];
+  /** The lender's limit, where it is more than the costed project draws. */
+  readonly facilityLimit?: bigint;
+  /**
+   * Whether the loan exists. "applied-for" is said in those words on every
+   * surface that names the loan: nobody is told a loan is secured before a
+   * sanction letter says so.
+   */
+  readonly facilityStatus?: "applied-for" | "sanctioned";
 }
 
 export interface Offering {
@@ -134,6 +149,8 @@ export interface Offering {
   readonly totalEquity: bigint;
   /** The sponsor's own money. The canon had no concept of this. */
   readonly promoter: bigint;
+  /** What the sponsor's stake IS, where it is not cash: land contributed in kind, for one. */
+  readonly promoterIs?: string;
   /** What is actually offered to partners. promoter + offering = equity. */
   readonly offered: bigint;
   readonly units: number;
@@ -262,11 +279,34 @@ export function waterfallState(w: Waterfall | null): {
   return { state, statedBps: bps, outstandingBps: 10000 - bps, missing };
 }
 
+/** One tier of an order of payment: who is paid, and by what rule. */
+export interface PaymentTier {
+  readonly what: string;
+  readonly rule: string;
+}
+
 export interface Operating {
   readonly adr: bigint;
   readonly occupancyBps: number;
   readonly grossRevenue: bigint;
   readonly waterfall: Waterfall | null;
+  /**
+   * THE ORDER OF PAYMENT — 2 Oct 2026
+   *
+   * The canon states a waterfall as six shares of gross revenue closing at
+   * 10,000 bps. The Creek's capital structure of 2 Oct 2026 does not: it
+   * states an ORDER, each tier paid in full before the next, the partners
+   * last and pro rata, with no share fixed in advance.
+   *
+   * That is a different instrument and it is carried as one, rather than
+   * forced into six invented percentages. A vehicle states EITHER a
+   * waterfall or a cascade; `publishable()` accepts a cascade that ends
+   * with the partners in place of a closing waterfall, because the order
+   * says who is paid ahead of a partner, which is the thing the gate
+   * exists to make sure a reader is told. It does not say how much, so no
+   * yield is ever computed from one.
+   */
+  readonly cascade?: readonly PaymentTier[];
   readonly reserveFloor: bigint | null;
   readonly yieldConfidence: string | null;
   /**
@@ -507,10 +547,50 @@ const SOLACE: Vehicle = {
   governance: null,
 };
 
+/**
+ * SLOWSPACE CREEK · re-struck 2 Oct 2026
+ *
+ * Founder, 1 Oct 2026: "Creek has a lot of illustrations and new
+ * financials; rebuild Creek accordingly." The capital record below replaces
+ * the 4 Aug intake's (four units of ₹1 Cr on a ₹15 Cr project) with the
+ * structure the founder struck on 2 Oct 2026:
+ *
+ *   CRK-09-CA-004 R0  pre-money ₹7.5 Cr, post-money ₹12.5 Cr, the raise
+ *   CRK-09-CA-005 R0  the cost plan (physical works ₹12.07 Cr)
+ *   CRK-09-CA-006 R0  sources and uses, the loan, the order of payment
+ *   CRK-09-RP-006 R0  the investor narrative, which reads all three
+ *   CRK-09-CT-001 R0  the draft term sheets (a draft for counsel)
+ *
+ * Twenty units of 5%; eight offered at ₹62.5 L (a base of six and a
+ * greenshoe of two at the same price), ₹5.0 Cr in all; the founders keep
+ * twelve against the land, which they contribute in kind at their own
+ * figure of ₹7.5 Cr. A bank loan of up to ₹10 Cr is applied for.
+ *
+ * ⚠ WHAT IS NOT SETTLED, and is recorded rather than smoothed over:
+ *   - the partnership is not incorporated (name reserved 3 Sep 2026, SRN
+ *     M31655297, as SLOWSPACE COORG CREEK LLP);
+ *   - the land has no independent valuation, and the survey has not been
+ *     read against the deed (C-18);
+ *   - the loan is applied for, not sanctioned, and its rate is a working
+ *     figure that is not stated here;
+ *   - the term sheets are a draft for counsel, and counsel has not cleared
+ *     the structure;
+ *   - this vehicle states an ORDER of payment where the platform's canon
+ *     states six shares of revenue (C-19), and names the founders, not
+ *     Getaway Collective, as designated partners (C-20).
+ *
+ * No yield, nightly rate or return is carried for this vehicle: the term
+ * sheets rule that the introducing platform states none (G-05), and with
+ * the operator's fee unruled there is nothing to compute one from.
+ */
 const COORGCREEK: Vehicle = {
   key: "coorgcreek",
   slug: "coorg-coffee-creek",
-  registeredName: "Coorg Coffee Creek LLP",
+  /* The name reserved with the Registrar on 3 Sep 2026 (SRN M31655297,
+     CRK-10-CT-002). It replaces "Coorg Coffee Creek LLP", which borrowed
+     its middle word from a different estate (C-02). Reserved is not
+     incorporated: there is still no LLPIN. */
+  registeredName: "SlowSpace Coorg Creek LLP",
   llpin: null,
   incorporated: null,
   agreementDated: null,
@@ -523,69 +603,107 @@ const COORGCREEK: Vehicle = {
   assetCode: "COG-03",
   jurisdiction: "Coorg, Karnataka",
   coordinates: "12°23'25.8\"N 75°49'15.2\"E",
-  landArea: "10 acres (possession)",
+  /* The deed, not the ten acres the intake carried: Sy 45 + 44/1 + 44/3 +
+     44/2 at Cherala, sale deed of 21 Jun 2024. The survey of 4 Aug 2023
+     measures more (C-18). */
+  landArea: "8.00 acres on a registered deed",
   keys: 20,
   buildStage: "pre-construction",
-  /* Founder, 4 Aug 2026: diligence completed. This replaces "acquired",
-     which the hero was rendering as "Land acquired" over a record saying
-     title and conversion status were unverified. */
+  /* Unchanged. The deed is the founders'; the partnership holds nothing
+     yet, and a title report is one of the gates before the loan. */
   tenure: "diligence-complete",
   commitments:
-    "SlowSpace brand. Land held under possession; title, Land Reforms Act and conversion status " +
-    "unverified. Construction financed via a ₹5.0 Cr facility once the equity raise closes.",
+    "SlowSpace brand. The land is on a registered sale deed of 21 June 2024 in the founders' names, " +
+    "and is to be contributed to the partnership at the founders' figure; no valuer has reported. " +
+    "A bank loan of up to ₹10 Cr is applied for and not sanctioned; the sanction follows the title " +
+    "report and the valuation.",
   hue: 90,
 
   stack: {
-    land: 60000000_0000n,
-    formation: 40000000_0000n,
-    facility: 50000000_0000n,
-    equityLayer: 100000000_0000n,
-    projectTotal: 150000000_0000n,
-    moratorium: "Interest-only during months 1–18",
-    covenant: "DSCR 1.50x minimum",
+    land: 75000000_0000n,
+    /* The cash equity: the new participation, at the full raise. */
+    formation: 50000000_0000n,
+    /* What the costed project draws: ₹8.00 Cr against certified works and
+       ₹0.36 Cr of the ₹2.00 Cr buffer (CRK-09-CT-001, the numbers). The
+       limit applied for is ₹10 Cr; seven unquoted items stand inside the
+       ₹1.64 Cr of buffer that is left. */
+    facility: 83600000_0000n,
+    facilityLimit: 100000000_0000n,
+    facilityStatus: "applied-for",
+    equityLayer: 125000000_0000n,
+    projectTotal: 208600000_0000n,
+    uses: [
+      ["Land, already held", 75000000_0000n],
+      ["The buildings and the ground", 120700000_0000n],
+      ["Design and engineering", 4900000_0000n],
+      ["Interest while building", 8000000_0000n],
+    ],
+    sources: [
+      ["Land, in kind", 75000000_0000n],
+      ["New participation", 50000000_0000n],
+      ["Bank loan, applied for", 83600000_0000n],
+    ],
+    moratorium: "Interest-only for the 18 months of the build, then 120 level monthly instalments",
+    covenant: "Cover of 1.20 times on debt service, proposed",
   },
-  ladder: { minimumInvestmentBps: 1000, minUnitBps: 500, stepBps: 500, ceilingBps: 6000 },
+  /* One unit is the minimum and the step. No ceiling for one partner is
+     stated; eight units, 40%, is the whole of what is offered. */
+  ladder: { minimumInvestmentBps: 500, minUnitBps: 500, stepBps: 500, ceilingBps: 4000 },
   offering: {
-    totalEquity: 100000000_0000n,
-    promoter: 60000000_0000n,
-    offered: 40000000_0000n,
-    units: 4,
-    unitPrice: 10000000_0000n,
+    totalEquity: 125000000_0000n,
+    /* The founders' twelve units, against the land contributed in kind. */
+    promoter: 75000000_0000n,
+    promoterIs: "the founders' land, contributed in kind at their own figure",
+    offered: 50000000_0000n,
+    units: 8,
+    unitPrice: 6250000_0000n,
     subscribed: 0,
-    available: 4,
+    available: 8,
     /* ₹1,00,000 from 24 Sep 2026, founder ruling: one flat deposit at every
        estate, refundable in full until the Vehicle Agreement is signed. */
     deposit: 100000_0000n,
-    lockIn: "36 months from financial close",
+    /* The draft terms propose a right of first offer and no redemption
+       right; no lock-in period is stated. Never carried over from the
+       intake's 36 months. */
+    lockIn: "Not yet set",
   },
   operating: {
     adr: 12000_0000n,
     occupancyBps: 5500,
-    /* The intake carries 48180000.00000001 — a float artefact from a
-       spreadsheet formula. Rounded to the rupee on transcription, because
-       a fraction of a paisa in a canonical figure is noise that later
-       reconciliation will chase. */
-    grossRevenue: 48180000_0000n,
-    waterfall: {
-      operator: 4000, brand: 1500, adminReserve: 250,
-      sinkingFund: 250, debtService: 1500, toPartners: 2500,
-    },
-    reserveFloor: 8700000_0000n,
-    yieldConfidence: "estimated",
-    yieldBasis: "on offering equity, from year 3 at stabilised occupancy",
+    /* The planning basis, not a forecast: 20 keys × ₹12,000 × 350
+       trading days × 55%. Carried so the record is whole; it is published
+       nowhere for this vehicle. */
+    grossRevenue: 46200000_0000n,
+    /* Not stated as shares. See `cascade`, and C-19. */
+    waterfall: null,
+    cascade: [
+      { what: "Channel, payment and tax", rule: "Taken from each night sold before anything else: what the sales channels, the card networks and the taxes keep." },
+      { what: "Operating costs and the operator's fee", rule: "The crew, the plant, the supplies and the management fee. The fee rate is not yet ruled." },
+      { what: "The bank: interest, then principal", rule: "The monthly instalment on the loan. The lender is paid ahead of every partner." },
+      { what: "The debt reserve", rule: "Topped up to six months of instalments." },
+      { what: "The equipment reserve", rule: "4% of gross revenue, held in the partnership's name to replace furniture and equipment." },
+      { what: "The partners", rule: "What remains is paid pro rata by units. One class: no preference, no promote and no fixed return." },
+    ],
+    reserveFloor: null,
+    yieldConfidence: null,
+    yieldBasis: null,
   },
 
-  /* No nominal/premium split is stated for this vehicle. */
+  /* The raise is struck on a post-money, but as priced units of 5%: there
+     is no nominal/premium split to state. */
   llpCapital: null,
-  entitlement: {
-    nightPoolMin: 300, nightPoolMax: 350, reservedDays: 0,
-    begins: "Pending programme lock — construction has not started",
-  },
+  /* The new terms state no nights for a partner. The intake's pool of
+     300 to 350 belonged to the structure this replaces, and is not carried. */
+  entitlement: null,
   governance: {
+    /* The intake's thresholds. The draft term sheets leave thresholds to
+       counsel and do not replace them. */
     ordinaryBps: 5001, specialBps: 7600, quorumBps: 6000,
-    reservedMatters: "Disposing of the land, or borrowing beyond ₹6.0 Cr",
-    transferRule: "Internal register first; external buyer needs consent",
-    designatedPartners: "Getaway Collective (GP)",
+    reservedMatters:
+      "Proposed: new units, any change to the order of payment, borrowing above ₹10 Cr, sale of the land, " +
+      "dissolution, or a change of designated partners need the consent of a majority of participant units",
+    transferRule: "Proposed: a right of first offer to the other partners; counsel to settle",
+    designatedPartners: "The founders",
   },
 };
 
@@ -1002,6 +1120,46 @@ export const CONFLICTS: readonly Conflict[] = [
       "Settled 20 Sep 2026: handover, Jan 2028. The date subscribers were given stands; the programme's Aug 2027 finish is the building, not the entitlement.",
   },
   {
+    id: "C-18", vehicle: "coorgcreek", severity: "advisory",
+    what: "The survey measures more land than the deed conveys.",
+    sides: [
+      "Sale deed, 21 Jun 2024: 8.00 acres at Cherala",
+      "Total-station survey, 4 Aug 2023: 9.46 acres, with three different totals on its own sheet",
+    ],
+    why:
+      "The capital plan, the cost plan and every drawing stand on the deed's 8.00 acres, and the " +
+      "land is contributed at a figure struck on it. The survey has not been read by a surveyor " +
+      "against the deed, so which boundary the plan sits inside is not yet established.",
+    settledBy: "A surveyor's reading of the survey against the deed",
+  },
+  {
+    id: "C-19", vehicle: "coorgcreek", severity: "advisory",
+    what: "The vehicle states an order of payment; the canon states six shares.",
+    sides: [
+      "LLP intake, 4 Aug 2026: six stages as shares of gross revenue (40 / 15 / 2.5 / 2.5 / 15 / 25)",
+      "Capital structure CRK-09-CA-006, 2 Oct 2026: an order of payment, the lender ahead of every partner, no share fixed",
+    ],
+    why:
+      "The record now carries the order of 2 Oct, and the public page shows it. It is advisory and " +
+      "not blocking because nothing is published from the superseded side. It is recorded because " +
+      "the platform's own account of a waterfall, on How it works, still describes six shares, and " +
+      "because the operator's fee inside tier two is not ruled, so what reaches a partner cannot yet be computed.",
+    settledBy: "The founder: whether this vehicle keeps the order of payment, and the operator's fee",
+  },
+  {
+    id: "C-20", vehicle: "coorgcreek", severity: "advisory",
+    what: "Who the designated partners are, and what Getaway Collective is to this vehicle.",
+    sides: [
+      "LLP intake, 4 Aug 2026: Getaway Collective is the designated partner and is paid from one stage of the waterfall",
+      "Draft term sheets CRK-09-CT-001, 2 Oct 2026: the founders are the designated partners; Getaway Collective introduces participants and nothing else, and its fee is not ruled",
+    ],
+    why:
+      "The record now carries the term sheets' position. The site at large still says Getaway " +
+      "Collective governs every vehicle and is paid from a disclosed stage; for this vehicle that " +
+      "is no longer what the documents propose. The term sheets are a draft for counsel.",
+    settledBy: "The founder and counsel: the platform's role at this vehicle, and whether it may take a fee",
+  },
+  {
     id: "C-10", vehicle: "coorgcreek", severity: "advisory",
     what: "The Creek is SlowSpace, not ESKAPE. — SETTLED 4 Aug 2026",
     sides: [
@@ -1031,6 +1189,10 @@ export const conflictsFor = (k: VehicleKey): Conflict[] =>
 export const blockingFor = (k: VehicleKey): Conflict[] =>
   conflictsFor(k).filter((c) => c.severity === "blocking");
 
+/** True when an order of payment is stated and its last tier is the partners'. */
+export const endsWithPartners = (c: readonly PaymentTier[] | undefined): boolean =>
+  !!c && c.length > 1 && /partners/i.test(c[c.length - 1].what);
+
 /**
  * Whether this vehicle may appear on a public surface.
  *
@@ -1049,7 +1211,9 @@ export function publishable(v: Vehicle): { ok: boolean; because: string[] } {
      outstanding stages are exactly the ones that decide the answer. */
   const wf = waterfallState(v.operating.waterfall);
   if (wf.state === "absent") {
-    because.push("The waterfall is not stated.");
+    /* An order of payment that ends with the partners stands in for the
+       six shares (see Operating.cascade). Anything less does not. */
+    if (!endsWithPartners(v.operating.cascade)) because.push("The waterfall is not stated.");
   } else if (wf.state === "partial") {
     because.push(
       `The waterfall states ${wf.statedBps.toLocaleString()} of 10,000 bps. ` +

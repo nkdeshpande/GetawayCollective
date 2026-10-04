@@ -93,6 +93,32 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
           withheld: gate.because,
         };
       }
+      /* A vehicle that states an order of payment (Operating.cascade) shows
+         the order, and no rate, revenue or yield: its terms rule that the
+         platform states none. */
+      const cascade = wf === null ? v.operating.cascade : undefined;
+      if (cascade) {
+        const applied = s.facilityStatus === "applied-for";
+        return {
+          eyebrow: "CHAPTER 06 · THE INVESTMENT",
+          title: "Who is paid, and in what order.",
+          lead:
+            "This estate states an order of payment, not shares of revenue: each tier is paid in full " +
+            "before the next, and the partners share only the last. No yield, rate or return is stated, " +
+            "and none is assured.",
+          rows: [
+            { label: "Project total", value: inr(s.projectTotal), basis: `${inr(s.equityLayer)} equity + ${inr(s.facility)} bank loan` },
+            ...(s.uses ?? []).map(([label, x]) => ({ label, value: inr(x), basis: "What the project is spent on" })),
+            {
+              label: applied ? "Bank loan, applied for" : "Bank loan", value: inr(s.facility),
+              basis: plainTerms(`${applied ? "Applied for, not sanctioned. " : ""}${s.facilityLimit ? `A limit of ${inr(s.facilityLimit)}. ` : ""}${s.moratorium}. ${s.covenant}.`),
+            },
+            { label: "A unit", value: inr(o.unitPrice), basis: `${o.units} offered; ${o.available} available. ${o.promoterIs ? `The sponsor's ${inr(o.promoter)} is ${o.promoterIs}.` : ""}`.trim() },
+            ...cascade.map((t, i) => ({ label: `${i + 1} ${t.what}`, value: i === cascade.length - 1 ? "Pro rata by units" : "Paid in full first", basis: t.rule })),
+          ],
+          withheld: [],
+        };
+      }
       return {
         eyebrow: "CHAPTER 06 · THE INVESTMENT",
         title: "Where each rupee of gross goes.",
@@ -129,9 +155,11 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
         rows: [
           { label: "Nothing is built", value: BUILD_LABEL[v.buildStage], basis: "Construction carries cost, programme and delivery risk, and none of it is insured away." },
           { label: "How the land is held", value: v.tenure ? TENURE_LABEL[v.tenure] : NOT_STATED, basis: plainTerms(v.commitments) },
-          { label: "Debt ranks ahead of you", value: inr(s.facility), basis: plainTerms(`${s.moratorium}. ${s.covenant}.`) },
+          { label: "Debt ranks ahead of you", value: inr(s.facility), basis: plainTerms(`${s.facilityStatus === "applied-for" ? "The loan is applied for, not sanctioned. " : ""}${s.moratorium}. ${s.covenant}.`) },
           { label: "Your capital is locked", value: o.lockIn, basis: v.governance ? plainTerms(v.governance.transferRule) : "Transfer terms are not on record." },
-          { label: "The yield is a forecast", value: wf.state === "complete" ? "Modelled" : "Not stated", basis: "No revenue has been observed. Occupancy and rate are assumptions." },
+          wf.state === "complete"
+            ? { label: "The yield is a forecast", value: "Modelled", basis: "No revenue has been observed. Occupancy and rate are assumptions." }
+            : { label: "No yield is stated", value: "Not stated", basis: "No revenue has been observed, and what reaches a partner is whatever remains after every tier ahead of them." },
           { label: "Open items on the record", value: String(registered.length), basis: registered.length ? registered.map((c) => c.id).join(" · ") : "None registered." },
         ],
         withheld: [],
