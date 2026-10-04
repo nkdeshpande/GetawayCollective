@@ -143,7 +143,8 @@ function twowaters() {
     `<line x1="250" y1="${H - 26}" x2="510" y2="${H - 26}" stroke="${INK.ink}"/><line x1="250" y1="${H - 32}" x2="250" y2="${H - 20}" stroke="${INK.ink}"/><line x1="510" y1="${H - 32}" x2="510" y2="${H - 20}" stroke="${INK.ink}"/>` +
     `<text x="380" y="${H - 34}" text-anchor="middle" ${MONO} font-size="12" fill="${INK.ink}">~400 m</text>` +
     `<text x="20" y="${H - 14}" ${MONO} font-size="11" fill="${INK.paper}">THE ARABIAN SEA · SURF</text>` +
-    `<text x="${W - 20}" y="${H - 14}" text-anchor="end" ${MONO} font-size="11" fill="${INK.ink}">THE ESTUARY · STILL</text>`;
+    /* The estuary is drawn at 55% over the figure's night ground, which leaves it a mid grey-green: ink on it was 3.55:1. Paper, as on the sea (4 Oct 2026). */
+    `<text x="${W - 20}" y="${H - 14}" text-anchor="end" ${MONO} font-size="11" fill="${INK.paper}">THE ESTUARY · STILL</text>`;
   return frame(`<svg viewBox="0 0 ${W} ${H}" class="ig-svg" role="img" aria-label="The estate on a strip of land between the open sea and a still estuary, about 400 metres apart">${svg}</svg>`,
     "Surf on the western edge, still water on the eastern, about four hundred metres apart. A schematic, not a survey.");
 }

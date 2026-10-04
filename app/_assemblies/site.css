@@ -11,9 +11,10 @@
 
 .site{--void:var(--gc-s-night);--v2:var(--gc-s-coal);--panel:var(--gc-s-panel);--paper:var(--gc-paper);--light:var(--gc-s-light);--ink:var(--gc-ink);--mute:var(--gc-s-mute);--line:var(--gc-s-line);--copper:var(--gc-copper);--cd:var(--gc-copper-deep);--electric:var(--gc-electric);--moss:var(--gc-s-moss);--slate:var(--gc-s-slate);--ember:var(--gc-s-ember);--display:var(--gc-font-display);--text:var(--gc-font-body);--mono:var(--gc-font-mono);--gut:clamp(20px,5vw,72px);--sec:clamp(48px,8.9vw,128px);--nav-h:58px;--ebar-h:52px;--read:66ch;--iris-h:72px;--col:1040px;--col-faq:980px;--col-wide:1200px;--ease:var(--gc-ease-cinema);color-scheme:dark}
 /* ── GENERATED RESET — scripts/gen-site-reset.js, do not edit by hand ── */
+.site{fill:revert}
 .site .brand{border-bottom:revert;padding:revert}
 .site .btn{align-items:revert;background:revert;border:revert;color:revert;display:revert;font:revert;gap:revert;justify-content:revert;letter-spacing:revert;padding:revert;text-transform:revert;transition:revert}
-.site .btn:hover{background:revert;border-color:revert;color:revert}
+.site .btn:where(:hover){background:revert;border-color:revert;color:revert}
 .site .dim{color:revert}
 .site .foot{border-top:revert;margin-top:revert;padding:revert}
 .site .gal{overflow:revert;padding:revert;position:revert}
@@ -27,10 +28,13 @@
 .site .narrow{margin:revert;max-width:revert;padding:revert}
 .site .sr{border:revert;clip:revert;height:revert;margin:revert;overflow:revert;padding:revert;position:revert;white-space:revert;width:revert}
 .site .strip{background:revert;border:revert;display:revert;gap:revert;overflow-x:revert;padding:revert;scroll-snap-type:revert}
+.site th{color:revert}
 /* ── END GENERATED RESET ── */
 .site *{box-sizing:border-box}
 .site{margin:0;background:var(--void);color:var(--paper);font:500 15.5px/1.6 var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 .site a{color:inherit;text-decoration:none}
+/* The skip link is the platform's: a paper tile, with ink on it (assemblies.css). The rule above gave it the page's colour instead, so with the keyboard on it it was paper on paper, 1:1, on every page of the site (4 Oct 2026). */
+.site .skip{color:var(--gc-ink)}
 .site button{font:inherit;color:inherit}
 .site :focus-visible{outline:2px solid var(--electric);outline-offset:3px}
 .site .eb{font:600 11.5px/1.3 var(--text);letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
@@ -238,7 +242,9 @@
 .site .zl button b{font:800 26px/1 var(--display);text-transform:uppercase;letter-spacing:-.01em}
 .site .zl button span{font:400 12px var(--mono);color:var(--mute)}
 .site .zl button p{grid-column:2/-1;margin:calc(var(--gc-sp-3xs) * 1.5) 0 0;color:var(--gc-s-fog);font-size:14.5px}
-.site .zl button[aria-pressed=false]{opacity:.45}
+/* 4 Oct 2026: a zone not selected was faded whole to 45%, its description to 2.6:1. Its swatch fades; its words take the ground's grey. */
+.site .zl button[aria-pressed=false] i{opacity:.45}
+.site .zl button[aria-pressed=false] :is(b,p){color:var(--mute)}
 @media (max-width:900px){.site .axo{grid-template-columns:1fr}}
 .site .chamber{padding-top:var(--sec)}
 .site .chamber .ttl{position:relative;z-index:2;padding:0 var(--gut);margin-bottom:-.45em}
@@ -275,7 +281,7 @@
 .site .getting{padding:var(--sec) var(--gut) 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(var(--gc-sp-m),5vw,calc(var(--gc-sp-3xs) * 20));align-items:center}
 .site .tcards{display:grid;gap:calc(var(--gc-sp-3xs) * 2.5);margin-top:22px}
 .site .tcards button{--c:8px;display:grid;grid-template-columns:1fr auto;gap:var(--gc-sp-3xs) calc(var(--gc-sp-3xs) * 3.5);text-align:left;background:var(--panel);border:0;padding:calc(var(--gc-sp-3xs) * 5) calc(var(--gc-sp-3xs) * 5.5);cursor:pointer;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
-.site .tcards button[aria-pressed=true]{background:var(--paper);color:var(--ink)}
+.site .tcards button[aria-pressed=true]{background:var(--paper);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
 .site .tcards b{font:400 38px/1 var(--mono);letter-spacing:-.05em;font-weight:400}
 .site .tcards span{grid-column:1/-1;font-size:14px;opacity:.75}
 .site .map{background:var(--gc-s-coal);position:relative}
@@ -495,7 +501,8 @@
 .site .coords{margin:calc(var(--gc-sp-3xs) * 3.5) 0 0;font-size:11.5px;color:var(--mute)}
 .site .concept-lead,.site .fin-lead{margin-top:calc(var(--gc-sp-3xs) * 3.5);max-width:62ch;color:var(--gc-s-fog)}
 .site .getting .para{margin-top:calc(var(--gc-sp-3xs) * 3.5)}
-.site .tcards em{font-style:normal;align-self:end;font:400 11px var(--mono);opacity:.6}
+/* 4 Oct 2026: the place name was the card's ink faded to 60%, 4.46:1 on the white card of a day estate. It takes the ground's grey, and the pressed card restates the greys for the ground it turns into. */
+.site .tcards em{font-style:normal;align-self:end;font:400 11px var(--mono);color:var(--mute)}
 .site .day-note{margin-top:calc(var(--gc-sp-3xs) * 8.5);font-size:13.5px;color:var(--mute)}
 .site .plan-note{font-size:13px;color:var(--mute);margin-top:var(--gc-sp-xs);max-width:var(--read)}
 .site .pdraw[hidden],.site .pinfo[hidden]{display:none}
@@ -561,6 +568,10 @@
 .site .tx-toc a:hover{color:var(--paper);text-decoration-color:var(--copper)}
 .site .tx-lede{font:500 clamp(19px,2vw,22px)/1.6 var(--text);color:var(--paper)}
 .site .tx-lede::first-letter{float:left;font:800 clamp(56px,6vw,80px)/.82 var(--display);margin:calc(var(--gc-sp-3xs) * 1.5) var(--gc-sp-xs) 0 0;color:var(--copper)}
+/* 4 Oct 2026: on a light page the capital was the night's copper, 2.22:1 where type this large needs 3:1, and a contents strip would have been the night's mist. Each takes the day's. */
+.site :is(.lt,.pg-col) .tx-lede::first-letter{color:var(--cd)}
+.site :is(.lt,.pg-col) .tx-toc a{color:var(--gc-s-stone);text-decoration-color:var(--gc-s-ash-2)}
+.site :is(.lt,.pg-col) .tx-toc a:is(:hover,.on){color:var(--ink);text-decoration-color:var(--cd)}
 .site .tx-h2{scroll-margin-top:80px}
 .site .tx-pull{margin:var(--gc-sp-l) 0;padding:var(--gc-sp-m) 0;border-top:2px solid var(--copper);border-bottom:1px solid var(--line)}
 .site .tx-pull p{margin:0;font:200 clamp(28px,3.6vw,46px)/1.12 var(--display);letter-spacing:-.03em;color:var(--paper);text-wrap:balance}
@@ -587,8 +598,10 @@
 .site .ig-tri b{font:800 20px/1.1 var(--display)}
 .site .ig-tri p{margin:0;font-size:14px;color:var(--gc-s-fog)}
 .site .ig-tri.lead p{color:var(--gc-s-stone)}
+/* 4 Oct 2026: each rung was faded whole, words and all, and the last two fell to 4.06:1 and 3.31:1. The rung's ground recedes into the figure's by the same steps; its words are left as written. */
 .site .ig-ladder{list-style:none;margin:0;padding:0;display:grid;gap:var(--gc-sp-3xs)}
-.site .ig-ladder li{display:grid;grid-template-columns:140px minmax(0,1fr);gap:var(--gc-sp-s);align-items:baseline;padding:var(--gc-sp-xs) var(--gc-sp-s);background:var(--panel);margin-left:calc(var(--k) * var(--gc-sp-m));opacity:calc(1 - var(--k) * .09)}
+.site .ig-ladder li{display:grid;grid-template-columns:140px minmax(0,1fr);gap:var(--gc-sp-s);align-items:baseline;padding:var(--gc-sp-xs) var(--gc-sp-s);background:var(--panel);margin-left:calc(var(--k) * var(--gc-sp-m))}
+@supports (background:color-mix(in srgb,currentColor calc(100% - 1 * 9%),transparent)){.site .ig-ladder li{background:color-mix(in srgb,var(--panel) calc(100% - var(--k,0) * 9%),var(--gc-s-coal))}}
 .site .ig-ladder li:first-child{border-left:2px solid var(--copper)}
 .site .ig-ladder b{font:700 16px var(--display)}
 .site .ig-ladder span{font-size:14px;color:var(--gc-s-fog)}
@@ -655,7 +668,8 @@
 .site .srch-box{display:flex;align-items:center;gap:var(--gc-sp-xs);padding:0 var(--gc-sp-s);border-bottom:1px solid var(--gc-s-rim)}
 .site .srch-box svg{width:18px;height:18px;flex:none;color:var(--mute)}
 .site .srch-box input{flex:1;min-width:0;height:60px;background:none;border:0;outline:none;color:var(--paper);font:500 18px var(--text)}
-.site .srch-box input::placeholder{color:var(--gc-s-ash-2)}
+/* 4 Oct 2026: the dialog is night, and this was the day's label grey on it, 3.94:1. */
+.site .srch-box input::placeholder{color:var(--mute)}
 .site .srch-esc{background:var(--panel);color:var(--gc-s-fog);border:0;padding:calc(var(--gc-sp-3xs) * 1.5) var(--gc-sp-2xs);font:400 11px var(--mono);cursor:pointer}
 .site .srch-list{list-style:none;margin:0;padding:var(--gc-sp-3xs) 0;overflow-y:auto}
 .site .srch-list a{display:grid;grid-template-columns:110px minmax(0,1fr);column-gap:var(--gc-sp-s);row-gap:calc(var(--gc-sp-3xs) / 2);padding:var(--gc-sp-xs) var(--gc-sp-s)}
@@ -844,8 +858,9 @@
 .site .dkt-p footer{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs);margin-top:var(--gc-sp-xs)}
 .site .dkt-p footer .btn.gray{background:var(--gc-paper-panel);color:var(--ink)}
 .site .dkt-stamp{flex:none;font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:calc(var(--gc-sp-3xs) * 1.5) var(--gc-sp-2xs);border:2px solid currentColor;transform:rotate(-3deg);color:var(--gc-s-ash)}
-.site .dkt-stamp.ok{color:var(--gc-confirm-deep)}
-.site .dkt-stamp.wait{color:var(--electric)}
+/* 4 Oct 2026: the papers are darker than the paper these two were derived for: 3.66:1 and 3.97:1 on kraft, at 11px (constants/tokens.ts SITE). */
+.site .dkt-stamp.ok{color:var(--gc-s-confirm-kraft)}
+.site .dkt-stamp.wait{color:var(--gc-s-electric-kraft)}
 @media (max-width:560px){.site .dkt-tabs [role=tab]{min-width:0;padding-right:calc(var(--gc-sp-3xs) * 7)}.site .dkt-p{min-height:0}}
 
 /* -- the gates: a sequence, one open at a time -- */
@@ -949,13 +964,16 @@
 .site .gal-hud{display:flex;align-items:center;gap:var(--gc-sp-m);padding:var(--gc-sp-m) var(--gut)}
 .site .gal-idx{margin-left:auto;font-size:12px;color:var(--gc-s-fog);white-space:nowrap}
 .site .gal-x{flex:none;white-space:nowrap;padding:var(--gc-sp-2xs) var(--gc-sp-s);border:1px solid var(--gc-s-line-2);background:none;color:var(--paper);font:600 12px var(--text);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
-.site .gal-x .mono{margin-left:var(--gc-sp-3xs);color:var(--gc-s-mute)}
-.site .gal-x:hover,.site .gal-x:focus-visible{background:var(--paper);color:var(--gc-s-night)}
+/* 4 Oct 2026: under the pointer or the keyboard, which is where it is when the viewer opens, Close is a paper tile, and its hint kept the night's grey on it, 2.97:1. The tile restates the greys. */
+.site .gal-x .mono{margin-left:var(--gc-sp-3xs);color:var(--mute)}
+.site .gal-x:hover,.site .gal-x:focus-visible{background:var(--paper);color:var(--gc-s-night);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
 .site .gal-vp{position:relative;display:flex;align-items:center;gap:var(--gc-sp-l);padding:0 12vw;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;outline:none}
 .site .gal-vp::-webkit-scrollbar{display:none}
 .site .gal-vp.drag{cursor:grabbing;user-select:none}
 .site .gal-f{flex:none;width:min(76vw,1180px);margin:0;display:grid;gap:var(--gc-sp-s);scroll-snap-align:center;opacity:.38;transform:scale(.94);transition:opacity .26s var(--ease),transform .26s var(--ease)}
 .site .gal-f.on{opacity:1;transform:none}
+/* 4 Oct 2026: the caption faded with its frame, to 1.73:1, and its button could still be reached. A frame beside the one on show is a picture only. */
+.site .gal-f:not(.on) figcaption{visibility:hidden}
 .site .gal-m{position:relative;aspect-ratio:16/9;max-height:62vh;overflow:hidden;background:var(--gc-s-coal)}
 .site .gal-f figcaption{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr) auto;gap:var(--gc-sp-3xs) var(--gc-sp-m);align-items:baseline}
 .site .gal-f figcaption .mono{grid-column:1/-1;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gc-s-mute)}
@@ -1056,7 +1074,8 @@
 .site .cmp-t :is(th,td).g-raising,.site .cmp-t tbody tr:nth-child(even) td.g-raising{background:var(--gc-paper-panel);color:var(--ink)}
 .site .cmp-t thead th.g-raising{border-top:4px solid var(--cd)}
 .site .cmp-t td.g-raising{font-weight:600}
-.site .cmp-t td.g-later{color:var(--gc-s-stone)}
+/* 4 Oct 2026: the name at the head of a column is the ground's ink. It was the platform's grey for a header cell, 2.35:1 on manila; the reset above now takes that off every th. The estate not yet open reads in its column's stone. */
+.site .cmp-t :is(th,td).g-later{color:var(--gc-s-stone)}
 .site .cmp-st{display:block;width:max-content;margin-bottom:calc(var(--gc-sp-3xs) * 2);padding:calc(var(--gc-sp-3xs) * .75) calc(var(--gc-sp-3xs) * 2);font:600 10.5px var(--text);letter-spacing:.14em;text-transform:uppercase}
 .site .g-raising .cmp-st{background:var(--cd);color:var(--gc-paper-panel)}
 .site .g-subscribed .cmp-st{background:var(--gc-s-night);color:var(--gc-paper-panel)}
@@ -1145,11 +1164,13 @@
 /* the bar: five places and Enquire first; search, the way in and the path marker quieter */
 .site .nav-srch{background:none;border-color:transparent;color:var(--gc-s-fog)}
 .site .nav-srch:hover,.site .nav-srch:focus-visible{background:var(--panel);border-color:var(--gc-s-rim)}
-.site .nav-srch kbd{display:none;color:var(--gc-s-ash-2)}
+/* 4 Oct 2026: the hint was the day's label grey on a night button, 3.18:1 once it shows. It keeps the bar's grey. */
+.site .nav-srch kbd{display:none}
 @media (min-width:1280px){.site .nav-srch:hover kbd,.site .nav-srch:focus-visible kbd{display:inline}}
 .site .nav .nav-acct{color:var(--gc-s-fog);font-weight:500}
 .site .nav .nav-acct:hover{color:var(--paper)}
-.site .nav-path{opacity:.8}
+/* 4 Oct 2026: the marker was quietened by fading the whole of it, which took its label to 4.28:1. The ticks fade; the label is already the night's grey. */
+.site .nav-path-bar{opacity:.8}
 .site .nav-path-bar i{width:6px;height:2px;background:var(--gc-s-rim)}
 .site .nav-path-l{color:var(--gc-s-mute)}
 .site .nav-enq{flex:none}
@@ -1335,7 +1356,7 @@
 /* getting there: the chart keeps its night, in the estate's own deep */
 .site .est.est-day .getting{padding-bottom:var(--sec)}
 .site .est.est-day .tcards button{background:var(--gc-paper-panel);color:var(--ink)}
-.site .est.est-day .tcards button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.site .est.est-day .tcards button[aria-pressed=true]{background:var(--ink);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line)}
 .site .est.est-day .map{background:var(--est-deep)}
 
 /* design: the concept, the standard, the plan */
@@ -1366,6 +1387,10 @@
 .site .est.est-day .dkt-sec{background:var(--gc-s-light)}
 .site .est.est-day .dkt-sec .dkt-lead{color:var(--gc-s-stone)}
 .site .est.est-day .mk .cap{background:var(--gc-paper-panel);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
+/* 4 Oct 2026: a day estate stands on a night page (its .pg is not .pg-col), so the rules for a form on a night page reached into its paper card: the address to write to was the estate's ink on a night panel, 1.02:1. Its form is the day's. */
+.site .est.est-day .tx-form .direct-row{background:var(--gc-s-chip)}
+.site .est.est-day .tx-form .chip{background:var(--gc-s-chip);color:var(--ink)}
+.site .est.est-day .tx-form .chip[aria-pressed=true]{background:var(--ink);color:var(--paper)}
 
 /* the home frame of an estate with a picture: the name on a paper plate at the foot, and the picture left alone */
 .site .sf.sf-img .ov{place-items:end start;text-align:left;padding:0 var(--gut) var(--gc-sp-l)}

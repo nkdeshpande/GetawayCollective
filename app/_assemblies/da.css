@@ -172,8 +172,17 @@
   clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c) * 2), calc(100% - var(--c)) 100%, 0 100%, 0 calc(var(--c) * 2)); }
 .da-ch-l button b { font: 800 18px var(--gc-font-display); text-transform: uppercase; }
 .da-ch-l button[aria-pressed="true"] { background: var(--da-ink); color: var(--gc-s-night); }
-.pg-col .da-ch-l button[aria-pressed="true"], .lt .da-ch-l button[aria-pressed="true"] { color: var(--gc-paper); }
-.da-ch-l button[aria-pressed="true"] .da-lbl { color: var(--da-mute); }
+.pg-col .da-ch-l button[aria-pressed="true"], .lt .da-ch-l button[aria-pressed="true"], .on-paper .da-ch-l button[aria-pressed="true"] { color: var(--gc-paper); }
+
+/* THE OTHER GROUND — 4 Oct 2026. A pressed tile, and the entity a drawing is
+   about, are filled with the page's ink: a light tile on a night page, a night
+   tile on a light one. What is set on one kept the page's greys, 2.97:1 on the
+   light tile of /how-we-build. They restate the two greys for the ground they
+   turn into, so a label never has to know which that is (the same rule as
+   --mute in site.css; constants/tokens.ts, NEUTRAL_ROLE). */
+.da-ch-l button[aria-pressed="true"], .da-te-n.on { --da-dim: var(--gc-s-ash); --da-mute: var(--gc-s-ash-2); }
+.pg-col .da-ch-l button[aria-pressed="true"], .lt .da-ch-l button[aria-pressed="true"], .on-paper .da-ch-l button[aria-pressed="true"],
+.pg-col .da-te-n.on, .lt .da-te-n.on, .on-paper .da-te-n.on { --da-dim: var(--gc-s-fog); --da-mute: var(--gc-s-mute); }
 
 /* search */
 .da-search { display: flex; align-items: center; gap: calc(var(--gc-sp-3xs) * 2.5); padding: var(--gc-sp-xs) var(--gc-sp-s); background: var(--da-tile); }

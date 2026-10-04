@@ -220,6 +220,16 @@ export const SITE = {
   pine: "#0F2119",        // a green night, for drawings that need a dark ground
   umber: "#17130F",       // a warm night, between the films
   tide: "#101C22",        // a sea night: the coast film's own ground, for the coast estates' pages (25 Sep 2026)
+  /* The state colours, on the papers — ADDITIVE, 4 Oct 2026. Nothing above
+     changed. COLOUR's variants were derived for paper (#F2F2F2), and every
+     paper here is darker than that: confirmDeep is 3.66:1 on kraft and
+     electric 3.97:1, and a docket's stamp is 11px. Found on the rendered
+     pages. Same construction as those variants: the original's hue and
+     saturation held, lightness moved to the first value clearing 4.5:1 on
+     kraft, the darkest paper, so it holds on all of them
+     (tests/site-grounds.test.ts measures each one). */
+  confirmKraft: "#146F3A",   // confirm on kraft:  2.19:1 -> 4.52:1
+  electricKraft: "#1D59CD",  // electric on kraft: 3.97:1 -> 4.52:1
 } as const;
 
 /*

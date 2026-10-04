@@ -14,6 +14,9 @@
  * BEFORE the ported rules, so the prototype's own declarations still win and
  * only what the platform set, and the site did not, is rolled back.
  *
+ * It also reverts a platform rule that lands on the site's root by sharing
+ * its name, and the colour of type an element rule sets (both noted below).
+ *
  * Usage:
  *   node scripts/gen-site-reset.js           write the reset
  *   node scripts/gen-site-reset.js --check   fail if it has drifted
@@ -84,17 +87,65 @@ function rules(css) {
 }
 
 const SIMPLE = /^(?:[a-z0-9]+)?(?:\.[\w-]+)+(?:\s*(?:>\s*)?(?:[a-z0-9]+|(?:[a-z0-9]+)?(?:\.[\w-]+)+))*(?::{1,2}[\w-]+(?:\([^)]*\))?)*$/;
+
+/* Two kinds of platform rule reach the site without naming one of its classes
+   beneath the root, and the reset passed both by. 4 Oct 2026, each found on
+   the rendered pages:
+
+   THE ROOT'S OWN NAME. The platform has a .site of its own: a map marker,
+   filled copper. It lands on the site's root, and fill is inherited, so every
+   drawn label that states no fill was copper: 2.22:1 on the light panel a
+   plan is drawn on. A rule on the root's name is reverted on the root.
+
+   AN ELEMENT. `th{color:…}` reaches every header cell, whatever its class,
+   and the platform's is a grey chosen for its own dark ground: 2.35:1 on
+   manila, in the comparison on /collection. For an element only the colour
+   of type is reverted (color, fill). The site's tables are written on top of
+   the platform's table layout and restate it cell by cell; a colour is the
+   one thing that is only right on the ground it was chosen for. */
+/* A REVERT MUST NOT OUT-RANK THE SITE'S OWN RULE. 4 Oct 2026, found with the
+   pointer on a rendered page. `.site .btn:hover{background:revert;color:revert}`
+   weighs one pseudo-class more than `.site .btn`, so under the pointer it took
+   back the site's own fill and ink as well as the platform's, and `revert`
+   goes all the way to the browser: a plain button, Enquire in the bar among
+   them, became bare link-coloured text, 2.39:1 on a white card. A state is
+   written inside :where(), which weighs nothing, so the reset is never
+   heavier than the rule the site wrote for the same element, and that rule,
+   coming after it, wins. A pseudo-element is a different box and is left. */
+const PSEUDO_ELEMENT = new Set(["before", "after", "first-letter", "first-line"]);
+const weightless = (sel) => sel.replace(/(?<!:):([\w-]+(?:\([^)]*\))?)/g, (m, p) => (PSEUDO_ELEMENT.has(p) ? m : `:where(:${p})`));
+
+const SITE_ROOT = ".site";
+const ELEMENT = /^[a-z][a-z0-9]*$/;
+const OUTSIDE = new Set(["html", "body"]);
+const TYPE_COLOUR = new Set(["color", "fill"]);
+const OWN_COLOUR = (v) => !/^(inherit|currentcolor)$/i.test(v);
+
 const reset = new Map();
+let onRoot = 0, onElements = 0;
 for (const f of sheets) {
   for (const r of rules(read(f))) {
     for (const raw of r.sel.split(",")) {
       const sel = raw.trim().replace(/\s+/g, " ");
-      if (!SIMPLE.test(sel) || sel.startsWith(".site")) continue;
-      const classes = [...sel.matchAll(/\.([\w-]+)/g)].map((m) => m[1]);
-      if (!classes.length || !classes.every((c) => siteClasses.has(c))) continue;
-      const props = [...r.body.matchAll(/(^|;)\s*([a-z-]+)\s*:/g)].map((m) => m[2]).filter((p) => !p.startsWith("--"));
+      let key, props;
+      if (sel === SITE_ROOT) {
+        key = SITE_ROOT;
+        props = [...r.body.matchAll(/(^|;)\s*([a-z-]+)\s*:/g)].map((m) => m[2]).filter((p) => !p.startsWith("--"));
+        if (props.length) onRoot++;
+      } else if (ELEMENT.test(sel)) {
+        if (OUTSIDE.has(sel)) continue;
+        key = SITE_ROOT + " " + sel;
+        props = [...r.body.matchAll(/(?:^|;)\s*([a-z-]+)\s*:\s*([^;]+)/g)]
+          .filter((m) => TYPE_COLOUR.has(m[1]) && OWN_COLOUR(m[2].trim())).map((m) => m[1]);
+        if (props.length) onElements++;
+      } else {
+        if (!SIMPLE.test(sel) || sel.startsWith(SITE_ROOT)) continue;
+        const classes = [...sel.matchAll(/\.([\w-]+)/g)].map((m) => m[1]);
+        if (!classes.length || !classes.every((c) => siteClasses.has(c))) continue;
+        props = [...r.body.matchAll(/(^|;)\s*([a-z-]+)\s*:/g)].map((m) => m[2]).filter((p) => !p.startsWith("--"));
+        key = SITE_ROOT + " " + weightless(sel);
+      }
       if (!props.length) continue;
-      const key = ".site " + sel;
       const set = reset.get(key) || new Set();
       props.forEach((p) => set.add(p));
       reset.set(key, set);
@@ -118,8 +169,8 @@ const next = cleaned.slice(0, at) + block + "\n" + cleaned.slice(at);
 
 if (CHECK) {
   if (next !== css) { console.error("[site-reset] STALE — run node scripts/gen-site-reset.js"); process.exit(1); }
-  console.log(`[site-reset] OK — ${reset.size} leaking rule(s) reverted under .site, from ${sheets.length} stylesheets`);
+  console.log(`[site-reset] OK — ${reset.size} leaking rule(s) reverted under .site (${onRoot} on the root, ${onElements} on an element), from ${sheets.length} stylesheets`);
   process.exit(0);
 }
 fs.writeFileSync(cssPath, next);
-console.log(`[site-reset] wrote ${reset.size} reset rule(s) from ${sheets.length} stylesheets · ${siteClasses.size} site classes`);
+console.log(`[site-reset] wrote ${reset.size} reset rule(s) (${onRoot} on the root, ${onElements} on an element) from ${sheets.length} stylesheets · ${siteClasses.size} site classes`);

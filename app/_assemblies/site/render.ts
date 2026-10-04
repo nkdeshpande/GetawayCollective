@@ -146,7 +146,8 @@ function mapSVG(M: MapSpec) {
     const a = ps[Number(M.tag[0])], c = ps[Number(M.tag[1])], mx = (a[0] + c[0]) / 2, my = (a[1] + c[1]) / 2;
     s += `<rect x="${mx - 30}" y="${my - 36}" width="60" height="24" fill="${INK.paper}"/><text x="${mx}" y="${my - 19}" text-anchor="middle" font-family="Space Mono" font-size="13" fill="${SITE.night}">${M.tag[2]}</text>`;
   }
-  return s + `<text x="24" y="${H - 12}" font-family="Space Mono" font-size="10" fill="${SITE.ash2}">THE ROUTE IS ILLUSTRATIVE</text>`;
+  /* The map is drawn on a night ground on every estate, so its note is the night's grey. It was the day's label grey, 3.13:1 to 3.60:1 (4 Oct 2026). */
+  return s + `<text x="24" y="${H - 12}" font-family="Space Mono" font-size="10" fill="${SITE.mute}">THE ROUTE IS ILLUSTRATIVE</text>`;
 }
 
 /* ── the estate select on the enquiry form names estates; the API takes slugs ──
