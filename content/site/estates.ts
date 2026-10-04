@@ -541,6 +541,11 @@ export const ESTATES: Record<string, SiteEstate> = {
   "name": "Seaside Confluence",
   "vehicle": "{{vehicle}}",
   "pal": "coast",
+  "media": {
+   "hero": "confluence/hero",
+   "heroTall": "confluence/hero-tall",
+   "enquire": "confluence/dock"
+  },
   "hour": 18.5,
   "enquireHour": 18.8,
   "heroLabel": "Drawn film: the river mouth at dusk, Padubidri",
@@ -555,7 +560,8 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    "title": "Two waters meeting. <b>That is the name.</b>",
    "text": "The estate sits at Nadsal, Padubidri, in Kaup taluk of Udupi district, on the estuarine edge of the coast: the Arabian Sea to the west, a river estuary to the east. The mangrove along the water is protected and nothing is built or planted in it.",
-   "coords": "13.117416°N 74.765988°E"
+   "coords": "13.117416°N 74.765988°E",
+   "img": "confluence/place"
   },
   "concept": {
    "title": "One building. <span>Two waters.</span>",
@@ -662,7 +668,8 @@ export const ESTATES: Record<string, SiteEstate> = {
      470,
      "THE RIVER · EAST"
     ]
-   ]
+   ],
+   "img": "confluence/zones"
   },
   "chapters": [
    {
@@ -689,10 +696,7 @@ export const ESTATES: Record<string, SiteEstate> = {
       "v": "Bronze fins, 350 × 12 mm, at 600 mm centres"
      },
      {
-      "film": [
-       "coast",
-       6.8
-      ],
+      "img": "confluence/balcony",
       "b": "The balcony",
       "s": "Behind the fins, over the water"
      },
@@ -704,7 +708,8 @@ export const ESTATES: Record<string, SiteEstate> = {
       "k": "Ground",
       "v": "About 23 m² touches the ground, against 306 m² for a raft"
      }
-    ]
+    ],
+    "img": "confluence/keys"
    },
    {
     "id": "upper",
@@ -730,12 +735,8 @@ export const ESTATES: Record<string, SiteEstate> = {
       "v": "ISO 12944 C5-M duplex; CX on the river face"
      },
      {
-      "film": [
-       "coast",
-       21
-      ],
-      "b": "Rain on the roof",
-      "s": "July brings the wettest month"
+      "k": "Rain on the roof",
+      "v": "July brings the wettest month"
      },
      {
       "k": "Spray zone",
@@ -745,7 +746,8 @@ export const ESTATES: Record<string, SiteEstate> = {
       "k": "Sound",
       "v": "Party walls on staggered studs; STC 60 is tested, not assumed"
      }
-    ]
+    ],
+    "img": "confluence/stair"
    },
    {
     "id": "plaza",
@@ -771,11 +773,7 @@ export const ESTATES: Record<string, SiteEstate> = {
       "v": "A sage pool, 3.5 × 8.6 m. Clean mineral, no scent added."
      },
      {
-      "film": [
-       "coast",
-       19.2,
-       1
-      ],
+      "img": "confluence/veranda-rain",
       "b": "The monsoon veranda",
       "s": "Rain on three sides, dry underfoot"
      },
@@ -787,7 +785,8 @@ export const ESTATES: Record<string, SiteEstate> = {
       "k": "The Crown",
       "v": "7.5 × 5.0 m on the roof"
      }
-    ]
+    ],
+    "img": "confluence/plaza"
    },
    {
     "id": "arrival",
@@ -813,10 +812,7 @@ export const ESTATES: Record<string, SiteEstate> = {
       "v": "Open to the sky, 11 × 10 m"
      },
      {
-      "film": [
-       "coast",
-       9.5
-      ],
+      "img": "confluence/procession",
       "b": "The procession",
       "s": "A slow climb to the deck"
      },
@@ -824,8 +820,13 @@ export const ESTATES: Record<string, SiteEstate> = {
       "k": "Undercroft",
       "v": "Kept open, so the building counts as ground plus one"
      }
-    ]
+    ],
+    "img": "confluence/arrival"
    }
+  ],
+  "made": [
+   "Materials",
+   "What Confluence <span>is made of.</span>"
   ],
   "materials": [
    [
@@ -913,7 +914,14 @@ export const ESTATES: Record<string, SiteEstate> = {
      "Dinner on the veranda, timed to the tide."
     ]
    ],
-   "note": "Food and the tide table will be run by an operating partner; the appointment is out to tender. A ritual is an invitation, never programming."
+   "note": "Food and the tide table will be run by an operating partner; the appointment is out to tender. A ritual is an invitation, never programming.",
+   "imgs": [
+    "confluence/river",
+    "confluence/walk",
+    "confluence/veranda",
+    "confluence/fire",
+    "confluence/tide-table"
+   ]
   },
   "getting": {
    "title": "Thirty minutes <span>from the airport.</span>",
@@ -973,7 +981,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "plan": {
    "title": "One building, <span>on its parcel.</span>",
-   "note": "Schematic, not to scale, and design intent only: not for construction. Every position waits on the Coastal Regulation Zone line.",
+   "note": "Illustrations, not to scale, and design intent only: not for construction. Every position waits on the Coastal Regulation Zone line.",
    "tabs": [
     {
      "tab": "Site",
@@ -992,7 +1000,8 @@ export const ESTATES: Record<string, SiteEstate> = {
        "817 m²"
       ]
      ],
-     "svg": "<polygon points=\"80,360 520,330 470,70\" fill=\"{ink:ink}\" fill-opacity=\".05\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"90\" y=\"385\" font-family=\"Space Mono\" font-size=\"11\">REGISTERED PARCEL · 84.09 × 28.16 × 83.69 M</text><rect x=\"330\" y=\"150\" width=\"110\" height=\"70\" fill=\"{ink:sea3}\" fill-opacity=\".35\" stroke=\"{ink:ink}\" transform=\"rotate(-6 385 185)\"/><text x=\"336\" y=\"140\" font-family=\"Space Mono\" font-size=\"11\">MONOLITH</text><rect x=\"250\" y=\"240\" width=\"80\" height=\"70\" fill=\"{ink:sand}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><text x=\"254\" y=\"232\" font-family=\"Space Mono\" font-size=\"11\">PLAZA</text><path d=\"M560 20C540 150 570 260 540 400\" fill=\"none\" stroke=\"{ink:sea}\" stroke-width=\"8\" stroke-opacity=\".5\"/><text x=\"545\" y=\"40\" font-family=\"Space Mono\" font-size=\"11\">RIVER</text>"
+     "svg": "<polygon points=\"80,360 520,330 470,70\" fill=\"{ink:ink}\" fill-opacity=\".05\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"90\" y=\"385\" font-family=\"Space Mono\" font-size=\"11\">REGISTERED PARCEL · 84.09 × 28.16 × 83.69 M</text><rect x=\"330\" y=\"150\" width=\"110\" height=\"70\" fill=\"{ink:sea3}\" fill-opacity=\".35\" stroke=\"{ink:ink}\" transform=\"rotate(-6 385 185)\"/><text x=\"336\" y=\"140\" font-family=\"Space Mono\" font-size=\"11\">MONOLITH</text><rect x=\"250\" y=\"240\" width=\"80\" height=\"70\" fill=\"{ink:sand}\" fill-opacity=\".45\" stroke=\"{ink:ink}\"/><text x=\"254\" y=\"232\" font-family=\"Space Mono\" font-size=\"11\">PLAZA</text><path d=\"M560 20C540 150 570 260 540 400\" fill=\"none\" stroke=\"{ink:sea}\" stroke-width=\"8\" stroke-opacity=\".5\"/><text x=\"545\" y=\"40\" font-family=\"Space Mono\" font-size=\"11\">RIVER</text>",
+     "img": "confluence/site-plan"
     },
     {
      "tab": "The key · section",
@@ -1019,7 +1028,8 @@ export const ESTATES: Record<string, SiteEstate> = {
        "12"
       ]
      ],
-     "svg": "<g font-family=\"Space Mono\" font-size=\"11\"><rect x=\"40\" y=\"140\" width=\"42\" height=\"120\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"44\" y=\"280\">SPINE 1.4</text><rect x=\"82\" y=\"140\" width=\"150\" height=\"120\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"130\" y=\"205\">SLEEP 5.0</text><rect x=\"232\" y=\"140\" width=\"96\" height=\"120\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"236\" y=\"205\">WET 3.2</text><rect x=\"328\" y=\"140\" width=\"102\" height=\"120\" fill=\"{ink:sea3}\" fill-opacity=\".18\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><text x=\"336\" y=\"205\">BALCONY 3.4</text><line x1=\"338\" y1=\"140\" x2=\"346\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"354\" y1=\"140\" x2=\"362\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"370\" y1=\"140\" x2=\"378\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"386\" y1=\"140\" x2=\"394\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"402\" y1=\"140\" x2=\"410\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"418\" y1=\"140\" x2=\"426\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><path d=\"M470 100C460 180 480 240 470 330\" fill=\"none\" stroke=\"{ink:sea}\" stroke-width=\"10\" stroke-opacity=\".4\"/><text x=\"452\" y=\"360\">RIVER</text><line x1=\"40\" y1=\"300\" x2=\"430\" y2=\"300\" stroke=\"{ink:ink}\"/><text x=\"200\" y=\"320\">13.0 M</text></g>"
+     "svg": "<g font-family=\"Space Mono\" font-size=\"11\"><rect x=\"40\" y=\"140\" width=\"42\" height=\"120\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"44\" y=\"280\">SPINE 1.4</text><rect x=\"82\" y=\"140\" width=\"150\" height=\"120\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"130\" y=\"205\">SLEEP 5.0</text><rect x=\"232\" y=\"140\" width=\"96\" height=\"120\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"2\"/><text x=\"236\" y=\"205\">WET 3.2</text><rect x=\"328\" y=\"140\" width=\"102\" height=\"120\" fill=\"{ink:sea3}\" fill-opacity=\".18\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><text x=\"336\" y=\"205\">BALCONY 3.4</text><line x1=\"338\" y1=\"140\" x2=\"346\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"354\" y1=\"140\" x2=\"362\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"370\" y1=\"140\" x2=\"378\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"386\" y1=\"140\" x2=\"394\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"402\" y1=\"140\" x2=\"410\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><line x1=\"418\" y1=\"140\" x2=\"426\" y2=\"260\" stroke=\"{ink:ember}\" stroke-width=\"3\"/><path d=\"M470 100C460 180 480 240 470 330\" fill=\"none\" stroke=\"{ink:sea}\" stroke-width=\"10\" stroke-opacity=\".4\"/><text x=\"452\" y=\"360\">RIVER</text><line x1=\"40\" y1=\"300\" x2=\"430\" y2=\"300\" stroke=\"{ink:ink}\"/><text x=\"200\" y=\"320\">13.0 M</text></g>",
+     "img": "confluence/key-section"
     },
     {
      "tab": "Plaza",
@@ -1046,7 +1056,8 @@ export const ESTATES: Record<string, SiteEstate> = {
        "7.5 × 5.0 m, on the roof"
       ]
      ],
-     "svg": "<rect x=\"60\" y=\"60\" width=\"480\" height=\"300\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><rect x=\"60\" y=\"60\" width=\"480\" height=\"190\" fill=\"{ink:sand}\" fill-opacity=\".2\" stroke=\"{ink:ink}\"/><text x=\"72\" y=\"90\" font-family=\"Space Mono\" font-size=\"12\">HALL · 120 M²</text><rect x=\"60\" y=\"250\" width=\"480\" height=\"110\" fill=\"{ink:sea2}\" fill-opacity=\".18\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><text x=\"72\" y=\"330\" font-family=\"Space Mono\" font-size=\"12\">MONSOON VERANDA · OPEN ON THREE SIDES</text><rect x=\"400\" y=\"100\" width=\"110\" height=\"60\" fill=\"{ink:sea}\" fill-opacity=\".4\" stroke=\"{ink:ink}\"/><text x=\"404\" y=\"135\" font-family=\"Space Mono\" font-size=\"10\">SAGE POOL</text><rect x=\"120\" y=\"170\" width=\"60\" height=\"30\" fill=\"{ink:ember}\" fill-opacity=\".4\" stroke=\"{ink:ink}\"/><text x=\"124\" y=\"190\" font-family=\"Space Mono\" font-size=\"10\">HEARTH</text>"
+     "svg": "<rect x=\"60\" y=\"60\" width=\"480\" height=\"300\" fill=\"none\" stroke=\"{ink:ink}\" stroke-width=\"3\"/><rect x=\"60\" y=\"60\" width=\"480\" height=\"190\" fill=\"{ink:sand}\" fill-opacity=\".2\" stroke=\"{ink:ink}\"/><text x=\"72\" y=\"90\" font-family=\"Space Mono\" font-size=\"12\">HALL · 120 M²</text><rect x=\"60\" y=\"250\" width=\"480\" height=\"110\" fill=\"{ink:sea2}\" fill-opacity=\".18\" stroke=\"{ink:ink}\" stroke-dasharray=\"5 4\"/><text x=\"72\" y=\"330\" font-family=\"Space Mono\" font-size=\"12\">MONSOON VERANDA · OPEN ON THREE SIDES</text><rect x=\"400\" y=\"100\" width=\"110\" height=\"60\" fill=\"{ink:sea}\" fill-opacity=\".4\" stroke=\"{ink:ink}\"/><text x=\"404\" y=\"135\" font-family=\"Space Mono\" font-size=\"10\">SAGE POOL</text><rect x=\"120\" y=\"170\" width=\"60\" height=\"30\" fill=\"{ink:ember}\" fill-opacity=\".4\" stroke=\"{ink:ink}\"/><text x=\"124\" y=\"190\" font-family=\"Space Mono\" font-size=\"10\">HEARTH</text>",
+     "img": "confluence/plaza-plan"
     }
    ]
   },

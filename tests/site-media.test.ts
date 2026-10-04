@@ -41,16 +41,24 @@ describe("an estate's own pictures", () => {
           total += size;
         }
       }
+      /* per estate: a second estate with pictures is not a reason to starve the first */
+      expect(total, estate).toBeLessThan(8 * 1024 * 1024);
+      total = 0;
     }
-    expect(total).toBeLessThan(8 * 1024 * 1024);
   });
 
   it("lists every file that is served, and cuts every picture it lists", () => {
     const script = fs.readFileSync(path.join(ROOT, "scripts", "gen-site-media.js"), "utf8");
-    const cut = [...script.matchAll(/^\s+"([a-z][a-z-]*)": \["/gm)].map((m) => m[1]).sort();
-    expect(cut).toEqual(Object.keys(MEDIA.creek).sort());
-    const served = new Set(fs.readdirSync(path.join(ROOT, "public", "images", "site", "creek")).map((f) => f.replace(/-\d+\.webp$/, "")));
-    expect([...served].sort()).toEqual(Object.keys(MEDIA.creek).sort());
+    expect(Object.keys(MEDIA).length).toBeGreaterThanOrEqual(2);
+    for (const estate of Object.keys(MEDIA)) {
+      /* the script's own map for this estate: const CREEK = { ... }; */
+      const block = script.match(new RegExp(`const ${estate.toUpperCase()} = \\{([\\s\\S]*?)\\n\\};`));
+      expect(block, `gen-site-media.js has no map for ${estate}`).not.toBeNull();
+      const cut = [...block![1].matchAll(/^\s+"([a-z][a-z-]*)": \["/gm)].map((m) => m[1]).sort();
+      expect(cut, estate).toEqual(Object.keys(MEDIA[estate]).sort());
+      const served = new Set(fs.readdirSync(path.join(ROOT, "public", "images", "site", estate)).map((f) => f.replace(/-\d+\.webp$/, "")));
+      expect([...served].sort(), estate).toEqual(Object.keys(MEDIA[estate]).sort());
+    }
   });
 
   it("resolves every picture a page asks for", () => {
@@ -71,9 +79,11 @@ describe("an estate's own pictures", () => {
   });
 
   it("describes what is drawn in the platform's own words", () => {
-    for (const p of Object.values(MEDIA.creek)) {
-      expect(p.alt.length).toBeGreaterThan(12);
-      expect(p.alt).not.toMatch(/photo/i);
+    for (const plates of Object.values(MEDIA)) {
+      for (const p of Object.values(plates)) {
+        expect(p.alt.length).toBeGreaterThan(12);
+        expect(p.alt).not.toMatch(/photo/i);
+      }
     }
   });
 });

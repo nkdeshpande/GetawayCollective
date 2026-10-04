@@ -59,6 +59,31 @@ export const MEDIA: Readonly<Record<string, Readonly<Record<string, Plate>>>> = 
     "sauna-lake": square("the sauna on the lake"),
     "stream": square("the stream between the clusters"),
   },
+  /* 4 Oct 2026. Seaside Confluence, from its own media register (rebuilt 1 Oct
+     2026 from the road-to-river model). Under construction, and still drawn:
+     nothing here is a photograph of the building. */
+  confluence: {
+    "hero": wide("the estate from above, on the river side: the building of twelve keys on its piles, the plaza and its pool, the walk between them and the dock on the river"),
+    "hero-tall": tall("the estate from above: the plaza and its pool, and the building of twelve keys beside the river"),
+    "place": wide("the estate from the air, from the road to the river: the arrival court, the plaza and its pool, the keys and the dock"),
+    "keys": wide("the twelve keys on two levels, stood on piles over open ground, with the walk to the river below"),
+    "stair": wide("the open stair that climbs from the ground to the upper level"),
+    "plaza": wide("the ramp rising beside the plaza to its deck"),
+    "arrival": wide("the arrival court between its low walls, with two people walking in"),
+    "river": wide("the river from a balcony, with the dock below and palms on the far bank"),
+    "walk": wide("the sea and the sand at low tide"),
+    "veranda": wide("the deck beside the plaza, in the rain"),
+    "fire": wide("the building at dusk, lit from within"),
+    "tide-table": wide("the deck beside the plaza in evening light"),
+    "dock": wide("the walk to the dock on the river, at slack tide"),
+    "zones": wide("the estate seen from above: the arrival court, the plaza and its pool, the keys and the dock on the river"),
+    "site-plan": wide("the whole site seen from above, from the road to the river"),
+    "key-section": wide("a cross-section through the building: two levels of keys on a steel frame, over open ground"),
+    "plaza-plan": wide("the plaza seen from above: the pool, the hall and the walk to the keys"),
+    "balcony": square("the river and the far bank, seen from a balcony"),
+    "veranda-rain": square("rain falling beside the plaza's deck"),
+    "procession": square("the procession rising from the court towards the deck"),
+  },
 };
 
 export const plateOf = (ref: string): (Plate & { readonly base: string }) | undefined => {

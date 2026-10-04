@@ -10,7 +10,7 @@
  * that folder is a synced working set. This script reads them and writes
  * web copies, two widths each, into public/images/site/<estate>/.
  *
- *   node scripts/gen-site-media.js "<source folder>"
+ *   node scripts/gen-site-media.js "<source folder>" [estate]     (estate: creek by default, or confluence)
  *
  * The frames and their words live in content/site/media.ts, which is the
  * one place a picture is named; this file only says which master each name
@@ -57,6 +57,39 @@ const CREEK = {
   "stream": ["crk_stream_square_01.png", "square"],
 };
 
+/* 4 Oct 2026. Seaside Confluence, from its own media register (C:\SENSORYGETAWAYS\
+   3.0 SEASIDE CONFLUENCE_SSC\LOCATION BRAND\media, GX-14-RG-002, rebuilt 1 Oct 2026 from
+   the road-to-river model SSC-01-DR-008). The register names the slot each picture was made
+   for, and the page follows it: the chapters, the five moments of the day, the plans. Two
+   choices are ours. The hero is the register's estate aerial and not its eye-level "hero",
+   which is a close view of one wall; and a portrait cut of the same aerial serves a phone.
+   The three site photographs in the register are marked interim, to be re-shot, and are
+   not used. */
+const CONFLUENCE = {
+  "hero": ["press_ssc_estate_aerial_01.jpg", "wide"],
+  "hero-tall": ["press_ssc_estate_aerial_01.jpg", "tall"],
+  "place": ["ssc_site_wide_01.jpg", "wide"],
+  "keys": ["ssc_ch3_fullbleed_01.jpg", "wide"],
+  "stair": ["ssc_sky_deck_wide_01.jpg", "wide"],
+  "plaza": ["ssc_ch2_fullbleed_01.jpg", "wide"],
+  "arrival": ["ssc_ch1_fullbleed_01.jpg", "wide"],
+  "river": ["ssc_exp01_card_01.jpg", "wide"],
+  "walk": ["ssc_exp06_card_01.jpg", "wide"],
+  "veranda": ["ssc_exp02_card_01.jpg", "wide"],
+  "fire": ["ssc_exp03_card_01.jpg", "wide"],
+  "tide-table": ["ssc_exp04_card_01.jpg", "wide"],
+  "dock": ["ssc_ch4_fullbleed_01.jpg", "wide"],
+  "zones": ["press_ssc_masterplan_zones_01.png", "wide"],
+  "site-plan": ["ssc_journal_10_wide_01.png", "wide"],
+  "key-section": ["ssc_journal_04_wide_01.png", "wide"],
+  "plaza-plan": ["ssc_journal_09_wide_01.png", "wide"],
+  "balcony": ["ssc01_outlook_wide_01.jpg", "square"],
+  "veranda-rain": ["ssc_exp02_card_01.jpg", "square"],
+  "procession": ["ssc_ch1b_square_01.jpg", "square"],
+};
+
+const FRAMES = { creek: CREEK, confluence: CONFLUENCE };
+
 /** [large, small] widths in px. The large is the intrinsic size the manifest states. */
 const WIDTHS = { wide: [1800, 900], tall: [1000, 600], square: [1200, 600] };
 const RATIO = { wide: 9 / 16, tall: 3 / 2, square: 1 };
@@ -79,12 +112,12 @@ async function build(estate, frames, src) {
 }
 
 if (require.main === module) {
-  const src = process.argv[2];
-  if (!src) {
-    console.error('usage: node scripts/gen-site-media.js "<source folder holding the masters>"');
+  const src = process.argv[2], estate = process.argv[3] || "creek";
+  if (!src || !FRAMES[estate]) {
+    console.error(`usage: node scripts/gen-site-media.js "<source folder holding the masters>" [${Object.keys(FRAMES).join(" | ")}]`);
     process.exit(1);
   }
-  build("creek", CREEK, src).catch((e) => { console.error(e.message); process.exit(1); });
+  build(estate, FRAMES[estate], src).catch((e) => { console.error(e.message); process.exit(1); });
 }
 
-module.exports = { CREEK, WIDTHS, RATIO };
+module.exports = { CREEK, CONFLUENCE, FRAMES, WIDTHS, RATIO };

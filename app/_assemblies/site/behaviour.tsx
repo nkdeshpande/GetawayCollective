@@ -555,11 +555,12 @@ function wireReveal(root: HTMLElement, still: boolean): () => void {
 /* ── Pictures behind a tab, a frame or the edge of a rail — 4 Oct 2026 ──
    A lazy picture is fetched when it comes near the screen. One that is
    hidden (the projector's other frames, the plan's other tabs, the open
-   gallery) or off to the side of a rail never comes near it, so it was
+   gallery, the collection's other groups) or off to the side of a rail never
+   comes near it, so it was
    fetched only when asked for, and on a phone's connection the frame stood
    empty meanwhile. Each such group now fetches its pictures as the group
    itself comes near. */
-const PICTURE_GROUPS = ".proj, .plan .pv, .pc-rail, .gal";
+const PICTURE_GROUPS = ".proj, .plan .pv, .pc-rail, .gal, .cgrid";
 function wirePictures(root: HTMLElement): () => void {
   const lazy = 'img[loading="lazy"]';
   const groups = $$<HTMLElement>(PICTURE_GROUPS, root).filter((g) => g.querySelector(lazy));
