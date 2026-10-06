@@ -16,7 +16,7 @@ import { nextFor } from "@/content/site/next";
 import { GATES, estateDocket } from "./docket";
 import { PROJECTOR, momentHour } from "./gallery";
 import type { Reading } from "./registry";
-import { fundingComplete, heldBy, loanLine, openReading, rupees, rupeesFull, src, unitsByEstate, type Prov } from "./registry";
+import { fundingComplete, heldBy, loanLine, openReading, ownershipPrivate, rupees, rupeesFull, src, unitsByEstate, type Prov } from "./registry";
 import { COLLECTION } from "@/content/site/home";
 import { plateOf } from "@/content/site/media";
 import { daHTML, type DAKind } from "../da/render";
@@ -412,7 +412,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
     rows.map((d) => `<div><span>${d[0]}</span><span${d[2] ? ' class="ab"' : ""}${Array.isArray(d[3]) ? src(d[3] as unknown as Prov) : ""}>${F(String(d[1]))}</span></div>`).join("") + "</div>" +
     (E.detailsNote ? `<p class="plan-note">${F(E.detailsNote)}</p>` : "") + "</section>";
   /* The estate's papers, as a docket: each status read from the register. */
-  if (R) dc += `<section class="dkt-sec" id="${k}-papers"><span class="eb">The papers</span><h2 class="h2">What is <span>on file.</span></h2>` +
+  if (R && !ownershipPrivate(R.vehicle.slug)) dc += `<section class="dkt-sec" id="${k}-papers"><span class="eb">The papers</span><h2 class="h2">What is <span>on file.</span></h2>` +
     `<p class="para dkt-lead">Each paper says whether it exists, where it can be read, and what is still to come. Nothing is shown as on file unless the partnership actually holds it.</p>` +
     `${estateDocket(R.vehicle, plain, R.publishable, complete)}</section>`;
 

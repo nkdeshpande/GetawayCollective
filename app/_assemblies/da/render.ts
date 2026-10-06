@@ -137,13 +137,12 @@ function positionData(v: Vehicle) {
   for (let u = 1; u <= Math.max(1, of.units); u++) {
     const share = u / total;
     rows.push({ u, cap: rupees(of.unitPrice * BigInt(u)), share: `${(share * 100).toFixed(1)}%`,
-      nights: e ? `${Math.floor(e.nightPoolMin * share)}–${Math.floor(e.nightPoolMax * share)}` : "Not stated" });
+      /* Founder, 6 Oct 2026: one night a year for each 1% held. */
+      nights: String(Math.floor(share * 100 + 1e-9)) });
   }
   return {
     key: v.key, rows,
-    note: e
-      ? `Nights are an illustration: the estate's night pool shared in proportion to equity. The rule that allocates nights is not yet decided; each offering letter will state it. Nights begin: ${e.begins}.`
-      : "This estate's terms state no nights for a partner, so none is shown. The offering letter governs.",
+    note: `Nights follow the standard rule: one night a year for each 1% of the estate held. Each offering letter confirms it.${e ? ` Nights begin: ${e.begins}.` : " Nights begin at handover."}`,
   };
 }
 function position(o: { vehicle?: string }) {
@@ -154,8 +153,7 @@ function position(o: { vehicle?: string }) {
     pick(vs, d.key) +
     `<div class="da-pb"><div class="da-tile"><span class="da-lbl">Capital</span><b data-f="cap">${r.cap}</b></div><div class="da-tile"><span class="da-lbl">Share of equity</span><b data-f="share">${r.share}</b></div>` +
     `<div class="da-tile"><span class="da-lbl">Vote weight</span><b data-f="vote">${r.share}</b></div>` +
-    /* Nights are shown only where at least one estate's terms state them. */
-    (vs.some((v) => v.entitlement) ? `<div class="da-tile"><span class="da-lbl">Nights a year · illustration</span><b data-f="nights">${r.nights}</b></div>` : "") + "</div>" +
+    `<div class="da-tile"><span class="da-lbl">Nights a year</span><b data-f="nights">${r.nights}</b></div></div>` +
     `<label class="da-range"><span class="da-lbl"><b data-f="u">1</b> <span data-f="uw">unit</span></span><input type="range" min="1" max="${d.rows.length}" value="1" aria-label="Units held"></label>` +
     `<p class="da-note" data-f="note">${esc(d.note)}</p>`,
     { set: data });

@@ -140,7 +140,7 @@ export const IRIS_CORPUS: readonly IrisAnswer[] = [
     asks: ["what places", "what is available", "the collection", "properties", "what can i invest in"],
     answer:
       "Seven estates. SlowSpace Creek, in Coorg, is open now. Seaside Confluence, on the Udupi coast, " +
-      "is fully subscribed and takes a waitlist. Solace, near Nandi Hills, and Coffee Fields Forever, " +
+      "is fully subscribed and takes a waitlist. Solace by SLOWSPACE, near Nandi Hills, and Coffee Fields Forever, " +
       "in Coorg, are funded and in delivery. Nine Hills, Wildwood and Tidal Club are in the pipeline " +
       "and not yet open. The Collection shows each one: its place, its design, who owns it and its capital.",
     source: { label: "The Collection", to: "/collection" },

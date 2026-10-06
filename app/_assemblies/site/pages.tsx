@@ -28,7 +28,7 @@ import { daHTML } from "../da/render";
 import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify, plate } from "./render";
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
-import { fundingComplete, heldBy, openReading, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
+import { fundingComplete, heldBy, landPublic, openReading, ownershipPrivate, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
 import type { Block, NextStep, SitePage } from "./types";
 import { DOCKET, rulebookDocket } from "./docket";
 import { APPLY, ROLES, WHY } from "@/content/site/careers";
@@ -87,7 +87,7 @@ export function SiteHome() {
     const R = read(v);
     return `${R.availability} · ${R.delivery}`;
   };
-  const facts = (c: (typeof COLLECTION)[number]) => { const v = vehicleOf(c.vehicleKey); return v ? `${v.keys} keys · ${v.landArea}` : c.spec; };
+  const facts = (c: (typeof COLLECTION)[number]) => { const v = vehicleOf(c.vehicleKey); return v ? `${v.keys} keys · ${landPublic(v)}` : c.spec; };
   /* An estate's own picture, where it has one (content/site/media.ts); its drawn film otherwise. */
   const imgOf = (href: string) => COLLECTION.find((c) => c.href === href)?.img;
   const html =
@@ -172,13 +172,13 @@ function compareHTML(): string {
   const rows: [string, (c: Col) => string, (c: Col) => Prov | undefined][] = [
     ["Place", (c) => esc(c.v.jurisdiction), (c) => c.R.prov.intake],
     ["Keys", (c) => String(c.v.keys), (c) => c.R.prov.intake],
-    ["Land", (c) => esc(c.v.landArea), (c) => c.R.prov.intake],
+    ["Land", (c) => esc(landPublic(c.v)), (c) => c.R.prov.intake],
     ["Availability", (c) => esc(c.R.availability), (c) => c.R.prov.derived],
     ["Delivery", (c) => esc(c.R.delivery), (c) => c.R.prov.intake],
     ["Units", (c) => (c.R.complete ? gap("Funding complete") : c.R.publishable ? `${c.v.offering.available} of ${c.v.offering.units} available` : gap("Figures being confirmed")), (c) => (c.R.publishable && !c.R.complete ? c.R.prov.derived : undefined)],
     ["A unit", (c) => (c.R.complete ? gap("Funding complete") : c.R.publishable ? rupees(c.v.offering.unitPrice) : gap("Not yet priced")), (c) => (c.R.publishable && !c.R.complete ? c.R.prov.intake : undefined)],
     ["Lock-in", (c) => (c.R.complete ? gap("Funding complete") : c.R.publishable ? esc(c.v.offering.lockIn) : gap("Set in the offering letter")), (c) => (c.R.publishable && !c.R.complete ? c.R.prov.intake : undefined)],
-    ["Held by", (c) => esc(heldBy(c.v).value), (c) => c.R.prov.intake],
+    ["Held by", (c) => (ownershipPrivate(c.v.slug) ? gap("Not published") : esc(heldBy(c.v).value)), (c) => (ownershipPrivate(c.v.slug) ? undefined : c.R.prov.intake)],
   ];
   return '<section class="cmp" id="compare"><span class="eb">Compare</span><h2 class="h2">The estates, <span>side by side.</span></h2>' +
     '<p class="para dim">Every figure is read from each estate\'s own record. Capital is at risk; the offering letter governs.</p>' +
@@ -215,7 +215,7 @@ export function SiteCollection() {
     const done = e.funding === "complete";
     return {
       e, g, st: stage(e), slug: e.href.replace("/collection/", ""),
-      facts: v ? `${v.keys} keys · ${v.landArea}` : e.spec,
+      facts: v ? `${v.keys} keys · ${landPublic(v)}` : e.spec,
       availability: R ? R.availability + (R.publishable && !R.complete && v!.offering.unitPrice > 0n ? ` · ${rupees(v!.offering.unitPrice)} a unit` : "")
         : done ? "Funding complete" : e.stage === "pipe" ? "Not yet offered" : "Not yet open for investment",
       delivery: R ? R.delivery : e.stage === "pipe" ? "Pipeline" : "In delivery",

@@ -20,7 +20,7 @@ describe("the capital stack", () => {
   it("adds to the stated project size", () => {
     expect(EQUITY).toBe(STACK.land + STACK.formation);
     expect(PROJECT).toBe(EQUITY + STACK.debt);
-    expect(inr(PROJECT)).toBe("₹9,50,00,000");
+    expect(inr(PROJECT)).toBe("₹10,00,00,000");
   });
 
   it("divides into exactly ten units of ₹40 lakh", () => {

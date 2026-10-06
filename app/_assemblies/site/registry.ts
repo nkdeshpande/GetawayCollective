@@ -35,6 +35,13 @@ export const publicName = (v: Vehicle): string =>
  * Read from the collection because Coffee Fields Forever has no register
  * record to carry the fact.
  */
+/** Founder, 6 Oct 2026: an estate whose ownership structure and details are not made public. */
+export const ownershipPrivate = (slug: string): boolean =>
+  COLLECTION.some((c) => c.ownership === "private" && c.href === `/collection/${slug}`);
+/** The land as it may be said in public: without the owned-and-leased split where ownership is private. */
+export const landPublic = (v: Vehicle): string =>
+  ownershipPrivate(v.slug) ? v.landArea.replace(/\s*\([^)]*\)/, "") : v.landArea;
+
 export const fundingComplete = (slug: string): boolean =>
   COLLECTION.some((c) => c.funding === "complete" && c.href === `/collection/${slug}`);
 
@@ -46,6 +53,7 @@ export const fundingComplete = (slug: string): boolean =>
 export const loanLine = (v: Vehicle): string => {
   const s = v.stack;
   return rupees(s.facility) + (s.facilityLimit ? ` of a ${rupees(s.facilityLimit)} limit` : "") +
+    (s.plannedDraw && s.plannedDraw < s.facility ? `, of which ${rupees(s.plannedDraw)} is the planned draw and ${rupees(s.facility - s.plannedDraw)} a buffer` : "") +
     (s.facilityStatus === "applied-for" ? " · applied for, not sanctioned" : "");
 };
 const loanRow = (v: Vehicle, p: Prov): readonly [string, string, number?, Prov?] =>
@@ -171,17 +179,17 @@ export function read(v: Vehicle): Reading {
     : "The offering is not yet published: its figures are still being confirmed, and none is estimated in the meantime.";
   const tokens = {
     vehicle: v.registeredName,
-    LAND: v.landArea,
+    LAND: landPublic(v),
     KEYS: String(v.keys),
     OFFER: offer,
   };
   const P = provFor(v);
   const held = heldBy(v);
   const details: (readonly [string, string, number?, Prov?])[] = [
-    [held.label, held.value + (v.llpin ? ` · LLPIN ${v.llpin}` : ""), undefined, P.intake],
+    ...(ownershipPrivate(v.slug) ? [] : [[held.label, held.value + (v.llpin ? ` · LLPIN ${v.llpin}` : ""), undefined, P.intake] as const]),
     ["Place", v.jurisdiction, undefined, P.intake],
     ["Coordinates", v.coordinates ? `<span class="mono">${v.coordinates}</span>` : "Not yet recorded", v.coordinates ? undefined : 1],
-    ["Land", v.landArea, undefined, P.intake],
+    ["Land", landPublic(v), undefined, P.intake],
     ["Keys", String(v.keys), undefined, P.intake],
   ];
   if (complete) {

@@ -264,7 +264,7 @@ const CAPITAL: VehicleDomainSpec = {
       name: "Finance",
       constituents: [
         { name: "Debt", backing: reg("DebtFacility",
-          "Lender, principal, rate, moratorium, covenants. The ₹5.5 Cr facility currently lives as prose in slowspace.ts — a covenant nobody can query is a covenant nobody monitors.") },
+          "Lender, principal, rate, moratorium, covenants. The ₹6.0 Cr facility currently lives as prose in slowspace.ts — a covenant nobody can query is a covenant nobody monitors.") },
         { name: "Interest", backing: reg("DebtFacility", "Schedule rows on the facility.") },
         { name: "Repayments", backing: reg("DebtFacility", "Schedule rows on the facility.") },
         { name: "Banking", backing: reg("BankAccount",

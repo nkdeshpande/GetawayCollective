@@ -108,7 +108,7 @@ export const OFFICE_PAGES: Record<string, Entry> = {
         { label: "Project", value: inr(PROJECT), money: true, sub: `${LLP.name}` },
         { label: "Equity layer", value: inr(EQUITY), money: true,
           sub: `${SUBSCRIBED_UNITS} of ${UNITS_IN_VEHICLE} units subscribed` },
-        { label: "Facility", value: inr(STACK.debt), money: true, sub: "drawn during construction only" },
+        { label: "Facility", value: inr(STACK.debt), money: true, sub: inr(STACK.draw) + " planned draw · construction only" },
         { label: "Debt cover", value: DSCR.toFixed(2) + "×", sub: "derived, never asserted", conf: "INFERRED" },
       ] },
       { kind: "links", items: [
@@ -928,7 +928,7 @@ export const OFFICE_PAGES: Record<string, Entry> = {
     ),
     sections: isPDB(llpin) ? [
       { kind: "empty", what: "No charge registered",
-        because: "The " + inr(STACK.debt) + " facility is committed but undrawn; its charge " +
+        because: "The " + inr(STACK.debt) + " facility is applied for and the bank's sanction is pending; its charge " +
                  "registers at first drawdown, programmed for " + PROGRAMME[1].w + ".",
         when: "DebtFacility is a §33 candidate — until ratified, the facility's terms live in the " +
               "offering record. A covenant nobody can query is a covenant nobody monitors." },

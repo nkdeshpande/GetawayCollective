@@ -15,7 +15,7 @@ import type { SiteEstate } from "@/app/_assemblies/site/types";
 export const ESTATES: Record<string, SiteEstate> = {
  "solace": {
   "key": "solace",
-  "name": "Solace",
+  "name": "Solace by SLOWSPACE",
   "vehicle": "{{vehicle}}",
   "pal": "solace",
   "hour": 6.4,
@@ -326,7 +326,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "Bortle 2 on new-moon weeks. Field glasses on the shelf."
     ]
    ],
-   "note": "The estate is run by Sensory Getaways, the operating partner. Partners use it in proportion to their position; the allocation rule is being set."
+   "note": "The estate is run by Sensory Getaways, the operating partner. Partners use it in proportion to their position: one night a year for each 1% held."
   },
   "getting": {
    "title": "Two hours <span>north.</span>",
@@ -524,9 +524,8 @@ export const ESTATES: Record<string, SiteEstate> = {
     "Sensory Getaways"
    ],
    [
-    "Nights per unit",
-    "Allocation rule being set",
-    1
+    "Nights",
+    "One night a year for each 1% held"
    ],
    [
     "Platform fee",

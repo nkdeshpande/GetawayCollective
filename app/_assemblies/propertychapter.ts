@@ -128,7 +128,7 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
           : "The waterfall is not complete, so no yield is stated.",
         rows: [
           { label: "Project total", value: inr(s.projectTotal), basis: `${inr(s.equityLayer)} equity + ${inr(s.facility)} facility` },
-          { label: "Facility", value: inr(s.facility), basis: plainTerms(`${s.moratorium} · ${s.covenant}`) },
+          { label: "Facility", value: inr(s.facility), basis: plainTerms(`${s.plannedDraw && s.plannedDraw < s.facility ? `${inr(s.plannedDraw)} is the planned draw; ${inr(s.facility - s.plannedDraw)} is a buffer. ` : ""}${s.moratorium} · ${s.covenant}`) },
           { label: "Gross revenue", value: inr(v.operating.grossRevenue), basis: `Rate ${inr(v.operating.adr)} at ${pct(v.operating.occupancyBps)} occupancy — forecast` },
           ...(wf
             ? WATERFALL_STAGES.map(([k, label]) => ({

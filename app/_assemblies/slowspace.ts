@@ -85,11 +85,14 @@ export const SITE = {
 export const STACK = {
   land: 30000000_0000n,         // ₹3.00 Cr — equity
   formation: 10000000_0000n,    // ₹1.00 Cr — equity
-  debt: 55000000_0000n,         // ₹5.50 Cr — drawn during construction only
+  /* Founder, 4 Oct 2026: a ₹6.00 Cr cap, ₹5.50 Cr the planned draw and
+     ₹0.50 Cr a buffer in case it is required. */
+  debt: 60000000_0000n,         // ₹6.00 Cr — the facility, drawn during construction only
+  draw: 55000000_0000n,         // ₹5.50 Cr — the planned draw
 } as const;
 
 export const EQUITY = STACK.land + STACK.formation;          // ₹4.00 Cr
-export const PROJECT = EQUITY + STACK.debt;                  // ₹9.50 Cr
+export const PROJECT = EQUITY + STACK.debt;                  // ₹10.00 Cr
 
 /* ── The minimum unit, and the ladder built from it ───────────────── */
 /*
@@ -285,7 +288,7 @@ export const WATERFALL_SLOWSPACE = [
   { k: "4 · Sinking Fund", bps: 250, cls: "less",
     note: "CapEx reserve. Funds replacement before failure." },
   { k: "5 · Debt Service", bps: bpsOf(DEBT_SERVICE), cls: "senior",
-    note: "₹5.5 Cr facility. THE SENIOR CLAIM — the dossier folded this inside the investor share." },
+    note: "₹6.0 Cr facility, ₹5.5 Cr the planned draw. THE SENIOR CLAIM — the dossier folded this inside the investor share." },
   { k: "6 · To Partners", bps: bpsOf(PARTNER_DISTRIBUTION), cls: "out",
     note: "No preferred return, no catch-up, no carry. Blocked if the reserve would fall below its floor." },
 ];
@@ -482,7 +485,7 @@ export const RISKS_SLOWSPACE: readonly DisclosureItem[] = [
         "Development projects may be subject to delays, cost increases or programme revisions " +
         "that affect the timing of operations."],
     facts: [
-      { k: "Construction finance", v: inr(STACK.debt) + " senior facility" },
+      { k: "Construction finance", v: inr(STACK.debt) + " senior facility, " + inr(STACK.draw) + " the planned draw" },
       { k: "Moratorium", v: "Interest-only during months 1\u201318" },
     ],
   },
@@ -568,7 +571,7 @@ export const ACKNOWLEDGEMENT = {
 
 /** Read from the vehicle record. Never retyped into the prose above. */
 export const RISK_TERMS: Record<string, string> = {
-  debt: inr(STACK.debt) + " facility \u00b7 drawn during construction only",
+  debt: inr(STACK.debt) + " facility \u00b7 " + inr(STACK.draw) + " the planned draw \u00b7 drawn during construction only",
   moratorium: "Interest-only for months 1\u201318",
   lockIn: UNIT.lockIn,
   occupancy: (OPERATING.occupancy / 100).toFixed(0) + "% blended occupancy assumed \u00b7 " +

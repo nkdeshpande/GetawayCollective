@@ -225,13 +225,13 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "public.ts 932–938 · AGENTS.md 115 · Rule 11"
    },
    {
-    "p": "<b class=\"tx-strong\">Using the estate.</b> Nights follow your position; they are an incident of ownership, never the product. The rule that allocates them is not yet decided and each offering letter will state it, so the figures below are an illustration only."
+    "p": "<b class=\"tx-strong\">Using the estate.</b> Nights follow your position; they are an incident of ownership, never the product. The standard rule is one night a year for each 1% of the estate you hold: ten nights for a 10% holding. Each offering letter confirms it."
    },
    {
     "da": "position"
    },
    {
-    "src": "public.ts 184 · DECISIONS.md D-08"
+    "src": "public.ts 184 · founder ruling, 6 Oct 2026"
    },
    {
     "p": "<b class=\"tx-strong\">Leaving.</b> There is no public market for units. After the lock-in, partners can post units on a noticeboard that other partners see first; it is not a market, and nothing guarantees a buyer."
@@ -324,7 +324,7 @@ export const PAGES: Record<string, SitePage> =  {
        "select",
        [
         "Any estate",
-        "Solace",
+        "Solace by SLOWSPACE",
         "Seaside Confluence",
         "SlowSpace Creek",
         "Coffee Fields Forever",
@@ -940,7 +940,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "Estates",
-      "Solace · Seaside Confluence · SlowSpace Creek · Coffee Fields Forever"
+      "Solace by SLOWSPACE · Seaside Confluence · SlowSpace Creek · Coffee Fields Forever"
      ],
      [
       "Keys across the four",
@@ -986,7 +986,7 @@ export const PAGES: Record<string, SitePage> =  {
    {
     "rows": [
      [
-      "Solace",
+      "Solace by SLOWSPACE",
       "Six keys on a granite ridge two hours north of Bengaluru; the reference estate."
      ],
      [
@@ -1337,7 +1337,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Unit</b>",
-      "A fixed share of one estate's LLP, priced in its offering letter. Each estate sets its own unit size, price and the most one partner may hold, and its page shows how many remain. Your units decide your share of distributions, your voting weight and your nights."
+      "A fixed share of one estate's LLP, priced in its offering letter. Each estate sets its own unit size, price and the most one partner may hold, and its page shows how many remain. Your units decide your share of distributions, your voting weight and your nights: one night a year for each 1% held."
      ],
      [
       "<b class=\"tx-strong\">Waitlist</b>",

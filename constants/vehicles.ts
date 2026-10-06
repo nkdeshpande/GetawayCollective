@@ -137,6 +137,13 @@ export interface CapitalStack {
   /** The lender's limit, where it is more than the costed project draws. */
   readonly facilityLimit?: bigint;
   /**
+   * What is planned to be drawn, where that is less than the facility and
+   * the rest is a buffer INSIDE the project total (Seaside Confluence,
+   * founder, 4 Oct 2026). Not facilityLimit: on The Creek that is headroom
+   * outside the project total. The buffer is derived, never typed.
+   */
+  readonly plannedDraw?: bigint;
+  /**
    * Whether the loan exists. "applied-for" is said in those words on every
    * surface that names the loan: nobody is told a loan is secured before a
    * sanction letter says so.
@@ -406,9 +413,16 @@ const SLOWSPACE: Vehicle = {
   stack: {
     land: 30000000_0000n,
     formation: 10000000_0000n,
-    facility: 55000000_0000n,
+    /* Founder, 4 Oct 2026: the facility is capped at ₹6.00 Cr, of which
+       ₹5.50 Cr is the planned draw and ₹0.50 Cr a buffer in case it is
+       required. With the ₹4.00 Cr equity that is a ₹10.00 Cr project.
+       This supersedes the intake's ₹5.50 Cr and ₹9.50 Cr. */
+    facility: 60000000_0000n,
+    plannedDraw: 55000000_0000n,
+    /* Founder, 6 Oct 2026: the bank's sanction is still pending. */
+    facilityStatus: "applied-for",
     equityLayer: 40000000_0000n,
-    projectTotal: 95000000_0000n,
+    projectTotal: 100000000_0000n,
     moratorium: "Interest-only during months 1–18",
     covenant: "DSCR 1.50x minimum",
   },

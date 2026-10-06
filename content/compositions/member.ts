@@ -112,7 +112,7 @@ export const MEMBER_PAGES: Record<string, Entry> = {
                  "drawdown schedule. This vehicle has made no call and its model does not anticipate one.",
         when: "A call, if ever made, appears here with its resolution reference and due date." },
       { kind: "note", tone: "steel",
-        text: "Construction is funded by the " + inr(55000000_0000n) + " facility, drawn during " +
+        text: "Construction is funded by the " + inr(60000000_0000n) + " facility, of which " + inr(55000000_0000n) + " is the planned draw, drawn during " +
               "build only — not by calls on partners." },
     ],
   },
