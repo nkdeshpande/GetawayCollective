@@ -154,7 +154,7 @@ const STORE = "gc-rail-collapsed";
  * everybody, so nothing about the frame discloses the viewer's standing.
  */
 const SITE_PATHS = [
-  /^\/$/, /^\/collection(\/|$)/, /^\/journal(\/|$)/, /^\/legal(\/|$)/,
+  /^\/$/, /^\/collection(\/|$)/, /^\/journal(\/|$)/, /^\/legal(\/|$)/, /^\/reserve\//,
   /^\/(how-it-works|how-we-build|about|contact|team|press|answers|glossary|signal|sign-in|verify|status|how-to-qualify|operating-partner|careers)$/,
 ];
 export const isSitePath = (p: string) => SITE_PATHS.some((re) => re.test(p));

@@ -25,7 +25,7 @@
  * return value rather than assume.
  */
 
-import { and, desc, eq, or, sql as raw } from "drizzle-orm";
+import { and, desc, eq, or, sql as raw, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { eventLog, inboundContact } from "./schema";
@@ -218,4 +218,33 @@ function toEnvelope(r: typeof eventLog.$inferSelect): EventEnvelope {
     reason: r.reason ?? undefined,
     payload: (r.payload ?? {}) as Record<string, unknown>,
   };
+}
+
+/* ── Deposits, read back (V2.0, 6 Oct 2026) ──────────────────────────
+   A hold is the deposit rows that share one reference, read
+   together (lib/holds.ts). These two readers fetch them. */
+const DEPOSIT_SOURCES = ["deposit-intent", "deposit-paid", "deposit-captured"];
+
+/** Every deposit row carrying one reference. */
+export async function depositRowsByReference(reference: string): Promise<ContactRow[]> {
+  const d = db();
+  if (!d) return [];
+  return (await d
+    .select()
+    .from(inboundContact)
+    .where(and(eq(inboundContact.correlationId, reference), inArray(inboundContact.source, DEPOSIT_SOURCES)))) as ContactRow[];
+}
+
+/** Every deposit row at one estate, or at all of them. */
+export async function depositRows(vehicleSlug?: string): Promise<ContactRow[]> {
+  const d = db();
+  if (!d) return [];
+  return (await d
+    .select()
+    .from(inboundContact)
+    .where(vehicleSlug
+      ? and(eq(inboundContact.vehicleSlug, vehicleSlug), inArray(inboundContact.source, DEPOSIT_SOURCES))
+      : inArray(inboundContact.source, DEPOSIT_SOURCES))
+    .orderBy(desc(inboundContact.receivedAt))
+    .limit(2000)) as ContactRow[];
 }

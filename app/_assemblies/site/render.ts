@@ -283,7 +283,7 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   const cta = complete ? ["Explore the collection", "/collection", "Other estates"]
     : onWaitlist ? ["Join the waitlist", waitlist ? "#waitlist" : ask, "Join the waitlist"]
     : waitlist ? ["Join the waitlist", "#waitlist", "Join the waitlist"]
-    : open ? [`Hold a position · ${rupeesFull(R!.vehicle.offering.deposit!)} deposit`, `${ask}#hold`, "Hold a position"]
+    : open ? [`Reserve your slot · ${rupeesFull(R!.vehicle.offering.deposit!)} deposit`, `/reserve/${E.slug}`, "Reserve your slot"]
     : R ? ["Get the offering pack", `${ask}?about=pack`, "Get the offering pack"] : ["Ask about this estate", ask, "Ask about this estate"];
   const layer = (id: string, label: string, body: string) =>
     `<div class="layer" id="${id}" data-layer="${label}">${body}</div>`;

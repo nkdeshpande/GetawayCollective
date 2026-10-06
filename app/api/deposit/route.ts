@@ -16,8 +16,10 @@
 import { NextResponse } from "next/server";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { sendLead } from "@/lib/leads";
-import { recordContact } from "@/lib/events/store";
+import { recordContact, depositRows } from "@/lib/events/store";
 import { DepositRequest, createOrder, eligibility, razorpayKeys } from "@/lib/deposit";
+import { heldUnits, holdsFrom } from "@/lib/holds";
+import { stanceFor } from "@/constants/vehicles";
 
 export async function POST(req: Request) {
   const rl = await rateLimit(clientKey(req));
@@ -31,6 +33,16 @@ export async function POST(req: Request) {
   const e = eligibility(d.vehicle, d.units);
   if (!e.ok) return NextResponse.json({ ok: false, error: e.reason, detail: e.detail }, { status: 409 });
   const v = e.vehicle;
+
+  /* Units already under a paid deposit are not offered twice (V2.0, 6 Oct
+     2026). The register says how many are offered; the deposit rows say how
+     many of those are held. If the rows cannot be read, the register stands. */
+  const held = heldUnits(holdsFrom(await depositRows(v.slug).catch(() => [])), v.slug);
+  const stance = stanceFor(v);
+  const free = stance.kind === "open" ? stance.unitsAvailable - held : 0;
+  if (d.units > free) {
+    return NextResponse.json({ ok: false, error: "too-many-units", detail: free > 0 ? `${free} still free` : "every unit is now held under a deposit" }, { status: 409 });
+  }
 
   const correlationId = crypto.randomUUID();
   const summary =

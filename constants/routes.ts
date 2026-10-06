@@ -194,6 +194,12 @@ export const PUBLIC_ROUTES: readonly Route[] = [
      rather than refused; never indexed, because it is not a page. */
   R("GC-905", "/start", "Where Next", "gateway", "AS-32",
     { indexable: false, notes: "Sends a signed-in person to their own place: the Office, their holdings, or the estate raising now. Renders nothing." }),
+  /* V2.0, 6 Oct 2026: one page to reserve a slot — the units, the
+     allocation, the deposit and the hold's status. Public, because a
+     deposit has never needed a sign-in; never indexed, because what it shows
+     changes with every hold. */
+  R("GC-906", "/reserve/[vehicle]", "Reserve", "gateway", "AS-32", { params: ["vehicle"], indexable: false,
+    notes: "Choose units, see the allocation, pay the holding deposit, and see where the hold stands." }),
   R("GC-007", "/office-workspace-preview", "Office Workspace Preview", "gateway", "AS-32",
     { indexable: false,
       notes: "Design-review surface only. Placeholder operational material; never internal or restricted records." }),

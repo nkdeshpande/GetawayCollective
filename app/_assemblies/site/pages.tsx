@@ -582,9 +582,9 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
   if (id === "enquire") {
     const R = read(v);
     if (R.stance.kind === "open" && v.offering.deposit !== null) {
-      blocks.push({ h: "Hold a position" });
-      blocks.push({ deposit: { vehicle: v.slug, payee: v.registeredName, incorporated: !!v.llpin, amount: rupeesFull(v.offering.deposit), available: R.stance.unitsAvailable, unitPrice: rupees(v.offering.unitPrice) } });
-      blocks.push({ h: "Or ask first" });
+      /* V2.0, 6 Oct 2026: reserving has its own page (./reserve.tsx); this
+         one is for asking. One link, said before the form. */
+      blocks.push({ links: [[`Reserve your slot · ${rupeesFull(v.offering.deposit)} deposit`, `/reserve/${v.slug}`, "lead"]] });
     }
     blocks.push({ h: R.stance.kind === "waitlist" ? "Join the waitlist" : "Request the offering pack" });
     blocks.push({ form: {

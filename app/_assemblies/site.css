@@ -560,6 +560,46 @@
 .site .ack{display:flex;gap:var(--gc-sp-xs);align-items:flex-start;font-size:14.5px}
 .site .ack input{margin-top:4px;accent-color:var(--gc-electric);width:18px;height:18px}
 @media (max-width:760px){.site .dep-terms{grid-template-columns:1fr}}
+/* ── Reserve a slot (./site/reserve.tsx) — V2.0, 6 Oct 2026 ─────────────
+   The slots, the allocation and where a hold stands, on one night panel
+   that holds its own ground on paper or on a picture: it restates the
+   night's two greys, so every label inside takes var(--mute) and reads.
+   Nothing is greyed by fading it, and copper is a fill here, never type. */
+.site .rsv{display:grid;gap:var(--gc-sp-m);background:var(--gc-ink);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line);padding:var(--gc-sp-m);max-width:720px}
+.site .rsv .eb{color:var(--mute)}
+.site .rsv-hd{display:flex;justify-content:space-between;align-items:baseline;gap:var(--gc-sp-s);flex-wrap:wrap}
+.site .rsv-hd .mono{font-size:12.5px;color:var(--gc-s-fog)}
+.site .rsv-bar{display:flex;gap:var(--gc-sp-3xs);margin-top:var(--gc-sp-2xs)}
+.site .rsv-bar i{flex:1;height:34px;background:var(--line);transition:background .35s var(--ease)}
+.site .rsv-bar i.free{background:transparent;box-shadow:inset 0 0 0 1px var(--mute)}
+.site .rsv-bar i.you{background:var(--copper)}
+.site .rsv-bar i.held{background:var(--mute)}
+.site .rsv-key{display:flex;gap:var(--gc-sp-s);flex-wrap:wrap;margin-top:var(--gc-sp-2xs);font-size:12.5px;color:var(--gc-s-fog)}
+.site .rsv-key span{display:inline-flex;align-items:center;gap:var(--gc-sp-2xs)}
+.site .rsv-key i{width:12px;height:12px;display:inline-block;background:var(--line)}
+.site .rsv-key i.free{background:transparent;box-shadow:inset 0 0 0 1px var(--mute)}
+.site .rsv-key i.you{background:var(--copper)}
+.site .rsv-key i.held{background:var(--mute)}
+.site .rsv-pick{display:flex;justify-content:space-between;align-items:center;gap:var(--gc-sp-s);flex-wrap:wrap}
+.site .rsv-step{display:inline-flex;align-items:center;gap:var(--gc-sp-xs);font:400 15px var(--text)}
+.site .rsv-step output{font:400 34px/1 var(--mono);letter-spacing:-.04em;min-width:1.2em;text-align:center}
+.site .rsv-step button{width:44px;height:44px;border:1px solid var(--mute);background:transparent;color:var(--paper);font:400 22px/1 var(--mono);cursor:pointer;transition:background .2s var(--ease),color .2s var(--ease)}
+.site .rsv-step button:hover:not(:disabled){background:var(--paper);color:var(--gc-ink)}
+.site .rsv-step button:disabled{border-color:var(--line);color:var(--mute);cursor:default}
+.site .rsv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:var(--gc-sp-3xs)}
+.site .rsv-tile{display:grid;gap:var(--gc-sp-2xs);align-content:start;padding:var(--gc-sp-s);box-shadow:inset 0 0 0 1px var(--line)}
+.site .rsv-tile b{font:400 clamp(20px,2vw,26px)/1.05 var(--mono);letter-spacing:-.04em;color:var(--paper);overflow-wrap:anywhere}
+.site .rsv-tile:nth-child(4){box-shadow:inset 0 0 0 1px var(--copper)}
+.site .rsv-tile em{font-style:normal;font-size:12.5px;line-height:1.4;color:var(--gc-s-fog)}
+.site .rsv-note{margin:0;font-size:13px;line-height:1.5;color:var(--gc-s-fog)}
+.site .rsv-status{display:grid;gap:var(--gc-sp-xs);padding:var(--gc-sp-s);box-shadow:inset 0 0 0 1px var(--mute);outline:none}
+.site .rsv-status[data-state="paid"]{box-shadow:inset 0 0 0 2px var(--copper)}
+.site .rsv-st-h{font:800 clamp(22px,2.6vw,32px)/1.05 var(--display);letter-spacing:-.02em;text-transform:uppercase}
+.site .rsv-st-rows{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--gc-sp-s);row-gap:var(--gc-sp-3xs);margin:0;font-size:14px}
+.site .rsv-st-rows dt{color:var(--gc-s-fog)}
+.site .rsv-st-rows dd{margin:0;font-family:var(--mono);overflow-wrap:anywhere}
+.site .rsv-st-p{margin:0;font-size:13.5px;line-height:1.5;color:var(--gc-s-rule)}
+@media (max-width:620px){.site .rsv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.site .rsv{padding:var(--gc-sp-s)}.site .rsv-tile b{font-size:19px}}
 
 /* ── the Journal: reading aids (24 Sep 2026) ── */
 .site .tx-toc{display:flex;flex-wrap:wrap;gap:var(--gc-sp-2xs) var(--gc-sp-m);padding:var(--gc-sp-s) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:14px}

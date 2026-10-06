@@ -16,6 +16,7 @@
 
 import { useEffect } from "react";
 import { wireCalc } from "./calc";
+import { wireReserve } from "./reserve-wire";
 import { usePathname, useRouter } from "next/navigation";
 import { Film } from "./film";
 import { wireDA } from "../da/wire";
@@ -68,6 +69,9 @@ async function payDeposit(f: HTMLFormElement) {
       handler: async (res: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
         const v = await fetch("/api/deposit/verify", { method: "POST", headers: { "content-type": "application/json" },
           body: JSON.stringify({ orderId: res.razorpay_order_id, paymentId: res.razorpay_payment_id, signature: res.razorpay_signature, email: body.email, vehicle, reference: j.reference }) });
+        const done = v.ok ? ((await v.json().catch(() => ({}))) as { reference?: string }) : null;
+        /* The reserve page shows the hold itself (./reserve-wire.ts). */
+        if (done) document.dispatchEvent(new CustomEvent("gc:reserved", { detail: { reference: done.reference || j.reference } }));
         if (v.ok) say(ok, `Deposit received. Your position is held; reference ${String(j.reference).slice(0, 8)}. Investor Relations will write to you about identity checks, the balance and the Vehicle Agreement.`);
         else say(err, `Razorpay took the payment (${res.razorpay_payment_id}) but this site could not confirm it. Keep that id; Investor Relations will reconcile it.`);
         f.reset();
@@ -598,6 +602,9 @@ export function SiteBehaviour() {
 
     /* the returns calculator (./calc.ts), where a page carries one */
     off.push(wireCalc(root));
+
+    /* the reserve page: units, allocation and where a hold stands */
+    off.push(wireReserve(root));
 
     /* films */
     $$<HTMLCanvasElement>("canvas.film", root).forEach((c, i) => {
