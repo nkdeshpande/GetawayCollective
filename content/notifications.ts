@@ -1,5 +1,5 @@
 /**
- * THE NOTIFICATION CATALOGUE — N-01 through N-17
+ * THE NOTIFICATION CATALOGUE — N-01 through N-17, and N-23
  *
  * Wave 9 · Communications
  *
@@ -10,9 +10,15 @@
  * template, so the in-product copy and the mail copy cannot drift.
  *
  * ── WIRED IS A FLAG, NOT A HOPE ──────────────────────────────────────
- * Exactly one notification fires today (N-17, lead capture). Every
- * other spec carries wired:false and the surfaces say "specimen"
- * wherever they render one. A notification surface that looked live
+ * Two notifications fire through this catalogue today: N-17 (lead
+ * capture, to the desk) and, since 6 Oct 2026, N-23 (the acknowledgement
+ * to the person who wrote in). Every other spec carries wired:false and
+ * the surfaces say "specimen" wherever they render one.
+ *
+ * The numbering follows GC-08-DS-001, the alerts and notices
+ * specification, which also lists what is still sent OUTSIDE this
+ * catalogue (the deposit mails, the payer's receipt, error alerts) and
+ * the order in which they move in. N-18 to N-22 are reserved there. A notification surface that looked live
  * while nothing generated events would be the platform lying about its
  * own nervous system.
  *
@@ -63,6 +69,11 @@ export interface NoticeSpec {
 export interface SpecimenContext {
   vehicle: string;
   bps: number;
+  /** The estate an enquiry named, by its public name and slug, where it named one. */
+  estate?: string;
+  estateSlug?: string;
+  /** True where the enquiry joined a waitlist: the estate's units are all held. */
+  waitlist?: boolean;
 }
 
 const P = (ctx: SpecimenContext) => position(ctx.bps);
@@ -377,6 +388,25 @@ export const NOTICES: readonly NoticeSpec[] = [
       links: [{ t: "The form", to: "/signal" }],
     }),
   },
+  {
+    id: "N-23", event: "Enquiry received", audience: "applicant",
+    urgency: "normal", channels: ["email"], wired: true,
+    note: "Sent by /api/dossier once the enquiry has reached the desk. It promises a reply in writing and no date: no reply time is stated anywhere, so none is invented here.",
+    render: (ctx) => ({
+      title: ctx.waitlist && ctx.estate ? `You are on the waitlist for ${ctx.estate}` : ctx.estate ? `We have your enquiry about ${ctx.estate}` : "We have your enquiry",
+      body: ctx.waitlist
+        ? ["Your place on the waitlist is recorded. If, after the lock-in, a partner offers units for sale, the waitlist hears first, in the order it was joined.",
+           "A place on the waitlist is not an offer, and it commits you to nothing. Nothing is asked of you until then.",
+           "Capital is at risk. The Risk Factors set it out in full."]
+        : ["Your enquiry has reached Investor Relations, and a person will reply to you in writing at this address.",
+           "Nothing about capital is decided by email alone, and nothing is asked of you until you choose to go further.",
+           "Capital is at risk. The Risk Factors set it out in full."],
+      links: [
+        ...(ctx.estateSlug ? [{ t: ctx.estate ?? "The estate", to: `/collection/${ctx.estateSlug}` }] : []),
+        { t: "Risk Factors", to: "/legal/risk-disclosure" },
+      ],
+    }),
+  },
 ];
 
 /** The worked context the specimen feed renders from. */
@@ -389,6 +419,10 @@ export const noticeById = (id: string): NoticeSpec | undefined =>
   NOTICES.find((n) => n.id === id);
 
 /* ── Load-time checks — the catalogue proves its own rules ────────── */
+const words23 = () => {
+  const r = NOTICES.find((n) => n.id === "N-23")!.render({ vehicle: LLP.name, bps: ALLOCATION.defaultBps });
+  return [r.title, ...r.body].join(" ");
+};
 {
   const ids = new Set<string>();
   for (const n of NOTICES) {
@@ -403,11 +437,16 @@ export const noticeById = (id: string): NoticeSpec | undefined =>
     throw new Error(`critical is reserved for N-05 and N-15; found [${crit.join(", ")}]`);
   }
 
-  // Exactly one notification is wired. Adding a second means an event
-  // source now exists — update this check WITH the event source.
+  // Two notifications are wired, and each has a real source: N-17 and
+  // N-23 both fire from /api/dossier. Adding a third means another source
+  // now exists — update this check WITH the source.
   const wired = NOTICES.filter((n) => n.wired).map((n) => n.id);
-  if (wired.join(",") !== "N-17") {
-    throw new Error(`wired must be exactly N-17 until an event source exists; found [${wired.join(", ")}]`);
+  if (wired.join(",") !== "N-17,N-23") {
+    throw new Error(`wired must be exactly N-17 and N-23 until another source exists; found [${wired.join(", ")}]`);
+  }
+  // N-23 asks for nothing and says so; it never names a reply time.
+  if (!words23().includes("commits you to nothing") && !words23().includes("nothing is asked of you")) {
+    throw new Error("N-23 must say that nothing is asked of the person");
   }
 
   const words = (id: string) => {

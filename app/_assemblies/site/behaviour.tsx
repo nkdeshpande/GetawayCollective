@@ -17,6 +17,7 @@
 import { useEffect } from "react";
 import { wireCalc } from "./calc";
 import { wireReserve } from "./reserve-wire";
+import { toast, wireNotify } from "./notify";
 import { usePathname, useRouter } from "next/navigation";
 import { Film } from "./film";
 import { wireDA } from "../da/wire";
@@ -254,12 +255,19 @@ function shortlist(root: HTMLElement): () => void {
     const t = ev.target as HTMLElement;
     const save = t.closest<HTMLButtonElement>("[data-save]");
     if (save) {
-      const l = readShort(), s = save.dataset.save || "";
-      writeShort(l.some((i) => i.slug === s) ? l.filter((i) => i.slug !== s) : [...l, { slug: s, name: save.dataset.name || s }]);
+      const l = readShort(), s = save.dataset.save || "", name = save.dataset.name || s;
+      const had = l.some((i) => i.slug === s);
+      writeShort(had ? l.filter((i) => i.slug !== s) : [...l, { slug: s, name }]);
+      /* S-03: said once, quietly, with the way back (./notify.ts). */
+      toast(had ? `${name} removed from your shortlist.` : `${name} saved to your shortlist.`, { undo: () => writeShort(l) });
       return;
     }
     const drop = t.closest<HTMLButtonElement>("[data-drop]");
-    if (drop) writeShort(readShort().filter((i) => i.slug !== drop.dataset.drop));
+    if (drop) {
+      const l = readShort(), gone = l.find((i) => i.slug === drop.dataset.drop);
+      writeShort(l.filter((i) => i.slug !== drop.dataset.drop));
+      if (gone) toast(`${gone.name} removed from your shortlist.`, { undo: () => writeShort(l) });
+    }
   };
   root.addEventListener("click", onClick);
   window.addEventListener(SHORT, paint);
@@ -603,6 +611,9 @@ export function SiteBehaviour() {
     /* the returns calculator (./calc.ts), where a page carries one */
     off.push(wireCalc(root));
 
+    /* the banner: a dropped connection, or what the site has standing to say */
+    off.push(wireNotify(root));
+
     /* the reserve page: units, allocation and where a hold stands */
     off.push(wireReserve(root));
 
@@ -762,7 +773,7 @@ export function SiteBehaviour() {
       if (cc) cc.textContent = (t.textContent || "").split(/\s+/).filter(Boolean).length + " words";
       on(b, "click", () => {
         const select = () => { const r = document.createRange(); r.selectNodeContents(t); const s = getSelection(); s?.removeAllRanges(); s?.addRange(r); b.textContent = "Selected"; };
-        try { navigator.clipboard.writeText(t.textContent || "").then(() => { b.textContent = "Copied"; }, select); } catch { select(); }
+        try { navigator.clipboard.writeText(t.textContent || "").then(() => { b.textContent = "Copied"; toast("Copied."); }, select); } catch { select(); }
         window.setTimeout(() => { b.textContent = "Copy"; }, 1800);
       });
     });

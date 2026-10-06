@@ -8,6 +8,9 @@ import { DossierLead, sendLead } from "@/lib/leads";
    record something neither law was written for. */
 import { recordContact } from "@/lib/events/store";
 import { vehicleBySlug, stanceFor } from "@/constants/vehicles";
+import { sendNotice } from "@/lib/email/send";
+import { SPECIMEN_CONTEXT } from "@/content/notifications";
+import { publicName } from "@/app/_assemblies/site/registry";
 
 export async function POST(req: Request) {
   /* G-10. Before the body is even read: a limited caller costs nothing. */
@@ -65,5 +68,17 @@ export async function POST(req: Request) {
   if (!result.ok) {
     return NextResponse.json({ ok: false, error: result.reason }, { status: 503 });
   }
+
+  /* N-23 (GC-08-DS-001): the person who wrote is told it arrived. Sent only
+     after the desk has it, so the acknowledgement is never a claim the desk
+     cannot honour, and never allowed to fail the request: the enquiry has
+     already succeeded, and the page has said so. */
+  await sendNotice("N-23", email, {
+    ...SPECIMEN_CONTEXT,
+    estate: v ? publicName(v) : undefined,
+    estateSlug: v?.slug,
+    waitlist: isWaitlist,
+  }).catch(() => undefined);
+
   return NextResponse.json({ ok: true });
 }

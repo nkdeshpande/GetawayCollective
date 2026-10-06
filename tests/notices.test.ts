@@ -15,10 +15,12 @@ const words = (id: string) => {
 };
 
 describe("the catalogue", () => {
-  it("carries N-01 through N-17, each once", () => {
-    expect(NOTICES).toHaveLength(17);
+  it("carries N-01 through N-17 and N-23, each once", () => {
+    // 18 with N-23, the acknowledgement of an enquiry, 6 Oct 2026.
+    expect(NOTICES).toHaveLength(18);
     const ids = NOTICES.map((n) => n.id);
-    expect(new Set(ids).size).toBe(17);
+    expect(new Set(ids).size).toBe(18);
+    expect(ids).toContain("N-23");
     for (let i = 1; i <= 17; i++) {
       expect(ids).toContain("N-" + String(i).padStart(2, "0"));
     }
@@ -29,9 +31,9 @@ describe("the catalogue", () => {
     expect(crit).toEqual(["N-05", "N-15"]);
   });
 
-  it("has exactly one wired notification, and it is lead capture", () => {
+  it("has two wired notifications: lead capture, and its acknowledgement", () => {
     // Adding a second means an event source exists — update this WITH it.
-    expect(NOTICES.filter((n) => n.wired).map((n) => n.id)).toEqual(["N-17"]);
+    expect(NOTICES.filter((n) => n.wired).map((n) => n.id)).toEqual(["N-17", "N-23"]);
   });
 
   it("renders every specimen without throwing, with a title and body", () => {
