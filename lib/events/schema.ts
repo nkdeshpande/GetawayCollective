@@ -29,7 +29,7 @@
  */
 
 import {
-  pgTable, text, timestamp, jsonb, index, uniqueIndex,
+  pgTable, text, timestamp, jsonb, index, uniqueIndex, integer, boolean, primaryKey,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -115,5 +115,79 @@ export const inboundContact = pgTable(
   (t) => ({
     byEmail: index("inbound_contact_email_idx").on(t.email),
     byReceived: index("inbound_contact_received_idx").on(t.receivedAt),
+  }),
+);
+
+/**
+ * NOTICE DELIVERY — the outbox (V2.0, 6 Oct 2026 · GC-08-DS-001, step 2)
+ *
+ * One row for each message to each person, written BEFORE it is sent and
+ * updated with what happened (lib/notices/outbox.ts). It is what makes a
+ * message retryable, countable and, later, readable in a person's own
+ * account.
+ *
+ * Unlike the event log this row IS updated: its state moves from queued to
+ * sent or failed, and it is marked read. That is why it is a table of its
+ * own and not an event — it is the working record of a delivery, not a
+ * fact about the institution. What was said is never edited: the subject
+ * and body are written once, so what a person was told on a given day can
+ * always be shown.
+ *
+ * Like inbound_contact it holds a personal detail (an address) with no
+ * institutional record behind it, and carries the same retention question.
+ */
+export const noticeDelivery = pgTable(
+  "notice_delivery",
+  {
+    deliveryId: text("delivery_id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    /** What it is, what it is about, who it is for. The second row with one key is refused (NR-16). */
+    dedupeKey: text("dedupe_key").notNull(),
+    /** The catalogue or specification id: N-03, N-23, O-01. */
+    noticeId: text("notice_id").notNull(),
+    recipient: text("recipient").notNull(),
+    audience: text("audience").notNull(),
+    channel: text("channel").notNull(),
+    urgency: text("urgency").notNull(),
+    subject: text("subject").notNull(),
+    bodyText: text("body_text").notNull(),
+    bodyHtml: text("body_html"),
+    replyTo: text("reply_to"),
+    /** queued, sent or failed. */
+    state: text("state").notNull(),
+    attempts: integer("attempts").notNull().default(0),
+    /** Not before this. Now for an answer; the morning for mail held by quiet hours; later for a retry. */
+    dueAt: timestamp("due_at", { mode: "string", withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).notNull().defaultNow(),
+    sentAt: timestamp("sent_at", { mode: "string", withTimezone: true }),
+    readAt: timestamp("read_at", { mode: "string", withTimezone: true }),
+    /** Why the last attempt failed, as a short reason. Never a message body. */
+    lastError: text("last_error"),
+  },
+  (t) => ({
+    keyOnce: uniqueIndex("notice_delivery_dedupe_key").on(t.dedupeKey),
+    byDue: index("notice_delivery_due_idx").on(t.state, t.dueAt),
+    byRecipient: index("notice_delivery_recipient_idx").on(t.recipient, t.createdAt),
+  }),
+);
+
+/**
+ * NOTICE PREFERENCE — what a person has switched off
+ *
+ * A row exists only where somebody has made a choice; no row means the
+ * default, which is to send. Notices the law, the agreement or security
+ * require are not governed by this table at all (lib/notices/outbox.ts,
+ * MANDATORY): a preference cannot reach them.
+ */
+export const noticePreference = pgTable(
+  "notice_preference",
+  {
+    recipient: text("recipient").notNull(),
+    noticeClass: text("notice_class").notNull(),
+    channel: text("channel").notNull(),
+    allowed: boolean("allowed").notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string", withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.recipient, t.noticeClass, t.channel] }),
   }),
 );

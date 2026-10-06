@@ -15,7 +15,7 @@
  */
 import { NextResponse } from "next/server";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
-import { sendLead } from "@/lib/leads";
+import { dedupeKey, dispatch } from "@/lib/notices/outbox";
 import { recordContact, depositRowsByReference } from "@/lib/events/store";
 import { DepositProof, checkoutSignatureValid, razorpayKeys } from "@/lib/deposit";
 import { holdsFrom } from "@/lib/holds";
@@ -56,8 +56,11 @@ export async function POST(req: Request) {
       `Order: ${orderId}\nPayment: ${paymentId}${units ? `\nUnits: ${units}` : ""}\nConfirmed by checkout signature` +
       (bound ? "" : "\nNot matched to an order opened on the site: reconcile by hand"),
   }).catch(() => false);
-  await sendLead({
-    to: process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co",
+  const desk = process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co";
+  await dispatch({
+    /* O-02 where the payment matched no order: the desk must reconcile it. */
+    key: dedupeKey(bound ? "O-01" : "O-02", paymentId, desk), noticeId: bound ? "O-01" : "O-02", to: desk,
+    audience: "office", urgency: bound ? "high" : "critical", transactional: true,
     subject: `Deposit paid - ${vehicle ?? "vehicle not named"}`,
     text:
       `A holding deposit was paid and its checkout signature verified.\n\nEmail: ${email}\n` +
@@ -70,8 +73,10 @@ export async function POST(req: Request) {
   /* The payer's own receipt, sent only to the address on the opened order. */
   const v = vehicle ? vehicleBySlug(vehicle) : undefined;
   if (bound && v) {
-    await sendLead({
-      to: email,
+    await dispatch({
+      /* N-03, the payer's receipt. One for each reference, however often the proof arrives. */
+      key: dedupeKey("N-03", reference, email), noticeId: "N-03", to: email,
+      audience: "investor", urgency: "high", transactional: true, replyTo: "ir@getawaycollective.co",
       subject: `Your slot is reserved - ${v.propertyName}`,
       text:
         "Your holding deposit has been received and your slot is reserved.\n\n" +

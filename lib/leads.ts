@@ -51,7 +51,7 @@ export type DossierLeadInput = z.infer<typeof DossierLead>;
 
 export type SendResult = { ok: true } | { ok: false; reason: "not-configured" | "send-failed" };
 
-export async function sendLead(opts: { to: string; subject: string; text: string }): Promise<SendResult> {
+export async function sendLead(opts: { to: string; subject: string; text: string; html?: string; replyTo?: string }): Promise<SendResult> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = senderAddress();
 
@@ -65,6 +65,8 @@ export async function sendLead(opts: { to: string; subject: string; text: string
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
       from, to: opts.to, subject: opts.subject, text: opts.text,
+      ...(opts.html ? { html: opts.html } : {}),
+      ...(opts.replyTo ? { replyTo: opts.replyTo } : {}),
     });
     if (error) {
       console.error("[leads] Resend rejected the message:", error);

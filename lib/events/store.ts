@@ -37,6 +37,9 @@ const g = globalThis as unknown as {
   __gcEventDb?: ReturnType<typeof drizzle>;
 };
 
+/** The same connection, for the outbox (lib/notices/outbox.ts), which keeps its own queries. */
+export const eventDb = () => db();
+
 function db() {
   const url = process.env.DATABASE_URL;
   if (!url) return null;

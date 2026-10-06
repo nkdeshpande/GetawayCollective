@@ -81,6 +81,23 @@ export function preview(noticeId: string, ctx: SpecimenContext = SPECIMEN_CONTEX
   return renderNotice(spec.render(ctx));
 }
 
+/**
+ * A live notice, rendered and ready for the outbox (lib/notices/outbox.ts).
+ *
+ * The same three refusals as sendNotice(): unknown, not an email notice,
+ * not wired. The outbox stores what this returns, so a specimen can no more
+ * be queued than it can be sent.
+ */
+export function renderForSend(noticeId: string, ctx: SpecimenContext = SPECIMEN_CONTEXT):
+  | { ok: true; subject: string; html: string; text: string; replyTo: string; audience: Audience; urgency: "low" | "normal" | "high" | "critical" }
+  | { ok: false; reason: "unknown-notice" | "not-an-email-notice" | "not-wired" } {
+  const spec = noticeById(noticeId);
+  if (!spec) return { ok: false, reason: "unknown-notice" };
+  if (!spec.channels.includes("email")) return { ok: false, reason: "not-an-email-notice" };
+  if (!spec.wired) return { ok: false, reason: "not-wired" };
+  return { ok: true, ...renderNotice(spec.render(ctx)), replyTo: REPLY_TO[spec.audience], audience: spec.audience, urgency: spec.urgency };
+}
+
 export async function sendNotice(
   noticeId: string,
   to: string,

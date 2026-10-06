@@ -8,7 +8,8 @@ import { DossierLead, sendLead } from "@/lib/leads";
    record something neither law was written for. */
 import { recordContact } from "@/lib/events/store";
 import { vehicleBySlug, stanceFor } from "@/constants/vehicles";
-import { sendNotice } from "@/lib/email/send";
+import { renderForSend } from "@/lib/email/send";
+import { dedupeKey, dispatch } from "@/lib/notices/outbox";
 import { SPECIMEN_CONTEXT } from "@/content/notifications";
 import { publicName } from "@/app/_assemblies/site/registry";
 
@@ -73,12 +74,19 @@ export async function POST(req: Request) {
      after the desk has it, so the acknowledgement is never a claim the desk
      cannot honour, and never allowed to fail the request: the enquiry has
      already succeeded, and the page has said so. */
-  await sendNotice("N-23", email, {
+  const ack = renderForSend("N-23", {
     ...SPECIMEN_CONTEXT,
     estate: v ? publicName(v) : undefined,
     estateSlug: v?.slug,
     waitlist: isWaitlist,
-  }).catch(() => undefined);
+  });
+  if (ack.ok) {
+    await dispatch({
+      key: dedupeKey("N-23", correlationId, email), noticeId: "N-23", to: email,
+      audience: ack.audience, urgency: ack.urgency, transactional: true,
+      subject: ack.subject, text: ack.text, html: ack.html, replyTo: ack.replyTo,
+    }).catch(() => undefined);
+  }
 
   return NextResponse.json({ ok: true });
 }
