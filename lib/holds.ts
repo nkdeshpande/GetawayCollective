@@ -79,6 +79,20 @@ export function holdsFrom(rows: readonly DepositRow[]): Hold[] {
 }
 
 /** Units under a paid deposit at one estate: not available to the next visitor. */
+/**
+ * The paid holds opened under one address, newest first (V2.0, 8 Oct 2026).
+ * For the signed-in person's own account: a sign-in proves the address, and
+ * only a hold whose order was opened with it is theirs. An order opened and
+ * never paid holds nothing, so it is not listed.
+ */
+export function holdsOf(holds: readonly Hold[], address: string): Hold[] {
+  const a = address.toLowerCase().trim();
+  if (!a) return [];
+  return holds
+    .filter((h) => h.status === "paid" && h.email.toLowerCase().trim() === a)
+    .sort((x, y) => (y.paidAt ?? "").localeCompare(x.paidAt ?? ""));
+}
+
 export function heldUnits(holds: readonly Hold[], slug: string): number {
   return holds.filter((r) => r.status === "paid" && r.vehicleSlug === slug).reduce((n, r) => n + r.units, 0);
 }

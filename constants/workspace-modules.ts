@@ -46,7 +46,7 @@ export const ADMIN_GENERAL_IA = [
   /* OFF-096 / OFF-097 (the investor record, 25 Sep 2026) are general too:
      a person may hold in several estates, so the record is not scoped to
      one, and each holding names its estate in the form. */
-  "OFF-090", "OFF-093", "OFF-095", "OFF-096", "OFF-097", "OFF-100", "NET-100", "NET-110", "SYS-100", "SYS-110", "SYS-120",
+  "OFF-090", "OFF-093", "OFF-095", "OFF-096", "OFF-097", "OFF-098", "OFF-100", "NET-100", "NET-110", "SYS-100", "SYS-110", "SYS-120",
 ] as const;
 
 const MEMBER_GENERAL = new Set<string>(MEMBER_GENERAL_IA);

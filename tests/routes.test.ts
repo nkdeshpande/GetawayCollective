@@ -44,11 +44,11 @@ describe("canonical IA v5", () => {
     // 114 since the investor record's two Office routes, 25 Sep 2026;
     // 116 with /how-to-qualify and /operating-partner the same day; 117 with /careers.
     // 119 with /reserve/[vehicle], 6 Oct 2026.
-    // 120 with /notices, 8 Oct 2026.
-    expect(ROUTES).toHaveLength(120);
-    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(120);
+    // 120 with /notices, 121 with /office/notices, 8 Oct 2026.
+    expect(ROUTES).toHaveLength(121);
+    expect(new Set(ROUTES.map((route) => route.path)).size).toBe(121);
     const records = ROUTES.flatMap((route) => [route.ia, ...(route.coLocatedIa ?? [])]);
-    expect(records).toHaveLength(121);   // 107 before the site skin, 113 before the retirement, 113 + 2 + 2 + 1 + 1 (/start) on 25 Sep
+    expect(records).toHaveLength(122);   // 107 before the site skin, 113 before the retirement, 113 + 2 + 2 + 1 + 1 (/start) on 25 Sep
     expect(new Set(records).size).toBe(records.length);
   });
 

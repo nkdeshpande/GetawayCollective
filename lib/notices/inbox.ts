@@ -116,3 +116,41 @@ export async function setChoice(address: string, noticeId: string, allowed: bool
     .onConflictDoUpdate({ target: [noticePreference.recipient, noticePreference.noticeClass, noticePreference.channel], set: { allowed, updatedAt: now.toISOString() } });
   return "saved";
 }
+
+/* ── the view from the Office: every delivery, whoever it was for ──── */
+
+export interface DeliveryLine {
+  readonly id: string;
+  readonly noticeId: string;
+  readonly recipient: string;
+  readonly audience: string;
+  readonly subject: string;
+  readonly state: "queued" | "sent" | "failed";
+  readonly attempts: number;
+  readonly lastError: string | null;
+  readonly at: string;
+  readonly read: boolean;
+}
+
+/**
+ * The most recent deliveries, for /office/notices (GC-08-DS-001, O-07). The
+ * subject and the address, never the body: the desk needs to see that a
+ * message went or failed, not to re-read what a person was told.
+ */
+export async function deliveryLog(limit = 200): Promise<readonly DeliveryLine[]> {
+  const d = eventDb();
+  if (!d) return [];
+  const rows = await d.select().from(noticeDelivery).orderBy(desc(noticeDelivery.createdAt)).limit(limit);
+  return rows.map((r) => ({
+    id: r.deliveryId, noticeId: r.noticeId, recipient: r.recipient, audience: r.audience, subject: r.subject,
+    state: (r.state === "sent" || r.state === "failed" ? r.state : "queued") as DeliveryLine["state"],
+    attempts: r.attempts, lastError: r.lastError, at: r.sentAt ?? r.createdAt, read: r.readAt !== null,
+  }));
+}
+
+/** How many of each state, for the head of the page. */
+export function tally(lines: readonly DeliveryLine[]): { sent: number; queued: number; failed: number } {
+  const n = { sent: 0, queued: 0, failed: 0 };
+  for (const l of lines) n[l.state]++;
+  return n;
+}

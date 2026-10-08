@@ -457,6 +457,11 @@ export const OFFICE_ROUTES: readonly Route[] = [
   R("OFF-097", "/office/investors/[investor]", "Investor", "admin", "AS-13",
     { params: ["investor"], rights: ["investor.register"],
       notes: "One person: their KYC, the account they are paid to, and what they hold." }),
+  /* 8 Oct 2026 (GC-08-DS-001, O-07): the outbox, for the desk. It names
+     addresses, so it sits behind the same right as the investor register. */
+  R("OFF-098", "/office/notices", "Notices sent", "admin", "AS-13",
+    { rights: ["investor.register"],
+      notes: "Every message the platform has recorded: the notice, who it was for, and whether it went." }),
 
   R("OFF-100", "/office/collection", "Collection", "admin", "AS-13",
     { rights: ["portfolio.manage"],

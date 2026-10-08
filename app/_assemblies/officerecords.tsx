@@ -35,6 +35,7 @@ import {
   aboveVotingCap, rupeesFromMinor, suggestedVehicleState,
 } from "@/lib/office-rules";
 import { WsFrame, OFFICE_TABS } from "./workspace/frame";
+import { deliveryLog, tally, when, type DeliveryLine } from "@/lib/notices/inbox";
 import { ActForm, Choice, Field, Reason } from "./officeforms";
 
 const day = (iso: string | null | undefined) =>
@@ -117,6 +118,51 @@ function EstateLine({ e, actor, orgReady }: { e: EstateOnRecord; actor: Actor; o
   );
 }
 
+/**
+ * /office/notices — what the platform has sent, and what failed (O-07).
+ * 8 Oct 2026, GC-08-DS-001. Read from the outbox: the notice, who it was
+ * for, its subject and whether it went. Never the body.
+ */
+export async function NoticeDeliveries() {
+  const actor = await currentActor();
+  if (!actor) return <SignedOut />;
+  const lines = await deliveryLog().catch(() => []);
+  const n = tally(lines);
+  const state = (l: DeliveryLine) =>
+    l.state === "sent" ? (l.audience !== "office" && l.read ? "Sent · read in account" : "Sent")
+      : l.state === "failed" ? `Failed after ${l.attempts} attempt${l.attempts === 1 ? "" : "s"}${l.lastError ? ` (${l.lastError})` : ""}`
+        : l.attempts ? `Waiting to retry (${l.attempts} tried)` : "Waiting to send";
+  return (
+    <Frame>
+      <header className="ws-head">
+        <div><span className="eb">Office · Notices</span>
+          <h1 className="ws-h1">What has been sent, <span>and what has not arrived.</span></h1>
+          <p>Every message the platform has recorded, newest first: the notice, who it was for and whether the mail went. A failed message is retried after 1, 5 and 30 minutes and then left here for a person to follow up.</p></div>
+        <div className="ws-card iv-card"><Rows rows={[
+          ["Shown", String(lines.length)], ["Sent", String(n.sent)], ["Waiting", String(n.queued)], ["Failed", String(n.failed)],
+        ]} /></div>
+      </header>
+      <Section eb="The outbox" title="The last <span>two hundred.</span>"
+        note="Addresses are shown because the desk must be able to reach the person; the words of a message are not shown here.">
+        {lines.length ? (
+          <div className="ws-table or-table">
+            <div className="hd"><span>Subject</span><span>To</span><span>When</span><span>Notice</span><span>State</span></div>
+            {lines.map((l) => (
+              <div key={l.id} className="row">
+                <div><b>{l.subject}</b></div>
+                <div>{l.audience === "office" ? "The desk" : l.recipient}</div>
+                <div>{when(l.at)}</div>
+                <div>{l.noticeId}</div>
+                <div className={l.state === "failed" ? "warn" : ""}>{state(l)}</div>
+              </div>
+            ))}
+          </div>
+        ) : <p className="or-lead">Nothing has been recorded yet. The first enquiry, deposit or KYC review after 8 Oct 2026 appears here.</p>}
+      </Section>
+    </Frame>
+  );
+}
+
 export async function InvestorRegister() {
   const actor = await currentActor();
   if (!actor) return <SignedOut />;
@@ -159,6 +205,8 @@ export async function InvestorRegister() {
           {estates.map((e) => <EstateLine key={e.v.key} e={e} actor={actor} orgReady={!!org} />)}
         </div>
       </Section>
+
+      <p className="or-lead"><Link href="/office/notices">What the platform has sent, and what failed</Link></p>
 
       <Section eb="The register" title="Everyone <span>on it.</span>">
         {people.length ? (

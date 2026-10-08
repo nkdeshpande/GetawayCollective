@@ -6,7 +6,8 @@
  * The outbox written back to its reader (lib/notices/inbox.ts): every
  * message sent to the address they signed in with, newest first, in the
  * words it was sent in, with whether the mail went. Under it, the notices
- * they may decline, and a plain statement of the ones they may not.
+ * they may decline, and a plain statement of the ones they may not. Above
+ * it, the holds paid for under the same address (lib/holds.ts holdsOf).
  *
  * A notice is a record, so nothing here can be deleted or dismissed. Opening
  * the page is what reads them: the browser says so once it has drawn
@@ -14,6 +15,10 @@
  * only prefetched reads nothing.
  */
 import { choicesFor, inboxFor, stateLabel, when } from "@/lib/notices/inbox";
+import { depositRows } from "@/lib/events/store";
+import { holdsFrom, holdsOf } from "@/lib/holds";
+import { vehicleBySlug } from "@/constants/vehicles";
+import { publicName } from "./registry";
 import { currentAddress } from "@/lib/session";
 import { TXT, esc, fill } from "./render";
 import type { Block, SitePage } from "./types";
@@ -21,9 +26,24 @@ import type { Block, SitePage } from "./types";
 export async function SiteNotices() {
   const address = await currentAddress();
   /* Middleware refuses anyone not signed in; an address is still required to match on. */
-  const [items, choices] = address
-    ? await Promise.all([inboxFor(address).catch(() => []), choicesFor(address).catch(() => [])])
-    : [[], []];
+  const [items, choices, rows] = address
+    ? await Promise.all([inboxFor(address).catch(() => []), choicesFor(address).catch(() => []), depositRows().catch(() => [])])
+    : [[], [], []];
+  /* Your holds: the paid deposits opened under this address, each with the
+     way back to where it stands. Nothing is shown where there are none. */
+  const holds = address ? holdsOf(holdsFrom(rows), address) : [];
+  const held = holds.length
+    ? '<div class="ntc"><span class="eb">Your holds</span><div class="ntc-list">' + holds.map((h) => {
+        const v = h.vehicleSlug ? vehicleBySlug(h.vehicleSlug) : undefined;
+        const name = v ? publicName(v) : "An estate";
+        return '<article class="ntc-item">' +
+          `<span class="eb">Deposit paid${h.paidAt ? ` · ${esc(when(h.paidAt))}` : ""}</span>` +
+          `<h3>${esc(name)} · ${h.units} unit${h.units === 1 ? "" : "s"} held</h3>` +
+          `<p class="ntc-body">Reference ${esc(h.reference)}. The deposit holds your slot; it buys nothing on its own and makes nobody a partner.</p>` +
+          (v ? `<a class="tx-u" href="/reserve/${esc(v.slug)}#r=${esc(h.reference)}">Where this hold stands</a>` : "") +
+          "</article>";
+      }).join("") + "</div></div>"
+    : "";
   const unread = items.filter((i) => i.unread).length;
 
   const list = items.length
@@ -47,6 +67,7 @@ export async function SiteNotices() {
       ? `Everything this site has sent to your address, newest first${unread ? `. ${unread} new` : ""}.`
       : "Everything this site sends to your address is kept here.",
     blocks: [
+      ...(held ? [{ html: held }] : []),
       { html: `<div class="ntc" data-ntc="${unread}"><div class="ntc-list">${list}</div>${prefs}</div>` },
       { links: [["The collection", "/collection"] as const, ["Write to Investor Relations", "/contact"] as const] },
     ] as Block[],
