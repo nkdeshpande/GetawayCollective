@@ -135,7 +135,7 @@ export async function OfficeAnalytics() {
       <header className="ws-head">
         <div><span className="eb">Office · Analytics</span>
           <h1 className="ws-h1">Who came, <span>and how far they went.</span></h1>
-          <p>The last thirty days. A visit is the first page of a browser tab's session, not a unique person: no cookie is set and nothing identifies a reader. Crawlers, the Office and browsers that ask not to be tracked are not counted.</p></div>
+          <p>The last thirty days. A visit is the first page of one browser tab&apos;s session, not a unique person: no cookie is set and nothing identifies a reader. Crawlers, the Office and browsers that ask not to be tracked are not counted.</p></div>
         <div className="ws-card iv-card"><Rows rows={[
           ["Visits", v.ready ? String(v.visits) : "Not switched on"], ["Pages read", v.ready ? String(v.views) : "Not switched on"],
           ["Signal subscribers", String(f.signal)], ["Deposits paid", String(f.lines.reduce((n, l) => n + l.paid, 0))],
