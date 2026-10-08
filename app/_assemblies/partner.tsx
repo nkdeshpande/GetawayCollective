@@ -9,11 +9,14 @@
  *
  * It also carries the viewer's own record into the page: holdings and the
  * masked profile from lib/session.ts currentInvestor(), never a ciphertext.
+ * Since 8 Oct 2026 the general pages also carry the relationship summary:
+ * the viewer's own holds and notices (lib/partner-account.ts).
  */
 
 import { notFound } from "next/navigation";
 import { vehicleBySlug } from "@/constants/vehicles";
-import { currentInvestor, currentSubject } from "@/lib/session";
+import { currentAddress, currentInvestor, currentSubject } from "@/lib/session";
+import { partnerAccount } from "@/lib/partner-account";
 import { mayOpenEstate } from "@/lib/investors";
 import { MemberSurface } from "./memberpages";
 
@@ -24,5 +27,8 @@ export async function PartnerSurface({ path, param }: { path: string; param?: st
     const v = vehicleBySlug(param);
     if (!v || !mayOpenEstate({ office, holdings: me?.holdings ?? [] }, v.key)) notFound();
   }
-  return <MemberSurface path={path} param={param} person={me} office={office} />;
+  /* The relationship summary sits above the estates, so only the general
+     pages read it (lib/partner-account.ts). */
+  const account = param ? undefined : await partnerAccount(await currentAddress());
+  return <MemberSurface path={path} param={param} person={me} office={office} account={account} />;
 }

@@ -41,7 +41,13 @@ export interface Person {
     readonly bank: { readonly holder: string | null; readonly name: string | null; readonly ifsc: string | null; readonly last4: string | null; readonly verifiedOn: string | null; readonly method: string | null };
   };
 }
-type MemberProps = { path: string; param?: string; person?: Person | null; office?: boolean };
+/** The relationship summary, as lib/partner-account.ts assembles it on the server. */
+export interface Account {
+  readonly unread: number;
+  readonly holds: readonly { readonly estate: string; readonly units: number; readonly paid: string; readonly href: string | null }[];
+  readonly notices: readonly { readonly at: string; readonly subject: string; readonly unread: boolean }[];
+}
+type MemberProps = { path: string; param?: string; person?: Person | null; office?: boolean; account?: Account };
 type RowT = readonly (readonly [string, string, boolean?])[];
 
 const day = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : null);
@@ -193,7 +199,49 @@ function Profile({ preview, person }: { preview: boolean; person?: Person | null
   </>;
 }
 
-function MemberWorkspace({ path, param, person, office = false }: MemberProps) {
+/**
+ * MEM-000, the relationship module (V2.0, 8 Oct 2026): what needs a partner
+ * before they open any one estate. Counts first, then the holds and the
+ * latest notices behind them. Every figure is the viewer's own record; the
+ * preview shows labelled examples and a real page with nothing on record
+ * says so.
+ */
+function Relationship({ preview, person, account }: { preview: boolean; person?: Person | null; account?: Account }) {
+  const a = account ?? { unread: 0, holds: [], notices: [] };
+  const kyc = person?.profile.kycState ? titleCase(person.profile.kycState) : "Not recorded";
+  return <>
+    <Section eb="Your relationship" title="What is yours, <span>at a glance.</span>"
+      note="You see your own position and each estate's authorised facts. Other partners' identity, KYC, banking and tax details are never shown here.">
+      <Personal preview={preview} what="Your relationship summary"
+        example={[["Estates held", "2"], ["Holds under a deposit", "1"], ["Notices not yet read", "2"], ["Identity checks", "Verified"]]}
+        real={person || account ? [
+          ["Estates held", String(person?.holdings.length ?? 0)], ["Holds under a deposit", String(a.holds.length)],
+          ["Notices not yet read", String(a.unread)], ["Identity checks", kyc],
+        ] : null} />
+    </Section>
+    {preview || a.holds.length ? (
+      <Section eb="Your holds" title="Slots held <span>under a deposit.</span>"
+        note="A deposit holds a slot; it buys nothing on its own and makes nobody a partner. It is refundable in full until the Vehicle Agreement is signed.">
+        {preview
+          ? <Personal preview what="Your holds" example={[["Coorg Coffee Creek · 1 unit", "Deposit paid 23 Sep 2026"]]} />
+          : <div className="ws-card iv-card"><dl className="iv-rows">{a.holds.map((h, i) => (
+              <div key={i}><dt>{h.estate} · {h.units} unit{h.units === 1 ? "" : "s"}</dt>
+                <dd>{h.paid ? `Deposit paid ${h.paid}` : "Deposit paid"}{h.href ? <> · <Link href={h.href}>Where it stands</Link></> : null}</dd></div>
+            ))}</dl></div>}
+      </Section>
+    ) : null}
+    <Section eb="Your notices" title="What we have <span>sent you.</span>">
+      {preview
+        ? <Personal preview what="Your notices" example={[["6 Oct 2026, 14:02", "Your slot is reserved: Coorg Coffee Creek"], ["5 Oct 2026, 09:10", "We have your enquiry"]]} />
+        : a.notices.length
+          ? <div className="ws-card iv-card"><dl className="iv-rows">{a.notices.map((n, i) => <div key={i}><dt>{n.at}{n.unread ? " · New" : ""}</dt><dd>{n.subject}</dd></div>)}</dl></div>
+          : <div className="ws-card iv-card iv-empty"><b>Nothing has been sent to your address yet.</b><p>Receipts, votes, distributions and changes to the documents are kept here as well as sent by email.</p></div>}
+      {preview ? null : <p className="ws-note"><Link href="/notices">All your notices, and what you receive</Link></p>}
+    </Section>
+  </>;
+}
+
+function MemberWorkspace({ path, param, person, office = false, account }: MemberProps) {
   const search = useSearchParams();
   const preview = path === "/member-workspace-preview";
   const view = viewFor(path, search.get("view"));
@@ -212,6 +260,7 @@ function MemberWorkspace({ path, param, person, office = false }: MemberProps) {
         {view === "home" || view === "portfolio" ? <>
           <header className="ws-head"><div><span className="eb">Your holdings</span><h1 className="ws-h1">Everything you own, <span>in one place.</span></h1>
             <p>Each estate you hold is its own partnership. Open one to see its property, its structure, its capital and your entitlement.</p></div></header>
+          {view === "home" ? <Relationship preview={preview} person={person} account={account} /> : null}
           <Section eb="Your positions" title="Across <span>the collection.</span>">
             <Personal preview={preview} what="Your list of positions" example={[["SlowSpace Coastal", "2 units · settled 14 Jul 2026"], ["Coorg Coffee Creek", "Holding deposit paid · 23 Sep 2026"]]}
               real={person?.holdings.length ? person.holdings.map((h) => [VEHICLES.find((x) => x.key === h.key)?.propertyName ?? h.key, `${h.units} units · ${h.votingPercent}% of the votes`] as const) : null} />
