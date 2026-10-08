@@ -42,7 +42,7 @@ describe("what N-21 says", () => {
   };
 
   it("goes to the person by email and to their notices, and is live", () => {
-    expect(spec).toMatchObject({ audience: "investor", urgency: "high", wired: true });
+    expect(spec).toMatchObject({ audience: "investor", urgency: "normal", wired: true });
     expect(spec.channels).toEqual(["email", "product"]);
     expect(renderForSend("N-21").ok).toBe(true);
   });
@@ -57,6 +57,22 @@ describe("what N-21 says", () => {
     const s = say({ accepted: ["Screening"], needed: [], complete: true, review: false });
     expect(s.title).toBe("Your identity checks are complete");
     expect(s.words).toContain("Nothing further is needed from you");
+  });
+  it("sets no deadline: optional and alongside, complete only before allotment (founder, 8 Oct 2026)", () => {
+    for (const kyc of [
+      { accepted: ["Identity"], needed: ["Address"], complete: false, review: false },
+      { accepted: ["Address"], needed: [], complete: false, review: false },
+      { accepted: [], needed: [], complete: false, review: true },
+    ]) {
+      const w = say(kyc).words;
+      expect(w).toContain("There is no deadline on this");
+      expect(w).toContain("only before units are allotted to you");
+    }
+    expect(say({ accepted: ["Screening"], needed: [], complete: true, review: false }).words).not.toContain("deadline");
+  });
+  it("can be switched off by the person", async () => {
+    const { isOptional } = await import("../lib/notices/inbox");
+    expect(isOptional("N-21")).toBe(true);
   });
   it("reports progress without asking for anything", () => {
     const s = say({ accepted: ["Address"], needed: [], complete: false, review: false });

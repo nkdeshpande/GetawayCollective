@@ -393,7 +393,10 @@ export const NOTICES: readonly NoticeSpec[] = [
   },
   {
     id: "N-21", event: "KYC reviewed", audience: "investor",
-    urgency: "high", channels: ["email", "product"], wired: true,
+    /* Founder ruling, 8 Oct 2026: KYC is optional and runs in parallel once
+       interest is expressed; it is mandatory only before allotment. So this
+       is never urgent, never a deadline, and a person may switch it off. */
+    urgency: "normal", channels: ["email", "product"], wired: true,
     note: "Sent by RecordKyc when a review accepts a check, asks for something, or completes the record. One for each review. The Office's reason for the act is an audit note and is never sent, so the notice names which checks need something and says who will say what.",
     render: (ctx) => {
       const k = ctx.kyc ?? { accepted: ["Identity", "Address"], needed: ["Source of funds"], complete: false, review: false };
@@ -405,6 +408,7 @@ export const NOTICES: readonly NoticeSpec[] = [
           ...(!k.complete && k.accepted.length ? [`Reviewed and accepted: ${k.accepted.join(", ")}.`] : []),
           ...(k.needed.length ? [`Needs something more from you: ${k.needed.join(", ")}. Reply to this message and Investor Relations will tell you exactly what to send; please do not send documents by email until they do.`] : []),
           ...(k.review ? ["Your record needs bringing up to date. Reply to this message and Investor Relations will tell you exactly what is needed; please do not send documents by email until they do."] : []),
+          ...(k.complete ? [] : ["There is no deadline on this. The checks are optional for now and run alongside everything else, at your own pace; they need to be complete only before units are allotted to you."]),
           "These checks are about who you are. They are not a decision about any estate, and they commit you to nothing.",
         ],
         links: [{ t: "Your notices", to: "/notices" }],
