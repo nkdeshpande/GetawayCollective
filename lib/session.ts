@@ -63,6 +63,15 @@ export async function currentSubject(): Promise<Subject> {
 }
 
 /** The signed-in identity, or null. For attribution on a write. */
+/**
+ * The address the viewer signed in with, lower-cased, or null. A sign-in
+ * link proves it; the notices inbox (lib/notices/inbox.ts) matches on it.
+ */
+export async function currentAddress(): Promise<string | null> {
+  const session = await auth().catch(() => null);
+  return session?.user?.email?.toLowerCase().trim() || null; // vocab-lint-ignore — Auth.js field name
+}
+
 export async function currentIdentityId(): Promise<string | null> {
   const session = await auth().catch(() => null);
   return session?.user?.id ?? null; // vocab-lint-ignore — Auth.js field name

@@ -107,6 +107,8 @@ describe("a night panel set inside a light ground restates the night's", () => {
     ".site .tx-asset:hover", ".site .est.est-day .tcards button[aria-pressed=true]",
     /* 6 Oct 2026: the reserve page's panel, which sits on paper or on a picture. */
     ".site .rsv",
+    /* 8 Oct 2026: the notices panel, on whatever ground its page has. */
+    ".site .ntc",
   ];
   for (const p of PANELS) it(p, () => { for (const d of NIGHT) expect(decls(p), `${p} should declare ${d}`).toContain(d); });
 });

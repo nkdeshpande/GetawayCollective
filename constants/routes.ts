@@ -200,6 +200,14 @@ export const PUBLIC_ROUTES: readonly Route[] = [
      changes with every hold. */
   R("GC-906", "/reserve/[vehicle]", "Reserve", "gateway", "AS-32", { params: ["vehicle"], indexable: false,
     notes: "Choose units, see the allocation, pay the holding deposit, and see where the hold stands." }),
+  /* V2.0, 8 Oct 2026 (GC-08-DS-001, step 3): what the site has sent to the
+     person signed in, and the notices they may decline. Any signed-in
+     person, because a receipt or an acknowledgement goes to people who are
+     not yet partners. */
+  R("GC-907", "/notices", "Notices", "gateway", "AS-32", { indexable: false,
+    accessOverride: { access: "identified", because:
+      "It shows messages sent to one address. A sign-in is what proves the address is the reader's own." },
+    notes: "Every message sent to the signed-in address, newest first, and the choices about what is sent." }),
   R("GC-007", "/office-workspace-preview", "Office Workspace Preview", "gateway", "AS-32",
     { indexable: false,
       notes: "Design-review surface only. Placeholder operational material; never internal or restricted records." }),

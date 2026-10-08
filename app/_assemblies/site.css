@@ -578,6 +578,23 @@
 .site .banner[data-tone="critical"]{border-bottom-color:var(--gc-critical)}
 .site .banner a{color:var(--gc-paper);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 @media (max-width:620px){.site .toasts{left:var(--gut);right:var(--gut);justify-items:stretch;max-width:none}.site .banner{justify-content:flex-start;font-size:13.5px}}
+/* ── Your notices (./site/notices.tsx) — V2.0, 8 Oct 2026 ───────────────
+   GC-08-DS-001, step 3. An ink panel on any ground, like the reserve
+   page's. Each notice is a ruled card in the words it was sent in; one not
+   yet read carries a copper edge and the word New, never the edge alone.
+   The count in the bar is ink on copper, in the figures' face. */
+.site .ntc{display:grid;gap:var(--gc-sp-m);background:var(--gc-ink);color:var(--paper);--mute:var(--gc-s-mute);--line:var(--gc-s-line);padding:var(--gc-sp-m);max-width:720px}
+.site .ntc .eb{color:var(--mute)}
+.site .ntc-list{display:grid;gap:var(--gc-sp-s)}
+.site .ntc-item{display:grid;gap:var(--gc-sp-2xs);padding:var(--gc-sp-s);border:1px solid var(--line);border-left:4px solid var(--line)}
+.site .ntc-item[data-unread]{border-left-color:var(--copper)}
+.site .ntc-item h3{margin:0;font:600 17px/1.3 var(--text);color:var(--paper)}
+.site .ntc-body{margin:0;font-size:14px;line-height:1.55;color:var(--gc-s-fog);white-space:pre-wrap;overflow-wrap:anywhere}
+.site .ntc-none,.site .ntc-note{margin:0;font-size:13.5px;line-height:1.5;color:var(--gc-s-fog)}
+.site .ntc-note:empty{display:none}
+.site .ntc-prefs{display:grid;gap:var(--gc-sp-xs);padding-top:var(--gc-sp-s);border-top:1px solid var(--line)}
+.site .nav .nav-ntc b{display:inline-block;margin-left:var(--gc-sp-2xs);padding:0 calc(var(--gc-sp-3xs) * 1.5);background:var(--gc-copper);color:var(--gc-ink);font:600 12px/1.5 var(--mono)}
+@media (max-width:620px){.site .ntc{padding:var(--gc-sp-s)}}
 /* ── Reserve a slot (./site/reserve.tsx) — V2.0, 6 Oct 2026 ─────────────
    The slots, the allocation and where a hold stands, on one night panel
    that holds its own ground on paper or on a picture: it restates the

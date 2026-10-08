@@ -21,6 +21,7 @@ import { MARK_CUT, MARK_PATH } from "@/constants/brand-system";
 import { Mark } from "../brandmark";
 import { OPEN_SEARCH, SiteSearch } from "./search";
 import { STAGES, stageOf } from "@/content/site/next";
+import { NOTICES_CHANGED } from "./notices-wire";
 
 /** Symbols the rendered markup refers to by id: the mark, the arrow, three glyphs. */
 export function SiteSymbols() {
@@ -48,6 +49,27 @@ const NAV = [
  * read once, after the page has drawn, so the bar never waits on it, and
  * the bar and the menu share the one answer.
  */
+/**
+ * How many notices the signed-in person has not read (GC-08-DS-001, step 3).
+ * Asked once the session is known, and again when the notices page says it
+ * has read them. Signed out it is never asked. A count that cannot be had
+ * is 0: the bar points at nothing rather than at a guess.
+ */
+function useUnread(signedIn: boolean): number {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!signedIn) { setN(0); return; }
+    let live = true;
+    const ask = () => fetch("/api/notices").then((r) => (r.ok ? r.json() : null)).catch(() => null).then((j) => {
+      if (live) setN(Number((j as { unread?: number } | null)?.unread) || 0);
+    });
+    void ask();
+    window.addEventListener(NOTICES_CHANGED, ask);
+    return () => { live = false; window.removeEventListener(NOTICES_CHANGED, ask); };
+  }, [signedIn]);
+  return n;
+}
+
 function useAccess(): [string | null, boolean] {
   const [access, setAccess] = useState<string | null>(null);
   const [known, setKnown] = useState(false);
@@ -128,7 +150,17 @@ export function SiteNav() {
     window.addEventListener("resize", onWide);
     return () => { document.removeEventListener("keydown", onKey); window.removeEventListener("resize", onWide); };
   }, [open]);
-  const acct = <Link className={`nav-acct${known ? " on" : ""}`} href={access ? "/start" : "/sign-in"}>{accountLabel(access)}</Link>;
+  const unread = useUnread(!!access);
+  const acct = (
+    <>
+      {access ? (
+        <Link className="nav-acct nav-ntc on" href="/notices" aria-label={unread ? `Notices, ${unread} new` : "Notices"}>
+          Notices{unread ? <b aria-hidden="true">{unread}</b> : null}
+        </Link>
+      ) : null}
+      <Link className={`nav-acct${known ? " on" : ""}`} href={access ? "/start" : "/sign-in"}>{accountLabel(access)}</Link>
+    </>
+  );
   return (
     <header className={`nav${p >= 1 && !open ? " away" : ""}${open ? " menu-open" : ""}`} style={{ "--nav-p": open ? "0" : p.toFixed(3) } as React.CSSProperties}>
       {/* 25 Sep 2026, founder: the mark alone, without the name beside it.
