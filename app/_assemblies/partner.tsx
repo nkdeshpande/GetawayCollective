@@ -27,8 +27,8 @@ export async function PartnerSurface({ path, param }: { path: string; param?: st
     const v = vehicleBySlug(param);
     if (!v || !mayOpenEstate({ office, holdings: me?.holdings ?? [] }, v.key)) notFound();
   }
-  /* The relationship summary sits above the estates, so only the general
-     pages read it (lib/partner-account.ts). */
-  const account = param ? undefined : await partnerAccount(await currentAddress());
+  /* The viewer's own holds and notices (lib/partner-account.ts): the
+     summary on Home, the hold at an estate, and the ledger on /activity. */
+  const account = await partnerAccount(await currentAddress(), { activity: path === "/activity" });
   return <MemberSurface path={path} param={param} person={me} office={office} account={account} />;
 }

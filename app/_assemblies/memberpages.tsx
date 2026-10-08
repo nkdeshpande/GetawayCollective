@@ -44,16 +44,19 @@ export interface Person {
 /** The relationship summary, as lib/partner-account.ts assembles it on the server. */
 export interface Account {
   readonly unread: number;
-  readonly holds: readonly { readonly estate: string; readonly units: number; readonly paid: string; readonly href: string | null }[];
+  readonly holds: readonly { readonly estate: string; readonly slug: string | null; readonly units: number; readonly paid: string; readonly href: string | null }[];
   readonly notices: readonly { readonly at: string; readonly subject: string; readonly unread: boolean }[];
+  readonly activity?: readonly { readonly at: string; readonly when: string; readonly what: string; readonly detail: string }[];
 }
+/** A register figure without its trailing zeros: "2.000000" reads 2, "12.500000" reads 12.5. */
+const trim = (n: string) => { const x = Number(n); return Number.isFinite(x) ? String(Math.round(x * 100) / 100) : n; };
 type MemberProps = { path: string; param?: string; person?: Person | null; office?: boolean; account?: Account };
 type RowT = readonly (readonly [string, string, boolean?])[];
 
 const day = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : null);
 const titleCase = (s: string) => s.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
 const KYC_STAGES = [["identity", "Identity"], ["address", "Address"], ["tax_residency", "Tax residency and PAN"], ["source_of_funds", "Source of funds"], ["suitability", "Suitability"], ["screening", "Screening"]] as const;
-type View = "home" | "portfolio" | "vehicle" | "property" | "structure" | "capital" | "entitlement" | "documents" | "profile";
+type View = "home" | "portfolio" | "vehicle" | "property" | "structure" | "capital" | "entitlement" | "documents" | "profile" | "activity";
 
 const ESTATE_VIEWS: readonly (readonly [View, string, string])[] = [
   ["vehicle", "Overview", ""], ["property", "Property", "/space"], ["structure", "LLP structure", "/governance"],
@@ -63,7 +66,8 @@ const ESTATE_VIEWS: readonly (readonly [View, string, string])[] = [
 function viewFor(path: string, requested: string | null): View {
   if (path === "/member-workspace-preview") return (requested as View) || "home";
   if (path === "/home") return "home";
-  if (path === "/portfolio" || path === "/activity") return "portfolio";
+  if (path === "/portfolio") return "portfolio";
+  if (path === "/activity") return "activity";
   if (path === "/profile") return "profile";
   const last = path.split("/").at(-1);
   return last === "space" ? "property" : last === "governance" || last === "partners" ? "structure" : last === "capital" ? "capital"
@@ -92,13 +96,29 @@ function Personal({ preview, example, what, real }: { preview: boolean; example:
   return <div className="ws-card iv-card iv-empty"><b>{what} is not on record here yet.</b><p>Investor Relations holds it and will send it on request. It appears here once it is recorded on the platform.</p><Link className="btn" href="/contact">Ask Investor Relations</Link></div>;
 }
 
-function EstateViews({ v, view, preview, person }: { v: Vehicle; view: View; preview: boolean; person?: Person | null }) {
+function EstateViews({ v, view, preview, person, account }: { v: Vehicle; view: View; preview: boolean; person?: Person | null; account?: Account }) {
   const o = v.offering, s = v.stack, g = v.governance, e = v.entitlement, w = v.operating.waterfall;
   const held = person?.holdings.find((h) => h.key === v.key);
+  /* MEM-110, the position module (V2.0, 8 Oct 2026): what the viewer holds
+     at this estate, from the register, and any slot held here under a
+     deposit. Nights follow the founder's ruling of 6 Oct 2026: one a year
+     for each 1% held, from handover. */
+  const here = (account?.holds ?? []).filter((h) => h.slug === v.slug);
+  const share = held ? Number(held.votingPercent) : NaN;
+  const position: RowT | null = held || here.length ? [
+    ...(held ? [
+      ["Units held", trim(held.units)] as const,
+      ["Share of the estate", `${trim(held.votingPercent)}%`] as const,
+      ["Your vote", "Weighted by your share"] as const,
+      ...(Number.isFinite(share) ? [["Nights a year", `${Math.floor(share + 1e-9)} · one for each 1% held, from handover`] as const] : []),
+    ] : []),
+    ...here.map((h, i) => [`Held under a deposit${here.length > 1 ? ` (${i + 1})` : ""}`, `${h.units} unit${h.units === 1 ? "" : "s"}${h.paid ? ` · paid ${h.paid}` : ""}`] as const),
+  ] : null;
   if (view === "vehicle") return <>
-    <Section eb="Your position" title="What you hold <span>here.</span>">
-      <Personal preview={preview} what="Your position" example={[["Units held", "2"], ["Share of the equity", "20%"], ["Settled on", "14 Jul 2026"], ["Votes", "Weighted by your equity"]]}
-        real={held ? [["Units held", held.units], ["Share of the votes", `${held.votingPercent}%`], ["Votes", "Weighted by your equity"]] : null} />
+    <Section eb="Your position" title="What you hold <span>here.</span>"
+      note={here.length && !preview ? "A deposit holds a slot; it buys nothing on its own and makes nobody a partner. A position appears once it is settled and entered on the register." : undefined}>
+      <Personal preview={preview} what="Your position" example={[["Units held", "2"], ["Share of the estate", "20%"], ["Your vote", "Weighted by your share"], ["Nights a year", "20 · one for each 1% held, from handover"]]}
+        real={position} />
     </Section>
     <Section eb="The estate" title="As its partners <span>see it.</span>"><ApertureCard v={v} opening="partner" /></Section>
   </>;
@@ -241,6 +261,29 @@ function Relationship({ preview, person, account }: { preview: boolean; person?:
   </>;
 }
 
+/**
+ * MEM-200, the ledger (V2.0, 8 Oct 2026): one dated list of the
+ * relationship, newest first. Deposits, the register's acts about the
+ * viewer and the notices sent to them, in the words lib/partner-account.ts
+ * gives each. Never who in the Office acted, and never their reason.
+ */
+function Activity({ preview, account }: { preview: boolean; account?: Account }) {
+  const lines = preview
+    ? [{ at: "3", when: "6 Oct 2026, 14:02", what: "Your holding deposit was paid", detail: "Coorg Coffee Creek · 1 unit" },
+       { at: "2", when: "5 Oct 2026, 09:10", what: "We sent you a notice", detail: "We have your enquiry" },
+       { at: "1", when: "14 Jul 2026, 11:30", what: "Your position was entered on the register", detail: "SlowSpace Coastal · 2 units" }]
+    : account?.activity ?? [];
+  return (
+    <Section eb="Your activity" title="What has happened, <span>in order.</span>"
+      note="Deposits, changes to your record and the notices sent to you. It shows what was done and when, not who in the Office did it.">
+      {lines.length ? (
+        <div className="ws-card iv-card">{preview ? <span className="iv-example">Example</span> : null}
+          <dl className="iv-rows">{lines.map((l, i) => <div key={i}><dt>{l.when}</dt><dd>{l.what}{l.detail ? <> · {l.detail}</> : null}</dd></div>)}</dl></div>
+      ) : <div className="ws-card iv-card iv-empty"><b>Nothing is recorded against your address yet.</b><p>A deposit, a change to your record or a notice appears here as soon as it happens.</p></div>}
+    </Section>
+  );
+}
+
 function MemberWorkspace({ path, param, person, office = false, account }: MemberProps) {
   const search = useSearchParams();
   const preview = path === "/member-workspace-preview";
@@ -248,10 +291,10 @@ function MemberWorkspace({ path, param, person, office = false, account }: Membe
   const v = (param && vehicleBySlug(param)) || VEHICLES[0];
   const estateHref = (x: Vehicle, suffix = "") => (preview ? `/member-workspace-preview?view=${suffix ? ESTATE_VIEWS.find((e) => e[2] === suffix)![0] : "vehicle"}` : `/portfolio/${x.slug}${suffix}`);
   const tabs: readonly WsTab[] = preview
-    ? [{ href: "/member-workspace-preview?view=home", label: "Holdings" }, { href: "/member-workspace-preview?view=vehicle", label: "An estate" }, { href: "/member-workspace-preview?view=profile", label: "Profile" }]
-    : [{ href: "/home", label: "Holdings" }, { href: "/portfolio", label: "Estates" }, { href: "/profile", label: "Profile" }];
-  const current = preview ? (view === "home" || view === "portfolio" ? "Holdings" : view === "profile" ? "Profile" : "An estate") : undefined;
-  const inEstate = !["home", "portfolio", "profile"].includes(view);
+    ? [{ href: "/member-workspace-preview?view=home", label: "Holdings" }, { href: "/member-workspace-preview?view=vehicle", label: "An estate" }, { href: "/member-workspace-preview?view=activity", label: "Activity" }, { href: "/member-workspace-preview?view=profile", label: "Profile" }]
+    : [{ href: "/home", label: "Holdings" }, { href: "/portfolio", label: "Estates" }, { href: "/activity", label: "Activity" }, { href: "/profile", label: "Profile" }];
+  const current = preview ? (view === "home" || view === "portfolio" ? "Holdings" : view === "profile" ? "Profile" : view === "activity" ? "Activity" : "An estate") : undefined;
+  const inEstate = !["home", "portfolio", "profile", "activity"].includes(view);
   const shown = VEHICLES.filter((x) => (preview ? stateOf(x) !== "forming" : office || person?.holdings.some((h) => h.key === x.key)));
 
   return (
@@ -282,7 +325,13 @@ function MemberWorkspace({ path, param, person, office = false, account }: Membe
           <nav className="ws-subnav" aria-label="This estate"><div>
             {ESTATE_VIEWS.map(([id, label, suffix]) => <Link key={id} href={estateHref(v, suffix)} aria-current={view === id ? "page" : undefined}>{label}</Link>)}
           </div></nav>
-          <EstateViews v={v} view={view} preview={preview} person={person} />
+          <EstateViews v={v} view={view} preview={preview} person={person} account={account} />
+        </> : null}
+
+        {view === "activity" ? <>
+          <header className="ws-head"><div><span className="eb">Activity</span><h1 className="ws-h1">Your relationship, <span>as a record.</span></h1>
+            <p>One private ledger across every estate: what you did, what was recorded about you, and what we sent you.</p></div></header>
+          <Activity preview={preview} account={account} />
         </> : null}
 
         {view === "profile" ? <>
