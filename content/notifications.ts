@@ -121,7 +121,7 @@ export const NOTICES: readonly NoticeSpec[] = [
     urgency: "high", channels: ["email", "product"], wired: true,
     note: "The payer's receipt, sent by /api/deposit/verify once the checkout proof is bound to an order this site opened. Must repeat the Member Law: the commonest misreading of a deposit is that it completes the purchase. No amount in the title (NR-07). The payer need not be signed in; the address is the one on the opened order.",
     render: (ctx) => {
-      const h = ctx.hold ?? { estate: "SlowSpace Creek", slug: "coorg-coffee-creek", payee: ctx.vehicle, units: 1, payment: "pay_specimen", reference: "specimen-reference" };
+      const h = ctx.hold ?? { estate: "Streamside Creek", slug: "coorg-coffee-creek", payee: ctx.vehicle, units: 1, payment: "pay_specimen", reference: "specimen-reference" };
       return {
         title: `Your slot is reserved: ${h.estate}`,
         body: [

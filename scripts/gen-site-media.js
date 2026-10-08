@@ -2,7 +2,7 @@
 /**
  * SITE MEDIA — an estate's illustrations, cut to what a page serves
  *
- * 1 Oct 2026. SlowSpace Creek is the first estate with pictures of its own:
+ * 1 Oct 2026. Streamside Creek is the first estate with pictures of its own:
  * the isometric illustrations in its location-brand media register
  * (C:\SENSORYGETAWAYS\4.0 SlowSpace Creek_CRK\LOCATION BRAND\media, rebuilt
  * 1 Oct 2026 from the approved scene; 3840 and 3000 px masters, no text on

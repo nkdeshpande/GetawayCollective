@@ -213,7 +213,7 @@ export function SiteFooter() {
         <div>
           <span className="eb">Estates</span>
           <Link href="/collection/slowspace-solace">Solace</Link><Link href="/collection/slowspace-coastal">Seaside Confluence</Link>
-          <Link href="/collection/coorg-coffee-creek">SlowSpace Creek</Link><Link href="/collection/coffee-fields-forever">Coffee Fields Forever</Link>
+          <Link href="/collection/coorg-coffee-creek">Streamside Creek</Link><Link href="/collection/coffee-fields-forever">Coffee Fields Forever</Link>
           <Link href="/collection">All seven estates</Link>
         </div>
         <div>

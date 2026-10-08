@@ -29,8 +29,8 @@ describe("N-23, the acknowledgement of an enquiry", () => {
     expect(spec.channels).toEqual(["email"]);
   });
   it("names the estate asked about, and links to it", () => {
-    const r = spec.render({ ...SPECIMEN_CONTEXT, estate: "SlowSpace Creek", estateSlug: "coorg-coffee-creek" });
-    expect(r.title).toBe("We have your enquiry about SlowSpace Creek");
+    const r = spec.render({ ...SPECIMEN_CONTEXT, estate: "Streamside Creek", estateSlug: "coorg-coffee-creek" });
+    expect(r.title).toBe("We have your enquiry about Streamside Creek");
     expect(r.links?.map((l) => l.to)).toEqual(["/collection/coorg-coffee-creek", "/legal/risk-disclosure"]);
   });
   it("still reads where no estate was named", () => expect(spec.render(SPECIMEN_CONTEXT).title).toBe("We have your enquiry"));
@@ -47,8 +47,8 @@ describe("N-23, the acknowledgement of an enquiry", () => {
     }
   });
   it("renders to a mail with a subject and a plain-text body", () => {
-    const m = preview("N-23", { ...SPECIMEN_CONTEXT, estate: "SlowSpace Creek", estateSlug: "coorg-coffee-creek" })!;
-    expect(m.subject).toContain("We have your enquiry about SlowSpace Creek");
+    const m = preview("N-23", { ...SPECIMEN_CONTEXT, estate: "Streamside Creek", estateSlug: "coorg-coffee-creek" })!;
+    expect(m.subject).toContain("We have your enquiry about Streamside Creek");
     expect(m.text).toContain("Investor Relations");
   });
 });

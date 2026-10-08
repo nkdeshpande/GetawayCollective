@@ -1,7 +1,7 @@
 /**
  * AN ESTATE'S OWN PICTURES — 2 Oct 2026
  *
- * SlowSpace Creek is the first estate to show illustrations of its own in
+ * Streamside Creek is the first estate to show illustrations of its own in
  * place of drawn films. Three things have to agree, and each can drift
  * alone: the names a page refers to (content), the list that describes
  * them (content/site/media.ts), and the files that are served

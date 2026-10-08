@@ -199,7 +199,7 @@ export const PAGES: Record<string, SitePage> =  {
     "da": "wftable"
    },
    {
-    "p": "One estate states its waterfall differently. SlowSpace Creek sets out an order of payment, with the bank ahead of every partner and no share fixed in advance; <a class=\"tx-u\" href=\"/collection/coorg-coffee-creek#capital\">its page shows the order</a>."
+    "p": "One estate states its waterfall differently. Streamside Creek sets out an order of payment, with the bank ahead of every partner and no share fixed in advance; <a class=\"tx-u\" href=\"/collection/coorg-coffee-creek#capital\">its page shows the order</a>."
    },
    {
     "p": "The same shares, drawn and applied to each estate's modelled revenue. The amounts are an illustration, not a forecast."
@@ -326,7 +326,7 @@ export const PAGES: Record<string, SitePage> =  {
         "Any estate",
         "Solace by SLOWSPACE",
         "Seaside Confluence",
-        "SlowSpace Creek",
+        "Streamside Creek",
         "Coffee Fields Forever",
         "Nine Hills",
         "Wildwood",
@@ -883,7 +883,7 @@ export const PAGES: Record<string, SitePage> =  {
       "/collection/slowspace-coastal"
      ],
      [
-      "See SlowSpace Creek",
+      "See Streamside Creek",
       "/collection/coorg-coffee-creek"
      ]
     ]
@@ -910,7 +910,7 @@ export const PAGES: Record<string, SitePage> =  {
    {
     "copy": [
      "Long",
-     "Getaway Collective is an investment platform for collective ownership of exceptional retreats in India, founded by Nikhil Deshpande. Each estate is held by its own Limited Liability Partnership, divided into units and owned by its partners, who decide with votes weighted by equity. Getaway Collective structures and governs the vehicles, holds no equity in any of them, and is paid from one disclosed stage of each vehicle's waterfall. The estates are operated by Sensory Getaways under a Commercial Services Agreement. The collection includes Solace in the Nandi Hills corridor, Seaside Confluence on the Udupi coast, and SlowSpace Creek and Coffee Fields Forever in Kodagu. Capital is at risk."
+     "Getaway Collective is an investment platform for collective ownership of exceptional retreats in India, founded by Nikhil Deshpande. Each estate is held by its own Limited Liability Partnership, divided into units and owned by its partners, who decide with votes weighted by equity. Getaway Collective structures and governs the vehicles, holds no equity in any of them, and is paid from one disclosed stage of each vehicle's waterfall. The estates are operated by Sensory Getaways under a Commercial Services Agreement. The collection includes Solace in the Nandi Hills corridor, Seaside Confluence on the Udupi coast, and Streamside Creek and Coffee Fields Forever in Kodagu. Capital is at risk."
     ]
    },
    {
@@ -940,7 +940,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "Estates",
-      "Solace by SLOWSPACE · Seaside Confluence · SlowSpace Creek · Coffee Fields Forever"
+      "Solace by SLOWSPACE · Seaside Confluence · Streamside Creek · Coffee Fields Forever"
      ],
      [
       "Keys across the four",
@@ -994,7 +994,7 @@ export const PAGES: Record<string, SitePage> =  {
       "Twelve keys over the river where it meets the sea, on steel piles."
      ],
      [
-      "SlowSpace Creek",
+      "Streamside Creek",
       "Twenty keys in five clusters, over a stream at Cherala in Kodagu."
      ],
      [
@@ -1158,7 +1158,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Where are the estates?</b>",
-      "All in Karnataka. Solace is at Chikkaballapur, in the Nandi Hills corridor, about two hours from Bengaluru. Seaside Confluence is at Padubidri on the Udupi coast, between the Arabian Sea and a river estuary. SlowSpace Creek and Coffee Fields Forever lie about 1.8 km apart in Kodagu, among coffee. Three more are in the pipeline: Nine Hills in the Sakleshpur hills, Wildwood at Aranthodu in Dakshina Kannada, and Tidal Club at Yermal on the Udupi coast."
+      "All in Karnataka. Solace is at Chikkaballapur, in the Nandi Hills corridor, about two hours from Bengaluru. Seaside Confluence is at Padubidri on the Udupi coast, between the Arabian Sea and a river estuary. Streamside Creek and Coffee Fields Forever lie about 1.8 km apart in Kodagu, among coffee. Three more are in the pipeline: Nine Hills in the Sakleshpur hills, Wildwood at Aranthodu in Dakshina Kannada, and Tidal Club at Yermal on the Udupi coast."
      ],
      [
       "<b class=\"tx-strong\">Who runs the estates?</b>",

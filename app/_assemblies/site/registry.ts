@@ -226,7 +226,7 @@ export function read(v: Vehicle): Reading {
 /**
  * A unit, estate by estate. The generic "one unit is 5%, twenty make the
  * whole" was Seaside Confluence's own ladder stated as if it were every
- * estate's; SlowSpace Creek's unit is 10% of ten. Read per estate instead.
+ * estate's; Streamside Creek's unit is 10% of ten. Read per estate instead.
  */
 export function unitsByEstate(): readonly { name: string; share: string; units: number; ceiling: number | null; price: string }[] {
   return VEHICLES.filter((v) => publishable(v).ok && v.offering.unitPrice > 0n && v.offering.totalEquity > 0n).map((v) => {

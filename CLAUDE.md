@@ -35,8 +35,10 @@ in a build.* **Re-run the check; don't quote the prose.**
 Because the platform is live: treat every change to `content/legal.ts`,
 `app/_assemblies/slowspace.ts`, money handling (`lib/money.ts`), or anything
 behind the accreditation gate as touching a real financial instrument, not a
-prototype. The ~9,000 words of Terms/Risk copy remain unreviewed by a
-lawyer and are now published — don't extend them as though settled.
+prototype. The ~9,000 words of Terms/Risk copy are published. The founder
+stated on 9 Oct 2026 that the Terms and Conditions are signed off; this file
+holds no copy of that sign-off, so a change to them is still a change to a
+settled legal text — don't extend or reword them without the founder's word.
 
 **One known-open infrastructure gap** (verified 12 Aug, easy to mistake
 for closed because the code is finished): durable rate limiting is

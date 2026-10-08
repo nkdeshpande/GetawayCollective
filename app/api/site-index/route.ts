@@ -34,7 +34,7 @@ export function GET() {
   const seen = new Set<string>();
   const add = (i: Item) => { const k = i[3] + "|" + i[1]; if (!seen.has(k)) { seen.add(k); items.push(i); } };
 
-  /* One entry per estate: the collection's full name ("SlowSpace Creek"),
+  /* One entry per estate: the collection's full name ("Streamside Creek"),
      the estate page's own introduction where it has one. */
   const intro = new Map(Object.values(ESTATES).map((e) => [`/collection/${e.slug}`, cut(plain(e.intro))]));
   const hrefs = new Set<string>();

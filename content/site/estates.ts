@@ -1121,7 +1121,7 @@ export const ESTATES: Record<string, SiteEstate> = {
  },
  "creek": {
   "key": "creek",
-  "name": "SlowSpace Creek",
+  "name": "Streamside Creek",
   "vehicle": "{{vehicle}}",
   "pal": "creek",
   "hour": 13,
@@ -1129,7 +1129,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "enquireHour": 20,
   "heroLabel": "Drawn film: rain over the river-forest, Coorg",
   "eyebrow": "Getaway Collective · Kodagu",
-  "credit": "SlowSpace Creek · twenty keys over a stream",
+  "credit": "Streamside Creek · twenty keys over a stream",
   "spec": "{{KEYS}} keys · {{LAND}}",
   "media": {
    "hero": "creek/hero",
@@ -1746,7 +1746,7 @@ export const ESTATES: Record<string, SiteEstate> = {
     9
    ],
    "title": "Twenty keys. <b>One working plantation.</b>",
-   "text": "Coffee Fields Forever sits at Valamudi, near Suntikoppa in Kodagu, on three acres of shade-grown coffee. Two acres are buildable; at least two-thirds of the estate stays as it is. It is a different estate from SlowSpace Creek, 1.8 km away.",
+   "text": "Coffee Fields Forever sits at Valamudi, near Suntikoppa in Kodagu, on three acres of shade-grown coffee. Two acres are buildable; at least two-thirds of the estate stays as it is. It is a different estate from Streamside Creek, 1.8 km away.",
    "coords": "12°23'25.6\"N 75°49'13.8\"E"
   },
   "concept": {
@@ -2108,7 +2108,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      [
       12.385716,
       75.836097,
-      "SlowSpace Creek"
+      "Streamside Creek"
      ]
     ],
     "route": [
@@ -2192,7 +2192,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Neighbour",
-    "SlowSpace Creek, 1.8 km, a different estate"
+    "Streamside Creek, 1.8 km, a different estate"
    ]
   ],
   "detailsNote": "",
@@ -2205,7 +2205,7 @@ export const FAQX: Record<string, [string, string, string][]> = {
  "solace": [
   [
    "Can I still invest in Solace?",
-   "No. Funding for Solace is complete, and the estate is being built. SlowSpace Creek, in Kodagu, is the estate open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
+   "No. Funding for Solace is complete, and the estate is being built. Streamside Creek, in Kodagu, is the estate open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
    "Founder ruling, 28 Sep 2026 · constants/vehicles.ts"
   ],
   [
@@ -2266,12 +2266,12 @@ export const FAQX: Record<string, [string, string, string][]> = {
  "cff": [
   [
    "Can I invest in Coffee Fields Forever now?",
-   "No. Funding for Coffee Fields Forever is complete. SlowSpace Creek, a separate estate about 1.8 km away, is open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
+   "No. Funding for Coffee Fields Forever is complete. Streamside Creek, a separate estate about 1.8 km away, is open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
    "Founder ruling, 28 Sep 2026 · properties.yaml"
   ],
   [
    "Is this the same estate as Creek?",
-   "No. SlowSpace Creek is a separate estate about 1.8 km away, under a different house brand and held by its own LLP. The two are held separately, and a holding in one carries no share, no vote and no nights in the other.",
+   "No. Streamside Creek is a separate estate about 1.8 km away, under a different house brand and held by its own LLP. The two are held separately, and a holding in one carries no share, no vote and no nights in the other.",
    "properties.yaml"
   ],
   [

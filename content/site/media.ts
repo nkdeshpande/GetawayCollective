@@ -3,7 +3,7 @@
  *
  * 1 Oct 2026. Until now every picture on the site was a drawn film (a
  * canvas of ridgelines), because no estate had pictures of its own.
- * SlowSpace Creek now has: the isometric illustrations of its location-brand
+ * Streamside Creek now has: the isometric illustrations of its location-brand
  * media register, rebuilt on 1 Oct 2026 from the approved scene. They are
  * illustrations of something unbuilt, every one, and render.ts plate()
  * says so on each.

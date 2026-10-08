@@ -105,10 +105,10 @@ describe("the wordings hold their law", () => {
     expect(n.render({ ...SPECIMEN_CONTEXT, bps: 1250 }).facts?.[0].v).toBe("12 a year · 12.5% held");
   });
   it("N-03 is the receipt: the estate, the payee, the reference, a way back, and no amount in its title", () => {
-    const r = noticeById("N-03")!.render({ ...SPECIMEN_CONTEXT, hold: { estate: "SlowSpace Creek", slug: "coorg-coffee-creek", payee: "SlowSpace Coorg Creek LLP", units: 2, payment: "pay_1", reference: "ref-1" } });
-    expect(r.title).toBe("Your slot is reserved: SlowSpace Creek");
+    const r = noticeById("N-03")!.render({ ...SPECIMEN_CONTEXT, hold: { estate: "Streamside Creek", slug: "coorg-coffee-creek", payee: "SlowSpace Coorg Creek LLP", units: 2, payment: "pay_1", reference: "ref-1" } });
+    expect(r.title).toBe("Your slot is reserved: Streamside Creek");
     expect(r.title).not.toMatch(/₹|\d{2,}/);
-    expect(r.facts?.map((f) => f.v)).toEqual(["SlowSpace Creek", "SlowSpace Coorg Creek LLP", "2", "pay_1", "ref-1"]);
+    expect(r.facts?.map((f) => f.v)).toEqual(["Streamside Creek", "SlowSpace Coorg Creek LLP", "2", "pay_1", "ref-1"]);
     expect(r.links?.[0].to).toBe("/reserve/coorg-coffee-creek#r=ref-1");
     expect(r.body.join(" ")).toContain("Capital is at risk");
   });
