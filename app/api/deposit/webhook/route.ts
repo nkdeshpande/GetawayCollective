@@ -7,7 +7,7 @@
  * payment.captured, pointing at https://www.getawaycollective.co/api/deposit/webhook (the bare domain answers 308, and a webhook sender need not follow it).
  */
 import { NextResponse } from "next/server";
-import { sendLead } from "@/lib/leads";
+import { dedupeKey, dispatch } from "@/lib/notices/outbox";
 import { recordContact } from "@/lib/events/store";
 import { webhookSignatureValid } from "@/lib/deposit";
 
@@ -36,8 +36,11 @@ export async function POST(req: Request) {
     vehicleSlug: notes.vehicle, correlationId: notes.reference || p.id || crypto.randomUUID(), source: "deposit-captured",
     note: `Payment: ${p.id}\nOrder: ${p.order_id}\nAmount: ${amount}\nUnits: ${notes.units ?? "?"}`,
   }).catch(() => false);
-  await sendLead({
-    to: process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co",
+  const desk = process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co";
+  await dispatch({
+    /* O-01 (GC-08-DS-001), keyed on the payment: Razorpay may deliver one event more than once. */
+    key: dedupeKey("O-01", `captured:${p.id ?? notes.reference ?? "unknown"}`, desk), noticeId: "O-01", to: desk,
+    audience: "office", urgency: "high", transactional: true,
     subject: `Deposit captured - ${notes.vehicle ?? "vehicle not named"}`,
     text:
       `Razorpay reports a captured holding deposit.\n\nName: ${notes.name ?? "?"}\nEmail: ${notes.email ?? p.email ?? "?"}\n` +

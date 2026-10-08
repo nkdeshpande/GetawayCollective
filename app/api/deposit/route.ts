@@ -15,7 +15,7 @@
  */
 import { NextResponse } from "next/server";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
-import { sendLead } from "@/lib/leads";
+import { dedupeKey, dispatch } from "@/lib/notices/outbox";
 import { recordContact, depositRows } from "@/lib/events/store";
 import { DepositRequest, createOrder, eligibility, razorpayKeys } from "@/lib/deposit";
 import { heldUnits, holdsFrom } from "@/lib/holds";
@@ -66,8 +66,11 @@ export async function POST(req: Request) {
   }).catch(() => false);
 
   if (!order) {
-    await sendLead({
-      to: process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co",
+    const desk = process.env.DOSSIER_LEAD_EMAIL ?? "communique@getawaycollective.co";
+    await dispatch({
+      /* O-03 (GC-08-DS-001): somebody tried to pay and could not. Recorded, sent once. */
+      key: dedupeKey("O-03", correlationId, desk), noticeId: "O-03", to: desk,
+      audience: "office", urgency: "high", transactional: true,
       subject: `Deposit requested (online payment unavailable) - ${v.propertyName}`,
       text: summary + "\n\nThe online deposit could not be opened, so no payment was taken. Send payment details.",
     }).catch(() => undefined);

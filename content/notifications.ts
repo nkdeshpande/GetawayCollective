@@ -10,7 +10,8 @@
  * template, so the in-product copy and the mail copy cannot drift.
  *
  * ── WIRED IS A FLAG, NOT A HOPE ──────────────────────────────────────
- * Three notifications fire through this catalogue today: N-17 (lead
+ * Four notifications fire through this catalogue today: N-03 (the
+ * payer's receipt, moved in on 8 Oct 2026), N-17 (lead
  * capture, to the desk), since 6 Oct 2026 N-23 (the acknowledgement to
  * the person who wrote in), and since 8 Oct 2026 N-21 (what a KYC review
  * changed, to the person it is about). Every other spec carries wired:false and
@@ -75,6 +76,8 @@ export interface SpecimenContext {
   estateSlug?: string;
   /** True where the enquiry joined a waitlist: the estate's units are all held. */
   waitlist?: boolean;
+  /** A paid hold, for the receipt (N-03). From the opened order, never from the browser. */
+  hold?: { estate: string; slug: string; payee: string; units: number; payment: string; reference: string };
   /** What a KYC review changed (lib/notices/kyc.ts). Checks are named by their public label. */
   kyc?: { accepted: readonly string[]; needed: readonly string[]; complete: boolean; review: boolean };
 }
@@ -93,7 +96,7 @@ export const NOTICES: readonly NoticeSpec[] = [
         "application in flight always completes — no suspension interrupts it (§24b).",
       ],
       facts: [{ k: "Decision due within", v: "15 working days" }],
-      links: [{ t: "Your application", to: "/passport" }],
+      links: [{ t: "Where you left off", to: "/start" }],
     }),
   },
   {
@@ -108,28 +111,34 @@ export const NOTICES: readonly NoticeSpec[] = [
         "evidence you provided holds — only the decision expires.",
       ],
       facts: [{ k: "Valid until", v: "annual review, 12 months from decision" }],
-      links: [{ t: "The open offering", to: "/flow" }],
+      links: [{ t: "Where you left off", to: "/start" }],
     }),
   },
   {
     id: "N-03", event: "Deposit received", audience: "investor",
-    urgency: "high", channels: ["email", "product"], wired: false,
-    note: "Must repeat the Member Law. The commonest misreading of a deposit is that it completes the purchase.",
-    render: (ctx) => ({
-      title: inr(DEPOSIT.amount) + " received",
-      body: [
-        "Your deposit is received and your position in " + ctx.vehicle + " is held.",
-        "The deposit holds a position; it does not buy one. You are not a partner: the Member " +
-        "Law fires on settlement of the full commitment and on nothing else. " +
-        DEPOSIT.refundable,
-      ],
-      facts: [
-        { k: "Deposit", v: inr(DEPOSIT.amount), money: true },
-        { k: "Position held", v: "as selected on your commitment path" },
-        { k: "Completion window", v: DEPOSIT.window },
-      ],
-      links: [{ t: "What happens next", to: "/flow/settled" }],
-    }),
+    urgency: "high", channels: ["email", "product"], wired: true,
+    note: "The payer's receipt, sent by /api/deposit/verify once the checkout proof is bound to an order this site opened. Must repeat the Member Law: the commonest misreading of a deposit is that it completes the purchase. No amount in the title (NR-07). The payer need not be signed in; the address is the one on the opened order.",
+    render: (ctx) => {
+      const h = ctx.hold ?? { estate: "SlowSpace Creek", slug: "coorg-coffee-creek", payee: ctx.vehicle, units: 1, payment: "pay_specimen", reference: "specimen-reference" };
+      return {
+        title: `Your slot is reserved: ${h.estate}`,
+        body: [
+          "Your holding deposit has been received and your slot is reserved.",
+          "What happens next: Investor Relations will write to you about identity checks, the balance and the Vehicle Agreement.",
+          "The deposit holds your slot; it buys nothing on its own. You are not a partner: that follows settlement of the full commitment, and nothing else. " +
+          DEPOSIT.refundable,
+          "Capital is at risk.",
+        ],
+        facts: [
+          { k: "Estate", v: h.estate },
+          { k: "Paid to", v: h.payee },
+          { k: "Units reserved", v: String(h.units) },
+          { k: "Payment", v: h.payment },
+          { k: "Reference", v: h.reference },
+        ],
+        links: [{ t: "Where your hold stands", to: `/reserve/${h.slug}#r=${h.reference}` }],
+      };
+    },
   },
   {
     id: "N-04", event: "Completion window opening", audience: "investor",
@@ -170,7 +179,7 @@ export const NOTICES: readonly NoticeSpec[] = [
           { k: "Share", v: (p.bps / 100).toFixed(0) + "% · contribution-weighted vote" },
           { k: "Entitlement", v: `${p.nights.min}–${p.nights.max} nights a year, from handover` },
         ],
-        links: [{ t: "Your vehicle console", to: "/member" }],
+        links: [{ t: "Your home", to: "/home" }],
       };
     },
   },
@@ -191,7 +200,7 @@ export const NOTICES: readonly NoticeSpec[] = [
           { k: "Your weight", v: (p.bps / 100).toFixed(0) + "%" },
           { k: "Closes", v: "2028-02-15 · 18:00 IST" },
         ],
-        links: [{ t: "Read and vote", to: "/member/resolutions" }],
+        links: [{ t: "Read and vote", to: "/portfolio" }],
       };
     },
   },
@@ -210,7 +219,7 @@ export const NOTICES: readonly NoticeSpec[] = [
           "and a tie is not approval. Absence can decide the outcome as surely as a vote.",
         ],
         facts: [{ k: "Closes", v: "2028-02-15 · 18:00 IST" }],
-        links: [{ t: "Vote now", to: "/member/resolutions" }],
+        links: [{ t: "Vote now", to: "/portfolio" }],
       };
     },
   },
@@ -231,7 +240,7 @@ export const NOTICES: readonly NoticeSpec[] = [
         { k: "Abstained", v: "5%" },
         { k: "Threshold", v: "Ordinary · >50%" },
       ],
-      links: [{ t: "The resolution record", to: "/member/resolutions" }],
+      links: [{ t: "The resolution record", to: "/portfolio" }],
     }),
   },
   {
@@ -251,7 +260,7 @@ export const NOTICES: readonly NoticeSpec[] = [
           { k: "Period", v: "quarter ending 2028-06-30" },
         ],
         conf: "FORECAST",
-        links: [{ t: "The breakdown", to: "/member/distributions" }],
+        links: [{ t: "The breakdown", to: "/portfolio" }],
       };
     },
   },
@@ -266,7 +275,7 @@ export const NOTICES: readonly NoticeSpec[] = [
                "is attached to the period record."],
         facts: [{ k: "Paid", v: inr(p.distribution / 4n), money: true }],
         conf: "FORECAST",
-        links: [{ t: "Statement", to: "/member/distributions" }],
+        links: [{ t: "Statement", to: "/portfolio" }],
       };
     },
   },
@@ -286,24 +295,23 @@ export const NOTICES: readonly NoticeSpec[] = [
         { k: "Reserve floor", v: inr(RESERVE.floor), money: true },
         { k: "Basis", v: RESERVE.basis },
       ],
-      links: [{ t: "The reserve test", to: "/capital/distributions" }],
+      links: [{ t: "The reserve test", to: "/portfolio" }],
     }),
   },
   {
     id: "N-12", event: "Entitlement opens", audience: "member",
     urgency: "normal", channels: ["product"], wired: false,
-    note: "Never before handover — nothing is drawable against an unbuilt asset.",
+    note: "Never before handover — nothing is drawable against an unbuilt asset. Worded to the founder's ruling of 6 Oct 2026: one night a year for each 1% held, not a range from a pool.",
     render: (ctx) => {
-      const p = P(ctx);
+      const pct = ctx.bps / 100, n = Math.floor(pct + 1e-9);
       return {
-        title: `Your ${p.nights.min}–${p.nights.max} nights for 2028 are drawable`,
+        title: `Your ${n} night${n === 1 ? "" : "s"} for the year can be drawn`,
         body: [
-          "Handover is complete and the ownership calendar for 2028 is open. Your allocation is " +
-          "derived from the vehicle pool by your stake, floored — a static right of ownership, " +
-          "not a reward for conduct.",
+          "Handover is complete and the year's ownership calendar is open. You hold one night a year " +
+          "for each 1% of the estate you own: a right of ownership, not a reward for conduct.",
         ],
-        facts: [{ k: "Allocation", v: `${p.nights.min}–${p.nights.max} nights · ${(p.bps / 100).toFixed(0)}%` }],
-        links: [{ t: "Entitlement", to: "/member/entitlement" }],
+        facts: [{ k: "Your nights", v: `${n} a year · ${pct.toFixed(pct % 1 ? 1 : 0)}% held` }],
+        links: [{ t: "Your portfolio", to: "/portfolio" }],
       };
     },
   },
@@ -319,7 +327,7 @@ export const NOTICES: readonly NoticeSpec[] = [
         "[The lapse policy is Decision D-07 and is not yet made. This notice ships after it is, " +
         "and states the actual consequence — this line is the specimen being honest.]",
       ],
-      links: [{ t: "Entitlement", to: "/member/entitlement" }],
+      links: [{ t: "Your portfolio", to: "/portfolio" }],
     }),
   },
   {
@@ -357,26 +365,25 @@ export const NOTICES: readonly NoticeSpec[] = [
         { k: "Trailing", v: "1.62× and declining" },
       ],
       conf: "INFERRED",
-      links: [{ t: "Capital risk", to: "/capital/risk" }],
+      links: [{ t: "The Office", to: "/office" }],
     }),
   },
   {
     id: "N-16", event: "Valuation published", audience: "member",
     urgency: "normal", channels: ["product"], wired: false,
-    note: "Names the source and its confidence class. A management estimate is not an appraisal.",
+    note: "Names the source and its confidence class. A management estimate is not an appraisal. No valuation exists for any estate yet, so the specimen states no figure: an invented one against a real estate would read as a fact.",
     render: () => ({
-      title: "Kyoto House revalued",
+      title: "A new valuation is on the record",
       body: [
-        "A new valuation is on the record. The source is part of the figure: this one is an " +
-        "independent appraisal, and renders as verified — a management estimate would say so " +
-        "and render as an estimate.",
+        "A new valuation has been published for an estate you hold. The source is part of the " +
+        "figure: an independent appraisal says so and renders as corroborated; a management " +
+        "estimate says so and renders as an estimate.",
       ],
       facts: [
-        { k: "Valuation", v: inr(124000000_0000n), money: true },
-        { k: "Source", v: "Independent appraisal · Nomura Real Estate" },
+        { k: "Valuation", v: "Stated here when one is published; none exists yet" },
+        { k: "Source", v: "Named with the figure, with its class" },
       ],
-      conf: "CORROBORATED",
-      links: [{ t: "The property record", to: "/collection/kyoto-house" }],
+      links: [{ t: "Your portfolio", to: "/portfolio" }],
     }),
   },
   {
@@ -464,12 +471,13 @@ const words23 = () => {
     throw new Error(`critical is reserved for N-05 and N-15; found [${crit.join(", ")}]`);
   }
 
-  // Three notifications are wired, and each has a real source: N-17 and
-  // N-23 fire from /api/dossier, N-21 from RecordKyc. Adding a fourth means
-  // another source now exists — update this check WITH the source.
+  // Four notifications are wired, and each has a real source: N-03 fires
+  // from /api/deposit/verify, N-17 and N-23 from /api/dossier, N-21 from
+  // RecordKyc. Adding a fifth means another source now exists — update
+  // this check WITH the source.
   const wired = NOTICES.filter((n) => n.wired).map((n) => n.id);
-  if (wired.join(",") !== "N-17,N-21,N-23") {
-    throw new Error(`wired must be exactly N-17, N-21 and N-23 until another source exists; found [${wired.join(", ")}]`);
+  if (wired.join(",") !== "N-03,N-17,N-21,N-23") {
+    throw new Error(`wired must be exactly N-03, N-17, N-21 and N-23 until another source exists; found [${wired.join(", ")}]`);
   }
   // N-23 asks for nothing and says so; it never names a reply time.
   if (!words23().includes("commits you to nothing") && !words23().includes("nothing is asked of you")) {

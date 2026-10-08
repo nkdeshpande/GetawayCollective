@@ -32,9 +32,9 @@ describe("the catalogue", () => {
     expect(crit).toEqual(["N-05", "N-15"]);
   });
 
-  it("has three wired notifications: lead capture, the KYC review, and the acknowledgement", () => {
+  it("has four wired notifications: the receipt, lead capture, the KYC review, and the acknowledgement", () => {
     // Adding a second means an event source exists — update this WITH it.
-    expect(NOTICES.filter((n) => n.wired).map((n) => n.id)).toEqual(["N-17", "N-21", "N-23"]);
+    expect(NOTICES.filter((n) => n.wired).map((n) => n.id)).toEqual(["N-03", "N-17", "N-21", "N-23"]);
   });
 
   it("renders every specimen without throwing, with a title and body", () => {
@@ -92,8 +92,29 @@ describe("the wordings hold their law", () => {
     expect(words("N-15")).toContain("Board sign-off");
   });
 
-  it("N-16 names the valuation source", () => {
-    expect(words("N-16")).toContain("Nomura");
+  it("N-16 names a source and its class, and invents no figure or estate", () => {
+    expect(words("N-16")).toContain("Source");
+    expect(words("N-16")).toContain("none exists yet");
+    expect(words("N-16")).not.toMatch(/Kyoto|Nomura|₹/);
+  });
+  it("N-12 gives one night a year for each 1% held (founder, 6 Oct 2026)", () => {
+    const n = noticeById("N-12")!;
+    expect(n.render({ ...SPECIMEN_CONTEXT, bps: 1000 }).title).toBe("Your 10 nights for the year can be drawn");
+    expect(n.render({ ...SPECIMEN_CONTEXT, bps: 100 }).title).toBe("Your 1 night for the year can be drawn");
+    expect(n.render({ ...SPECIMEN_CONTEXT, bps: 1250 }).facts?.[0].v).toBe("12 a year · 12.5% held");
+  });
+  it("N-03 is the receipt: the estate, the payee, the reference, a way back, and no amount in its title", () => {
+    const r = noticeById("N-03")!.render({ ...SPECIMEN_CONTEXT, hold: { estate: "SlowSpace Creek", slug: "coorg-coffee-creek", payee: "SlowSpace Coorg Creek LLP", units: 2, payment: "pay_1", reference: "ref-1" } });
+    expect(r.title).toBe("Your slot is reserved: SlowSpace Creek");
+    expect(r.title).not.toMatch(/₹|\d{2,}/);
+    expect(r.facts?.map((f) => f.v)).toEqual(["SlowSpace Creek", "SlowSpace Coorg Creek LLP", "2", "pay_1", "ref-1"]);
+    expect(r.links?.[0].to).toBe("/reserve/coorg-coffee-creek#r=ref-1");
+    expect(r.body.join(" ")).toContain("Capital is at risk");
+  });
+  it("links to no page that has been retired", () => {
+    for (const n of NOTICES) for (const l of n.render(SPECIMEN_CONTEXT).links ?? []) {
+      expect(l.to, `${n.id} -> ${l.to}`).not.toMatch(/^\/(flow|member|passport|capital)|kyoto/);
+    }
   });
 
   it("forward-looking amounts carry a confidence class", () => {

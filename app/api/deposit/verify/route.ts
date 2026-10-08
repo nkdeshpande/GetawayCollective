@@ -16,12 +16,13 @@
 import { NextResponse } from "next/server";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { dedupeKey, dispatch } from "@/lib/notices/outbox";
+import { renderForSend } from "@/lib/email/send";
+import { SPECIMEN_CONTEXT } from "@/content/notifications";
 import { recordContact, depositRowsByReference } from "@/lib/events/store";
 import { DepositProof, checkoutSignatureValid, razorpayKeys } from "@/lib/deposit";
 import { holdsFrom } from "@/lib/holds";
 import { vehicleBySlug } from "@/constants/vehicles";
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getawaycollective.co";
 
 export async function POST(req: Request) {
   const rl = await rateLimit(clientKey(req));
@@ -73,20 +74,19 @@ export async function POST(req: Request) {
   /* The payer's own receipt, sent only to the address on the opened order. */
   const v = vehicle ? vehicleBySlug(vehicle) : undefined;
   if (bound && v) {
-    await dispatch({
-      /* N-03, the payer's receipt. One for each reference, however often the proof arrives. */
-      key: dedupeKey("N-03", reference, email), noticeId: "N-03", to: email,
-      audience: "investor", urgency: "high", transactional: true, replyTo: "ir@getawaycollective.co",
-      subject: `Your slot is reserved - ${v.propertyName}`,
-      text:
-        "Your holding deposit has been received and your slot is reserved.\n\n" +
-        `Estate: ${v.propertyName}\nPaid to: ${v.registeredName}\nUnits reserved: ${units}\n` +
-        `Payment: ${paymentId}\nReference: ${reference}\n\n` +
-        `See where it stands at any time:\n${SITE}/reserve/${v.slug}#r=${reference}\n\n` +
-        "What happens next: Investor Relations will write to you about identity checks, the balance and the Vehicle Agreement. " +
-        "The deposit is refundable in full until that agreement is signed. It holds your slot; it buys nothing on its own and makes nobody a partner. " +
-        "Capital is at risk.\n\nGetaway Collective · ir@getawaycollective.co",
-    }).catch(() => undefined);
+    /* N-03, the payer's receipt, in the catalogue's words (content/notifications.ts).
+       One for each reference, however often the proof arrives. */
+    const receipt = renderForSend("N-03", {
+      ...SPECIMEN_CONTEXT,
+      hold: { estate: v.propertyName, slug: v.slug, payee: v.registeredName, units: Number(units) || 1, payment: paymentId, reference },
+    });
+    if (receipt.ok) {
+      await dispatch({
+        key: dedupeKey("N-03", reference, email), noticeId: "N-03", to: email,
+        audience: receipt.audience, urgency: receipt.urgency, transactional: true,
+        subject: receipt.subject, text: receipt.text, html: receipt.html, replyTo: receipt.replyTo,
+      }).catch(() => undefined);
+    }
   }
   return NextResponse.json({ ok: true, reference });
 }
