@@ -191,3 +191,34 @@ export const noticePreference = pgTable(
     pk: primaryKey({ columns: [t.recipient, t.noticeClass, t.channel] }),
   }),
 );
+
+/**
+ * SITE VISITS, BY DAY — counts, and nothing about anybody
+ *
+ * V2.0, 9 Oct 2026. How many pages were read, and where readers came
+ * from, without a cookie and without a person: one row for each day, page
+ * and source, holding two counters. There is no visitor id, no address, no
+ * device and no time of day, so there is nothing here to join to a person
+ * and nothing to ask consent for (lib/visits.ts).
+ *
+ *   views     pages read
+ *   landings  of those, the first page of a browser tab's visit
+ */
+export const siteVisitDaily = pgTable(
+  "site_visit_daily",
+  {
+    /** The day in India, YYYY-MM-DD. */
+    day: text("day").notNull(),
+    /** The page, without its query string. */
+    path: text("path").notNull(),
+    /** "direct", "internal", a referring host, or a campaign's utm_source. */
+    source: text("source").notNull(),
+    views: integer("views").notNull().default(0),
+    landings: integer("landings").notNull().default(0),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.day, t.path, t.source] }),
+    byDay: index("site_visit_daily_day_idx").on(t.day),
+  }),
+);
+

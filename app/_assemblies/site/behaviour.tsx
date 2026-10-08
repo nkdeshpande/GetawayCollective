@@ -19,6 +19,7 @@ import { wireCalc } from "./calc";
 import { wireReserve } from "./reserve-wire";
 import { toast, wireNotify } from "./notify";
 import { wireNotices } from "./notices-wire";
+import { wireVisit } from "./visit-wire";
 import { usePathname, useRouter } from "next/navigation";
 import { Film } from "./film";
 import { wireDA } from "../da/wire";
@@ -614,6 +615,9 @@ export function SiteBehaviour() {
 
     /* the banner: a dropped connection, or what the site has standing to say */
     off.push(wireNotify(root));
+
+    /* one page was read: a count, and nothing about the reader (lib/visits.ts) */
+    off.push(wireVisit());
 
     /* the notices page: reading them, and the choices about what is sent */
     off.push(wireNotices(root));

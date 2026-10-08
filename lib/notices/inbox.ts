@@ -44,6 +44,7 @@ const mine = (address: string) => and(eq(noticeDelivery.recipient, norm(address)
 /** In a person's words, where the catalogue's event name is the desk's. */
 const LABELS: Readonly<Record<string, string>> = {
   "N-21": "Updates when your identity checks are reviewed",
+  "N-26": "A notice when your payment account is recorded",
   "N-23": "An acknowledgement when you enquire or join a waitlist",
 };
 

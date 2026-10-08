@@ -462,6 +462,15 @@ export const OFFICE_ROUTES: readonly Route[] = [
   R("OFF-098", "/office/notices", "Notices sent", "admin", "AS-13",
     { rights: ["investor.register"],
       notes: "Every message the platform has recorded: the notice, who it was for, and whether it went." }),
+  /* 9 Oct 2026: how many came and how far they went, and everyone who wrote
+     in. The first holds counts only; the second names people, so both sit
+     behind the investor register's right. */
+  R("OFF-099", "/office/analytics", "Analytics", "admin", "AS-13",
+    { rights: ["investor.register"],
+      notes: "Visits, sources and pages read, counted without a cookie; and the funnel from enquiry to paid deposit." }),
+  R("OFF-094", "/office/enquiries", "Enquiries", "admin", "AS-13",
+    { rights: ["investor.register"],
+      notes: "Everyone who wrote in through a public form, newest first, with what they asked." }),
 
   R("OFF-100", "/office/collection", "Collection", "admin", "AS-13",
     { rights: ["portfolio.manage"],

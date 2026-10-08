@@ -382,10 +382,10 @@ async function tellKyc(before: { email: string | null; kyc_state: string | null;
 export async function recordBank(actor: Actor, investorId: string, body: unknown): Promise<ActResult> {
   try {
     const b = parseOr(RecordBankBody, body);
-    await mustExist(investorId);
+    const person = await mustExist(investorId);
     if (!piiReady()) throw new Refusal("The account cannot be stored: this deployment has no encryption key (PII_ENCRYPTION_KEY), and an account number is never stored in the clear.", 503);
     const cipher = encryptPii(b.account);
-    return await act(actor, {
+    const done = await act(actor, {
       name: "RecordBankAccount", reason: b.reason, objectId: investorId,
       /* Method and date only. Not the holder, not the bank, not the last four. */
       emit: (emit) => emit("BankAccountRecorded", investorId, { method: b.method, verifiedOn: b.verifiedOn || null }),
@@ -398,6 +398,17 @@ export async function recordBank(actor: Actor, investorId: string, body: unknown
         }).where(eq(investor.id, investorId));
       },
     });
+    /* N-26 (GC-08-DS-001): the person is told, so a change they did not ask
+       for is noticed. The last four digits only. It can never fail the act. */
+    if (done.ok && person.email && done.events[0]) {
+      const mail = renderForSend("N-26", { ...SPECIMEN_CONTEXT, bank: { last4: last4(b.account) } });
+      if (mail.ok) await dispatch({
+        key: dedupeKey("N-26", done.events[0].eventId, person.email), noticeId: "N-26", to: person.email,
+        audience: mail.audience, urgency: mail.urgency, transactional: true,
+        subject: mail.subject, text: mail.text, html: mail.html, replyTo: mail.replyTo,
+      }).catch(() => undefined);
+    }
+    return done;
   } catch (e) { return refuse(e); }
 }
 

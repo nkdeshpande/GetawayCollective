@@ -78,6 +78,8 @@ export interface SpecimenContext {
   waitlist?: boolean;
   /** A paid hold, for the receipt (N-03). From the opened order, never from the browser. */
   hold?: { estate: string; slug: string; payee: string; units: number; payment: string; reference: string };
+  /** The payment account just recorded (N-26): its last four digits and nothing else. */
+  bank?: { last4: string };
   /** What a KYC review changed (lib/notices/kyc.ts). Checks are named by their public label. */
   kyc?: { accepted: readonly string[]; needed: readonly string[]; complete: boolean; review: boolean };
 }
@@ -423,6 +425,22 @@ export const NOTICES: readonly NoticeSpec[] = [
     },
   },
   {
+    id: "N-26", event: "Payment account recorded", audience: "investor",
+    /* High, not critical: the catalogue keeps critical for the Member Law and
+       the covenant. It is mandatory all the same (lib/notices/outbox.ts). */
+    urgency: "high", channels: ["email", "product"], wired: true,
+    note: "Sent by RecordBankAccount whenever the account distributions are paid to is recorded or changed. Security: it exists so that a change the person did not ask for is noticed. The last four digits only, never the number, the holder or the IFSC; nothing in the title.",
+    render: (ctx) => ({
+      title: "Your payment account was recorded",
+      body: [
+        "The account your distributions are paid to has been recorded on your investor record" +
+        (ctx.bank?.last4 ? `: the account ending ${ctx.bank.last4}.` : "."),
+        "If you asked for this, nothing more is needed. If you did not, reply to this message or write to ir@getawaycollective.co at once.",
+      ],
+      links: [{ t: "Your notices", to: "/notices" }],
+    }),
+  },
+  {
     id: "N-23", event: "Enquiry received", audience: "applicant",
     urgency: "normal", channels: ["email"], wired: true,
     note: "Sent by /api/dossier once the enquiry has reached the desk. It promises a reply in writing and no date: no reply time is stated anywhere, so none is invented here.",
@@ -473,11 +491,11 @@ const words23 = () => {
 
   // Four notifications are wired, and each has a real source: N-03 fires
   // from /api/deposit/verify, N-17 and N-23 from /api/dossier, N-21 from
-  // RecordKyc. Adding a fifth means another source now exists — update
+  // RecordKyc, N-26 from RecordBankAccount. Adding a sixth means another source now exists — update
   // this check WITH the source.
   const wired = NOTICES.filter((n) => n.wired).map((n) => n.id);
-  if (wired.join(",") !== "N-03,N-17,N-21,N-23") {
-    throw new Error(`wired must be exactly N-03, N-17, N-21 and N-23 until another source exists; found [${wired.join(", ")}]`);
+  if (wired.join(",") !== "N-03,N-17,N-21,N-26,N-23") {
+    throw new Error(`wired must be exactly N-03, N-17, N-21, N-26 and N-23 until another source exists; found [${wired.join(", ")}]`);
   }
   // N-23 asks for nothing and says so; it never names a reply time.
   if (!words23().includes("commits you to nothing") && !words23().includes("nothing is asked of you")) {

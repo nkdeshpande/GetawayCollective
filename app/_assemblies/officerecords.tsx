@@ -36,6 +36,8 @@ import {
 } from "@/lib/office-rules";
 import { WsFrame, OFFICE_TABS } from "./workspace/frame";
 import { deliveryLog, tally, when, type DeliveryLine } from "@/lib/notices/inbox";
+import { visitReport } from "@/lib/visits";
+import { enquiries, funnel } from "@/lib/desk";
 import { ActForm, Choice, Field, Reason } from "./officeforms";
 
 const day = (iso: string | null | undefined) =>
@@ -115,6 +117,87 @@ function EstateLine({ e, actor, orgReady }: { e: EstateOnRecord; actor: Actor; o
         </div>
       </>}
     </div>
+  );
+}
+
+/**
+ * /office/analytics — how many came, from where, and how far they went.
+ * 9 Oct 2026. Visits are counts with no reader behind them (lib/visits.ts);
+ * the funnel is read from enquiries and deposits already on record
+ * (lib/desk.ts). Nothing here is an estimate, and nothing is a unique person.
+ */
+export async function OfficeAnalytics() {
+  const actor = await currentActor();
+  if (!actor) return <SignedOut />;
+  const [v, f] = await Promise.all([visitReport(30), funnel().catch(() => ({ lines: [], signal: 0 }))]);
+  return (
+    <Frame>
+      <header className="ws-head">
+        <div><span className="eb">Office · Analytics</span>
+          <h1 className="ws-h1">Who came, <span>and how far they went.</span></h1>
+          <p>The last thirty days. A visit is the first page of a browser tab's session, not a unique person: no cookie is set and nothing identifies a reader. Crawlers, the Office and browsers that ask not to be tracked are not counted.</p></div>
+        <div className="ws-card iv-card"><Rows rows={[
+          ["Visits", v.ready ? String(v.visits) : "Not switched on"], ["Pages read", v.ready ? String(v.views) : "Not switched on"],
+          ["Signal subscribers", String(f.signal)], ["Deposits paid", String(f.lines.reduce((n, l) => n + l.paid, 0))],
+        ]} /></div>
+      </header>
+      <Section eb="The funnel" title="Enquiry to <span>paid deposit.</span>" note="Counted from the enquiries and deposit records themselves, since the first one was recorded. An order opened and never paid holds nothing.">
+        {f.lines.length ? (
+          <div className="ws-table or-table">
+            <div className="hd"><span>Estate</span><span>Enquiries</span><span>Waitlist</span><span>Orders opened</span><span>Deposits paid</span></div>
+            {f.lines.map((l) => <div key={l.estate} className="row"><div><b>{l.estate}</b></div><div>{l.enquiries}</div><div>{l.waitlist}</div><div>{l.opened}</div><div>{l.paid}</div></div>)}
+          </div>
+        ) : <p className="or-lead">No enquiry or deposit is on record yet.</p>}
+      </Section>
+      {v.ready ? <>
+        <Section eb="By day" title="Visits and <span>pages read.</span>">
+          {v.days.length ? <div className="ws-card iv-card"><Rows rows={v.days.map((d) => [d.day, `${d.visits} visit${d.visits === 1 ? "" : "s"} · ${d.views} page${d.views === 1 ? "" : "s"} read`] as const)} /></div>
+            : <p className="or-lead">Nothing has been counted yet. Counting began when this page went live.</p>}
+        </Section>
+        <Section eb="Where they came from" title="The source of <span>each visit.</span>" note="Direct means no referring site: a typed address, a bookmark, or an app that does not say. A campaign link shows as utm: and its name.">
+          {v.sources.length ? <div className="ws-card iv-card"><Rows rows={v.sources.map((s) => [s.source, String(s.visits)] as const)} /></div> : <p className="or-lead">No visit has a source yet.</p>}
+        </Section>
+        <Section eb="What they read" title="The most read <span>pages.</span>">
+          {v.pages.length ? <div className="ws-card iv-card"><Rows rows={v.pages.map((p) => [p.path, `${p.views} read · ${p.visits} began here`] as const)} /></div> : <p className="or-lead">No page has been counted yet.</p>}
+        </Section>
+      </> : (
+        <Section eb="Visits" title="Not switched <span>on yet.</span>">
+          <p className="or-lead">The visit counter is built and waits on one database table (migration 0005). Until it is applied nothing is counted, and nothing is lost: the funnel above does not depend on it.</p>
+        </Section>
+      )}
+      <p className="or-lead"><Link href="/office/enquiries">Everyone who wrote in</Link> · <Link href="/office/notices">What the platform has sent</Link></p>
+    </Frame>
+  );
+}
+
+/**
+ * /office/enquiries — everyone who wrote in, newest first (lib/desk.ts).
+ * 9 Oct 2026. The desk's inbox: the form already mails each one; this is the
+ * list that does not depend on that mail arriving.
+ */
+export async function OfficeEnquiries() {
+  const actor = await currentActor();
+  if (!actor) return <SignedOut />;
+  const list = await enquiries().catch(() => []);
+  return (
+    <Frame>
+      <header className="ws-head">
+        <div><span className="eb">Office · Enquiries</span>
+          <h1 className="ws-h1">Everyone who wrote in, <span>and what they asked.</span></h1>
+          <p>The last hundred enquiries, waitlist entries, Signal sign-ups and questions put to IRIS, newest first. Each was also sent to the desk by email when it arrived.</p></div>
+        <div className="ws-card iv-card"><Rows rows={[["Shown", String(list.length)], ["Enquiries", String(list.filter((e) => e.kind === "Enquiry").length)],
+          ["Waitlist", String(list.filter((e) => e.kind === "Waitlist").length)], ["The Signal", String(list.filter((e) => e.kind === "The Signal").length)]]} /></div>
+      </header>
+      <Section eb="The inbox" title="Newest <span>first.</span>" note="These are people who have not been qualified. Nothing here makes anyone an investor; that is a separate, recorded act.">
+        {list.length ? (
+          <ol className="or-history">{list.map((e) => (
+            <li key={e.id}><b>{e.name || e.email}{e.estate ? ` · ${e.estate}` : ""}</b><span>{e.kind} · {when(e.at)}</span>
+              <em>{e.email}{e.note ? ` — ${e.note}` : ""}</em></li>
+          ))}</ol>
+        ) : <p className="or-lead">Nobody has written in yet.</p>}
+      </Section>
+      <p className="or-lead"><Link href="/office/analytics">Visits and the funnel</Link></p>
+    </Frame>
   );
 }
 
@@ -206,7 +289,7 @@ export async function InvestorRegister() {
         </div>
       </Section>
 
-      <p className="or-lead"><Link href="/office/notices">What the platform has sent, and what failed</Link></p>
+      <p className="or-lead"><Link href="/office/analytics">Visits and the funnel</Link> · <Link href="/office/enquiries">Everyone who wrote in</Link> · <Link href="/office/notices">What the platform has sent, and what failed</Link></p>
 
       <Section eb="The register" title="Everyone <span>on it.</span>">
         {people.length ? (
