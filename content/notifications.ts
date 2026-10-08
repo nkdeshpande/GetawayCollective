@@ -1,5 +1,5 @@
 /**
- * THE NOTIFICATION CATALOGUE — N-01 through N-17, and N-23
+ * THE NOTIFICATION CATALOGUE — N-01 through N-17, N-21 and N-23
  *
  * Wave 9 · Communications
  *
@@ -10,15 +10,16 @@
  * template, so the in-product copy and the mail copy cannot drift.
  *
  * ── WIRED IS A FLAG, NOT A HOPE ──────────────────────────────────────
- * Two notifications fire through this catalogue today: N-17 (lead
- * capture, to the desk) and, since 6 Oct 2026, N-23 (the acknowledgement
- * to the person who wrote in). Every other spec carries wired:false and
+ * Three notifications fire through this catalogue today: N-17 (lead
+ * capture, to the desk), since 6 Oct 2026 N-23 (the acknowledgement to
+ * the person who wrote in), and since 8 Oct 2026 N-21 (what a KYC review
+ * changed, to the person it is about). Every other spec carries wired:false and
  * the surfaces say "specimen" wherever they render one.
  *
  * The numbering follows GC-08-DS-001, the alerts and notices
  * specification, which also lists what is still sent OUTSIDE this
  * catalogue (the deposit mails, the payer's receipt, error alerts) and
- * the order in which they move in. N-18 to N-22 are reserved there. A notification surface that looked live
+ * the order in which they move in. N-18 to N-20 and N-22 are reserved there. A notification surface that looked live
  * while nothing generated events would be the platform lying about its
  * own nervous system.
  *
@@ -74,6 +75,8 @@ export interface SpecimenContext {
   estateSlug?: string;
   /** True where the enquiry joined a waitlist: the estate's units are all held. */
   waitlist?: boolean;
+  /** What a KYC review changed (lib/notices/kyc.ts). Checks are named by their public label. */
+  kyc?: { accepted: readonly string[]; needed: readonly string[]; complete: boolean; review: boolean };
 }
 
 const P = (ctx: SpecimenContext) => position(ctx.bps);
@@ -389,6 +392,26 @@ export const NOTICES: readonly NoticeSpec[] = [
     }),
   },
   {
+    id: "N-21", event: "KYC reviewed", audience: "investor",
+    urgency: "high", channels: ["email", "product"], wired: true,
+    note: "Sent by RecordKyc when a review accepts a check, asks for something, or completes the record. One for each review. The Office's reason for the act is an audit note and is never sent, so the notice names which checks need something and says who will say what.",
+    render: (ctx) => {
+      const k = ctx.kyc ?? { accepted: ["Identity", "Address"], needed: ["Source of funds"], complete: false, review: false };
+      const asks = k.needed.length > 0 || k.review;
+      return {
+        title: k.complete ? "Your identity checks are complete" : asks ? "Something is needed for your identity checks" : "Your identity checks have moved on",
+        body: [
+          ...(k.complete ? ["Every check on your record is now verified. Nothing further is needed from you for these checks."] : []),
+          ...(!k.complete && k.accepted.length ? [`Reviewed and accepted: ${k.accepted.join(", ")}.`] : []),
+          ...(k.needed.length ? [`Needs something more from you: ${k.needed.join(", ")}. Reply to this message and Investor Relations will tell you exactly what to send; please do not send documents by email until they do.`] : []),
+          ...(k.review ? ["Your record needs bringing up to date. Reply to this message and Investor Relations will tell you exactly what is needed; please do not send documents by email until they do."] : []),
+          "These checks are about who you are. They are not a decision about any estate, and they commit you to nothing.",
+        ],
+        links: [{ t: "Your notices", to: "/notices" }],
+      };
+    },
+  },
+  {
     id: "N-23", event: "Enquiry received", audience: "applicant",
     urgency: "normal", channels: ["email"], wired: true,
     note: "Sent by /api/dossier once the enquiry has reached the desk. It promises a reply in writing and no date: no reply time is stated anywhere, so none is invented here.",
@@ -437,12 +460,12 @@ const words23 = () => {
     throw new Error(`critical is reserved for N-05 and N-15; found [${crit.join(", ")}]`);
   }
 
-  // Two notifications are wired, and each has a real source: N-17 and
-  // N-23 both fire from /api/dossier. Adding a third means another source
-  // now exists — update this check WITH the source.
+  // Three notifications are wired, and each has a real source: N-17 and
+  // N-23 fire from /api/dossier, N-21 from RecordKyc. Adding a fourth means
+  // another source now exists — update this check WITH the source.
   const wired = NOTICES.filter((n) => n.wired).map((n) => n.id);
-  if (wired.join(",") !== "N-17,N-23") {
-    throw new Error(`wired must be exactly N-17 and N-23 until another source exists; found [${wired.join(", ")}]`);
+  if (wired.join(",") !== "N-17,N-21,N-23") {
+    throw new Error(`wired must be exactly N-17, N-21 and N-23 until another source exists; found [${wired.join(", ")}]`);
   }
   // N-23 asks for nothing and says so; it never names a reply time.
   if (!words23().includes("commits you to nothing") && !words23().includes("nothing is asked of you")) {

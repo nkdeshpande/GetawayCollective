@@ -58,6 +58,11 @@ import {
   aboveVotingCap, conservationRefusal, isUuid, kycRefusal, votingPercent,
 } from "./office-rules";
 
+import { SPECIMEN_CONTEXT } from "../content/notifications";
+import { renderForSend } from "./email/send";
+import { kycChange, type KycReading } from "./notices/kyc";
+import { dedupeKey, dispatch } from "./notices/outbox";
+
 const byKey = (k: string): Vehicle | undefined => VEHICLES.find((x) => x.key === k);
 
 const g = globalThis as unknown as { __gcRecSql?: ReturnType<typeof postgres>; __gcRecDb?: ReturnType<typeof drizzle> };
@@ -330,14 +335,14 @@ const bump = { updated_at: sql`now()`, version: sql`${investor.version} + 1` };
 export async function recordKyc(actor: Actor, investorId: string, body: unknown): Promise<ActResult> {
   try {
     const b = parseOr(RecordKycBody, body);
-    await mustExist(investorId);
+    const before = await mustExist(investorId);
     const why = kycRefusal({ kycState: b.kycState, stages: b.stages, verifiedOn: b.verifiedOn || undefined });
     if (why) throw new Refusal(why, 400);
     if (b.pan && !piiReady()) throw new Refusal("The PAN cannot be stored: this deployment has no encryption key (PII_ENCRYPTION_KEY). Save without it, or ask for the key to be set.", 503);
     /* Encrypted before the envelope runs, so the clear value exists for as
        short a time as possible and never reaches an event. */
     const pan = b.pan ? { pan_ciphertext: encryptPii(b.pan), pan_last4: last4(b.pan) } : {};
-    return await act(actor, {
+    const done = await act(actor, {
       name: "RecordKyc", reason: b.reason, objectId: investorId,
       emit: (emit) => emit("KycRecorded", investorId, {
         state: b.kycState, stages: b.stages, verifiedOn: b.verifiedOn || null, reviewDueOn: b.reviewDueOn || null, panChanged: Boolean(b.pan),
@@ -351,7 +356,27 @@ export async function recordKyc(actor: Actor, investorId: string, body: unknown)
         }).where(eq(investor.id, investorId));
       },
     });
+    /* N-21 (GC-08-DS-001): the person is told what the review changed, once
+       the record is written. It can never fail or undo the act. The reason
+       above is the Office's audit note and is not sent. */
+    if (done.ok) await tellKyc(before, { state: b.kycState, stages: b.stages }, done.events[0]?.eventId).catch(() => undefined);
+    return done;
   } catch (e) { return refuse(e); }
+}
+
+async function tellKyc(before: { email: string | null; kyc_state: string | null; kyc_stages: unknown }, after: KycReading, eventId: string | undefined) {
+  const change = kycChange({ state: before.kyc_state, stages: (before.kyc_stages as Record<string, string> | null) ?? null }, after);
+  if (!change || !before.email || !eventId) return;
+  const mail = renderForSend("N-21", { ...SPECIMEN_CONTEXT, kyc: change });
+  if (!mail.ok) return;
+  await dispatch({
+    key: dedupeKey("N-21", eventId, before.email), noticeId: "N-21", to: before.email,
+    audience: mail.audience, urgency: mail.urgency,
+    /* Sent at once: quiet hours are proposed, not ruled (D-02), and the
+       clock that would release a held message is not yet switched on. */
+    transactional: true,
+    subject: mail.subject, text: mail.text, html: mail.html, replyTo: mail.replyTo,
+  });
 }
 
 export async function recordBank(actor: Actor, investorId: string, body: unknown): Promise<ActResult> {

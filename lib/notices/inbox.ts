@@ -15,7 +15,8 @@
  *
  * ── WHAT CAN BE SWITCHED OFF (NR-18) ─────────────────────────────────
  * Only a notice that is live, goes by email, is not the desk's and is not
- * mandatory. Today that is one: the acknowledgement of an enquiry. The
+ * mandatory. Today that is two: updates on identity checks, and the
+ * acknowledgement of an enquiry. The
  * list is derived from the catalogue, so it grows as notices are switched
  * on and never offers a choice about one that does not exist.
  */
@@ -42,6 +43,7 @@ const mine = (address: string) => and(eq(noticeDelivery.recipient, norm(address)
 
 /** In a person's words, where the catalogue's event name is the desk's. */
 const LABELS: Readonly<Record<string, string>> = {
+  "N-21": "Updates when your identity checks are reviewed",
   "N-23": "An acknowledgement when you enquire or join a waitlist",
 };
 
