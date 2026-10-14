@@ -292,3 +292,14 @@
 .or-history span { font-size: 13px; color: var(--gc-s-mute); }
 .or-history em { grid-column: 1 / -1; font-style: normal; font-size: 13.5px; color: var(--gc-s-fog); }
 @media (max-width: 900px) { .or-estates .row { grid-template-columns: 1fr; } }
+
+/* The path, continued into the workspaces (15 Oct 2026): the same six marks
+   as the public bar, the stage this workspace stands at in copper, and its
+   name in the figures' face. It steps aside on a narrow bar. */
+.ws-path { display: inline-flex; align-items: center; gap: var(--gc-sp-2xs); padding-left: var(--gc-sp-s); border-left: 1px solid var(--gc-s-line); cursor: default; }
+.ws-path-bar { display: inline-flex; gap: calc(var(--gc-sp-3xs) / 2); }
+.ws-path-bar i { width: 10px; height: 3px; background: var(--gc-s-line-2); }
+.ws-path-bar i.on { background: var(--gc-copper); }
+.ws-path-l { font: 400 11px var(--gc-font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--gc-s-fog); }
+.ws-path .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 1100px) { .ws-path { display: none; } }

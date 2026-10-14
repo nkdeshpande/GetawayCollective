@@ -20,6 +20,12 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { MARK_BOX } from "@/constants/brand-system";
 import { Mark } from "../brandmark";
+import { STAGES } from "@/content/site/next";
+
+/* Where a workspace sits on the reader's path (15 Oct 2026): the public bar
+   marks Discover to Commit; the investor's diligence is Commit and the
+   partner's own record is Hold. The Office is not on anybody's path. */
+const STAGE_OF: Partial<Record<Opening, (typeof STAGES)[number]>> = { investor: "Commit", partner: "Hold" };
 
 export type Opening = "public" | "investor" | "partner" | "office";
 
@@ -65,6 +71,12 @@ export function WsFrame({ opening, tabs, current, preview = false, children }: {
           <Mark size={24} /><span><b>Getaway</b> Collective</span>
         </Link>
         <span className="ws-opening" title={o.who}><ApertureMark opening={opening} size={16} />{o.label}{preview ? <em>Preview · example material</em> : null}</span>
+        {STAGE_OF[opening] ? (
+          <span className="ws-path" title={`Where this sits: ${STAGES.join(" · ")}`}>
+            <span className="ws-path-bar" aria-hidden="true">{STAGES.map((s) => <i key={s} className={s === STAGE_OF[opening] ? "on" : undefined} />)}</span>
+            <span className="ws-path-l"><span className="sr">Where this sits on the path: </span>{STAGE_OF[opening]}</span>
+          </span>
+        ) : null}
         <nav className="ws-tabs" aria-label={`${o.label} places`}>
           {tabs.map((t) => <Link key={t.href} href={t.href} aria-current={here(t) ? "page" : undefined}>{t.label}</Link>)}
         </nav>

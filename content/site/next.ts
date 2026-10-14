@@ -46,7 +46,9 @@ export const nextFor = (path: string): NextStep | undefined =>
  */
 export function stageOf(path: string): { n: number; name: (typeof STAGES)[number] } | undefined {
   const at = (name: (typeof STAGES)[number]) => ({ n: STAGES.indexOf(name) + 1, name });
-  if (/^\/collection\/[a-z0-9-]+\/enquire$/.test(path)) return at("Commit");
+  if (/^\/collection\/[a-z0-9-]+\/enquire$/.test(path) || /^\/reserve\/[a-z0-9-]+$/.test(path)) return at("Commit");
+  /* 15 Oct 2026: a signed-in person's own notices and holds sit at the end of the path. */
+  if (path === "/notices") return at("Hold");
   if (/^\/collection(\/|$)/.test(path)) return at("Examine");
   if (/^\/(how-to-qualify|sign-in|verify)$/.test(path)) return at("Qualify");
   if (/^\/(how-it-works|answers|glossary|operating-partner)$/.test(path) || /^\/legal(\/|$)/.test(path)) return at("Understand");
