@@ -8,7 +8,6 @@
   isolation: isolate;
   overflow: hidden;
   background-image:
-    linear-gradient(to right, var(--gc-void) 8%, transparent 82%),
     url("/images/gc-forest-hero.png");
   background-position: center;
   background-size: cover;
@@ -74,7 +73,6 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to top, var(--gc-void), transparent),
     url("/images/gc-forest-hero.png");
   background-size: cover;
   transition: transform var(--gc-dur-cinema) var(--gc-ease-cinema), filter var(--gc-dur-cinema) var(--gc-ease-cinema);
@@ -167,7 +165,6 @@
   place-items: end start;
   padding: var(--gc-sp-l);
   background:
-    linear-gradient(to top, var(--gc-void), transparent),
     url("/images/gc-forest-hero.png") center/cover;
   border: var(--gc-stroke-idle) solid var(--gc-hairline-inv);
 }
@@ -232,10 +229,7 @@
 .investment-map {
   position: relative;
   min-height: calc(var(--gc-sp-4xl) * 3.5);
-  background:
-    linear-gradient(to right, transparent, var(--gc-hairline), transparent),
-    linear-gradient(to bottom, transparent, var(--gc-hairline), transparent),
-    var(--gc-forest);
+  background: var(--gc-forest);
   border: var(--gc-stroke-idle) solid var(--gc-hairline);
 }
 .investment-map i { position: absolute; width: var(--gc-sp-xs); height: var(--gc-sp-xs); background: var(--gc-copper-deep); border: var(--gc-stroke-active) solid var(--gc-paper); }

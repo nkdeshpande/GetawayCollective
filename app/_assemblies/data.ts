@@ -355,5 +355,5 @@ export const VOICES = [
 /** Placeholder imagery, derived from the forest token rather than picked. */
 export const plate = (hue: number): React.CSSProperties => ({
   background:
-    `linear-gradient(145deg, hsl(${hue} 34% 26%) 0%, hsl(${hue} 30% 13%) 55%, var(--gc-void) 100%)`,
+    `hsl(${hue} 30% 16%)`,   // solid: no gradient, founder ruling of 21 Sep 2026
 });

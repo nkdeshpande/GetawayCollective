@@ -195,7 +195,7 @@ export function PropertyMasthead({ p }: { p: Property }) {
           <div
             style={{
               position: "absolute", inset: 0,
-              background: "linear-gradient(to top, var(--gc-void) 0%, transparent 60%)",
+              background: "transparent",
             }}
           />
           <div

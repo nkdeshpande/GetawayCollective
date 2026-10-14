@@ -60,7 +60,7 @@ export function Offering() {
         >
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(to top, var(--gc-void) 0%, transparent 62%)",
+            background: "transparent",
           }} />
           <div className="wrap" style={{
             position: "relative", paddingBottom: "var(--gc-sp-xl)",
