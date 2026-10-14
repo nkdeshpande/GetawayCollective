@@ -20,7 +20,7 @@
  * The numbering follows GC-08-DS-001, the alerts and notices
  * specification, which also lists what is still sent OUTSIDE this
  * catalogue (the deposit mails, the payer's receipt, error alerts) and
- * the order in which they move in. N-18 to N-20 and N-22 are reserved there. A notification surface that looked live
+ * the order in which they move in. N-19 is withdrawn and N-22 reserved there. A notification surface that looked live
  * while nothing generated events would be the platform lying about its
  * own nervous system.
  *
@@ -401,6 +401,46 @@ export const NOTICES: readonly NoticeSpec[] = [
     }),
   },
   {
+    id: "N-18", event: "Deposit order not paid", audience: "applicant",
+    urgency: "normal", channels: ["email"], wired: true,
+    note: "Sent once, by the morning clock (app/api/cron/notices), for an order opened at least twelve hours earlier that no payment reached and that is under a week old. Founder ruling of 15 Oct 2026 (D-04): one reminder, the next morning, never a second. It sells nothing: it says nothing was taken and where to start again if the reader wants to.",
+    render: (ctx) => {
+      const h = ctx.hold ?? { estate: "Streamside Creek", slug: "coorg-coffee-creek", payee: ctx.vehicle, units: 1, payment: "", reference: "specimen-reference" };
+      return {
+        title: `Your order at ${h.estate} was not paid`,
+        body: [
+          `You opened a holding deposit order for ${h.units} unit${h.units === 1 ? "" : "s"} at ${h.estate}, and no payment reached it. Nothing was taken, and no units are held for you.`,
+          "If you still want to reserve, the page shows the units that are free today. If you paid and this crossed with it, the page shows the latest.",
+          "Capital is at risk.",
+        ],
+        facts: [{ k: "Reference", v: h.reference }],
+        links: [{ t: "Where this order stands", to: `/reserve/${h.slug}#r=${h.reference}` }],
+      };
+    },
+  },
+  {
+    id: "N-20", event: "Deposit refunded", audience: "investor",
+    urgency: "high", channels: ["email", "product"], wired: true,
+    note: "Sent when Razorpay reports the holding deposit refunded (app/api/deposit/webhook, refund.processed). Mandatory: it is a receipt for money. It promises no date: when the money appears is the bank's.",
+    render: (ctx) => {
+      const h = ctx.hold ?? { estate: "Streamside Creek", slug: "coorg-coffee-creek", payee: ctx.vehicle, units: 1, payment: "pay_specimen", reference: "specimen-reference" };
+      return {
+        title: `Your deposit was refunded: ${h.estate}`,
+        body: [
+          "Razorpay has confirmed that your holding deposit was refunded in full, to the account it was paid from. When it appears there is up to your bank.",
+          `The units it held at ${h.estate} are released, and you hold nothing there. You are not, and were not, a partner.`,
+        ],
+        facts: [
+          { k: "Estate", v: h.estate },
+          { k: "Paid to", v: h.payee },
+          { k: "Payment", v: h.payment },
+          { k: "Reference", v: h.reference },
+        ],
+        links: [{ t: "Where this hold stands", to: `/reserve/${h.slug}#r=${h.reference}` }],
+      };
+    },
+  },
+  {
     id: "N-21", event: "KYC reviewed", audience: "investor",
     /* Founder ruling, 8 Oct 2026: KYC is optional and runs in parallel once
        interest is expressed; it is mandatory only before allotment. So this
@@ -494,8 +534,8 @@ const words23 = () => {
   // RecordKyc, N-26 from RecordBankAccount. Adding a sixth means another source now exists — update
   // this check WITH the source.
   const wired = NOTICES.filter((n) => n.wired).map((n) => n.id);
-  if (wired.join(",") !== "N-03,N-17,N-21,N-26,N-23") {
-    throw new Error(`wired must be exactly N-03, N-17, N-21, N-26 and N-23 until another source exists; found [${wired.join(", ")}]`);
+  if (wired.join(",") !== "N-03,N-17,N-18,N-20,N-21,N-26,N-23") {
+    throw new Error(`wired must be exactly N-03, N-17, N-18, N-20, N-21, N-26 and N-23 until another source exists; found [${wired.join(", ")}]`);
   }
   // N-23 asks for nothing and says so; it never names a reply time.
   if (!words23().includes("commits you to nothing") && !words23().includes("nothing is asked of you")) {

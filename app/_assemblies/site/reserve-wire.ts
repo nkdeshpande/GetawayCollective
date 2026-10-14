@@ -15,7 +15,7 @@
 
 interface Row { u: number; capital: string; share: string; nights: string; balance: string }
 interface Data { slug?: string; estate?: string; payee?: string; deposit?: string; taken?: number; held?: number; rows?: Row[] }
-interface Status { ok: boolean; reference?: string; status?: "opened" | "paid"; units?: number; estate?: string | null; payee?: string | null; email?: string; paidAt?: string | null }
+interface Status { ok: boolean; reference?: string; status?: "opened" | "paid" | "refunded"; units?: number; estate?: string | null; payee?: string | null; email?: string; paidAt?: string | null }
 
 const REF = /^[0-9a-f-]{36}$/i;
 const el = (tag: string, cls: string, text?: string) => {
@@ -68,9 +68,10 @@ export function wireReserve(root: HTMLElement): () => void {
     if (!panel) return;
     panel.replaceChildren();
     const paid = !!s?.ok && s.status === "paid";
-    panel.dataset.state = paid ? "paid" : s?.ok ? "opened" : "unknown";
-    panel.append(el("span", "eb", paid ? "Reserved" : s?.ok ? "Payment not yet seen" : "Your hold"));
-    panel.append(el("b", "rsv-st-h", paid ? "Your slot is reserved." : s?.ok ? "This order was opened, and no payment has reached it yet." : "This reference could not be read just now."));
+    const back = !!s?.ok && s.status === "refunded";
+    panel.dataset.state = paid ? "paid" : back ? "refunded" : s?.ok ? "opened" : "unknown";
+    panel.append(el("span", "eb", paid ? "Reserved" : back ? "Refunded" : s?.ok ? "Payment not yet seen" : "Your hold"));
+    panel.append(el("b", "rsv-st-h", paid ? "Your slot is reserved." : back ? "This deposit was refunded." : s?.ok ? "This order was opened, and no payment has reached it yet." : "This reference could not be read just now."));
     const dl = el("dl", "rsv-st-rows");
     const row = (k: string, v: string) => { if (!v) return; dl.append(el("dt", "", k), el("dd", "", v)); };
     if (s?.ok) {
@@ -81,7 +82,9 @@ export function wireReserve(root: HTMLElement): () => void {
     }
     row("Reference", reference);
     panel.append(dl);
-    panel.append(el("p", "rsv-st-p", paid
+    panel.append(el("p", "rsv-st-p", back
+      ? "It went back in full to the account it was paid from, and the units it held are offered again. You hold nothing here. You can reserve again below if you wish."
+      : paid
       ? "Investor Relations will write to you about identity checks, the balance and the Vehicle Agreement. The deposit is refundable in full until that agreement is signed. Keep this page's link: it always shows where your hold stands."
       : s?.ok
         ? "If you have paid, it can take a minute to arrive: reload this page. If nothing was taken, you can reserve again below."

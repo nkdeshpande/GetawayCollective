@@ -7,6 +7,8 @@
  *   deposit-intent    an order was opened at Razorpay; nothing is paid
  *   deposit-paid      the checkout signature was verified on this site
  *   deposit-captured  Razorpay's own webhook reported the money captured
+ *   deposit-refunded  Razorpay reported the deposit refunded (15 Oct 2026):
+ *                     the hold ends and its units are offered again
  *
  * All three carry one reference (the correlation id). A hold is those
  * rows read together, so it needs no table of its own and nothing here can
@@ -27,7 +29,7 @@ export interface DepositRow {
   readonly receivedAt: string | Date;
 }
 
-export type HoldStatus = "opened" | "paid";
+export type HoldStatus = "opened" | "paid" | "refunded";
 
 export interface Hold {
   readonly reference: string;
@@ -40,9 +42,11 @@ export interface Hold {
   /** When the order was opened, and when the money was first seen. */
   readonly openedAt: string | null;
   readonly paidAt: string | null;
+  /** When Razorpay reported the refund. A refunded hold holds nothing. */
+  readonly refundedAt?: string | null;
 }
 
-const DEPOSIT_SOURCES = new Set(["deposit-intent", "deposit-paid", "deposit-captured"]);
+const DEPOSIT_SOURCES = new Set(["deposit-intent", "deposit-paid", "deposit-captured", "deposit-refunded"]);
 const line = (note: string | null, key: string): string | null => {
   const m = (note ?? "").match(new RegExp(`^${key}:\\s*(.+)$`, "m"));
   return m ? m[1].trim() : null;
@@ -61,18 +65,20 @@ export function holdsFrom(rows: readonly DepositRow[]): Hold[] {
     const sorted = [...group].sort((a, b) => iso(a.receivedAt).localeCompare(iso(b.receivedAt)));
     const intent = sorted.find((r) => r.source === "deposit-intent");
     const paid = sorted.find((r) => r.source === "deposit-paid" || r.source === "deposit-captured");
+    const refunded = sorted.find((r) => r.source === "deposit-refunded");
     const first = <T,>(f: (r: DepositRow) => T | null): T | null => { for (const r of sorted) { const x = f(r); if (x !== null) return x; } return null; };
     const units = Number(first((r) => line(r.note, "Units")) ?? 0);
     out.push({
       reference,
       vehicleSlug: first((r) => r.vehicleSlug),
       units: Number.isInteger(units) && units > 0 ? units : 0,
-      status: paid ? "paid" : "opened",
+      status: refunded ? "refunded" : paid ? "paid" : "opened",
       orderId: first((r) => line(r.note, "Order")),
       paymentId: first((r) => line(r.note, "Payment")),
       email: (intent ?? sorted[0]).email,
       openedAt: intent ? iso(intent.receivedAt) : null,
       paidAt: paid ? iso(paid.receivedAt) : null,
+      refundedAt: refunded ? iso(refunded.receivedAt) : null,
     });
   }
   return out;

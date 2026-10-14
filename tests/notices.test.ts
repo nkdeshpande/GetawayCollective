@@ -17,9 +17,9 @@ const words = (id: string) => {
 describe("the catalogue", () => {
   it("carries N-01 through N-17, N-21 and N-23, each once", () => {
     // 18 with N-23, 6 Oct 2026; 19 with N-21, the KYC review, 8 Oct 2026.
-    expect(NOTICES).toHaveLength(20);   // 20 with N-26, the payment account, 9 Oct 2026
+    expect(NOTICES).toHaveLength(22);   // 22 with N-18 and N-20, 15 Oct 2026   // 20 with N-26, the payment account, 9 Oct 2026
     const ids = NOTICES.map((n) => n.id);
-    expect(new Set(ids).size).toBe(20);
+    expect(new Set(ids).size).toBe(22);
     expect(ids).toContain("N-26");
     expect(ids).toContain("N-21");
     expect(ids).toContain("N-23");
@@ -33,9 +33,9 @@ describe("the catalogue", () => {
     expect(crit).toEqual(["N-05", "N-15"]);
   });
 
-  it("has five wired notifications: the receipt, lead capture, the KYC review, the payment account, and the acknowledgement", () => {
+  it("has seven wired notifications: the receipt, lead capture, the unpaid order, the refund, the KYC review, the payment account, and the acknowledgement", () => {
     // Adding a second means an event source exists — update this WITH it.
-    expect(NOTICES.filter((n) => n.wired).map((n) => n.id)).toEqual(["N-03", "N-17", "N-21", "N-26", "N-23"]);
+    expect(NOTICES.filter((n) => n.wired).map((n) => n.id)).toEqual(["N-03", "N-17", "N-18", "N-20", "N-21", "N-26", "N-23"]);
   });
 
   it("renders every specimen without throwing, with a title and body", () => {

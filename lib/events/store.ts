@@ -226,7 +226,7 @@ function toEnvelope(r: typeof eventLog.$inferSelect): EventEnvelope {
 /* ── Deposits, read back (V2.0, 6 Oct 2026) ──────────────────────────
    A hold is the deposit rows that share one reference, read
    together (lib/holds.ts). These two readers fetch them. */
-const DEPOSIT_SOURCES = ["deposit-intent", "deposit-paid", "deposit-captured"];
+const DEPOSIT_SOURCES = ["deposit-intent", "deposit-paid", "deposit-captured", "deposit-refunded"];
 
 /** Every deposit row carrying one reference. */
 export async function depositRowsByReference(reference: string): Promise<ContactRow[]> {

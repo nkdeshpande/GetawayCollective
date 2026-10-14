@@ -11,10 +11,10 @@ import { MANDATORY } from "../lib/notices/outbox";
 import { holdsOf, type Hold } from "../lib/holds";
 
 describe("what a person may decline (NR-18)", () => {
-  it("is, today, updates on identity checks and the acknowledgement of an enquiry", () =>
-    expect(optionalNotices().map((o) => o.noticeId)).toEqual(["N-21", "N-23"]));
+  it("is, today, the unpaid-order reminder, updates on identity checks, and the acknowledgement of an enquiry", () =>
+    expect(optionalNotices().map((o) => o.noticeId)).toEqual(["N-18", "N-21", "N-23"]));
   it("is worded for the person, not the desk", () =>
-    expect(optionalNotices().map((o) => o.label)).toEqual(["Updates when your identity checks are reviewed", "An acknowledgement when you enquire or join a waitlist"]));
+    expect(optionalNotices().map((o) => o.label)).toEqual(["A reminder the morning after a deposit order that was not paid", "Updates when your identity checks are reviewed", "An acknowledgement when you enquire or join a waitlist"]));
   it("never includes a mandatory notice, the desk's mail, or a specimen", () => {
     for (const id of MANDATORY) expect(isOptional(id), id).toBe(false);
     expect(isOptional("N-17")).toBe(false);
@@ -67,7 +67,7 @@ describe("with no database", () => {
     expect(await markRead("a@example.com")).toBe(0);
   });
   it("every optional notice reads as still received", async () =>
-    expect((await choicesFor("a@example.com")).map((c) => [c.noticeId, c.allowed])).toEqual([["N-21", true], ["N-23", true]]));
+    expect((await choicesFor("a@example.com")).map((c) => [c.noticeId, c.allowed])).toEqual([["N-18", true], ["N-21", true], ["N-23", true]]));
   it("a choice is refused as unavailable, and a mandatory one as not optional", async () => {
     expect(await setChoice("a@example.com", "N-23", false)).toBe("unavailable");
     expect(await setChoice("a@example.com", "N-03", false)).toBe("not-optional");

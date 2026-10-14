@@ -84,6 +84,7 @@ export function activityFrom(events: readonly PartnerEvent[], holds: readonly Ho
     const about = [estateName(h.vehicleSlug), units(h.units)].filter(Boolean).join(" · ");
     if (h.openedAt) lines.push({ at: h.openedAt, what: "You opened a holding deposit", detail: about });
     if (h.paidAt) lines.push({ at: h.paidAt, what: "Your holding deposit was paid", detail: about });
+    if (h.refundedAt) lines.push({ at: h.refundedAt, what: "Your holding deposit was refunded", detail: about });
   }
   for (const i of inbox) lines.push({ at: i.at, what: "We sent you a notice", detail: i.subject });
   const time = (s: string) => { const t = Date.parse(s); return Number.isFinite(t) ? t : 0; };

@@ -15,6 +15,7 @@
 import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import { deliverDue } from "@/lib/notices/outbox";
+import { runClock } from "@/lib/notices/clock";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,9 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, error: "unauthorised" }, { status: 401 });
   }
   try {
-    return NextResponse.json({ ok: true, ...(await deliverDue(50)) }, { headers: { "cache-control": "no-store" } });
+    /* The clock first, so anything it queues is sent in the same run. */
+    const clock = await runClock();
+    return NextResponse.json({ ok: true, ...clock, ...(await deliverDue(50)) }, { headers: { "cache-control": "no-store" } });
   } catch {
     /* The table is not there yet, or the database is not reachable. */
     return NextResponse.json({ ok: false, error: "outbox-unavailable" }, { status: 503 });
