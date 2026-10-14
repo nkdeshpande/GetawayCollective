@@ -24,8 +24,8 @@
  * keeps the two from drifting into one another.
  */
 
-import { WATERFALL } from "../app/_assemblies/data";
-import { DSCR, UNIT, MY_YIELD_BPS, SITE } from "../app/_assemblies/slowspace";
+import { WATERFALL, inr } from "../app/_assemblies/data";
+import { DSCR, UNIT, MY_YIELD_BPS, SITE, DEPOSIT } from "../app/_assemblies/slowspace";
 import type { JournalMeta } from "../constants/journal-taxonomy";
 
 export type JournalKind =
@@ -939,9 +939,69 @@ const J13: Entry = {
   ],
 };
 
+/* 15 Oct 2026. The platform explaining a rule it already follows, like the
+   first eight, so it carries no editorial meta: it is collection distance
+   by definition. Every fact in it is the live reserve flow's
+   (lib/holds.ts, app/api/deposit) or a founder ruling (KYC before
+   allotment, 8 Oct 2026); the amount and the refund term are read from
+   the register. */
+const J14: Entry = {
+  id: "J-14",
+  slug: "what-a-holding-deposit-is",
+  title: "What a holding deposit is, and is not",
+  standfirst:
+    "A deposit holds a slot. It does not buy one, and it makes nobody a partner. What it does, " +
+    "and what it leaves for later.",
+  kind: "mechanism",
+  published: "2026-10-15",
+  minutes: 3,
+  cites: [
+    { what: "holding deposit", value: inr(DEPOSIT.amount) },
+    { what: "refund term", value: DEPOSIT.refundable },
+  ],
+  body: [
+    { t: "p", x:
+      "The commonest misreading of a deposit is that it completes something. It does not. This " +
+      "is what the deposit does, and what it leaves for later, in the order a reserver meets them." },
+    { t: "h", x: "It holds a slot" },
+    { t: "p", x:
+      "When you reserve, you choose how many units you intend to take and pay one holding " +
+      "deposit. It is the same at every estate, whatever the number of units. From that moment " +
+      "the units you chose are held: the next person to open the reserve page is not offered them." },
+    { t: "figure", label: "Holding deposit", value: inr(DEPOSIT.amount), source: "the vehicle register; the same at every estate, whatever the number of units" },
+    { t: "h", x: "It is paid to the estate, not to us" },
+    { t: "p", x:
+      "The deposit is paid to the estate's own LLP, the partnership that holds the property, and " +
+      "never to Getaway Collective. Your receipt names the payee, so you can see where the money went." },
+    { t: "h", x: "It buys nothing on its own" },
+    { t: "p", x:
+      "A deposit is not a position. You are not a partner, and you hold no share of the estate, " +
+      "until the balance is settled with the Vehicle Agreement and your position is entered on the " +
+      "register. Settlement, not the deposit, is what makes a partner." },
+    { t: "h", x: "It can come back" },
+    { t: "p", x:
+      DEPOSIT.refundable + " If it is refunded, the hold ends: the units are offered again, the " +
+      "reserve page says the deposit was refunded, and you receive a receipt for that as well." },
+    { t: "h", x: "What it leaves for later" },
+    { t: "p", x:
+      "The balance, at the estate's published unit price, and the Vehicle Agreement are completed " +
+      "with Investor Relations. Identity checks run alongside, at your own pace; they need to be " +
+      "complete only before units are allotted to you." },
+    { t: "assert", x:
+      "Capital is at risk. A deposit removes none of that risk. It holds your place while you " +
+      "read, ask and decide." },
+  ],
+  onward: [
+    { path: "/how-it-works", title: "How it works",
+      why: "Units, the waterfall, decisions and nights, end to end." },
+    { path: "/legal/risk-disclosure", title: "Risk Factors",
+      why: "What can go wrong, stated as risk rather than as policy." },
+  ],
+};
+
 export const JOURNAL: readonly Entry[] = [
   J01, J02, J03, J04, J05, J06, J07, J08,
-  J09, J10, J11, J12, J13,
+  J09, J10, J11, J12, J13, J14,
 ];
 
 export const entryBySlug = (slug: string): Entry | undefined =>

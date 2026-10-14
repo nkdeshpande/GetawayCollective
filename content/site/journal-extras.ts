@@ -97,6 +97,17 @@ export const JOURNAL_EXTRAS: Readonly<Record<string, JournalExtra>> = {
     graphicAfter: -1,
     quote: { text: "Less, but better.", who: "Dieter Rams", where: "his ten principles for good design" },
   },
+  "what-a-holding-deposit-is": {
+    pull: "A deposit is not a position.",
+    graphic: { kind: "compare", head: ["A holding deposit", "A position"], rows: [
+      ["What it is", "One payment that holds a slot", "Units entered on the register"],
+      ["Paid to", "The estate's LLP", "The estate's LLP"],
+      ["Makes you a partner", "No", "Yes, on settlement"],
+      ["Can come back", "In full, until you sign", "No; it can be sold after the lock-in"],
+    ] },
+    graphicAfter: 2,
+    quote: { text: "Measure twice, cut once.", who: "A carpenter's proverb", where: "traditional" },
+  },
   "four-thousand-weekends": {
     pull: "It does not make an hour better. It converts hours that would not otherwise have existed.",
     graphic: { kind: "weekends" },
