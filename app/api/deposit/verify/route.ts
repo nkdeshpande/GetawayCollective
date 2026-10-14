@@ -22,6 +22,7 @@ import { recordContact, depositRowsByReference } from "@/lib/events/store";
 import { DepositProof, checkoutSignatureValid, razorpayKeys } from "@/lib/deposit";
 import { holdsFrom } from "@/lib/holds";
 import { vehicleBySlug } from "@/constants/vehicles";
+import { publicName } from "@/app/_assemblies/site/registry";
 
 
 export async function POST(req: Request) {
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
        One for each reference, however often the proof arrives. */
     const receipt = renderForSend("N-03", {
       ...SPECIMEN_CONTEXT,
-      hold: { estate: v.propertyName, slug: v.slug, payee: v.registeredName, units: Number(units) || 1, payment: paymentId, reference },
+      hold: { estate: publicName(v), slug: v.slug, payee: v.registeredName, units: Number(units) || 1, payment: paymentId, reference },
     });
     if (receipt.ok) {
       await dispatch({

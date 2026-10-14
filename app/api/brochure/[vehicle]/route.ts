@@ -32,6 +32,7 @@ import {
   publishable, waterfallState, VEHICLES, BUILD_LABEL, TENURE_LABEL,
 } from "@/constants/vehicles";
 import { estateOf } from "@/constants/spatial";
+import { publicName } from "@/app/_assemblies/site/registry";
 import { pageFor } from "@/constants/property-page";
 import { COLOUR, FONT, SPACE } from "@/constants/tokens";
 
@@ -82,7 +83,7 @@ export async function GET(
 
   const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<title>${esc(v.propertyName)} — Getaway Collective</title>
+<title>${esc(publicName(v))} — Getaway Collective</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   /* Print-first, and every value read from constants/tokens.ts rather
@@ -110,7 +111,7 @@ export async function GET(
 </style></head><body>
 
 <p class="eyebrow">${esc(page?.eyebrow ?? "Getaway Collective")}</p>
-<h1>${esc(v.propertyName)}</h1>
+<h1>${esc(publicName(v))}</h1>
 <p class="lede">${esc(page?.headline ?? "")}</p>
 
 <h2>The place</h2>

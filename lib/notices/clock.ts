@@ -14,6 +14,7 @@
  * (founder, 8 Oct 2026): nothing here mentions it.
  */
 import { VEHICLES } from "../../constants/vehicles";
+import { publicName } from "../../app/_assemblies/site/registry";
 import { SPECIMEN_CONTEXT } from "../../content/notifications";
 import { renderForSend } from "../email/send";
 import { depositRows } from "../events/store";
@@ -37,7 +38,7 @@ export async function runClock(now: Date = new Date()): Promise<{ reminded: numb
   for (const h of unpaid) {
     const v = VEHICLES.find((x) => x.slug === h.vehicleSlug);
     if (!v) continue;
-    const mail = renderForSend("N-18", { ...SPECIMEN_CONTEXT, hold: { estate: v.propertyName, slug: v.slug, payee: v.registeredName, units: h.units, payment: "", reference: h.reference } });
+    const mail = renderForSend("N-18", { ...SPECIMEN_CONTEXT, hold: { estate: publicName(v), slug: v.slug, payee: v.registeredName, units: h.units, payment: "", reference: h.reference } });
     if (!mail.ok) continue;
     const out = await dispatch({
       key: dedupeKey("N-18", h.reference, h.email), noticeId: "N-18", to: h.email,
@@ -50,7 +51,7 @@ export async function runClock(now: Date = new Date()): Promise<{ reminded: numb
     const v = VEHICLES.find((x) => x.slug === h.vehicleSlug);
     const out = await dispatch({
       key: dedupeKey("O-06", h.reference, to), noticeId: "O-06", to, audience: "office", urgency: "normal",
-      subject: `A hold paid 21 days ago - ${v?.propertyName ?? "estate not named"}`,
+      subject: `A hold paid 21 days ago - ${v ? publicName(v) : "estate not named"}`,
       text: `This hold was paid 21 or more days ago. Decide with the person whether to continue, extend or refund.\n\n` +
         `Reference: ${h.reference}\nUnits: ${h.units}\nPaid: ${h.paidAt}\nPayer: ${h.email}`,
     }, now).catch(() => null);

@@ -43,6 +43,7 @@
     "lint:route": "node scripts/route-lint.js",
     "lint:taxonomy": "node scripts/taxonomy-lint.js",
     "lint:journal": "node scripts/journal-lint.js",
+    "canon:check": "vite-node --config vitest.config.ts scripts/canon-check.ts",
     "lint:links": "node scripts/link-lint.js",
     "lint:ai": "node scripts/ai-lint.js",
     "lint:public": "node scripts/public-law-lint.js",

@@ -20,6 +20,7 @@ import { recordContact, depositRows } from "@/lib/events/store";
 import { DepositRequest, createOrder, eligibility, razorpayKeys } from "@/lib/deposit";
 import { heldUnits, holdsFrom } from "@/lib/holds";
 import { stanceFor } from "@/constants/vehicles";
+import { publicName } from "@/app/_assemblies/site/registry";
 
 export async function POST(req: Request) {
   const rl = await rateLimit(clientKey(req));
@@ -83,7 +84,8 @@ export async function POST(req: Request) {
     order: { id: order.id, amount: order.amount, currency: "INR" },
     keyId: keys!.keyId,
     payee: v.registeredName,
-    description: `Holding deposit · ${v.propertyName} · ${d.units} unit${d.units === 1 ? "" : "s"}`,
+    /* Shown to the payer in Razorpay's own window: the estate's public name. */
+    description: `Holding deposit · ${publicName(v)} · ${d.units} unit${d.units === 1 ? "" : "s"}`,
     prefill: { name: d.name, email: d.email, contact: d.phone },
   });
 }
