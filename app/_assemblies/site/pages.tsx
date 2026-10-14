@@ -100,7 +100,8 @@ export function SiteHome() {
     '<p class="hero-risk">Capital is at risk.</p></div></div></section>' +
     `<section class="mani"><p id="mani">${MANIFESTO.split(" ").map((w) => `<span>${w}</span>`).join(" ")}</p></section>` +
     // ── what owning means ──
-    `<section class="ref"><div>${film("solace", 7)}</div><div>${film("creek", 11)}</div><div>${film("cff", 17)}</div>` +
+    /* 15 Oct 2026: the estates' own pictures, where there were three drawn films. */
+    `<section class="ref"><div>${plate("solace/mist", { sizes: "(max-width: 700px) 100vw, 34vw", tag: "none" })}</div><div>${plate("creek/water", { sizes: "(max-width: 700px) 100vw, 34vw", tag: "none" })}</div><div>${plate("cff/fire", { sizes: "(max-width: 700px) 100vw, 34vw", tag: "none" })}</div>` +
     '<div class="mid"><div><span class="eb">What you own</span><b>ONE ESTATE, ONE LLP</b><p class="para para-s">Units in the partnership that holds the land and the buildings. Partners decide, by equity; one operating partner runs every estate.</p><a class="btn" href="/how-it-works">How ownership works</a></div></div></section>' +
     // ── four estates, up close ──
     '<div class="explore-h"><span class="eb">The collection</span><h2 class="h2">Explore our <span>estates</span></h2></div>' +
@@ -123,7 +124,7 @@ export function SiteHome() {
     '</div><div><span class="eb">Built as a system</span><h2 class="h2">Three chassis. <span>Every estate.</span></h2></div>' +
     '<div><p class="para">Each estate is assembled from the same three architectural systems: one on the ground, one lifted to the horizon, one opened into volume. The land changes; the standard does not. That is how a small place can be built as carefully the tenth time as the first.</p>' +
     '<a class="btn gray" href="/collection/slowspace-solace#concept">See them at Solace</a></div></section>' +
-    `<section class="fullbleed">${film("creek", 20.5, { rain: true })}<div class="cap"><span class="eb">Run by our operating partner</span>` +
+    `<section class="fullbleed">${plate("creek/night")}<div class="cap"><span class="eb">Run by our operating partner</span>` +
     '<h2 class="h2">You own it. <span>Nobody asks you to run it.</span></h2><p class="para">Sensory Getaways operates every estate under a Commercial Services Agreement, measured on service levels and paid from the first stage of the waterfall. Partners decide; the operator delivers.</p>' +
     '<a class="btn" href="/operating-partner">The operating partner</a></div></section>' +
     // ── the Journal, and the pack ──

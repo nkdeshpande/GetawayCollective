@@ -84,6 +84,32 @@ export const MEDIA: Readonly<Record<string, Readonly<Record<string, Plate>>>> = 
     "veranda-rain": square("rain falling beside the plaza's deck"),
     "procession": square("the procession rising from the court towards the deck"),
   },
+  /* 15 Oct 2026. Coffee Fields Forever, from its own illustration plates and
+     atelier views, each cut free of the words it carried (scripts/gen-site-media.js).
+     Funding is complete and nothing is built: every one is a drawing. */
+  cff: {
+    "hero": wide("the whole estate from above: the keys in their hamlets under the coffee, joined by one walking round"),
+    "place": wide("the walk down the valley side of the estate, through the trees"),
+    "zones": wide("the estate seen from above: the hamlets, the pools, the drive and the boundary"),
+    "canopy": wide("keys under the shade canopy, with the walking round between them"),
+    "keys": wide("one twin key cut open: two rooms under one roof, and the deck"),
+    "roastery": wide("the roastery and the tree house beside the pond"),
+    "fire": wide("the hearth: the fire circle beside the long pool"),
+    "fog": wide("the hamlet at Mist Hollow, its keys among the trees"),
+    "harvest": wide("the hamlet at Harvest Ridge, beside the boundary wall"),
+    "night": wide("the estate at night, lit only along the walking round"),
+    "light": wide("a single key in a clearing, with its plunge pool"),
+    "monsoon": wide("the hearth in the monsoon, rain over the long pool"),
+  },
+  /* 15 Oct 2026. Solace: two views of the land from its sign-off set, and no view
+     of the buildings, because that set draws a later scheme than the page describes.
+     They serve the home page only. The estate page keeps its drawn films: in picture
+     mode a page lays no words over a film (tests/estate-day.test.ts), and Solace's
+     three chapters have no picture that matches the scheme they describe. */
+  solace: {
+    "hero": wide("a path between rows of trees, with one person walking into the orchard"),
+    "mist": wide("the orchard in the morning mist"),
+  },
 };
 
 export const plateOf = (ref: string): (Plate & { readonly base: string }) | undefined => {

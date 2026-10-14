@@ -49,6 +49,8 @@
 .site canvas.film{display:block;width:100%;height:100%}
 /* An estate's own picture stands where its film would (render.ts plate()). */
 .site .film-img{display:block;width:100%;height:100%;object-fit:cover}
+/* 15 Oct 2026: the home page's three frames and its full bleed take pictures too. */
+.site :is(.ref>div,.fullbleed)>.film-img{position:absolute;inset:0}
 .site picture{display:contents}
 .site .plate-tag{position:absolute;left:var(--gc-sp-s);bottom:var(--gc-sp-s);z-index:1;padding:calc(var(--gc-sp-3xs) * 1.25) var(--gc-sp-2xs);background:var(--gc-paper-panel);color:var(--gc-s-night);font:600 10px/1.2 var(--text);letter-spacing:.14em;text-transform:uppercase;pointer-events:none}
 .site .plate-tag-tl{bottom:auto;top:var(--gc-sp-s)}

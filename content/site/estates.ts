@@ -1733,6 +1733,10 @@ export const ESTATES: Record<string, SiteEstate> = {
   "name": "Coffee Fields Forever",
   "vehicle": "the Coffee Fields Forever LLP, being formed",
   "pal": "cff",
+  "media": {
+   "hero": "cff/hero",
+   "enquire": "cff/monsoon"
+  },
   "hour": 16.5,
   "enquireHour": 17.5,
   "heroLabel": "Drawn film: shade-grown coffee slopes in the afternoon, Kodagu",
@@ -1747,10 +1751,12 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    "title": "Twenty keys. <b>One working plantation.</b>",
    "text": "Coffee Fields Forever sits at Valamudi, near Suntikoppa in Kodagu, on three acres of shade-grown coffee. Two acres are buildable; at least two-thirds of the estate stays as it is. It is a different estate from Streamside Creek, 1.8 km away.",
-   "coords": "12°23'25.6\"N 75°49'13.8\"E"
+   "coords": "12°23'25.6\"N 75°49'13.8\"E",
+   "img": "cff/place"
   },
   "concept": {
    "title": "Three hamlets. <span>One canopy.</span>",
+   "img": "cff/zones",
    "lead": "The keys are gathered into three hamlets under the coffee, around a roastery raised over a working vault, so that the working estate never crosses the floor people live on.",
    "zones": [
     {
@@ -1895,6 +1901,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "chapters": [
    {
     "id": "canopy",
+    "img": "cff/canopy",
     "title": "The canopy",
     "film": [
      "cff",
@@ -1932,6 +1939,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    },
    {
     "id": "keys",
+    "img": "cff/keys",
     "title": "The keys",
     "film": [
      "cff",
@@ -1965,6 +1973,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    },
    {
     "id": "roastery",
+    "img": "cff/roastery",
     "title": "Roastery",
     "film": [
      "cff",
@@ -2063,6 +2072,13 @@ export const ESTATES: Record<string, SiteEstate> = {
      "The minute of light",
      "Sun through the framed opening, once a day."
     ]
+   ],
+   "imgs": [
+    "cff/fire",
+    "cff/fog",
+    "cff/harvest",
+    "cff/night",
+    "cff/light"
    ],
    "note": "Source: CFF experiences, 09 Aug 2026. No operations plan exists yet; who runs each of these is not appointed."
   },
