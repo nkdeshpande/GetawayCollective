@@ -9,7 +9,8 @@
  * anything over the rate limit are simply not counted.
  */
 import { rateLimit, clientKey } from "@/lib/rate-limit";
-import { countVisit, isBot } from "@/lib/visits";
+import { countVisit, isBot, sourceOf } from "@/lib/visits";
+import { capture, shape } from "@/lib/posthog";
 
 export const dynamic = "force-dynamic";
 const done = () => new Response(null, { status: 204, headers: { "cache-control": "no-store" } });
@@ -19,7 +20,9 @@ export async function POST(req: Request) {
   if (req.headers.get("dnt") === "1" || req.headers.get("sec-gpc") === "1") return done();
   const rl = await rateLimit(clientKey(req));
   if (!rl.ok) return done();
-  const b = (await req.json().catch(() => null)) as { p?: unknown; l?: unknown; r?: unknown; u?: unknown } | null;
-  if (b) await countVisit({ path: b.p, landing: b.l === true, referrer: b.r, utm: b.u });
+  const b = (await req.json().catch(() => null)) as { p?: unknown; l?: unknown; r?: unknown; u?: unknown; t?: unknown } | null;
+  /* 15 Oct 2026: the same page, as a step on its path (lib/posthog.ts; dormant without POSTHOG_KEY). */
+  if (b) await Promise.all([countVisit({ path: b.p, landing: b.l === true, referrer: b.r, utm: b.u }),
+    capture(shape("$pageview", { landing: b.l === true, source: sourceOf(b.l === true, b.r, b.u) }, b.t, { path: b.p, country: req.headers.get("x-vercel-ip-country") }))]);
   return done();
 }

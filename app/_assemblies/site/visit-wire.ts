@@ -8,7 +8,13 @@
  * is not a cookie, holds no identifier and is never sent anywhere.
  *
  * A browser that asks not to be tracked sends nothing at all.
+ *
+ * 15 Oct 2026: it also carries this tab's random id (./product-wire.ts), so
+ * the same page can be a step on its path when PostHog is switched on. The
+ * counter itself still stores no identifier (lib/visits.ts).
  */
+import { tab } from "./product-wire";
+
 const SEEN = "gc-visit";
 
 export function wireVisit(): () => void {
@@ -18,7 +24,7 @@ export function wireVisit(): () => void {
     let landing = false;
     try { landing = !sessionStorage.getItem(SEEN); sessionStorage.setItem(SEEN, "1"); } catch { /* private mode: every page counts as internal */ }
     const u = landing ? new URLSearchParams(location.search).get("utm_source") : null;
-    const body = JSON.stringify({ p: location.pathname, l: landing, r: landing ? document.referrer : "", u: u ?? undefined });
+    const body = JSON.stringify({ p: location.pathname, l: landing, r: landing ? document.referrer : "", u: u ?? undefined, t: tab() ?? undefined });
     const send = () => { void fetch("/api/visit", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true }).catch(() => undefined); };
     const t = window.setTimeout(send, 1200);   // a page left at once was not read
     return () => window.clearTimeout(t);

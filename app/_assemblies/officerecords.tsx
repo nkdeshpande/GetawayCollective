@@ -37,6 +37,7 @@ import {
 import { WsFrame, OFFICE_TABS } from "./workspace/frame";
 import { deliveryLog, tally, when, type DeliveryLine } from "@/lib/notices/inbox";
 import { visitReport } from "@/lib/visits";
+import { visitPaths, missing, sending } from "@/lib/posthog";
 import { enquiries, funnel } from "@/lib/desk";
 import { ActForm, Choice, Field, Reason } from "./officeforms";
 
@@ -129,7 +130,8 @@ function EstateLine({ e, actor, orgReady }: { e: EstateOnRecord; actor: Actor; o
 export async function OfficeAnalytics() {
   const actor = await currentActor();
   if (!actor) return <SignedOut />;
-  const [v, f] = await Promise.all([visitReport(30), funnel().catch(() => ({ lines: [], signal: 0 }))]);
+  const [v, f, jn] = await Promise.all([visitReport(30), funnel().catch(() => ({ lines: [], signal: 0 })), visitPaths(30)]);
+  const top = jn.ready ? Math.max(1, jn.steps[0].tabs) : 1;
   return (
     <Frame>
       <header className="ws-head">
@@ -141,6 +143,21 @@ export async function OfficeAnalytics() {
           ["Signal subscribers", String(f.signal)], ["Deposits paid", String(f.lines.reduce((n, l) => n + l.paid, 0))],
         ]} /></div>
       </header>
+      {/* 15 Oct 2026: the path a visit takes, from PostHog (lib/posthog.ts), beside the records it leads to. */}
+      <Section eb="The path" title="Arrival to <span>paid deposit.</span>" note="Each step counts browser tabs, not people: no cookie is set and nobody is identified. Counted by PostHog from the steps this site forwards to it.">
+        {jn.ready ? <>
+          <div className="ws-table or-table">
+            <div className="hd"><span>Step</span><span>Tabs</span><span>Of all arrivals</span></div>
+            {jn.steps.map((s) => <div key={s.label} className="row"><div><b>{s.label}</b></div><div>{s.tabs}</div><div>{Math.round((s.tabs / top) * 100)}%</div></div>)}
+          </div>
+          <div className="ws-card iv-card"><Rows rows={[
+            ["Hero film played", jn.film.tabs ? `${jn.film.tabs} tab${jn.film.tabs === 1 ? "" : "s"}` : "Not yet"],
+            ...jn.countries.map((c) => [c.country === "Unknown" ? "Country not known" : c.country, `${c.tabs} tab${c.tabs === 1 ? "" : "s"}`] as const),
+          ]} /></div>
+          {jn.ctas.length ? <div className="ws-card iv-card"><Rows rows={jn.ctas.map((c) => [c.label, `${c.clicks} press${c.clicks === 1 ? "" : "es"}`] as const)} /></div> : null}
+          {jn.url ? <p className="or-lead"><a href={jn.url} target="_blank" rel="noopener noreferrer">Open the full record in PostHog</a></p> : null}
+        </> : <p className="or-lead">{sending() ? "Steps are being sent to PostHog. " : `Nothing is sent yet: waiting on ${missing().send.join(", ")}. `}{jn.why}</p>}
+      </Section>
       <Section eb="The funnel" title="Enquiry to <span>paid deposit.</span>" note="Counted from the enquiries and deposit records themselves, since the first one was recorded. An order opened and never paid holds nothing.">
         {f.lines.length ? (
           <div className="ws-table or-table">

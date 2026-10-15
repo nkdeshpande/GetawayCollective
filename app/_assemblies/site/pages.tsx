@@ -92,7 +92,15 @@ export function SiteHome() {
     // ── who we are, and what is offered ──
     /* 15 Oct 2026 (audit, section 5): the first thing a visitor reads is what
        is offered, not the name, which the bar already carries. */
-    `<section class="hero">${film("coast", 18.4, { label: "Drawn film: laterite cliffs and the Arabian Sea at dusk" })}` +
+    /* 15 Oct 2026: the hero is a drawn film of one day on the coast, dusk to
+       dusk, rendered to video (GC-14-FM-002). The poster is its first frame;
+       behaviour.tsx loads and plays it only where motion is welcome and data
+       is not being saved, so a still, a slow line or no script all see the
+       poster. Drawn, not photographed, and tagged so. */
+    '<section class="hero"><video class="film-vid" muted loop playsinline preload="none" poster="/images/site/hero/coast-day-poster.webp" ' +
+    'data-src="/images/site/hero/coast-day-1280.mp4" data-src-wide="/images/site/hero/coast-day-1920.mp4" ' +
+    'aria-label="Drawn film: one day on the coast, the sun crossing laterite cliffs above the Arabian Sea, and the lights of an unbuilt building at night"></video>' +
+    '<span class="plate-tag hero-tag">Illustration · unbuilt</span>' +
     '<h1 class="hp">Own a share of <span>a retreat in India.</span></h1>' +
     '<div class="hero-foot"><span></span>' +
     '<div class="hero-own"><p>Own units in the partnership that holds a retreat. We govern it and hold none of it; an operating partner runs it.</p>' +

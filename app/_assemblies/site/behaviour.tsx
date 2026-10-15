@@ -22,6 +22,7 @@ import { wireNotices } from "./notices-wire";
 import { wireVisit } from "./visit-wire";
 import { usePathname, useRouter } from "next/navigation";
 import { Film } from "./film";
+import { track, wireProduct } from "./product-wire";
 import { wireDA } from "../da/wire";
 import { loadIndex } from "./search";
 
@@ -64,6 +65,7 @@ async function payDeposit(f: HTMLFormElement) {
       return;
     }
     if (!r.ok || !j.ok) { say(err, j.detail ? `This offering cannot take a deposit right now: ${j.detail}` : "That did not go through, and nothing was taken. Write to ir@getawaycollective.co."); return; }
+    track("deposit_opened", { vehicle, units: body.units });
     const Razorpay = await loadCheckout();
     if (!Razorpay) { say(err, "The payment window could not load, and nothing was taken. Try again, or write to ir@getawaycollective.co."); return; }
     const rz = new Razorpay({
@@ -75,6 +77,7 @@ async function payDeposit(f: HTMLFormElement) {
         const done = v.ok ? ((await v.json().catch(() => ({}))) as { reference?: string }) : null;
         /* The reserve page shows the hold itself (./reserve-wire.ts). */
         if (done) document.dispatchEvent(new CustomEvent("gc:reserved", { detail: { reference: done.reference || j.reference } }));
+        if (v.ok) track("deposit_paid", { vehicle });
         if (v.ok) say(ok, `Deposit received. Your position is held; reference ${String(j.reference).slice(0, 8)}. Investor Relations will write to you about identity checks, the balance and the Vehicle Agreement.`);
         else say(err, `Razorpay took the payment (${res.razorpay_payment_id}) but this site could not confirm it. Keep that id; Investor Relations will reconcile it.`);
         f.reset();
@@ -618,12 +621,22 @@ export function SiteBehaviour() {
 
     /* one page was read: a count, and nothing about the reader (lib/visits.ts) */
     off.push(wireVisit());
+    off.push(wireProduct(root));
 
     /* the notices page: reading them, and the choices about what is sent */
     off.push(wireNotices(root));
 
     /* the reserve page: units, allocation and where a hold stands */
     off.push(wireReserve(root));
+
+    /* the hero's film: loaded only where motion is welcome and data is not being saved */
+    $$<HTMLVideoElement>("video.film-vid", root).forEach((v) => {
+      const save = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+      if (still || save) return;
+      v.src = (window.innerWidth * (window.devicePixelRatio || 1) > 1600 ? v.dataset.srcWide : v.dataset.src) || "";
+      v.addEventListener("playing", () => track("hero_film", { state: "playing" }), { once: true });
+      v.play().catch(() => undefined);
+    });
 
     /* films */
     $$<HTMLCanvasElement>("canvas.film", root).forEach((c, i) => {
@@ -832,6 +845,7 @@ export function SiteBehaviour() {
           const r = await fetch(`/api/${to}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: ctl.signal });
           const j = await r.json().catch(() => ({})) as { ok?: boolean };
           if (r.ok && j.ok === true) {
+            track("enquiry_sent", { form: to, vehicle: to === "dossier" ? (body as { vehicle?: string }).vehicle : undefined });
             f.reset();
             /* A stepped enquiry that has gone says so and nothing else. */
             $$<HTMLElement>(".fstep", f).forEach((s) => { s.hidden = true; });
