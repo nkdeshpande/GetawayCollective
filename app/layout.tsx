@@ -11,7 +11,7 @@
 
 import type { Metadata } from "next";
 import { fontVars } from "./_system/fonts";
-import { CookieConsent, Specimens } from "./_assemblies/dialogs";
+import { Specimens } from "./_assemblies/dialogs";
 import { Shell } from "./_assemblies/shell";
 import { currentSubject } from "@/lib/session";
 import { headers } from "next/headers";
@@ -72,7 +72,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* P-03: asserts at the foot, never blocks, declines by default.
             Specimens renders a dialog only when ?specimen= names one —
             zero footprint otherwise. */}
-        <CookieConsent />
         <Specimens />
       </body>
     </html>

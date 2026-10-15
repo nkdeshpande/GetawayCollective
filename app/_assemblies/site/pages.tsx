@@ -21,18 +21,17 @@ import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
 import { VEHICLES, vehicleBySlug } from "@/constants/vehicles";
 import { PROPERTIES } from "../data";
-import { calcHTML, compareHTML as fourWaysHTML, simulate, DEFAULTS as CALC_DEFAULTS, type CalcEstate } from "./calc";
+import { type CalcEstate } from "./calc";
 import { chapterContent } from "../propertychapter";
 import type { ChapterId } from "@/constants/property-chapters";
 import { daHTML } from "../da/render";
 import { FORM, NE, PROP, TXT, esc, faqHTML, film, fill, inkify, plate } from "./render";
 import { graphicHTML } from "./infographics";
 import { JOURNAL_EXTRAS } from "@/content/site/journal-extras";
-import { fundingComplete, heldBy, landPublic, openReading, ownershipPrivate, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
+import { fundingComplete, heldBy, landPublic, openReading, ownershipPrivate, publicName, read, rupees, rupeesFull, src, vehicleOf, type Prov } from "./registry";
 import type { Block, NextStep, SitePage } from "./types";
 import { DOCKET, rulebookDocket } from "./docket";
 import { APPLY, ROLES, WHY } from "@/content/site/careers";
-import { GALLERY } from "./gallery";
 import { PASSPORT_STAGES } from "@/content/compositions/passport";
 import { OPERATORS } from "@/content/public";
 
@@ -87,18 +86,26 @@ export function SiteHome() {
     const R = read(v);
     return `${R.availability} · ${R.delivery}`;
   };
-  const facts = (c: (typeof COLLECTION)[number]) => { const v = vehicleOf(c.vehicleKey); return v ? `${v.keys} keys · ${landPublic(v)}` : c.spec; };
   /* An estate's own picture, where it has one (content/site/media.ts); its drawn film otherwise. */
   const imgOf = (href: string) => COLLECTION.find((c) => c.href === href)?.img;
   const html =
     // ── who we are, and what is offered ──
+    /* 15 Oct 2026 (audit, section 5): the first thing a visitor reads is what
+       is offered, not the name, which the bar already carries. */
     `<section class="hero">${film("coast", 18.4, { label: "Drawn film: laterite cliffs and the Arabian Sea at dusk" })}` +
-    '<h1 class="wm" aria-label="Getaway Collective">GETAWAY <span>COLLECTIVE</span></h1>' +
-    '<div class="hero-foot"><p class="tl">Sensory Retreat,<br><span>Capital Meets Curation.</span></p>' +
+    '<h1 class="hp">Own a share of <span>a retreat in India.</span></h1>' +
+    '<div class="hero-foot"><span></span>' +
     '<div class="hero-own"><p>Own units in the partnership that holds a retreat. We govern it and hold none of it; an operating partner runs it.</p>' +
     `<div class="hero-act"><a class="btn lead" href="/collection">Explore the collection ${NE}</a><a class="hero-link" href="/how-it-works">How ownership works</a></div>` +
     '<p class="hero-risk">Capital is at risk.</p></div></div></section>' +
-    `<section class="mani"><p id="mani">${MANIFESTO.split(" ").map((w) => `<span>${w}</span>`).join(" ")}</p></section>` +
+    /* The manifesto is read, not revealed a word at a time. */
+    `<section class="mani mani-still"><p>${MANIFESTO}</p></section>` +
+    /* The estate open now, told in a sentence or two, with where to read the rest. */
+    (pack ? `<section class="now"><div><span class="eb">Open now</span><h2 class="h2">${esc(pack.name)}</h2>` +
+      `<p class="para">${esc(COLLECTION.find((c) => c.href === `/collection/${pack.vehicle.slug}`)?.character?.replace(/<[^>]+>/g, "") ?? "")} ` +
+      `${pack.vehicle.offering.available === pack.vehicle.offering.units ? `All ${pack.vehicle.offering.units} of its units are offered` : `${pack.vehicle.offering.available} of its ${pack.vehicle.offering.units} units are still offered`}, at ${rupees(pack.vehicle.offering.unitPrice)} each, in ${esc(pack.vehicle.registeredName)}${pack.vehicle.llpin ? "" : ", a partnership still being formed"}. ` +
+      `Before you decide, read what is still open${pack.vehicle.slug === "coorg-coffee-creek" ? ": its terms not yet set, its loan not yet sanctioned, and the land valued at the founders' own figure" : ""}.</p>` +
+      `<p class="now-act"><a class="btn lead" href="/collection/${pack.vehicle.slug}">Read about ${esc(pack.name)} ${NE}</a><a class="hero-link" href="/collection/${pack.vehicle.slug}/risk">What is still open</a></p></div></section>` : "") +
     // ── what owning means ──
     /* 15 Oct 2026: the estates' own pictures, where there were three drawn films. */
     `<section class="ref"><div>${plate("solace/mist", { sizes: "(max-width: 700px) 100vw, 34vw", tag: "none" })}</div><div>${plate("creek/water", { sizes: "(max-width: 700px) 100vw, 34vw", tag: "none" })}</div><div>${plate("cff/fire", { sizes: "(max-width: 700px) 100vw, 34vw", tag: "none" })}</div>` +
@@ -108,13 +115,8 @@ export function SiteHome() {
     '<div class="stackfilm">' + HOME_STACK.map((s) =>
       `<section class="sf${imgOf(s.href) ? " sf-img" : ""}">${imgOf(s.href) ? plate(imgOf(s.href)!, { tag: "tl" }) : film(s.pal, s.hour, { rain: s.rain })}<div class="ov"><div><h3>${s.name}</h3><p>${s.line}</p>${s.chip ? `<p class="sf-d">${s.chip}</p>` : ""}<span class="chip">${esc(state(s.vehicleKey, s.href))}</span></div></div>` +
       `<a class="btn go" href="${s.href}">${s.cta} ${NE}</a></section>`).join("") + "</div>" +
-    // ── all of them, in frames ──
-    `<section class="gal-sec"><div class="gal-head"><span class="eb">The collection, in frames</span>` +
-    `<h2 class="h2">${Nw} estates, <span>drawn.</span></h2>` +
-    '<p class="para">Open the frames and move through them: swipe, drag, or use the arrow keys. Every frame leads to its estate.</p>' +
-    '<p><a class="tx-u" href="/collection">Or see them listed, with where each stands</a></p></div>' +
-    GALLERY("gal-home", "The collection, in frames", COLLECTION.map((c) => ({ pal: c.pal, hour: c.hour, img: c.img, t: c.name.replace(/<[^>]+>/g, ""), line: `${c.line} · ${facts(c)}`, href: c.href })), `View all ${Nw.toLowerCase()} estates`) +
-    "</section>" +
+    /* 15 Oct 2026 (audit, section 5): the frames repeated the list above; one way to browse. */
+    `<p class="explore-all"><a class="tx-u" href="/collection">All ${Nw.toLowerCase()} estates, and where each one stands</a></p>` +
     // ── still to come ──
     '<section class="next"><div class="center gut"><h2 class="h2">Next <span>estates</span></h2><p class="para mute">Named, surveyed, not yet open. Each will arrive with its own offering letter.</p></div><div class="rail">' +
     NEXT_ESTATES.map((n) => `${n.href ? `<a class="nc" href="${n.href}">` : '<article class="nc">'}<div class="im">${film(n.pal, n.hour)}</div><h4>${n.name}</h4><p>${n.line}</p>${n.href ? "</a>" : "</article>"}`).join("") + "</div></section>" +
@@ -414,8 +416,9 @@ export function SiteQualify() {
   const S = PASSPORT_STAGES;
   const estates = calcEstates();
   const lead = estates[0];
-  const one = lead ? simulate({ estate: lead, units: 1, ...CALC_DEFAULTS, countNights: true }) : null;
-  const deposit = VEHICLES.find((v) => v.offering.available > 0 && v.offering.deposit)?.offering.deposit;
+  const openV = VEHICLES.find((v) => v.offering.available > 0 && v.offering.deposit);
+  const deposit = openV?.offering.deposit;
+  const openPct = openV ? Number((openV.offering.unitPrice * 1000n) / openV.offering.totalEquity) / 10 : 0;
   const hold = deposit ? rupeesFull(deposit) : null;
 
   const tile = (t: string, p: string) => `<div class="own-tile"><h3>${t}</h3><p>${p}</p></div>`;
@@ -426,11 +429,11 @@ export function SiteQualify() {
     `<h3 class="tx-h3">KYC, alongside: any time, complete before you sign</h3>${track(S.filter((r) => KYC_STAGES.has(r.slug)), (i) => `K${i + 1}`)}`;
 
   const blocks: Block[] = [
-    { figs: [["0", "documents needed to sign in"], ["3", "steps from here to owning"], ["0", "commitments made by signing in"], ...(hold ? [[hold, "holds your units, refundable until you sign"]] : [])] },
     { h: "What you own" },
     { html: `<div class="own-tiles">` +
       tile("A share of a real place", "Your units are a share of the partnership that holds the land and the buildings, registered in its own name.") +
-      tile("Nights of your own", lead && one ? `Each estate's nights are shared among its partners from handover. If they are shared by equity, one unit at ${esc(lead.name)} is about ${one.nightsPerYear[0]} to ${one.nightsPerYear[1]} nights a year: an illustration, because the rule that allocates nights is not yet decided and each offering letter will state it.` : "Each estate's nights are shared among its partners from handover. The rule that allocates them is not yet decided; each offering letter will state it.") +
+      /* 15 Oct 2026 (audit GC-02): one rule everywhere, the founder's of 6 Oct. */
+      tile("Nights of your own", openV ? `One night a year for each 1% of an estate you hold, from handover. At ${esc(publicName(openV))}, open now, one unit is ${openPct}% of the equity, so ${Math.floor(openPct + 1e-9)} nights a year. They come with owning; they are never sold.` : "One night a year for each 1% of an estate you hold, from handover. They come with owning; they are never sold.") +
       tile("Income, modelled", lead ? `Distributions follow the waterfall. At ${esc(lead.name)} the modelled yield is ${lead.yieldPct}% a year, ${lead.yieldClass.toLowerCase()}, ${esc(lead.basis)}. Not promised.` : "Distributions follow the waterfall, from stabilised occupancy. Not promised.") +
       tile("Nothing to run", "The operating partner runs every estate day to day, measured on service levels and paid from the waterfall. You decide; it delivers.") +
       tile("A vote", "The partners decide the matters that matter, each vote weighted by equity.") +
@@ -443,10 +446,12 @@ export function SiteQualify() {
     ] },
     { p: "Why there are checks at all: partners own real land together, and the law requires the partnership to know who each of them is before they become one. That is why KYC is the last step, not the first. It never stands between you and the estates." },
     { links: [["Sign in or begin", "/sign-in", "lead"], ["See the collection", "/collection"]] },
-    { h: "What your money does, <span>four ways</span>", id: "calculator" },
-    { p: "The same sum, over the same years, in an estate, an apartment you let out, a fixed deposit and an equity SIP. Move the sliders; change the assumptions to your own. Only one of the four is also a place you can spend your time." },
-    { html: calcHTML(estates) },
-    { html: fourWaysHTML() },
+    /* 15 Oct 2026 (audit, section 6): the four-way calculator added an
+       estate's value, its distributions and the worth of its nights into one
+       headline, against comparators on different terms. It is withdrawn until
+       it compares like with like; calc.ts is kept. */
+    { h: "What your money does", id: "calculator" },
+    { p: "Three different things come with a share of an estate, and they are not added together. There is the value of the share itself, which can rise or fall and has no public market. There are distributions, which are paid only when there is money left after the estate's own costs and any loan, in the order its agreement sets. And there are nights, which are a benefit of owning, not income. Each estate's investment page sets out its own figures and the basis for each one." },
     { assert: "An estate is not a deposit. Your capital is at risk and no return is guaranteed by any party; every estate figure here is modelled from its register and stated with its basis. Figures are before tax. Read the Risk Factors before you decide." },
     { h: "Every stage, in full" },
     { html: `<details class="tx-fold"><summary>Read every stage: the path, and KYC alongside it</summary>${stagesHTML}</details>` },

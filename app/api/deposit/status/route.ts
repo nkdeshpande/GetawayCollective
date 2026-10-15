@@ -11,7 +11,7 @@ import { NextResponse } from "next/server";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { depositRowsByReference } from "@/lib/events/store";
 import { maskEmail, holdsFrom } from "@/lib/holds";
-import { vehicleBySlug } from "@/constants/vehicles";
+import { vehicleBySlug, depositPayeeLine } from "@/constants/vehicles";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
     status: r.status,
     units: r.units,
     estate: v?.slug ?? null,
-    payee: v?.registeredName ?? null,
+    payee: v ? depositPayeeLine(v) : null,
     email: maskEmail(r.email),
     openedAt: r.openedAt,
     paidAt: r.paidAt,

@@ -12,7 +12,7 @@ import { recordContact } from "@/lib/events/store";
 import { webhookSignatureValid } from "@/lib/deposit";
 import { depositRows } from "@/lib/events/store";
 import { holdsFrom } from "@/lib/holds";
-import { vehicleBySlug } from "@/constants/vehicles";
+import { vehicleBySlug, depositPayeeLine } from "@/constants/vehicles";
 import { publicName } from "@/app/_assemblies/site/registry";
 import { renderForSend } from "@/lib/email/send";
 import { SPECIMEN_CONTEXT } from "@/content/notifications";
@@ -48,7 +48,7 @@ async function refunded(evt: Captured) {
   }).catch(() => false);
   const v = hold.vehicleSlug ? vehicleBySlug(hold.vehicleSlug) : undefined;
   if (v) {
-    const mail = renderForSend("N-20", { ...SPECIMEN_CONTEXT, hold: { estate: publicName(v), slug: v.slug, payee: v.registeredName, units: hold.units, payment: paymentId, reference: hold.reference } });
+    const mail = renderForSend("N-20", { ...SPECIMEN_CONTEXT, hold: { estate: publicName(v), slug: v.slug, payee: depositPayeeLine(v), units: hold.units, payment: paymentId, reference: hold.reference } });
     if (mail.ok) await dispatch({
       key: dedupeKey("N-20", hold.reference, hold.email), noticeId: "N-20", to: hold.email,
       audience: mail.audience, urgency: mail.urgency, transactional: true,

@@ -113,6 +113,23 @@ export const TENURE_LABEL: Record<Tenure, string> = {
   "conveyance-complete": "Conveyance complete",
 };
 
+/**
+ * WHO A HOLDING DEPOSIT IS PAID TO — founder, 15 Oct 2026: "Payments are
+ * always to the holding company that forms the LLP. The amount is held as a
+ * fiduciary until the members are formed for the LLP." So no deposit is ever
+ * described as paid to an LLP directly, formed or not. The holding company
+ * is NAVINA Structures (founder, 15 Oct 2026).
+ */
+export const DEPOSIT_HOLDER: string | null = "NAVINA Structures";
+/** "NAVINA Structures, the holding company that forms SlowSpace Coorg Creek LLP, as fiduciary until its partners are admitted" */
+export const depositPayee = (v: Pick<Vehicle, "registeredName">): string =>
+  `${DEPOSIT_HOLDER ?? "the holding company"}${DEPOSIT_HOLDER ? ", the holding company" : ""} that forms ${v.registeredName}, as fiduciary until its partners are admitted`;
+/** The same, to begin a sentence or fill a "Paid to" line. */
+export const depositPayeeLine = (v: Pick<Vehicle, "registeredName">): string => {
+  const s = depositPayee(v);
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 export const BUILD_LABEL: Record<BuildStage, string> = {
   "pre-construction": "Pre-construction",
   "under-construction": "Under construction",
@@ -403,7 +420,9 @@ const SLOWSPACE: Vehicle = {
      the conflict is registered rather than the figure quietly corrected. */
   landArea: ".3 acres · dual frontage",
   keys: 12,
-  buildStage: "under-construction",
+  /* 15 Oct 2026 (audit GC-03): the approvals are not obtained and the CRZ line
+     is not drawn, so nothing is built; it is pre-construction. */
+  buildStage: "pre-construction",
   /* The record states CRZ compliance and a frontage, and no tenure
      position. Null rather than a guess — see the note on Tenure. */
   tenure: null,

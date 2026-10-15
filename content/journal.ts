@@ -969,10 +969,11 @@ const J14: Entry = {
       "deposit. It is the same at every estate, whatever the number of units. From that moment " +
       "the units you chose are held: the next person to open the reserve page is not offered them." },
     { t: "figure", label: "Holding deposit", value: inr(DEPOSIT.amount), source: "the vehicle register; the same at every estate, whatever the number of units" },
-    { t: "h", x: "It is paid to the estate, not to us" },
+    { t: "h", x: "It is held for the estate" },
     { t: "p", x:
-      "The deposit is paid to the estate's own LLP, the partnership that holds the property, and " +
-      "never to Getaway Collective. Your receipt names the payee, so you can see where the money went." },
+      "The deposit is paid to NAVINA Structures, the holding company that forms the estate's partnership, which holds it " +
+      "as a fiduciary until the partnership is formed and its partners are admitted. Your receipt names " +
+      "the payee, so you can see where the money went." },
     { t: "h", x: "It buys nothing on its own" },
     { t: "p", x:
       "A deposit is not a position. You are not a partner, and you hold no share of the estate, " +

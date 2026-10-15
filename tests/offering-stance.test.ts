@@ -34,7 +34,8 @@ describe("exactly one vehicle is open", () => {
       const s = stanceFor(v);
       expect(s.kind).toBe("waitlist");
       expect(v.lifecycle).toBe("funded");
-      expect(v.buildStage).toBe("under-construction");
+      /* 15 Oct 2026 (audit GC-03): Seaside Confluence has no approvals yet, so it is pre-construction. */
+      expect(v.buildStage).toBe(v === coastal ? "pre-construction" : "under-construction");
       expect(v.offering.available).toBe(0);
       expect(v.offering.subscribed).toBe(v.offering.units);
     }

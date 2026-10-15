@@ -19,7 +19,7 @@ import { dedupeKey, dispatch } from "@/lib/notices/outbox";
 import { recordContact, depositRows } from "@/lib/events/store";
 import { DepositRequest, createOrder, eligibility, razorpayKeys } from "@/lib/deposit";
 import { heldUnits, holdsFrom } from "@/lib/holds";
-import { stanceFor } from "@/constants/vehicles";
+import { stanceFor, depositPayeeLine } from "@/constants/vehicles";
 import { publicName } from "@/app/_assemblies/site/registry";
 
 export async function POST(req: Request) {
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     reference: correlationId,
     order: { id: order.id, amount: order.amount, currency: "INR" },
     keyId: keys!.keyId,
-    payee: v.registeredName,
+    payee: depositPayeeLine(v),
     /* Shown to the payer in Razorpay's own window: the estate's public name. */
     description: `Holding deposit · ${publicName(v)} · ${d.units} unit${d.units === 1 ? "" : "s"}`,
     prefill: { name: d.name, email: d.email, contact: d.phone },

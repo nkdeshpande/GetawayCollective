@@ -449,7 +449,9 @@ export function DEPOSIT(d: NonNullable<Block["deposit"]>) {
   return `<form class="tx-form dep" id="hold" novalidate data-form data-to="deposit" data-vehicle="${d.vehicle}" data-theme-hex="${INK.ink}">` +
     `<div class="dep-terms"><div><span class="eb">Holding deposit</span><b>${d.amount}</b><span>Flat, whatever size you take</span></div>` +
     /* A partnership that is not yet incorporated does not own anything yet, and the line says so. */
-    `<ul><li>Paid online, to <b>${esc(d.payee)}</b>, ${d.incorporated === false ? "the partnership that will own the estate; it is not yet incorporated" : "the partnership that owns the estate"}. Getaway Collective holds none of it.</li>` +
+    /* 15 Oct 2026, founder: always to the holding company that forms the LLP,
+       held as a fiduciary until the partnership's members are admitted. */
+    `<ul><li>Paid online to NAVINA Structures, the holding company that forms <b>${esc(d.payee)}</b>${d.incorporated === false ? " (not yet incorporated)" : ""}, which holds it as a fiduciary until the partnership admits its partners.</li>` +
     "<li>Refundable in full until the Vehicle Agreement is signed.</li>" +
     "<li>It holds your position; it buys nothing and makes nobody a partner.</li>" +
     `<li>Identity checks, the balance at ${d.unitPrice} a unit and the Agreement all complete offline, with Investor Relations.</li></ul></div>` +

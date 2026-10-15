@@ -21,7 +21,7 @@
  * referrer sees it. The page then asks /api/deposit/status for it.
  */
 import { notFound } from "next/navigation";
-import { vehicleBySlug, stanceFor } from "@/constants/vehicles";
+import { vehicleBySlug, stanceFor, depositPayeeLine } from "@/constants/vehicles";
 import { ESTATES } from "@/content/site/estates";
 import { depositRows } from "@/lib/events/store";
 import { heldUnits, nightsFor, holdsFrom } from "@/lib/holds";
@@ -72,7 +72,7 @@ export async function SiteReserve({ vehicle: param }: { vehicle: string }) {
   const first = rows[0];
   const cells = Array.from({ length: o.units }, (_, i) =>
     i < taken ? "sub" : i < taken + held ? "held" : "free");
-  const data = esc(JSON.stringify({ slug: v.slug, estate: name, payee: v.registeredName, deposit: rupeesFull(deposit), taken, held, rows }));
+  const data = esc(JSON.stringify({ slug: v.slug, estate: name, payee: depositPayeeLine(v), deposit: rupeesFull(deposit), taken, held, rows }));
 
   const tile = (k: string, label: string, value: string, note = "") =>
     `<div class="rsv-tile"><span class="eb">${label}</span><b data-rsv-f="${k}">${value}</b>${note ? `<em>${note}</em>` : ""}</div>`;
@@ -113,7 +113,7 @@ export async function SiteReserve({ vehicle: param }: { vehicle: string }) {
       ["Or change your mind", "Until the Vehicle Agreement is signed, the deposit is refundable in full. Write to Investor Relations and it is returned."],
     ] },
     { rows: [
-      ["Paid to", `${esc(v.registeredName)}${v.llpin ? "" : ", not yet incorporated"}. Getaway Collective holds none of it.`],
+      ["Paid to", `${esc(depositPayeeLine(v))}.${v.llpin ? "" : " The partnership is not yet incorporated."}`],
       ["Refund", "In full, until the Vehicle Agreement is signed"],
       ["Payment", "Card, UPI or netbanking through Razorpay. Payment details never reach this site."],
       ["Questions", '<span class="mono sel">ir@getawaycollective.co</span>'],

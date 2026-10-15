@@ -1138,7 +1138,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Does Getaway Collective own the properties?</b>",
-      "No. Each estate is held by its own LLP, and the LLP is owned by its partners. Getaway Collective governs the partnership, keeps its records and runs its votes, but it holds no equity and no economic interest in any estate. That separation is entrenched in the terms: it can change only by a unanimous vote of the partners, so the party setting the rules can never profit from bending them."
+      "No. Each estate is held by its own LLP, and the LLP is owned by its partners. Getaway Collective governs the partnership, keeps its records and runs its votes. It holds no equity in any estate. It is paid from the second stage of each estate's waterfall for the platform it operates, at the rate that estate's terms state, and from nothing else; it takes no share of what reaches the partners. That separation is entrenched in the terms and can change only by a unanimous vote of the partners."
      ],
      [
       "<b class=\"tx-strong\">What do investors own?</b>",
@@ -1154,7 +1154,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">What is the holding deposit?</b>",
-      "₹1,00,000, the same at every estate whatever the number of units you intend to take. It is paid online, to the estate's own LLP rather than to Getaway Collective, and holds your units while the rest is completed with Investor Relations: the identity checks, the balance of the unit price and the Vehicle Agreement. It is refundable in full until that agreement is signed. It buys nothing on its own and makes nobody a partner."
+      "₹1,00,000, the same at every estate whatever the number of units you intend to take. It is paid online to NAVINA Structures, the holding company that forms the estate's LLP, which holds it as a fiduciary until the partnership admits its partners, and it holds your units while the rest is completed with Investor Relations: the identity checks, the balance of the unit price and the Vehicle Agreement. It is refundable in full until that agreement is signed. It buys nothing on its own and makes nobody a partner."
      ],
      [
       "<b class=\"tx-strong\">Where are the estates?</b>",
@@ -1178,7 +1178,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Can units be sold?</b>",
-      "Yes, after the lock-in, which is typically 36 months from financial close. There is no public market: you post units on a noticeboard that existing partners see first, and nothing guarantees a buyer or a price. A buyer from outside the partnership needs the consent of partners holding a majority, and must complete the same identity checks. During the lock-in, units move only on a partner's death or with every partner's consent."
+      "Yes, after the lock-in, whose length each estate's LLP agreement sets; at Streamside Creek it is not yet set. There is no public market: you post units on a noticeboard that existing partners see first, and nothing guarantees a buyer or a price. A buyer from outside the partnership needs the consent of partners holding a majority, and must complete the same identity checks. During the lock-in, units move only on a partner's death or with every partner's consent."
      ],
      [
       "<b class=\"tx-strong\">Is capital at risk?</b>",
@@ -1217,7 +1217,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Admin reserve</b>",
-      "The third stage of the waterfall: 2.5% of an estate's revenue, set aside to pay for governing the partnership: keeping its records, running its votes and meeting its legal obligations. It is paid before debt service and before anything reaches partners."
+      "At most estates, the third stage of the waterfall: a share of revenue (2.5% where it is fixed), set aside to pay for governing the partnership: keeping its records, running its votes and meeting its legal obligations. It is paid before debt service and before anything reaches partners."
      ],
      [
       "<b class=\"tx-strong\">Basis point</b>",
@@ -1265,7 +1265,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Holding deposit</b>",
-      "₹1,00,000, paid online to the estate's own LLP to hold your units while the rest is completed. It is the same at every estate, whatever the number of units, and refundable in full until the Vehicle Agreement is signed. It makes nobody a partner."
+      "₹1,00,000, paid online to NAVINA Structures, the holding company that forms the estate's LLP, and held by it as a fiduciary, to hold your units while the rest is completed. It is the same at every estate, whatever the number of units, and refundable in full until the Vehicle Agreement is signed. It makes nobody a partner."
      ],
      [
       "<b class=\"tx-strong\">Key</b>",
@@ -1329,7 +1329,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Sinking fund</b>",
-      "The fourth stage of the waterfall: 2.5% of an estate's revenue set aside every year for long-term renewal, so the estate is kept up as it ages."
+      "At most estates, the fourth stage of the waterfall: a share of revenue (2.5% where it is fixed) set aside every year for long-term renewal, so the estate is kept up as it ages. Each estate's agreement sets its own."
      ],
      [
       "<b class=\"tx-strong\">Sponsor</b>",
@@ -1345,7 +1345,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "<b class=\"tx-strong\">Waterfall</b>",
-      "The six stages, in fixed order, through which an estate's revenue is paid: the operating partner, brand and platform, the admin reserve, the sinking fund, debt service, and then partners. Each stage is paid in full before the next receives anything, and the six always add up to the whole of revenue."
+      "At most estates, the six stages, in fixed order, through which revenue is paid: the operating partner, brand and platform, the admin reserve, the sinking fund, debt service, and then partners. Each stage is paid in full before the next receives anything, and the six always add up to the whole of revenue. An estate may set its own order instead, as Streamside Creek does."
      ]
     ]
    },
