@@ -53,11 +53,11 @@ describe("where an estate stands, said once and without contradiction", () => {
   it("offers the next step the brief assigns to each state", () => {
     for (const v of VEHICLES) {
       const R = read(v), o = v.offering;
-      const want = fundingComplete(v.slug) ? "View estate progress"
-        : v.lifecycle === "forming" ? "Explore the concept"
-        : publishable(v).ok && o.available > 0 && v.lifecycle === "raising" ? "Explore the offering"
+      const want = fundingComplete(v.slug) ? "View progress"
+        : v.lifecycle === "forming" ? "Get updates"
+        : publishable(v).ok && o.available > 0 && v.lifecycle === "raising" ? "Review the offering"
         : o.available <= 0 && o.subscribed > 0 && stanceFor(v).kind === "waitlist" ? "Join the waitlist"
-        : "View estate progress";
+        : "View progress";
       expect(R.action[0], v.key).toBe(want);
       expect(R.action[1].startsWith(`/collection/${v.slug}`), v.key).toBe(true);
     }

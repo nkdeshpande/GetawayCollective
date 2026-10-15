@@ -222,7 +222,7 @@ export function SiteCollection() {
       availability: R ? R.availability + (R.publishable && !R.complete && v!.offering.unitPrice > 0n ? ` · ${rupees(v!.offering.unitPrice)} a unit` : "")
         : done ? "Funding complete" : e.stage === "pipe" ? "Not yet offered" : "Not yet open for investment",
       delivery: R ? R.delivery : e.stage === "pipe" ? "Pipeline" : "In delivery",
-      action: R ? R.action : e.stage === "pipe" ? (["Explore the concept", e.href] as const) : (["View estate progress", e.href] as const),
+      action: R ? R.action : e.stage === "pipe" ? (["Get updates", "/signal"] as const) : (["View progress", e.href] as const),
     };
   });
   const tabs: readonly (readonly [Group | "all", string])[] = [
@@ -585,6 +585,15 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
   const blocks: Block[] = [];
   if (c.rows.length) blocks.push({ rows: c.rows.map((r) => [esc(plain(r.label)), `${esc(plain(r.value))}${r.basis ? `<span class="tx-note">${esc(plain(r.basis))}</span>` : ""}`]) });
   if (c.withheld.length) { blocks.push({ h: "Withheld, and why" }); blocks.push({ list: c.withheld.map((w) => esc(plain(w))) }); }
+  /* 15 Oct 2026 (audit GC-07): the offering is read before anything is paid,
+     so reserving is offered at the foot of the investment page. */
+  if (id === "investment") {
+    const R = read(v);
+    if (R.stance.kind === "open" && v.offering.deposit !== null) {
+      blocks.push({ p: "If, having read this and the risks, you want to hold units while you decide, a refundable holding deposit does that." });
+      blocks.push({ links: [[`Reserve your slot · ${rupeesFull(v.offering.deposit)} deposit`, `/reserve/${v.slug}`, "lead"], ["Read the risks first", `/collection/${v.slug}/risk`]] });
+    }
+  }
   if (id === "enquire") {
     const R = read(v);
     if (R.stance.kind === "open" && v.offering.deposit !== null) {

@@ -191,6 +191,11 @@ export function VoteConfirmDialog({
   const [done, setDone] = useState(false);
   const [held, setHeld] = useState(false);
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  /* 15 Oct 2026 (audit GC-10): the timed press is one way, not the only way.
+     A partner who cannot hold a key or a pointer for three seconds confirms
+     in two deliberate steps instead: tick, then cast. */
+  const [understood, setUnderstood] = useState(false);
+  const castNow = () => { if (done || !understood) return; if (timer) clearTimeout(timer); setTimer(null); setDone(true); onCast(); };
 
   const start = (e: React.SyntheticEvent) => {
     if (done || timer) return;
@@ -218,7 +223,7 @@ export function VoteConfirmDialog({
 
       <p className="t-body-s measure" style={{ margin: "var(--gc-sp-m) 0" }}>
         A cast vote is irreversible. A tie is not approval, so this weight can decide the outcome.
-        Hold for three seconds; release to cancel.
+        Hold for three seconds and release to cancel, or confirm in two steps below.
       </p>
 
       <button
@@ -232,6 +237,17 @@ export function VoteConfirmDialog({
         <span className="ticks" aria-hidden="true"><i /><i /><i /><i /></span>
         <span className="cap">{done ? "Cast" : held ? "Hold…" : `Hold to cast ${choice}`}</span>
       </button>
+
+      <div style={{ marginTop: "var(--gc-sp-m)", display: "grid", gap: "var(--gc-sp-xs)" }}>
+        <span className="t-body-s dim">Or, without holding:</span>
+        <label className="t-body-s" style={{ display: "flex", gap: "var(--gc-sp-xs)", alignItems: "flex-start" }}>
+          <input type="checkbox" checked={understood} disabled={done} onChange={(e) => setUnderstood(e.target.checked)} />
+          <span>I understand this vote cannot be changed once it is cast.</span>
+        </label>
+        <button type="button" className="btn" disabled={done || !understood} onClick={castNow}>
+          {done ? "Cast" : `Cast ${choice}`}
+        </button>
+      </div>
     </Shell>
   );
 }

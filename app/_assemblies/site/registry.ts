@@ -214,11 +214,13 @@ export function read(v: Vehicle): Reading {
   /* The brief's table: raising → the offering; subscribed with a waitlist →
      the waitlist; in delivery with nothing open → its progress; pipeline →
      the concept. */
-  const action: readonly [string, string] = complete ? ["View estate progress", `/collection/${v.slug}`]
-    : v.lifecycle === "forming" ? ["Explore the concept", `/collection/${v.slug}`]
-    : ok && o.available > 0 && v.lifecycle === "raising" ? ["Explore the offering", `/collection/${v.slug}/investment`]
+  /* 15 Oct 2026 (audit, section 3): one label per state, the same on every
+     surface. An open offer is reviewed before anything is paid (GC-07). */
+  const action: readonly [string, string] = complete ? ["View progress", `/collection/${v.slug}`]
+    : v.lifecycle === "forming" ? ["Get updates", `/collection/${v.slug}/enquire`]
+    : ok && o.available > 0 && v.lifecycle === "raising" ? ["Review the offering", `/collection/${v.slug}/investment`]
     : full && stance.kind === "waitlist" ? ["Join the waitlist", `/collection/${v.slug}/enquire`]
-    : ["View estate progress", `/collection/${v.slug}`];
+    : ["View progress", `/collection/${v.slug}`];
   return { vehicle: v, stance, publishable: ok, unitsTotal, promoterUnits, status, price, tokens, details, prov: P,
     name: publicName(v), availability, delivery, action, complete };
 }

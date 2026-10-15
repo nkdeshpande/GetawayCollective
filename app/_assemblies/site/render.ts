@@ -280,10 +280,11 @@ export function PROP(E: SiteEstate, R: Reading | undefined, faq: string) {
   /* A fully subscribed estate takes a waitlist whether or not its page
      carries its own waitlist section; the enquiry page always does. */
   const onWaitlist = !complete && !!R && R.stance.kind === "waitlist";
-  const cta = complete ? ["Explore the collection", "/collection", "Other estates"]
+  const cta = complete ? ["View the open estate", "/collection", "Other estates"]
     : onWaitlist ? ["Join the waitlist", waitlist ? "#waitlist" : ask, "Join the waitlist"]
     : waitlist ? ["Join the waitlist", "#waitlist", "Join the waitlist"]
-    : open ? [`Reserve your slot · ${rupeesFull(R!.vehicle.offering.deposit!)} deposit`, `/reserve/${E.slug}`, "Reserve your slot"]
+    /* 15 Oct 2026 (audit GC-07): review the offering first; reserving waits at its foot. */
+    : open ? ["Review the offering", `/collection/${E.slug}/investment`, "Review the offering"]
     : R ? ["Get the offering pack", `${ask}?about=pack`, "Get the offering pack"] : ["Ask about this estate", ask, "Ask about this estate"];
   const layer = (id: string, label: string, body: string) =>
     `<div class="layer" id="${id}" data-layer="${label}">${body}</div>`;

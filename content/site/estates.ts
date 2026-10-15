@@ -23,7 +23,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: granite ridge at first light, Nandi Hills corridor",
   "eyebrow": "Getaway Collective · Nandi Hills corridor",
   "credit": "A SlowSpace estate · the reference vehicle",
-  "spec": "{{KEYS}} keys · {{LAND}} · 65% of the land kept as it is · 2 h from Bengaluru",
+  "spec": "{{KEYS}} keys, two hours from Bengaluru, with nearly two-thirds of the land kept as it is.",
   "intro": "Six keys on a granite ridge two hours from Bengaluru, the buildings on a fifth of an acre. Nearly two-thirds of the land stays exactly as it is. Solace is the first estate the collective will deliver, and the one every other estate will be measured against.",
   "place": {
    "film": [
@@ -550,7 +550,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: the river mouth at dusk, Padubidri",
   "eyebrow": "Getaway Collective · Udupi coast",
   "credit": "Seaside Confluence · a SlowSpace estate · the first coastal estate",
-  "spec": "{{KEYS}} keys · one steel building · {{LAND}}",
+  "spec": "{{KEYS}} keys in one steel building, where the river meets the sea.",
   "intro": "Twelve keys over the river where it meets the sea, on the Udupi coast. One building, stood on steel so the ground under it is barely touched. Every key looks at the river; the verandah is the useful space.",
   "place": {
    "film": [
@@ -1130,7 +1130,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: rain over the river-forest, Coorg",
   "eyebrow": "Getaway Collective · Kodagu",
   "credit": "Streamside Creek · twenty keys over a stream",
-  "spec": "{{KEYS}} keys · {{LAND}}",
+  "spec": "{{KEYS}} keys in five clusters, set down along a stream.",
   "media": {
    "hero": "creek/hero",
    "heroTall": "creek/hero-tall",
@@ -1742,7 +1742,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: shade-grown coffee slopes in the afternoon, Kodagu",
   "eyebrow": "Getaway Collective · Suntikoppa, Coorg",
   "credit": "Coffee Fields Forever · an ESKAPE estate · the flagship destination",
-  "spec": "20 keys · 3.0 acres of working coffee · 250 km from Bengaluru",
+  "spec": "Twenty keys inside three acres of working coffee, 250 km from Bengaluru.",
   "intro": "Twenty keys held inside a working coffee plantation at Suntikoppa. The shade-grown canopy is the product: this is the only estate in the collection that farms what it serves.",
   "place": {
    "film": [
