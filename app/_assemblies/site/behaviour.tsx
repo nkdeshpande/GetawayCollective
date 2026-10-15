@@ -633,9 +633,13 @@ export function SiteBehaviour() {
     $$<HTMLVideoElement>("video.film-vid", root).forEach((v) => {
       const save = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
       if (still || save) return;
-      v.src = (window.innerWidth * (window.devicePixelRatio || 1) > 1600 ? v.dataset.srcWide : v.dataset.src) || "";
+      /* data-film, not data-src: data-src marks a figure with a source, and the
+         hero once opened a "Source" card when tapped (15 Oct 2026). */
+      v.src = (window.innerWidth * (window.devicePixelRatio || 1) > 1600 ? v.dataset.filmWide : v.dataset.film) || "";
       v.addEventListener("playing", () => track("hero_film", { state: "playing" }), { once: true });
-      v.play().catch(() => undefined);
+      /* a phone that refused to start it on load gets one more try at the first touch or scroll */
+      const retry = () => { if (v.paused) v.play().catch(() => undefined); };
+      v.play().catch(() => { window.addEventListener("pointerdown", retry, { once: true }); window.addEventListener("scroll", retry, { once: true, passive: true }); });
     });
 
     /* films */

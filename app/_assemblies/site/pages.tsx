@@ -98,7 +98,7 @@ export function SiteHome() {
        is not being saved, so a still, a slow line or no script all see the
        poster. Drawn, not photographed, and tagged so. */
     '<section class="hero"><video class="film-vid" muted loop playsinline preload="none" poster="/images/site/hero/coast-day-poster.webp" ' +
-    'data-src="/images/site/hero/coast-day-1280.mp4" data-src-wide="/images/site/hero/coast-day-1920.mp4" ' +
+    'data-film="/images/site/hero/coast-day-1280.mp4" data-film-wide="/images/site/hero/coast-day-1920.mp4" ' +
     'aria-label="Drawn film: one day on the coast, the sun crossing laterite cliffs above the Arabian Sea, and the lights of an unbuilt building at night"></video>' +
     '<span class="plate-tag hero-tag">Illustration · unbuilt</span>' +
     '<h1 class="hp">Own a share of <span>a retreat in India.</span></h1>' +
