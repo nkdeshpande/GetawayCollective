@@ -212,6 +212,19 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "L1-16 28–57"
    },
    {
+    "h": "Who is paid, and for what",
+    "id": "fees"
+   },
+   {
+    "p": "Every stage pays someone, and the order says who comes first. <b class=\"tx-strong\">First</b>, Sensory Getaways, the operating partner, for running the estate day to day under its Commercial Services Agreement. <b class=\"tx-strong\">Second</b>, the owner of the estate's house brand, SlowSpace or ESKAPE, for the name and the demand it brings, and Getaway Collective, for the platform: the records, the register of partners and the votes. <b class=\"tx-strong\">Third and fourth</b>, the partnership itself, which keeps its administration reserve and its sinking fund in its own name. <b class=\"tx-strong\">Fifth</b>, the bank, where there is a loan. <b class=\"tx-strong\">Last</b>, the partners."
+   },
+   {
+    "p": "The shares are set estate by estate. At Seaside Confluence and Solace the brand and platform stage takes 15% of revenue, and at Wildwood, still in the pipeline, 5%; the operating partner takes between 35% and 50%. At Streamside Creek the order is different, as above, and the operator's fee is not yet set. Each estate's investment page states its own."
+   },
+   {
+    "p": "Getaway Collective holds no equity in any estate and takes nothing from what reaches the partners. Where one of these parties is connected to another, by ownership or by the people who run it, the <a class=\"tx-u\" href=\"/legal/disclosures\">Disclosures</a> say so. No other charge can be made unless it appears in the offering letter before you commit."
+   },
+   {
     "h": "<span class=\"tx-ch\">Chapter 4</span>Deciding, using and leaving",
     "id": "decide"
    },

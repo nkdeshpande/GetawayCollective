@@ -191,6 +191,11 @@ function compareHTML(): string {
     /* The same next step the estate's card and page offer (registry.ts read().action). */
     `<tr class="cmp-go"><th scope="row">Next step</th>${cols.map((c) => `<td class="g-${c.g}"><a class="btn ${c.g === "raising" ? "lead" : "gray"}" href="${c.R.action[1]}">${esc(c.R.action[0])}</a></td>`).join("")}</tr>` +
     `</tbody></table></div>` +
+    /* 15 Oct 2026 (audit GC-10): on a phone the same comparison is one estate
+       at a time, top to bottom, instead of a table that scrolls sideways. */
+    `<div class="cmp-m">${cols.map((c) => `<article class="g-${c.g}"><span class="cmp-st">${esc(c.R.availability)}</span><h3><a href="${c.e.href}">${c.e.name}</a></h3>` +
+      `<dl>${rows.map(([k, f, p]) => `<div><dt>${k}</dt><dd><span${src(p(c))}>${f(c)}</span></dd></div>`).join("")}</dl>` +
+      `<a class="btn ${c.g === "raising" ? "lead" : "gray"}" href="${c.R.action[1]}">${esc(c.R.action[0])}</a></article>`).join("")}</div>` +
     '<p class="cmp-note">Tap a figure for where it comes from and how far it can be relied on.</p></section>';
 }
 

@@ -216,6 +216,19 @@
 .site .cmp-t thead a:hover{text-decoration:underline;text-underline-offset:4px}
 .site .cmp-t tbody th{font:600 11.5px/1.3 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--gc-s-stone);width:130px}
 .site .cmp-t .ab{color:var(--gc-s-stone)}
+/* 15 Oct 2026 (audit GC-10): the phone reads the comparison one estate at a time. */
+.site .cmp-m{display:none}
+@media (max-width:700px){
+  .site .cmp-wrap{display:none}
+  .site .cmp-m{display:grid;gap:var(--gc-sp-m)}
+  .site .cmp-m article{display:grid;gap:var(--gc-sp-xs);padding-top:var(--gc-sp-s);border-top:1px solid var(--gc-hairline)}
+  .site .cmp-m h3{margin:0;font:800 22px/1.1 var(--display);letter-spacing:-.02em}
+  .site .cmp-m dl{margin:0;display:grid}
+  .site .cmp-m dl>div{display:grid;grid-template-columns:minmax(96px,34%) minmax(0,1fr);gap:var(--gc-sp-xs);padding:calc(var(--gc-sp-3xs) * 2.5) 0;border-bottom:1px solid var(--gc-hairline)}
+  .site .cmp-m dt{font:600 11px/1.4 var(--text);letter-spacing:.12em;text-transform:uppercase;color:var(--gc-s-stone)}
+  .site .cmp-m dd{margin:0;font-size:15px;overflow-wrap:anywhere}
+  .site .cmp-m .btn{justify-self:start;margin-top:var(--gc-sp-2xs)}
+}
 .site .cmp-t .ab:before{content:"— "}
 .site .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .site .readbar{position:fixed;left:0;top:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--copper);z-index:60;pointer-events:none}
