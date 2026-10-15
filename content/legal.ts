@@ -869,8 +869,8 @@ const COOKIES: StandingDocument = {
   path: "/legal/cookies",
   title: "Cookie Notice",
   purpose: "What is stored on your device, and why there is no consent banner.",
-  version: "2.0",
-  effective: "2026-07-31",
+  version: "2.1",
+  effective: "2026-10-15",
   parts: [
     {
       ref: "A", title: "What is stored",
@@ -880,9 +880,16 @@ const COOKIES: StandingDocument = {
                  "A security token that prevents a request being forged from another site.",
                  "A preference for reduced motion, where you have set one, so the setting survives " +
                  "a reload."] },
-        { n: "A.2", h: "Nothing else",
+        /* 2.1, 15 Oct 2026: wording approved by the founder (GC-17-AN-001), for
+           PostHog as forwarded by lib/posthog.ts. */
+        { n: "A.2", h: "Nothing that follows you",
           p: ["There is no analytics cookie, no advertising cookie, no third-party tag, and no " +
-              "pixel. Nothing on this platform reports your reading to another company."],
+              "pixel. To learn which pages are read and where a visit stops, this platform " +
+              "records the pages a browser tab opens and the actions pressed in it, under a " +
+              "random number that is deleted when the tab closes. It is never joined to your " +
+              "name, email or address, and none of those is sent. These records are processed " +
+              "for us by PostHog, Inc. Nothing is recorded where your browser sends Do Not Track " +
+              "or Global Privacy Control."],
           assertion: true },
       ],
     },

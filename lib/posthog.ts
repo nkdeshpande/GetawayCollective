@@ -20,10 +20,10 @@
  *     every call returns at once. A browser asking not to be tracked (DNT,
  *     GPC) is never forwarded, exactly as the visit counter.
  *
- * ⚠ The published Cookie Policy (content/legal.ts, /legal/cookies) says there
- * is no analytics cookie and no third-party tag. Both remain true as built,
- * but PostHog becomes a processor of usage data. Set POSTHOG_KEY only once
- * the founder has approved the disclosure wording (GC-17-AN-001).
+ * The Cookie Notice (content/legal.ts, /legal/cookies, A.2 in v2.1) discloses
+ * exactly this: tab-scoped records, no identity, PostHog as processor, and
+ * DNT/GPC honoured. Its wording was approved by the founder on 15 Oct 2026
+ * (GC-17-AN-001). Change what is sent here and that clause must change too.
  *
  * Environment (names only):
  *   POSTHOG_KEY               project API key (phc_…) — switches sending on
