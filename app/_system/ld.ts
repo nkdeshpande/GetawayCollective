@@ -12,6 +12,7 @@ import { toPublic, toInternal } from "@/constants/estate-urls";
 import { ESTATES } from "@/content/site/estates";
 import { PAGES } from "@/content/site/pages";
 import { JOURNAL, KIND_LABEL } from "@/content/journal";
+import { DOCUMENTS } from "@/content/legal";
 
 export const SITE = "https://www.getawaycollective.co";
 const ORG = `${SITE}/#org`;
@@ -67,6 +68,11 @@ const organization = () => {
   const founder = peopleOf().find((p) => p.lead);
   return {
     "@type": "Organization", "@id": ORG, name: "Getaway Collective", url: SITE, description: DESCRIPTION, logo: `${SITE}/icon`,
+    /* 16 Oct 2026 (LLM discovery): answer engines confuse the name with
+       unrelated US companies. This says which one we are, in their terms. */
+    disambiguatingDescription: "The Indian platform at getawaycollective.co for owning a share of a retreat estate in Karnataka through its own LLP. Not affiliated with Getaway (getaway.house), Getaway Collection (getaway.co) or Collective Retreats.",
+    areaServed: { "@type": "Country", name: "India" },
+    knowsAbout: ["Collective ownership of retreat estates", "Limited liability partnerships (LLP) in India", "Boutique hospitality in Karnataka", "Kodagu (Coorg)", "Udupi coast", "Revenue waterfall", "Partner governance"],
     ...(founder ? { founder: { "@type": "Person", name: plain(founder.name), jobTitle: plain(founder.role) } } : {}),
   };
 };
@@ -160,5 +166,52 @@ export function llmsTxt(): string {
     "## Optional",
     `- [Risk factors](${SITE}/legal/risk-disclosure)`, `- [Terms](${SITE}/legal/terms)`, `- [All documents](${SITE}/legal)`, "",
   ];
+  return toPublic(L.join("\n"));
+}
+
+/* ── /llms-full.txt ────────────────────────────────────────────────────
+   16 Oct 2026 (LLM discovery). The map above points; this is the text an
+   answer engine can quote without crawling: the explanatory pages, every
+   estate in full, and the Risk Factors as published. Read from the same
+   content the pages render, so it cannot say something the site does not.
+   Nothing here is new copy. */
+type Blk = Readonly<Record<string, unknown>>;
+const textOf = (b: Blk): string[] => {
+  const out: string[] = [];
+  const each = (v: unknown) => (Array.isArray(v) ? v : v == null ? [] : [v]);
+  if (b.h) out.push("", `### ${plain(String(b.h).replace(/^<span[^>]*>([^<]*)<\/span>/, "$1: "))}`);
+  for (const p of each(b.p)) out.push(plain(p));
+  for (const r of each(b.rows)) if (Array.isArray(r)) out.push(`- ${plain(r[0])}: ${plain(String(r[1] ?? "").replace(/Source ·.*$/, ""))}`);
+  for (const x of each(b.list)) out.push(`- ${plain(Array.isArray(x) ? x.join(": ") : x)}`);
+  for (const s of each(b.steps)) out.push(`- ${plain(Array.isArray(s) ? s.join(": ") : s)}`);
+  return out.filter((l, i) => l !== "" || i === 0);
+};
+const FULL_PAGES = ["/about", "/how-it-works", "/how-to-qualify", "/how-we-build", "/operating-partner"] as const;
+
+export function llmsFullTxt(): string {
+  const L: string[] = [llmsTxt(), "", "---", "", "# The full text", ""];
+  for (const path of FULL_PAGES) {
+    const P = Object.values(PAGES).find((x) => x.path === path);
+    if (!P) continue;
+    L.push(`## ${plain(P.title)}`, `Source: ${SITE}${path}`, "");
+    if (P.lead) L.push(plain(P.lead), "");
+    for (const b of P.blocks as readonly Blk[]) L.push(...textOf(b));
+    L.push("");
+  }
+  L.push("## The estates", "");
+  for (const { node: p } of places()) L.push(`### ${p.name}`, `Source: ${p.url}`, "", plain(p.description), "");
+  const risk = DOCUMENTS.find((d) => d.path === "/legal/risk-disclosure");
+  if (risk) {
+    L.push(`## ${risk.title} (version ${risk.version}, effective ${risk.effective})`, `Source: ${SITE}${risk.path}`, "", plain(risk.purpose), "");
+    for (const part of risk.parts) {
+      L.push(`### ${part.ref}. ${plain(part.title)}`);
+      if (part.intro) L.push(plain(part.intro));
+      for (const c of part.clauses) {
+        L.push(`${c.n}${c.h ? ` ${plain(c.h)}.` : ""} ${(c.p ?? []).map(plain).join(" ")}`.trim());
+        for (const x of c.list ?? []) L.push(`- ${plain(x)}`);
+      }
+      L.push("");
+    }
+  }
   return toPublic(L.join("\n"));
 }

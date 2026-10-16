@@ -150,6 +150,6 @@ export const config = {
      ownership file, a static file in public/ that must answer at exactly
      this path. Named literally, so nothing else of its shape passes. */
   matcher: [
-    "/((?!api|_next/static|_next/image|images|favicon.ico|robots.txt|sitemap.xml|llms.txt|icon|apple-icon|opengraph-image|googled77b53429ba0cb43.html).*)",
+    "/((?!api|_next/static|_next/image|images|favicon.ico|robots.txt|sitemap.xml|llms.txt|llms-full.txt|icon|apple-icon|opengraph-image|googled77b53429ba0cb43.html|938365432f84bb6fd23f90c9333d781f.txt).*)",
   ],
 };

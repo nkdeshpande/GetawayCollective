@@ -48,15 +48,30 @@ function disallowed(): string[] {
   return [...privateRoots].filter((p) => !publicRoots.has(p)).sort();
 }
 
+/**
+ * Answer engines, named. 16 Oct 2026 (LLM discovery). They were already
+ * allowed by "*"; naming them states the intent and survives a future "*"
+ * tightening. A crawler with its own group ignores "*", so each carries the
+ * same disallow list. Search and training crawlers alike: being described
+ * correctly by an assistant is the point.
+ */
+export const ANSWER_ENGINES = [
+  "OAI-SearchBot", "GPTBot", "PerplexityBot", "Claude-SearchBot", "ClaudeBot",
+  "ChatGPT-User", // vocab-lint-ignore — a crawler's registered name
+  "Perplexity-User", // vocab-lint-ignore — a crawler's registered name
+  "Claude-User", // vocab-lint-ignore — a crawler's registered name
+  "Google-Extended", "Applebot-Extended", "Bingbot", "CCBot",
+] as const;
+
 export default function robots(): MetadataRoute.Robots {
+  /* /api is added by hand: it holds endpoints, not surfaces, so it is
+     absent from the route table by design and cannot be derived. */
+  const disallow = [...disallowed(), "/api"];
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      /* /api is added by hand: it holds endpoints, not surfaces, so it is
-         absent from the route table by design and cannot be derived. */
-      disallow: [...disallowed(), "/api"],
-    },
+    rules: [
+      { userAgent: "*", allow: "/", disallow },
+      { userAgent: [...ANSWER_ENGINES], allow: ["/", "/llms.txt", "/llms-full.txt"], disallow },
+    ],
     sitemap: `${BASE}/sitemap.xml`,
   };
 }

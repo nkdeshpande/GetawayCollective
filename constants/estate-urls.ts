@@ -33,7 +33,7 @@ const SURFACES = ["collection", "reserve"] as const;
 const swap = (map: Readonly<Record<string, string>>) => {
   const keys = Object.keys(map).sort((a, b) => b.length - a.length).join("|");
   /* not inside the Office's or a partner's own paths, which keep the key */
-  const re = new RegExp(`(?<!/(?:office|portfolio|admin))/(${SURFACES.join("|")})/(${keys})(?=$|[/"'?#\\s<])`, "g");
+  const re = new RegExp(`(?<!/(?:office|portfolio|admin))/(${SURFACES.join("|")})/(${keys})(?![A-Za-z0-9_-])`, "g");
   return (s: string) => s.replace(re, (_, surface: string, slug: string) => `/${surface}/${map[slug]}`);
 };
 
