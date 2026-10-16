@@ -104,7 +104,7 @@ export function SiteHome() {
     '<h1 class="hp">Own a share of <span>a retreat in India.</span></h1>' +
     '<div class="hero-foot"><span></span>' +
     '<div class="hero-own"><p>Own units in the partnership that holds a retreat. We govern it and hold none of it; an operating partner runs it.</p>' +
-    `<div class="hero-act"><a class="btn lead" href="/collection">Explore the collection ${NE}</a><a class="hero-link" href="/how-it-works">How ownership works</a></div>` +
+    `<div class="hero-act"><a class="btn lead" href="/collection">Explore the collection ${NE}</a><a class="hero-link" href="/how-it-works">How ownership works</a><button type="button" class="hero-link hero-play" hidden>Play the film</button></div>` +
     '<p class="hero-risk">Capital is at risk.</p></div></div></section>' +
     /* The manifesto is read, not revealed a word at a time. */
     `<section class="mani mani-still"><p>${MANIFESTO}</p></section>` +

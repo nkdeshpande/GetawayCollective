@@ -50,6 +50,9 @@
 /* 15 Oct 2026: the home hero's drawn film, as video, over its own first frame. */
 .site .film-vid{display:block;width:100%;height:100%;object-fit:cover;object-position:40% 50%;background:var(--gc-s-tide)}
 .site .hero .hero-tag{left:auto;right:var(--gut);top:var(--gc-sp-s);bottom:auto}
+.site .hero .hero-play{background:none;border:0;padding:0;cursor:pointer}
+.site .hero .hero-play[hidden]{display:none}
+.site .hero .hero-play:focus-visible{outline:2px solid var(--copper);outline-offset:3px}
 /* An estate's own picture stands where its film would (render.ts plate()). */
 .site .film-img{display:block;width:100%;height:100%;object-fit:cover}
 /* 15 Oct 2026: the home page's three frames and its full bleed take pictures too. */

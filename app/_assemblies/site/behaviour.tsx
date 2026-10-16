@@ -632,14 +632,25 @@ export function SiteBehaviour() {
     /* the hero's film: loaded only where motion is welcome and data is not being saved */
     $$<HTMLVideoElement>("video.film-vid", root).forEach((v) => {
       const save = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-      if (still || save) return;
+      /* 16 Oct 2026: where the film does not start by itself (reduced motion,
+         data saver, a phone in battery saver), a button says it is there and
+         plays it on the reader's own choice, rather than leaving a still that
+         reads as no film at all. */
+      const btn = v.closest(".hero")?.querySelector<HTMLButtonElement>(".hero-play");
+      const offer = () => { if (btn && v.paused) btn.hidden = false; };
+      if (btn) on(btn, "click", () => {
+        if (!v.src) v.src = (window.innerWidth * (window.devicePixelRatio || 1) > 1600 ? v.dataset.filmWide : v.dataset.film) || "";
+        btn.hidden = true; v.play().catch(() => { btn.hidden = false; });
+      });
+      v.addEventListener("playing", () => { if (btn) btn.hidden = true; });
+      if (still || save) { offer(); return; }
       /* data-film, not data-src: data-src marks a figure with a source, and the
          hero once opened a "Source" card when tapped (15 Oct 2026). */
       v.src = (window.innerWidth * (window.devicePixelRatio || 1) > 1600 ? v.dataset.filmWide : v.dataset.film) || "";
       v.addEventListener("playing", () => track("hero_film", { state: "playing" }), { once: true });
       /* a phone that refused to start it on load gets one more try at the first touch or scroll */
       const retry = () => { if (v.paused) v.play().catch(() => undefined); };
-      v.play().catch(() => { window.addEventListener("pointerdown", retry, { once: true }); window.addEventListener("scroll", retry, { once: true, passive: true }); });
+      v.play().catch(() => { offer(); window.addEventListener("scroll", retry, { once: true, passive: true }); });
     });
 
     /* films */
