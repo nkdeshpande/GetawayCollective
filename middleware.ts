@@ -144,8 +144,12 @@ export const config = {
      authorise() from lib/authority.ts itself. That is a rule a person
      has to keep rather than one the matcher keeps for them, which is
      exactly the kind of rule that gets broken — so it is written here,
-     at the place where the exemption is granted. */
+     at the place where the exemption is granted.
+
+     googled77b53429ba0cb43.html (16 Oct 2026) is Google Search Console's
+     ownership file, a static file in public/ that must answer at exactly
+     this path. Named literally, so nothing else of its shape passes. */
   matcher: [
-    "/((?!api|_next/static|_next/image|images|favicon.ico|robots.txt|sitemap.xml|llms.txt|icon|apple-icon|opengraph-image).*)",
+    "/((?!api|_next/static|_next/image|images|favicon.ico|robots.txt|sitemap.xml|llms.txt|icon|apple-icon|opengraph-image|googled77b53429ba0cb43.html).*)",
   ],
 };
