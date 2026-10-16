@@ -43,6 +43,9 @@ export const metadata: Metadata = {
      everything else is explicitly excluded by the generator rather than
      left to a default somebody may later change. */
   robots: { index: false, follow: false },
+  /* Google Search Console ownership (founder, 16 Oct 2026). Keep it: the
+     property stays verified only while this tag is served. */
+  verification: { google: "7vY2nwYSoR-ZtgDXIkuGtczmJO4P8bNM4wlw6hWMq2E" },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
