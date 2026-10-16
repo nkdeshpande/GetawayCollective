@@ -49,10 +49,10 @@ describe("structured data describes the page it is on", () => {
 
 describe("titles name the place", () => {
   it("leads the home page with the brand and what it is", () =>
-    expect(pageMeta("/", {}, "x").title).toBe("Getaway Collective · Collective ownership of retreats in India"));
+    expect(pageMeta("/", {}, "x").title).toBe("Getaway Collective · Own a share of a retreat in India, through an LLP"));
   it("says where an estate is, in the names people search", () => {
-    expect(pageMeta("/collection/[vehicle]", { vehicle: "coorg-coffee-creek" }, "x").title).toBe("Streamside Creek · Kodagu (Coorg), Karnataka · Getaway Collective");
-    expect(pageMeta("/collection/[vehicle]", { vehicle: "slowspace-coastal" }, "x").title).toBe("Seaside Confluence · Udupi coast, Karnataka · Getaway Collective");
+    expect(pageMeta("/collection/[vehicle]", { vehicle: "coorg-coffee-creek" }, "x").title).toBe("Streamside Creek, Kodagu (Coorg), Karnataka · Own a share of a retreat · Getaway Collective");
+    expect(pageMeta("/collection/[vehicle]", { vehicle: "slowspace-coastal" }, "x").title).toBe("Seaside Confluence, Udupi coast, Karnataka · Own a share of a retreat · Getaway Collective");
   });
   it("does not double a name already given", () => expect(placeOf("Getaway Collective · Suntikoppa, Coorg", undefined)).toBe("Suntikoppa, Coorg"));
   it("keeps a noindex page out of search but gives it a canonical", () => {

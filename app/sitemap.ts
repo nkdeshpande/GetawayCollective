@@ -27,6 +27,7 @@ import type { MetadataRoute } from "next";
 import { ROUTES, accessOf, isIndexable } from "@/constants/routes";
 import { PROPERTIES, toSlug } from "@/app/_assemblies/data";
 import { JOURNAL } from "@/content/journal";
+import { ESTATES } from "@/content/site/estates";
 
 const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getawaycollective.co").replace(/\/+$/, "");
 
@@ -45,17 +46,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entries.push({ url: BASE + (r.path === "/" ? "" : r.path) });
   }
 
+  const seen = new Set<string>();
   for (const p of PROPERTIES) {
     const slug = toSlug(p.ufr0060);
+    seen.add(slug);
     for (const suffix of VEHICLE_CHAPTERS) {
       entries.push({ url: `${BASE}/collection/${slug}${suffix}` });
     }
   }
+  /* 16 Oct 2026 (SEO audit): an estate with a page but no vehicle on the
+     register (Coffee Fields Forever, funded outside the platform) was
+     published and indexable yet missing here. Its estate page is listed;
+     its chapters are not, since it has no offering. */
+  for (const e of Object.values(ESTATES)) if (e.slug && !seen.has(e.slug)) entries.push({ url: `${BASE}/collection/${e.slug}` });
 
   /* /journal/[story] is indexable, so its entries belong here. /roles was
      RETIRED by the v4 migration (folded into /about) and its loop went
      with it — it was emitting a dead URL per role. */
-  for (const e of JOURNAL) entries.push({ url: `${BASE}/journal/${e.slug}` });
+  for (const e of JOURNAL) entries.push({ url: `${BASE}/journal/${e.slug}`, ...(/^\d{4}-\d{2}-\d{2}$/.test(e.published) ? { lastModified: e.published } : {}) });
 
   return entries;
 }

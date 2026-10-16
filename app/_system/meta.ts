@@ -59,9 +59,23 @@ const WHERE = VEHICLES.every((v) => /Karnataka/.test(v.jurisdiction)) ? "Karnata
  * the brand, and the collection says what and where it is. The words are
  * the site's own description, not new claims.
  */
+/* 16 Oct 2026 (SEO audit): titles carry the words people search with, own
+   a share of a retreat, through an LLP, in Coorg and Karnataka, and still
+   only what the site already says. */
 const FULL_TITLE: Readonly<Record<string, string>> = {
-  "/": `${BRAND} · Collective ownership of retreats in India`,
-  "/collection": `The Collection · Retreat estates in ${WHERE} · ${BRAND}`,
+  "/": `${BRAND} · Own a share of a retreat in India, through an LLP`,
+  "/collection": `Retreat estates to co-own in ${WHERE} · The Collection · ${BRAND}`,
+  "/how-it-works": `How co-owning a retreat works · LLP partnership, fees and exit · ${BRAND}`,
+  "/how-to-qualify": `How to own a share of a retreat · Three steps · ${BRAND}`,
+  "/journal": `The Journal · Owning a retreat in India, explained · ${BRAND}`,
+};
+
+/* 16 Oct 2026 (SEO audit): four pages shared the default description. */
+const DESCRIPTION: Readonly<Record<string, string>> = {
+  "/": "Own units in the LLP that holds a retreat estate in Coorg or on the Karnataka coast. We govern each partnership and hold none of it; an operating partner runs it. Capital is at risk.",
+  "/collection": `Every estate in the collection, in ${WHERE}: which is open, which is funded and in delivery, and which is still forming, with keys, land and where each one stands.`,
+  "/journal": "Notes on owning a share of a retreat in India: why an LLP, what a partner holds, how the nights work, and the record of each estate as it is built.",
+  "/legal": "The standing documents of Getaway Collective: Terms, Risk Factors, Privacy, Cookies and Disclosures, each versioned and dated.",
 };
 
 const CHAPTER: Readonly<Record<string, string>> = { investment: "The investment", risk: "Risk", enquire: "Enquire" };
@@ -82,13 +96,17 @@ function resolve(pattern: string, p: Readonly<Record<string, string>>): { title?
     const name = plain(e?.name) || plain(page?.title).replace(/\.$/, "") || v?.propertyName;
     if (!name) return {};
     const chapter = pattern.split("/").pop()!;
-    if (CHAPTER[chapter]) return { title: `${name} · ${CHAPTER[chapter]}`, description: `${CHAPTER[chapter]} for ${name}, read from the vehicle register. Capital is at risk.` };
     const where = placeOf(e?.eyebrow ?? page?.eyebrow, v?.jurisdiction);
-    return { title: where ? `${name} · ${where}` : name, description: plain(e?.intro) || plain(page?.lead) };
+    const at = where ? ` (${where})` : "";
+    if (chapter === "investment") return { title: `Invest in ${name} · Units, price and returns`, description: `The investment in ${name}${at}: how many units, what one costs, how the capital is raised, and the order in which revenue is paid out to partners. Capital is at risk.` };
+    if (chapter === "risk") return { title: `${name} · Risk factors before you invest`, description: `What could go wrong at ${name}${at}, stated before anyone is asked for anything: building, demand, the operator, liquidity and the partnership itself.` };
+    if (CHAPTER[chapter]) return { title: `${name} · ${CHAPTER[chapter]}`, description: `${CHAPTER[chapter]} for ${name}${at}. Capital is at risk.` };
+    return { title: where ? `${name}, ${where} · Own a share of a retreat` : name, description: plain(e?.intro) || plain(page?.lead) };
   }
   if (pattern === "/how-to-qualify") return { description: "Own a share of a retreat in three steps: sign in with one email, hold your units with a refundable deposit, and sign, with KYC alongside rather than in the way. And what the same sum does four ways." };
   if (pattern === "/careers") return { description: "Getaway Collective runs as two roles: the master developer and asset manager, who holds the capital and governs; and the operating and brand partner, who runs the estates." };
   if (pattern === "/operating-partner") return { description: "Who runs each Getaway Collective estate day to day, how the operating partner is measured and paid, and what happens when it fails." };
+  if (DESCRIPTION[pattern]) return { description: DESCRIPTION[pattern] };
   const page = Object.values(PAGES).find((x) => x.path === pattern);
   return page ? { description: plain(page.lead) } : {};
 }

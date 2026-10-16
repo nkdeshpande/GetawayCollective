@@ -243,7 +243,9 @@ export const PUBLIC_ROUTES: readonly Route[] = [
   R("GC-145", "/collection/[vehicle]/risk", "Risk", "capital", "AS-14", { params: ["vehicle"],
     accessOverride: { access: "public", because: PUBLIC_DOCTRINE_REASON },
     notes: "Chapter 07. How this loses money, stated before anyone is asked for anything." }),
-  R("GC-160", "/collection/[vehicle]/enquire", "Enquire", "gateway", "AS-32", { params: ["vehicle"],
+  R("GC-160", "/collection/[vehicle]/enquire", "Enquire", "gateway", "AS-32", { params: ["vehicle"], indexable: false,
+    /* 16 Oct 2026 (SEO audit): a form, not a page anyone searches for. Kept
+       out of search and the sitemap so the estate page is what ranks. */
     notes: "Chapter 08 — Consider. Vehicle-scoped, and it states what an enquiry creates before " +
            "it asks for anything." }),
 
