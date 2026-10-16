@@ -150,7 +150,10 @@ describe("the generated app tree", () => {
   it("connects the validated legacy-address registry to Next", () => {
     const nextConfig = readIf("next.config.ts");
     expect(nextConfig).toContain('import { REDIRECTS } from "./constants/redirects"');
-    expect(nextConfig).toContain("return [...REDIRECTS]");
+    expect(nextConfig).toContain("...REDIRECTS.map(");
+    /* 16 Oct 2026: the estates' own addresses ride on the same hook (constants/estate-urls.ts). */
+    expect(nextConfig).toContain("...ESTATE_REDIRECTS");
+    expect(nextConfig).toContain("...ESTATE_REWRITES");
   });
 
   it("keeps protected metadata generic until authority resolves", () => {

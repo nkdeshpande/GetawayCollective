@@ -8,6 +8,7 @@
  */
 
 import { VEHICLES } from "@/constants/vehicles";
+import { toPublic, toInternal } from "@/constants/estate-urls";
 import { ESTATES } from "@/content/site/estates";
 import { PAGES } from "@/content/site/pages";
 import { JOURNAL, KIND_LABEL } from "@/content/journal";
@@ -94,7 +95,7 @@ const crumbs = (trail: readonly (readonly [string, string])[]) => ({
  * /answers, the glossary on /glossary.
  */
 export function pageGraph(path: string | null | undefined) {
-  const p = (path ?? "/").replace(/\/+$/, "") || "/";
+  const p = toInternal((path ?? "/").replace(/\/+$/, "") || "/");
   const graph: Record<string, unknown>[] = [organization(), website()];
   const all = places();
   let m: RegExpMatchArray | null;
@@ -132,7 +133,7 @@ export function pageGraph(path: string | null | undefined) {
 }
 
 /** JSON for a <script type="application/ld+json">, safe inside HTML. */
-export const pageGraphJSON = (path: string | null | undefined) => JSON.stringify(pageGraph(path)).replace(/</g, "\\u003c");
+export const pageGraphJSON = (path: string | null | undefined) => toPublic(JSON.stringify(pageGraph(path))).replace(/</g, "\\u003c");
 
 /** The plain-text map an answer engine reads first. */
 export function llmsTxt(): string {
@@ -159,5 +160,5 @@ export function llmsTxt(): string {
     "## Optional",
     `- [Risk factors](${SITE}/legal/risk-disclosure)`, `- [Terms](${SITE}/legal/terms)`, `- [All documents](${SITE}/legal)`, "",
   ];
-  return L.join("\n");
+  return toPublic(L.join("\n"));
 }

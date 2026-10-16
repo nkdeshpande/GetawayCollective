@@ -28,6 +28,7 @@ import { ROUTES, accessOf, isIndexable } from "@/constants/routes";
 import { PROPERTIES, toSlug } from "@/app/_assemblies/data";
 import { JOURNAL } from "@/content/journal";
 import { ESTATES } from "@/content/site/estates";
+import { toPublic } from "@/constants/estate-urls";
 
 const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.getawaycollective.co").replace(/\/+$/, "");
 
@@ -65,5 +66,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
      with it — it was emitting a dead URL per role. */
   for (const e of JOURNAL) entries.push({ url: `${BASE}/journal/${e.slug}`, ...(/^\d{4}-\d{2}-\d{2}$/.test(e.published) ? { lastModified: e.published } : {}) });
 
-  return entries;
+  return entries.map((e) => ({ ...e, url: toPublic(e.url) }));
 }

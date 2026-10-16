@@ -21,6 +21,7 @@ import { vehicleBySlug } from "@/constants/vehicles";
 import { publicName } from "./registry";
 import { currentAddress } from "@/lib/session";
 import { TXT, esc, fill } from "./render";
+import { toPublic } from "@/constants/estate-urls";
 import type { Block, SitePage } from "./types";
 
 export async function SiteNotices() {
@@ -72,5 +73,5 @@ export async function SiteNotices() {
       { links: [["The collection", "/collection"] as const, ["Write to Investor Relations", "/contact"] as const] },
     ] as Block[],
   } as unknown as SitePage;
-  return <div className="pg" dangerouslySetInnerHTML={{ __html: fill(TXT(P)) }} />;
+  return <div className="pg" dangerouslySetInnerHTML={{ __html: toPublic(fill(TXT(P))) }} />;
 }
