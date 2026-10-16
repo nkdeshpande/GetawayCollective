@@ -18,6 +18,7 @@ import { JOURNAL, KIND_LABEL } from "@/content/journal";
 import { DOCUMENTS } from "@/content/legal";
 import { VEHICLES, vehicleBySlug } from "@/constants/vehicles";
 import { ROUTES } from "@/constants/routes";
+import { toPublic, toInternal } from "@/constants/estate-urls";
 
 const BRAND = "Getaway Collective";
 /**
@@ -117,7 +118,8 @@ function resolve(pattern: string, p: Readonly<Record<string, string>>): { title?
  * a path the site does not publish — so the card can never carry text that
  * arrived in a URL.
  */
-export function describePath(path: string): { title: string; kicker: string } | undefined {
+export function describePath(publicPath: string): { title: string; kicker: string } | undefined {
+  const path = toInternal(publicPath);
   let m: RegExpMatchArray | null;
   if ((m = path.match(/^\/journal\/([a-z0-9-]+)$/))) {
     const e = JOURNAL.find((x) => x.slug === m![1]);
@@ -146,7 +148,7 @@ export function describePath(path: string): { title: string; kicker: string } | 
  * canonical, and says noindex.
  */
 export function pageMeta(pattern: string, params: Readonly<Record<string, string>>, fallbackTitle: string, index = true): Metadata {
-  const path = pattern.replace(/\[(\w+)\]/g, (_, k: string) => params[k] ?? k);
+  const path = toPublic(pattern.replace(/\[(\w+)\]/g, (_, k: string) => params[k] ?? k));
   const r = resolve(pattern, params);
   const title = FULL_TITLE[pattern] ?? (r.title ? `${r.title} · ${BRAND}` : fallbackTitle);
   const description = clip(plain(r.description) || DEFAULT);

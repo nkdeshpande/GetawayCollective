@@ -68,7 +68,8 @@ describe("the sitemap lists pages worth arriving at", () => {
     for (const p of ["/sign-in", "/verify", "/status", "/403", "/404", "/500"]) expect(urls, p).not.toContain(p);
   });
   it("keeps the estates and the Journal", () => {
-    expect(urls).toContain("/collection/coorg-coffee-creek");
+    expect(urls).toContain("/collection/streamside-creek");
+    expect(urls).not.toContain("/collection/coorg-coffee-creek"); // the key, not the address (constants/estate-urls.ts)
     expect(urls).toContain("/journal/two-waters");
   });
 });

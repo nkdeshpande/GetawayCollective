@@ -204,8 +204,8 @@ export function SiteFooter() {
         </div>
         <div>
           <span className="eb">Estates</span>
-          <Link href="/collection/slowspace-solace">Solace</Link><Link href="/collection/slowspace-coastal">Seaside Confluence</Link>
-          <Link href="/collection/coorg-coffee-creek">Streamside Creek</Link><Link href="/collection/coffee-fields-forever">Coffee Fields Forever</Link>
+          <Link href="/collection/solace">Solace</Link><Link href="/collection/seaside-confluence">Seaside Confluence</Link>
+          <Link href="/collection/streamside-creek">Streamside Creek</Link><Link href="/collection/coffee-fields-forever">Coffee Fields Forever</Link>
           <Link href="/collection">All seven estates</Link>
         </div>
         <div>
@@ -215,7 +215,7 @@ export function SiteFooter() {
         </div>
         <div>
           <span className="eb">Contact</span>
-          <Link href="/contact">Enquire</Link><Link href="/collection/slowspace-coastal#waitlist">Seaside Confluence waitlist</Link>
+          <Link href="/contact">Enquire</Link><Link href="/collection/seaside-confluence#waitlist">Seaside Confluence waitlist</Link>
           <Link href="/sign-in">Sign in</Link>
           <span className="mono sel foot-addr">ir@getawaycollective.co</span>
         </div>

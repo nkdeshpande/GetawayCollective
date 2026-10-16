@@ -34,9 +34,10 @@ import { DOCKET, rulebookDocket } from "./docket";
 import { APPLY, ROLES, WHY } from "@/content/site/careers";
 import { PASSPORT_STAGES } from "@/content/compositions/passport";
 import { OPERATORS } from "@/content/public";
+import { toPublic } from "@/constants/estate-urls";
 
 function Mount({ html, light = false }: { html: string; light?: boolean }) {
-  return <div className={`pg${light ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div className={`pg${light ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: toPublic(html) }} />;
 }
 
 /** 2026-08-03 → 3 Aug 2026. */

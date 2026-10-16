@@ -26,6 +26,7 @@ import { ESTATES } from "@/content/site/estates";
 import { depositRows } from "@/lib/events/store";
 import { heldUnits, nightsFor, holdsFrom } from "@/lib/holds";
 import { TXT, esc, fill } from "./render";
+import { toPublic } from "@/constants/estate-urls";
 import { fundingComplete, openReading, publicName, read, rupees, rupeesFull } from "./registry";
 import type { Block, SitePage } from "./types";
 
@@ -57,7 +58,7 @@ export async function SiteReserve({ vehicle: param }: { vehicle: string }) {
         ] },
       ] as Block[],
     } as unknown as SitePage;
-    return <div className={`pg${P.img ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: fill(TXT(P)) }} />;
+    return <div className={`pg${P.img ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: toPublic(fill(TXT(P))) }} />;
   }
 
   const held = Math.min(stance.unitsAvailable, heldUnits(holdsFrom(await depositRows(v.slug).catch(() => [])), v.slug));
@@ -125,5 +126,5 @@ export async function SiteReserve({ vehicle: param }: { vehicle: string }) {
     lead: `Choose your units, see exactly what they are, and hold them with a ${rupeesFull(deposit)} deposit. Refundable in full until you sign.`,
     blocks,
   } as unknown as SitePage;
-  return <div className={`pg${P.img ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: fill(TXT(P)) }} />;
+  return <div className={`pg${P.img ? " pg-col" : ""}`} dangerouslySetInnerHTML={{ __html: toPublic(fill(TXT(P))) }} />;
 }
