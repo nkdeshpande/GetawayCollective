@@ -59,6 +59,14 @@ function places() {
           ...(/Karnataka/.test(juris) ? { addressRegion: "Karnataka" } : {}), addressCountry: "IN",
         },
         ...(geo ? { geo: { "@type": "GeoCoordinates", ...geo } } : {}),
+        /* 20 Oct 2026 (LLM discovery): the facts an assistant is asked for,
+           in its own terms, from the register. Not printed on the page,
+           which keeps to narrative (audit ruling, 15 Oct). */
+        ...(v ? { additionalProperty: [
+          { "@type": "PropertyValue", name: "Keys", value: v.keys },
+          { "@type": "PropertyValue", name: "Stage", value: v.buildStage.replace(/-/g, " ") },
+          { "@type": "PropertyValue", name: "Ownership", value: "Held by its own LLP; investors become its partners. Getaway Collective holds no equity." },
+        ] } : {}),
       },
     };
   });

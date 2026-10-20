@@ -1207,6 +1207,26 @@ export const PAGES: Record<string, SitePage> =  {
       "Yes, after the lock-in, whose length each estate's LLP agreement sets; at Streamside Creek it is not yet set. There is no public market: you post units on a noticeboard that existing partners see first, and nothing guarantees a buyer or a price. A buyer from outside the partnership needs the consent of partners holding a majority, and must complete the same identity checks. During the lock-in, units move only on a partner's death or with every partner's consent."
      ],
      [
+      "<b class=\"tx-strong\">How is this different from a REIT?</b>",
+      "A unit here is a share of one partnership that holds one estate, not of a fund that holds many. Partners vote on that estate's decisions in proportion to what each holds, share in its distributions when there are any, and have nights there from handover. There is no public market for units: after the lock-in they are offered on a noticeboard that existing partners see first, and nothing guarantees a buyer or a price."
+     ],
+     [
+      "<b class=\"tx-strong\">How is it different from buying a holiday home with friends?</b>",
+      "The estate is held by a body corporate, its own LLP, rather than by the people using it, so what happens when a partner dies, wants out or disagrees is written into the LLP agreement before it arises. An operating partner runs it day to day against agreed Service Levels, decisions are taken by recorded votes weighted by holding, and every partner's nights come from what they hold rather than from negotiation. The Journal sets out <a href=\"/journal/why-a-body-corporate\" class=\"tx-u\">why a body corporate</a> and <a href=\"/journal/the-real-cost-of-thirty-days\" class=\"tx-u\">what a house used thirty days a year really costs</a>."
+     ],
+     [
+      "<b class=\"tx-strong\">What happens if the operating partner does not perform?</b>",
+      "It is measured against a Service Level under its Commercial Services Agreement with the estate's LLP, and its duties run to the partnership, so the partners, by their votes, hold it to that agreement. It can be replaced. Replacement takes time, and the estate earns less while it happens; that cost falls on partners and is disclosed as a risk rather than described as a safeguard."
+     ],
+     [
+      "<b class=\"tx-strong\">Who is paid before the partners?</b>",
+      "At most estates revenue passes through six stages in a fixed order, each paid in full before the next: the operating partner; the house brand and the platform; the partnership's administration reserve; its sinking fund; the bank, where there is a loan; and then the partners. Streamside Creek sets its own order. Each estate's investment page gives its own shares, and no other charge can be made unless it appears in the offering letter before you commit. <a href=\"/how-it-works#fees\" class=\"tx-u\">Who is paid, and for what</a>."
+     ],
+     [
+      "<b class=\"tx-strong\">Can someone living outside India invest?</b>",
+      "The platform is operated from India and each estate is held by an Indian LLP. If you are resident, domiciled or a citizen elsewhere, whether you may lawfully commit is a question of the law that applies to you, and it is yours to answer. Commitments from places where the offer would need a registration that has not been made are declined. The <a href=\"/legal/terms\" class=\"tx-u\">Terms</a> state this at B.3."
+     ],
+     [
       "<b class=\"tx-strong\">Is capital at risk?</b>",
       "Yes. Capital is at risk, and no return is guaranteed by any party, including Getaway Collective, the operating partner and the sponsor. Estates carry construction and delivery risk, bank debt is repaid before partners, income depends on occupancy that has not yet been observed, and units cannot be sold quickly. The <a href=\"/legal/risk-disclosure\" class=\"tx-u\">Risk Factors</a> set it out in full."
      ]
