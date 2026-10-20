@@ -46,7 +46,7 @@ export const PAGES: Record<string, SitePage> =  {
      "Each estate's capital stays in that estate.",
      "Every figure is shown with its basis.",
      "Nights come with ownership.",
-     "What a property earns goes to its partners."
+     "What reaches the partners is theirs alone."
     ]
    },
    {
