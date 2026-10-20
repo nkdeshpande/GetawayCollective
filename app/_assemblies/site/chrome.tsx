@@ -233,6 +233,8 @@ export function SiteFooter() {
             <span><b>One LLP per property</b>, owned by its partners.</span>
             <span><b>Sensory Getaways</b> operates the properties under contract.</span>
           </div>
+          {/* Copy review R1, 20 Oct 2026: the one risk line, once per page, in place of every repetition. */}
+          <p className="foot-risk">Investing involves risk. Please read the <Link href="/legal/risk-disclosure">risk disclosure</Link> before you decide.</p>
           <div className="legal">
             <span>© 2026 Getaway Collective. Satoshi by Indian Type Foundry.</span>
             <Link href="/legal/terms">Terms</Link><Link href="/legal/privacy">Privacy</Link>

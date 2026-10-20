@@ -35,16 +35,18 @@ export interface CollectionEstate {
    * papers, on any public surface (registry.ts ownershipPrivate).
    */
   readonly ownership?: "private";
+  /** What the estate is, in the words of the home page's "open now" line (copy review R1, 20 Oct 2026). */
+  readonly now?: string;
 }
 
 export const COLLECTION: readonly CollectionEstate[] = [
-  { name: "Streamside Creek", line: "A SlowSpace estate · Cherala, Kodagu", spec: "20 keys · five clusters of four", region: "coffee", stage: "open", pal: "creek", hour: 13, href: "/collection/coorg-coffee-creek", img: "creek/hero", vehicleKey: "coorgcreek", fallback: "", character: "Twenty keys in five clusters, over a stream in Kodagu." },
-  { name: "Solace by SLOWSPACE", line: "A SlowSpace estate · Chikkaballapura", spec: "6 keys · Nandi Hills corridor", region: "hills", stage: "open", pal: "solace", hour: 6.6, href: "/collection/slowspace-solace", img: "solace/hero", vehicleKey: "solace", fallback: "", character: "On a granite ridge two hours north of Bengaluru; the reference estate.", funding: "complete", ownership: "private" },
-  { name: "Coffee Fields Forever", line: "An ESKAPE estate · Suntikoppa, Kodagu", spec: "20 keys · 3.0 acres", region: "coffee", stage: "open", pal: "cff", hour: 16.5, href: "/collection/coffee-fields-forever", img: "cff/hero", vehicleKey: null, fallback: "Funding complete", character: "Inside a working coffee plantation at Suntikoppa.", funding: "complete" },
-  { name: "Seaside Confluence", line: "A SlowSpace estate · Padubidri, Udupi", spec: "12 keys · one steel building", region: "coast", stage: "open", pal: "coast", hour: 18.6, href: "/collection/slowspace-coastal", img: "confluence/hero", vehicleKey: "slowspace", fallback: "", character: "Over the river where it meets the sea, on steel piles." },
+  { name: "Streamside Creek", line: "A SlowSpace estate · Cherala, Kodagu", spec: "20 studios · five clusters of four", region: "coffee", stage: "open", pal: "creek", hour: 13, href: "/collection/coorg-coffee-creek", img: "creek/hero", vehicleKey: "coorgcreek", fallback: "", character: "Twenty studios over a stream. Kodagu.", now: "twenty studios in five clusters, over a stream in Kodagu" },
+  { name: "Solace by SLOWSPACE", line: "A SlowSpace estate · Chikkaballapura", spec: "6 keys · Nandi Hills corridor", region: "hills", stage: "open", pal: "solace", hour: 6.6, href: "/collection/slowspace-solace", img: "solace/hero", vehicleKey: "solace", fallback: "", character: "A granite ridge. Bengaluru is two hours south.", funding: "complete", ownership: "private" },
+  { name: "Coffee Fields Forever", line: "An ESKAPE estate · Suntikoppa, Kodagu", spec: "20 keys · 3.0 acres", region: "coffee", stage: "open", pal: "cff", hour: 16.5, href: "/collection/coffee-fields-forever", img: "cff/hero", vehicleKey: null, fallback: "Funding complete", character: "Inside a working coffee plantation. Suntikoppa.", funding: "complete" },
+  { name: "Seaside Confluence", line: "A SlowSpace estate · Padubidri, Udupi", spec: "12 keys · one steel building", region: "coast", stage: "open", pal: "coast", hour: 18.6, href: "/collection/slowspace-coastal", img: "confluence/hero", vehicleKey: "slowspace", fallback: "", character: "Where the river meets the sea. Built on steel piles." },
   { name: "Nine Hills", line: "A SlowSpace estate · Sakleshpur hills", spec: "12–20 keys · 5 acres", region: "hills", stage: "pipe", pal: "nine", hour: 9, href: "/collection/nine-hills", vehicleKey: null, fallback: "Pipeline <span>· not yet offered</span>", character: "Sleep at the trailhead." },
-  { name: "Wildwood", line: "A SlowSpace estate · Aranthodu", spec: "12 keys · 12 acres", region: "hills", stage: "pipe", pal: "wild", hour: 19, href: "/collection/wildwood", vehicleKey: "wildwood", fallback: "", character: "The land is already the reason to come." },
-  { name: "Tidal Club", line: "An ESKAPE estate · Yermal, Udupi coast", spec: "40 keys · 16 villas and the Club", region: "coast", stage: "pipe", pal: "coast", hour: 7, href: "/collection/tidal-club", vehicleKey: null, fallback: "Pipeline <span>· not yet offered</span>", character: "Sixteen villas and a club on the backwater at Yermal." },
+  { name: "Wildwood", line: "A SlowSpace estate · Aranthodu", spec: "12 keys · 12 acres", region: "hills", stage: "pipe", pal: "wild", hour: 19, href: "/collection/wildwood", vehicleKey: "wildwood", fallback: "", character: "Twelve acres. The land is the reason." },
+  { name: "Tidal Club", line: "An ESKAPE estate · Yermal, Udupi coast", spec: "40 keys · 16 villas and the Club", region: "coast", stage: "pipe", pal: "coast", hour: 7, href: "/collection/tidal-club", vehicleKey: null, fallback: "Pipeline <span>· not yet offered</span>", character: "Sixteen villas and a club. The backwater at Yermal." },
 ];
 
 /** The four estates the home page scrolls through, each with its register key. `chip` is a short description, never a status: status is read from the register. */
@@ -63,7 +65,7 @@ export const HOME_JOURNAL: readonly { readonly slug: string; readonly pal: strin
 ];
 
 export const MANIFESTO =
-  "Modern luxury is the absence of noise. We build small places to one standard, hold each one in its own partnership, and govern it for the people who own it. We hold none of it ourselves.";
+  "Quiet is the thing worth owning. We build a few small places to one standard. Each is held in its own LLP. Its partners own all of it.";
 
 /** The three chassis, drawn. */
 export const TRIO = [

@@ -24,10 +24,10 @@ export const PAGES: Record<string, SitePage> =  {
   "lead": "Getaway Collective builds remarkable places in India and puts each one inside its own company, owned by its partners and governed in the open.",
   "blocks": [
    {
-    "h": "What we are, and what we are not"
+    "h": "What we are"
    },
    {
-    "p": "An investment platform that happens to govern extraordinary places. Not a hospitality company, not a booking platform, not a property manager. We do not sell holidays."
+    "p": "An investment platform for owning places worth returning to, together. Each place is held in its own LLP, owned by its partners and governed in the open."
    },
    {
     "h": "Why it exists"
@@ -39,14 +39,14 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "about.tsx 104–123"
    },
    {
-    "h": "Four refusals"
+    "h": "Four commitments"
    },
    {
     "list": [
-     "No pooling of capital between estates.",
-     "No promised return.",
-     "No selling of time.",
-     "No share of what a property earns, for Getaway Collective."
+     "Each estate's capital stays in that estate.",
+     "Every figure is shown with its basis.",
+     "Nights come with ownership.",
+     "What a property earns goes to its partners."
     ]
    },
    {
@@ -77,7 +77,7 @@ export const PAGES: Record<string, SitePage> =  {
     "h": "Vision"
    },
    {
-    "p": "To create the world's most trusted collective ownership platform for extraordinary places, where architecture, stewardship, and technology transform real estate into a lifelong source of restoration, belonging, and enduring value."
+    "p": "Places in India worth coming back to, owned by the people who come back, on records anyone who holds them can read."
    },
    {
     "src": "L1-01 156, verbatim"
@@ -117,20 +117,33 @@ export const PAGES: Record<string, SitePage> =  {
  "how": {
   "key": "how",
   "eyebrow": "How it works",
-  "title": "One estate. <span>One LLP.</span> Its partners decide.",
+  "title": "One estate. <span>One LLP.</span>",
   "film": [
    "cff",
    12,
    0,
    1
   ],
-  "lead": "Every estate is held by its own Limited Liability Partnership. You hold units in that partnership; the partnership holds the land and the buildings.",
+  "lead": "Every estate is a single asset held in its own special purpose vehicle (SPV), in the form of a limited liability partnership (LLP). The LLP owns the land and the buildings in its own name. Its partners own the LLP in proportion to their units, each liable only up to what they agreed to contribute.",
   "blocks": [
    {
     "q": "Modern luxury is the absence of noise."
    },
    {
     "p": "The doctrine first, then the arithmetic that has to survive it. Four chapters: what you own, how you become a partner, where the money goes, and how partners decide, use the estate and leave."
+   },
+   {
+    "h": "Where your money goes"
+   },
+   {
+    "steps": [
+     ["The deposit", "You hold your units with a ₹1,00,000 deposit, paid to NAVINA Structures, the company forming the estate's partnership, which holds it as a fiduciary. It is refundable in full until you sign."],
+     ["Identity checks", "They run alongside, at your pace, and complete before you sign."],
+     ["Signing", "You sign the LLP agreement and pay the balance; your units are allotted at signing."],
+     ["Building and running", "The estate is built and then run by the operating partner."],
+     ["Distributions", "Revenue pays six stages in order; partners share what remains, in proportion to their units."],
+     ["After the lock-in", "You may offer your units, to the other partners first."]
+    ]
    },
    {
     "src": "public.ts 252–258"

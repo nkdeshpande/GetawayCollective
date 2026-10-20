@@ -578,6 +578,12 @@
 .site .foot .triad{display:flex;flex-wrap:wrap;gap:var(--gc-sp-3xs) var(--gc-sp-m);color:var(--gc-s-fog)}
 .site .foot .triad b{color:var(--paper);font-weight:600}
 .site .foot .legal{margin-top:var(--gc-sp-xs)}
+/* Copy review R1, 20 Oct 2026: the one risk line on every page, and the structure section. */
+.site .foot .foot-risk{margin:var(--gc-sp-s) 0 0;font:500 13px/1.5 var(--text);color:var(--gc-s-fog);max-width:var(--read)}
+.site .foot .foot-risk a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.site .spv{padding:var(--sec) var(--gut)}
+.site .spv>div{max-width:760px;display:grid;gap:var(--gc-sp-s);text-align:left}
+.site .spv .h2,.site .spv .para{margin:0}
 .site .phero .strip .sold-chip{margin:0}
 .site .rail,.site .pc-rail{scroll-padding-inline:var(--gut)}
 
