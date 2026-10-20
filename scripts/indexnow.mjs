@@ -15,10 +15,10 @@ const dry = process.argv.includes("--dry");
 
 const xml = await (await fetch(`${SITE}/sitemap.xml`)).text();
 const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-if (dry) { console.log(urls.join("\n")); console.log(`${urls.length} URLs, not sent`); process.exit(0); }
+if (dry) { console.log(urls.join("\n")); console.log(`${urls.length} URLs, not sent`); } else {
 const r = await fetch("https://api.indexnow.org/indexnow", {
   method: "POST", headers: { "content-type": "application/json; charset=utf-8" },
   body: JSON.stringify({ host: new URL(SITE).host, key: KEY, keyLocation: `${SITE}/${KEY}.txt`, urlList: urls }),
 });
 console.log(`IndexNow: ${r.status} ${r.statusText} for ${urls.length} URLs`);
-process.exit(r.ok ? 0 : 1);
+process.exitCode = r.ok ? 0 : 1; }
