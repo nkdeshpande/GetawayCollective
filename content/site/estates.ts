@@ -22,20 +22,21 @@ export const ESTATES: Record<string, SiteEstate> = {
   "enquireHour": 18.1,
   "heroLabel": "Drawn film: granite ridge at first light, Nandi Hills corridor",
   "eyebrow": "Getaway Collective · Nandi Hills corridor",
-  "credit": "A SlowSpace estate · the reference vehicle",
-  "spec": "{{KEYS}} keys, two hours from Bengaluru, with nearly two-thirds of the land kept as it is.",
-  "intro": "Six keys on a granite ridge two hours from Bengaluru, the buildings on a fifth of an acre. Nearly two-thirds of the land stays exactly as it is. Solace is the first estate the collective will deliver, and the one every other estate will be measured against.",
+  "credit": "A SlowSpace estate · the reference estate",
+  "spec": "{{KEYS}} studios on a granite ridge, two hours from Bengaluru. Funded and under construction.",
+  "intro": "The reference estate. Solace is the first estate the collection delivers, and the one every other estate is measured against. It is six studios on a ridge at Hosahudya, Chikkaballapura. The buildings take a fifth of an acre. At least 65% of the land stays as it is.",
   "place": {
    "film": [
     "solace",
     15
    ],
    "title": "Two hours from the city. <b>A ridge above the valley.</b>",
-   "text": "Solace sits at Hosahudya in Chikkaballapura, on the Nandi Hills corridor north of Bengaluru. The climate is dry and high: cool mornings, long light, a monsoon that arrives as a line on the western horizon. The buildings take only a fifth of an acre; the rest of the ridge is left to itself.",
+   "text": "Solace sits north of Bengaluru on the Nandi Hills corridor. The climate is dry and high: cool mornings, long light, and a monsoon seen first as a line on the western horizon. Kempegowda International Airport lies between the city and the estate.",
    "coords": "13°24'40.5\"N 77°49'26.9\"E · CONFIRMED 07 AUG 2026"
   },
   "concept": {
    "title": "Ground. Horizon. <span>Volume.</span>",
+   "lead": "Ridge holds the ground and its courtyard. Expanse lifts to the horizon. Voyager opens into a tall void over warm water.",
    "zones": [
     {
      "k": "ridge",
@@ -122,7 +123,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      11,
      1
     ],
-    "para": "Ridge sits on the ground floor of Building A and opens straight onto its own courtyard. The brief was one sentence: rain on stone, heard from bed. The low sill, the deep threshold and the stone apron all serve it. Two keys, numbers 1 and 2.",
+    "para": "Ridge sits on the ground floor of Building A and opens straight onto its own courtyard. The brief was one sentence: rain on stone, heard from bed. The low sill, the deep threshold and the stone apron all serve it. Two studios, numbers 1 and 2.",
     "meta": [
      "38 M² + COURTYARD",
      "EAST",
@@ -163,7 +164,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "solace",
      5.9
     ],
-    "para": "Expanse rides the upper deck of Building A at +3.8 metres. It is deliberately spare: the horizon does the decorating. A window seat runs the full width of the east wall, built for people who wake early on purpose. Two keys, numbers 3 and 4.",
+    "para": "Expanse rides the upper deck of Building A at +3.8 metres. It is deliberately spare: the horizon does the decorating. A window seat runs the full width of the east wall, built for people who wake early on purpose. Two studios, numbers 3 and 4.",
     "meta": [
      "36 M² + DECK",
      "+3.8 M FFL",
@@ -204,7 +205,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "solace",
      19.4
     ],
-    "para": "The Twin Gables of Building B hold the two largest keys on the estate. Overhead the roof rises into a five-and-a-half-metre void; rain lands on it like an instrument. Below, a private onsen holds at forty degrees. Two keys, numbers 5 and 6.",
+    "para": "The Twin Gables of Building B hold the two largest studios on the estate. Overhead the roof rises into a five-and-a-half-metre void; rain lands on it like an instrument. Below, a private onsen holds at forty degrees. Two studios, numbers 5 and 6.",
     "meta": [
      "52 M² + PORCH",
      "5.5 M VOID",
@@ -326,7 +327,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "Bortle 2 on new-moon weeks. Field glasses on the shelf."
     ]
    ],
-   "note": "The estate is run by Sensory Getaways, the operating partner. Partners use it in proportion to their position: one night a year for each 1% held."
+   "note": "Sensory Getaways runs the estate. Partners use it in proportion to what they hold: one night a year for each 1%, from handover."
   },
   "getting": {
    "title": "Two hours <span>north.</span>",
@@ -381,8 +382,8 @@ export const ESTATES: Record<string, SiteEstate> = {
    }
   },
   "plan": {
-   "title": "Two buildings, <span>six keys.</span>",
-   "note": "Schematic, not to scale. Areas are those scheduled for each key.",
+   "title": "Two buildings, <span>six studios.</span>",
+   "note": "Schematic, not to scale. Areas are those scheduled for the studios.",
    "tabs": [
     {
      "tab": "Site",
@@ -550,21 +551,21 @@ export const ESTATES: Record<string, SiteEstate> = {
   "heroLabel": "Drawn film: the river mouth at dusk, Padubidri",
   "eyebrow": "Getaway Collective · Udupi coast",
   "credit": "Seaside Confluence · a SlowSpace estate · the first coastal estate",
-  "spec": "{{KEYS}} keys in one steel building, where the river meets the sea.",
-  "intro": "Twelve keys over the river where it meets the sea, on the Udupi coast. One building, stood on steel so the ground under it is barely touched. Every key looks at the river; the verandah is the useful space.",
+  "spec": "{{KEYS}} studios where the river meets the sea, on the Udupi coast. Every unit offered is held.",
+  "intro": "A share of the first coastal estate. Seaside Confluence is twelve studios in one building over a river estuary, at Padubidri on the Udupi coast. It is a single asset in its own special purpose vehicle (SPV), in the form of a limited liability partnership (LLP). Its partners own it exclusively.",
   "place": {
    "film": [
     "coast",
     17.2
    ],
    "title": "Two waters meeting. <b>That is the name.</b>",
-   "text": "The estate sits at Nadsal, Padubidri, in Kaup taluk of Udupi district, on the estuarine edge of the coast: the Arabian Sea to the west, a river estuary to the east. The mangrove along the water is protected and nothing is built or planted in it.",
+   "text": "The estate sits at Nadsal, Padubidri, in Kaup taluk of Udupi district. The Arabian Sea lies to the west and a river estuary to the east. The protected mangrove along the water stays as it is.",
    "coords": "13.117416°N 74.765988°E",
    "img": "confluence/place"
   },
   "concept": {
    "title": "One building. <span>Two waters.</span>",
-   "lead": "Mostly steel, because of the coastal zone and the mangrove setbacks. Driven galvanised piles, no excavation, and a building that stands inside its registered parcel.",
+   "lead": "Mostly steel, because of the coastal zone and the mangrove setbacks. The river six sit over an open undercroft; the upper six sit beneath one roof; the plaza shares the deck.",
    "ground": [
     {
      "c": "{ink:sea2}",
@@ -589,7 +590,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "k": "lower",
      "name": "River six",
      "sub": "L0 · +2.00",
-     "text": "Six keys over an open stilt undercroft, balconies cantilevered to the river behind bronze fins.",
+     "text": "Six studios over an open undercroft, balconies facing the river behind bronze fins.",
      "c": "{ink:sea3}",
      "vols": [
       {
@@ -607,7 +608,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "k": "upper",
      "name": "Upper six",
      "sub": "L1 · +5.80",
-     "text": "Six keys above, under a single steel roof whose ridge stays below the 9.00 m coastal cap.",
+     "text": "Six studios above, under one steel roof whose ridge stays below the 9.00 m coastal height limit.",
      "c": "{ink:ember}",
      "vols": [
       {
@@ -678,7 +679,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "coast",
      16.5
     ],
-    "para": "Six keys stand at +2.00 over an open undercroft, so the ground and the tide pass underneath. Each key is one 3.4-metre bay, 13 metres deep from the spine to the balcony, and each balcony looks straight at the water. Bronze fins at 32 degrees give privacy without a wall.",
+    "para": "The river six stand over an open undercroft, so the ground and the tide pass beneath. Each balcony looks straight at the water, screened by bronze fins.",
     "meta": [
      "44.2 M² · 476 SQ FT",
      "+2.00",
@@ -717,7 +718,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "coast",
      7.4
     ],
-    "para": "The second level stands at +5.80, under a steel plate roof pitched at two degrees and clad in standing-seam aluminium. The ridge sits at +8.95, below the 9.00-metre coastal cap. Open galvanised stair cores on the spine face carry you up; nothing is enclosed at the stair.",
+    "para": "The upper six sit above, under one shallow steel roof.",
     "meta": [
      "44.2 M² · 476 SQ FT",
      "+5.80",
@@ -755,7 +756,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "coast",
      19.6
     ],
-    "para": "Beside the keys, on the same steel deck, the plaza holds the estate's shared life: a hall, a monsoon veranda open on three sides, a sage pool and a hearth. Rain on three sides. Dry underfoot. On the roof above sits the Crown, the smallest enclosure on the estate and the one with the widest view.",
+    "para": "The plaza shares the same deck: a hall, a monsoon veranda open on three sides, a sage pool and a hearth. On the roof sits the Crown, a small enclosure with the widest view.",
     "meta": [
      "15.0 × 12.8 M",
      "HALL 120 M²",
@@ -794,7 +795,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "coast",
      12.4
     ],
-    "para": "From Beach Road a narrow drive leads to an open court of volcanic cobble, eleven by ten metres. From there a procession 1.9 metres wide climbs two metres over twenty-two to the deck. Nothing at ground level is enclosed; the tide and the air move under the whole estate.",
+    "para": "Arrival is by an open cobbled court and a slow, rising walk to the deck.",
     "meta": [
      "COURT 11 × 10 M",
      "PROCESSION 22 M",
@@ -824,9 +825,10 @@ export const ESTATES: Record<string, SiteEstate> = {
    }
   ],
   "made": [
-   "Materials",
-   "What Confluence <span>is made of.</span>"
+   "How it is built",
+   "One steel building <span>that barely touches the ground.</span>"
   ],
+  "madeSo": "The frame stands on driven galvanised piles, with no excavation. About 23 m² meets the ground, against 306 m² for a concrete raft. The studios are 44.2 m² (476 sq ft) each. The ridge stays below the 9.00 m coastal height limit. The full specification, coatings and drawings are in the offering pack.",
   "materials": [
    [
     "Structure",
@@ -913,7 +915,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "Dinner on the veranda, timed to the tide."
     ]
    ],
-   "note": "Food and the tide table will be run by an operating partner; the appointment is out to tender. A ritual is an invitation, never programming.",
+   "note": "Sensory Getaways runs the estate. A food partner is being appointed by tender. A ritual is an invitation, never programming.",
    "imgs": [
     "confluence/river",
     "confluence/walk",
@@ -980,7 +982,7 @@ export const ESTATES: Record<string, SiteEstate> = {
   },
   "plan": {
    "title": "One building, <span>on its parcel.</span>",
-   "note": "Illustrations, not to scale, and design intent only: not for construction. Every position waits on the Coastal Regulation Zone line.",
+   "note": "Illustrations of the estate as designed, not to scale. Building positions are fixed once the Coastal Regulation Zone (CRZ) line is read from the survey plan. Drawings are then issued for construction.",
    "tabs": [
     {
      "tab": "Site",
@@ -1070,8 +1072,8 @@ export const ESTATES: Record<string, SiteEstate> = {
     "Nadsal, Padubidri, Kaup taluk, Udupi"
    ],
    [
-    "Key",
-    "44.2 m² · 476 sq ft"
+    "Studios",
+    "44.2 m² · 476 sq ft each"
    ],
    [
     "Structure",
@@ -1091,7 +1093,7 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Coastal zone",
-    "The Coastal Regulation Zone (CRZ) line, not yet read from the survey; it decides where every building may stand",
+    "The Coastal Regulation Zone (CRZ) line, read from the survey plan, fixes where every building stands; drawings are then issued for construction",
     1
    ],
    [
@@ -1100,21 +1102,22 @@ export const ESTATES: Record<string, SiteEstate> = {
    ],
    [
     "Operator",
-    "Sensory Getaways; food partner out to tender"
+    "Sensory Getaways; a food partner is being appointed by tender"
    ]
   ],
   "detailsNote": "",
+  "ownAnswers": true,
   "waitlist": {
    "chip": "FULLY SUBSCRIBED",
    "title": "Join the <span>waitlist.</span>",
-   "text": "Every offered unit of {{vehicle}} is held. If, after the lock-in, a partner offers units for sale, the waitlist is offered them first, in the order it was joined. A place on the waitlist is not an offer and commits you to nothing.",
+   "text": "Every unit offered in {{vehicle}} is held. If, after the lock-in, a partner offers units for sale, the waitlist hears first, in the order it was joined. Joining commits you to nothing.",
    "chips": [
     "1 unit",
     "2 units",
     "3 or more"
    ],
-   "ok": "You are on the Confluence waitlist. Investor Relations will write if a partner offers units for sale; nothing is asked of you until then.",
-   "note": "Units change hands only after the lock-in, at a price the partners agree, and a buyer from outside needs their consent. Nothing guarantees that any will be offered."
+   "ok": "You are on the Confluence waitlist. Investor Relations will write when a partner offers units for sale.",
+   "note": "Any sale is at a price buyer and seller agree. A buyer from outside the partnership needs the partners' consent."
   },
   "slug": "slowspace-coastal",
   "vehicleKey": "slowspace"
@@ -1741,23 +1744,23 @@ export const ESTATES: Record<string, SiteEstate> = {
   "enquireHour": 17.5,
   "heroLabel": "Drawn film: shade-grown coffee slopes in the afternoon, Kodagu",
   "eyebrow": "Getaway Collective · Suntikoppa, Coorg",
-  "credit": "Coffee Fields Forever · an ESKAPE estate · the flagship destination",
-  "spec": "Twenty keys inside three acres of working coffee, 250 km from Bengaluru.",
-  "intro": "Twenty keys held inside a working coffee plantation at Suntikoppa. The shade-grown canopy is the product: this is the only estate in the collection that farms what it serves.",
+  "credit": "Coffee Fields Forever · an ESKAPE estate · the flagship estate",
+  "spec": "Twenty studios inside three acres of working coffee, 250 km from Bengaluru. Funded and in delivery.",
+  "intro": "The flagship ESKAPE estate, and the one that farms what it serves. It is twenty studios in a shade-grown coffee plantation at Valamudi, near Suntikoppa. It is a single asset in its own limited liability partnership (LLP). The LLP is a special purpose vehicle (SPV): it holds one estate. Its partners own it exclusively. Funding is complete.",
   "place": {
    "film": [
     "cff",
     9
    ],
-   "title": "Twenty keys. <b>One working plantation.</b>",
-   "text": "Coffee Fields Forever sits at Valamudi, near Suntikoppa in Kodagu, on three acres of shade-grown coffee. Two acres are buildable; at least two-thirds of the estate stays as it is. It is a different estate from Streamside Creek, 1.8 km away.",
+   "title": "The canopy <b>is the product.</b>",
+   "text": "The coffee grows under shade trees, as it always has here. The studios stand between the rows, so the plantation keeps working. Harvest runs from November to January, and the coffee is roasted on the estate. It is a separate estate from Streamside Creek, 1.8 km away, under a different house brand and its own LLP. A holding in one carries no share, vote or nights in the other.",
    "coords": "12°23'25.6\"N 75°49'13.8\"E",
    "img": "cff/place"
   },
   "concept": {
    "title": "Three hamlets. <span>One canopy.</span>",
    "img": "cff/zones",
-   "lead": "The keys are gathered into three hamlets under the coffee, around a roastery raised over a working vault, so that the working estate never crosses the floor people live on.",
+   "lead": "The twenty are gathered into three hamlets under the coffee, around a roastery raised over a working vault. The working estate moves below the floor people live on.",
    "zones": [
     {
      "k": "blossom",
@@ -1829,7 +1832,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "k": "harvest",
      "name": "Harvest Ridge",
      "sub": "hamlet",
-     "text": "The ridge hamlet, closest to the picking.",
+     "text": "The hamlet closest to the picking.",
      "c": "{ink:gold}",
      "vols": [
       {
@@ -1907,7 +1910,7 @@ export const ESTATES: Record<string, SiteEstate> = {
      "cff",
      14.5
     ],
-    "para": "The coffee grows under shade trees, as it always has here. The keys are placed between the rows, not in place of them, so the plantation keeps working around the people who own a share of it.",
+    "para": "The coffee grows under shade trees, as it always has here. The studios stand between the rows, not in place of them, so the plantation keeps working around the people who own a share of it.",
     "meta": [
      "3.0 ACRES",
      "2.0 BUILDABLE",
@@ -2080,7 +2083,7 @@ export const ESTATES: Record<string, SiteEstate> = {
     "cff/night",
     "cff/light"
    ],
-   "note": "Source: CFF experiences, 09 Aug 2026. No operations plan exists yet; who runs each of these is not appointed."
+   "note": "Sensory Getaways runs the estate and sets its operating plan ahead of opening."
   },
   "getting": {
    "title": "West, <span>into Kodagu.</span>",
@@ -2220,26 +2223,81 @@ export const ESTATES: Record<string, SiteEstate> = {
 export const FAQX: Record<string, [string, string, string][]> = {
  "solace": [
   [
-   "Can I still invest in Solace?",
-   "No. Funding for Solace is complete, and the estate is being built. Streamside Creek, in Kodagu, is the estate open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
-   "Founder ruling, 28 Sep 2026 · constants/vehicles.ts"
+   "Can I invest in Solace?",
+   "Funding is complete and the estate is being built. Streamside Creek is open now, and Investor Relations can write to you when the next estate opens.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
   ],
   [
    "When does Solace open?",
-   "Solace is under construction. No handover date is published yet, and this page will not guess one: it will be stated once the building programme is fixed. Partners' nights begin at handover, when the estate is complete and handed to the operating partner to open. Until then there is nothing to draw on, and the number of nights shown for an unbuilt estate is zero rather than a promise.",
-   "constants/vehicles.ts · legal.ts F.2"
+   "The handover date is published once the building programme is fixed. Partners' nights begin at handover, when the estate passes to Sensory Getaways to open.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
   ]
  ],
  "confluence": [
   [
-   "Can I still invest in Confluence?",
-   "Not directly: every unit offered in SlowSpace Coastal LLP, the partnership that holds Seaside Confluence, has been taken. You can join the waitlist below. If, after the lock-in, a partner offers units for sale, the waitlist hears first, in the order it was joined. Joining is not an offer and commits you to nothing. Any sale is at a price the buyer and seller agree, and a buyer from outside the partnership needs the partners' consent.",
-   "legal.ts G.1–G.3 · public.ts 330–333"
+   "Can I still invest?",
+   "Every unit offered is held. Join the waitlist, and you will hear first if a partner offers units after the lock-in. Streamside Creek is open to new partners now.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
   ],
   [
-   "Is the building already approved?",
-   "Not yet. Seaside Confluence sits on the coast, where India's Coastal Regulation Zone (CRZ) rules decide how close to the water anything may be built. That line still has to be read from the survey plan, and every position on the drawings waits on it. The drawings are design intent, not yet issued for construction, and nothing is cleared or built until the line that governs it is drawn.",
-   "SSC-00-CN-003 §16"
+   "Where do approvals stand?",
+   "The coast is governed by India's Coastal Regulation Zone rules. The CRZ line is read from the survey plan, and every building position follows it. Drawings are issued for construction after that.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "Is this a timeshare?",
+   "A timeshare sells weeks of use. Here you buy units in the LLP that holds the estate. You own part of the partnership, vote in proportion to your holding and share in its distributions. Nights come with that share.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "Do I own the property?",
+   "You own part of the LLP, and the LLP owns the estate. NAVINA Structures Pvt Ltd, as Getaway Collective, governs it and holds no equity. It is paid a platform fee from stage 2 of the payment order. Changing that rule takes a unanimous vote of the partners.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "What is a unit?",
+   "A fixed share of the estate's LLP, at the price in the offering letter. Your units set three things together: your share of distributions, your vote and your nights.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "How many nights come with a unit?",
+   "One unit here carries 10 nights a year, from handover. Nights are used within their year. Where partners want the same dates, whoever has used the fewest nights that year goes first.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "What does it cost to hold?",
+   "Running costs are paid from the estate's own revenue, through the six stages of the payment order. Partners form one class, paid together at the last stage in proportion to units. Any other charge is stated in the offering letter before you commit.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "Who maintains the estate?",
+   "Sensory Getaways, under a Commercial Services Agreement with the LLP. It is measured against agreed service levels and paid from stage 1. Renewal as the buildings age comes from the sinking fund: 2.5% of revenue set aside every year.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "Can partners change the buildings?",
+   "Yes, together, by resolution, with votes weighted by holding. An ordinary resolution needs more than 50% of the holdings voting. A special resolution needs at least 76% of all holdings. Selling the land, or borrowing beyond the agreed limit, is reserved to the partners.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "How are disagreements settled?",
+   "By vote, weighted by holding; a tied vote fails. Partners holding at least 20% can call a meeting, held within 21 days. Anything a vote cannot settle follows the dispute clause in the LLP agreement. A complaint about the platform has its own three-stage route, set out in the <a class=\"tx-u\" href=\"/legal/disclosures\">Disclosures</a>.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "Can I sell my units?",
+   "Yes, after the 36-month lock-in. You offer them on a private noticeboard, which fellow partners see first. A buyer from outside needs majority consent and completes the same identity checks. On a partner's death, units pass to their estate and the lock-in falls away.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "Can I let my nights to others?",
+   "A night you release can be let by the estate. That income joins the estate's revenue and reaches every partner through the payment order. The LLP agreement states whether nights may be given to family or friends.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
+  ],
+  [
+   "What should I weigh before committing?",
+   "The estate's <a class=\"tx-u\" href=\"/collection/slowspace-coastal/risk\">risk page</a> sets out each factor, read from the record.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
   ]
  ],
  "creek": [
@@ -2281,19 +2339,19 @@ export const FAQX: Record<string, [string, string, string][]> = {
  ],
  "cff": [
   [
-   "Can I invest in Coffee Fields Forever now?",
-   "No. Funding for Coffee Fields Forever is complete. Streamside Creek, a separate estate about 1.8 km away, is open now, and Investor Relations can write to you when the next one opens; asking commits you to nothing.",
-   "Founder ruling, 28 Sep 2026 · properties.yaml"
+   "Can I invest now?",
+   "Funding is complete. Streamside Creek is open now, and Investor Relations can write to you when the next estate opens.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
   ],
   [
-   "Is this the same estate as Creek?",
-   "No. Streamside Creek is a separate estate about 1.8 km away, under a different house brand and held by its own LLP. The two are held separately, and a holding in one carries no share, no vote and no nights in the other.",
-   "properties.yaml"
+   "Is this the same estate as Streamside Creek?",
+   "They are two estates, 1.8 km apart. Each has its own house brand and its own LLP.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
   ],
   [
-   "Why are the keys not named?",
-   "A key is one dwelling at the estate. The public names for Coffee Fields Forever's keys have not been chosen yet, and the working names used in design are not meant for publication. Until the names are chosen, this page refers to each key by the hamlet it sits in, so that nothing printed now has to be withdrawn later.",
-   "DECISIONS.md D-07"
+   "Why are the studios named by hamlet?",
+   "Their public names are being chosen. Until then each is named by the hamlet it stands in, so nothing printed now needs to change later.",
+   "GC-19-CT-002 R0 · founder, 23 Oct 2026"
   ]
  ]
 };

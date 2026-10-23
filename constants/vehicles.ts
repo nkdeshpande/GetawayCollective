@@ -686,7 +686,7 @@ const COORGCREEK: Vehicle = {
     totalEquity: 125000000_0000n,
     /* The founders' twelve units, against the land contributed in kind. */
     promoter: 75000000_0000n,
-    promoterIs: "the founders' land, contributed in kind at their own figure",
+    promoterIs: "the promoters' land, contributed in kind at their own figure",
     offered: 50000000_0000n,
     units: 8,
     unitPrice: 6250000_0000n,
@@ -710,12 +710,12 @@ const COORGCREEK: Vehicle = {
     /* Not stated as shares. See `cascade`, and C-19. */
     waterfall: null,
     cascade: [
-      { what: "Channel, payment and tax", rule: "Taken from each night sold before anything else: what the sales channels, the card networks and the taxes keep." },
+      { what: "Channel, payment and tax", rule: "What the sales channels, card networks and taxes keep from each night sold." },
       { what: "Operating costs and the operator's fee", rule: "The crew, the plant, the supplies and the management fee. The fee rate is not yet ruled." },
-      { what: "The bank: interest, then principal", rule: "The monthly instalment on the loan. The lender is paid ahead of every partner." },
+      { what: "The bank", rule: "Interest, then principal: the monthly instalment." },
       { what: "The debt reserve", rule: "Topped up to six months of instalments." },
       { what: "The equipment reserve", rule: "4% of gross revenue, held in the partnership's name to replace furniture and equipment." },
-      { what: "The partners", rule: "What remains is paid pro rata by units. One class: no preference, no promote and no fixed return." },
+      { what: "The partners", rule: "What remains, pro rata by units. One class." },
     ],
     reserveFloor: null,
     yieldConfidence: null,

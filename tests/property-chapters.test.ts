@@ -87,11 +87,11 @@ describe("the public gate still governs the figures", () => {
   });
 
   it("shows them for a vehicle that passes, and names the basis of any yield", () => {
-    /* A vehicle with a waterfall of shares names its yield a forecast. */
+    /* A vehicle with a waterfall of shares names its yield modelled (GC-19-CT-002 R0, R-07). */
     const shared = VEHICLES.find((v) => publishable(v).ok && v.operating.waterfall !== null)!;
     const withYield = chapterContent(shared, "investment");
     expect(withYield.withheld).toHaveLength(0);
-    expect(withYield.lead).toContain("forecast");
+    expect(withYield.lead).toContain("modelled");
     expect(JSON.stringify(withYield)).toContain("FORECAST");
     /* The Creek states an order of payment (2 Oct 2026): the order is shown,
        the loan is said to be applied for, and no yield, rate or revenue is. */
@@ -99,7 +99,7 @@ describe("the public gate still governs the figures", () => {
     const investment = chapterContent(creek, "investment");
     expect(investment.withheld).toHaveLength(0);
     const body = JSON.stringify(investment);
-    expect(investment.lead).toContain("order of payment");
+    expect(investment.lead).toContain("fixed order");
     expect(body).toContain("applied for");
     expect(body).not.toContain("FORECAST");
     expect(body).not.toContain("Gross revenue");

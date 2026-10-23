@@ -91,7 +91,7 @@ describe("funding complete: founder ruling, 28 Sep 2026", () => {
   it("answers the estates' own questions without a unit or a price", () => {
     for (const k of ["solace", "cff"]) for (const [q, a] of FAQX[k]) {
       if (!/invest/i.test(q)) continue;
-      expect(a, q).toMatch(/Funding for .* is complete/);
+      expect(a, q).toMatch(/Funding is complete/); /* wording of GC-19-CT-002 R0, founder 23 Oct 2026 */
       expect(a, q).not.toMatch(/\bunits?\b|₹|lock-in|waitlist/i);
     }
     const cff = Object.values(ESTATES).find((e) => e.slug === "coffee-fields-forever")!;

@@ -546,7 +546,8 @@ export function SiteCareers() {
 const DAY = (iso: string) => longDate(iso);
 export function SiteOperator() {
   const O = OPERATORS;
-  const blocks: Block[] = [{ lede: O.standfirst }];
+  /* Wave 2 (founder, 23 Oct 2026): the page opens on what the operator does, not a standfirst. */
+  const blocks: Block[] = [];
   for (const pane of O.panes) {
     blocks.push({ h: pane.title });
     if (pane.lede) blocks.push({ p: pane.lede });
@@ -562,8 +563,8 @@ export function SiteOperator() {
   blocks.push({ links: [["How it works", "/how-it-works"], ["The collection", "/collection"]] });
   const P: SitePage = {
     key: "operator", path: "/operating-partner", light: 1, eyebrow: "The operating partner",
-    title: "The invisible <span>hand.</span>",
-    lead: "Who runs each estate day to day, how that is measured and paid, and what happens when it fails.",
+    title: "Sensory Getaways runs every estate, <span>measured and paid for one job.</span>",
+    lead: "Each estate is a single asset in its own limited liability partnership (LLP). Sensory Getaways runs it day to day, under contract to that LLP. This page sets out what it does, how it is measured and how it is paid.",
     blocks,
   };
   return <Mount html={TXT(P)} light />;
@@ -635,8 +636,9 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
   if (id === "investment") {
     const R = read(v);
     if (R.stance.kind === "open" && v.offering.deposit !== null) {
-      blocks.push({ p: "If, having read this and the risks, you want to hold units while you decide, a refundable holding deposit does that." });
-      blocks.push({ links: [[`Reserve your slot · ${rupeesFull(v.offering.deposit)} deposit`, `/reserve/${v.slug}`, "lead"], ["Read the risks first", `/collection/${v.slug}/risk`]] });
+      /* Wave 2, GC-19-CT-002 R0 (founder, 23 Oct 2026). */
+      blocks.push({ p: `Hold your units while you decide. A ${rupeesFull(v.offering.deposit)} deposit, paid to NAVINA Structures Pvt Ltd as a fiduciary, holds your units. It is refundable in full until you sign.` });
+      blocks.push({ links: [[`Hold your units · ${rupeesFull(v.offering.deposit)} deposit`, `/reserve/${v.slug}`, "lead"], ["Read the risks first", `/collection/${v.slug}/risk`]] });
     }
   }
   if (id === "enquire") {
@@ -644,7 +646,7 @@ export function SiteChapter({ path, param }: { path: string; param: string }) {
     if (R.stance.kind === "open" && v.offering.deposit !== null) {
       /* V2.0, 6 Oct 2026: reserving has its own page (./reserve.tsx); this
          one is for asking. One link, said before the form. */
-      blocks.push({ links: [[`Reserve your slot · ${rupeesFull(v.offering.deposit)} deposit`, `/reserve/${v.slug}`, "lead"]] });
+      blocks.push({ links: [[`Hold your units · ${rupeesFull(v.offering.deposit)} deposit`, `/reserve/${v.slug}`, "lead"]] });
     }
     blocks.push({ h: R.stance.kind === "waitlist" ? "Join the waitlist" : "Request the offering pack" });
     blocks.push({ form: {

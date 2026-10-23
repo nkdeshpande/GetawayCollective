@@ -549,25 +549,25 @@ export const PAGES: Record<string, SitePage> =  {
    "wild",
    19
   ],
-  "lead": "Not a resort that happens to sit in a forest. The land is already the reason to come.",
+  "lead": "Twelve studios on twelve acres at Aranthodu, Dakshina Kannada. Forming. Opens to partners after counsel's review.",
   "blocks": [
    {
     "rows": [
      [
       "Vehicle",
-      "PV01 Aranthodu Water Estate LLP · in the pipeline, not yet open for subscription"
+      "Aranthodu Water Estate LLP, in formation"
      ],
      [
       "Place",
       "Aranthodu, Dakshina Kannada"
      ],
      [
-      "Keys",
-      "12: six on water, six in the grove"
+      "Studios",
+      "12: six on the water, six in the grove"
      ],
      [
       "Land",
-      "12 acres, the largest holding in the collection · lease and title pending",
+      "12 acres, the largest holding in the collection · the lease and title documents are being completed",
       1
      ],
      [
@@ -576,7 +576,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "Figures",
-      "Withheld: the vehicle cannot publish while its model reads \"do not close equity\"",
+      "Capital, units and the payment order are published when the estate opens to partners, after the close of its financial model and counsel's review",
       1
      ]
     ]
@@ -585,7 +585,7 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "vehicles.ts 585–851 · WLD-01-CN-001 · properties.yaml 167–195"
    },
    {
-    "p": "Abundance into value. Dependency out. Nothing about Wildwood is offered until its six open conflicts are cleared and counsel has reviewed it."
+    "p": "The land is the reason to come. Wildwood is twelve studios: six on the water and six in the grove. Its 12 acres make it the largest holding in the collection. Each estate is a single asset in its own limited liability partnership (LLP), owned exclusively by its partners. Join The Signal to hear when Wildwood opens."
    },
    {
     "links": [
@@ -681,14 +681,14 @@ export const PAGES: Record<string, SitePage> =  {
  "team": {
   "key": "team",
   "eyebrow": "The team",
-  "title": "The people who <span>draw, build and govern it.</span>",
+  "title": "The people who <span>form, design, build and govern each estate.</span>",
   "film": [
    "solace",
    12,
    0,
    1
   ],
-  "lead": "Every estate is designed, engineered and modelled by named people, and governed by a founder whose decisions are written down. This page records who they are; where a registration or a name is still to be published, it says so rather than leaving it out.",
+  "lead": "Every estate is designed, engineered and modelled by named people. NAVINA Structures Pvt Ltd forms and governs each estate's limited liability partnership (LLP), as Getaway Collective, its brand. Its directors are the promoters, who invest in each estate in their own names.",
   "blocks": [
    {
     "people": [
@@ -697,11 +697,11 @@ export const PAGES: Record<string, SitePage> =  {
       "initials": "ND",
       "role": "Founder",
       "name": "Nikhil Deshpande",
-      "line": "Founder of Getaway Collective. Sets the standard every estate is designed, built and governed to, and signs the decisions that make it binding.",
+      "line": "Founder of Getaway Collective, and a director and shareholder of NAVINA Structures Pvt Ltd. A promoter of each estate, investing in his own name on the same terms as other partners. He sets the standard every estate is designed, built and governed to, and signs the decisions that make it binding.",
       "does": [
        "The enterprise and brand constitutions",
-       "Design and capital decisions at each estate, each written down and dated, such as the steel structure at Seaside Confluence",
-       "The separation between the platform, the operating partner and each vehicle"
+       "Design and capital decisions at each estate, each written and dated, such as the steel structure at Seaside Confluence",
+       "The separation between NAVINA, the operating partner and each LLP"
       ],
       "rows": [
        [
@@ -714,7 +714,7 @@ export const PAGES: Record<string, SitePage> =  {
       "initials": "KS",
       "role": "Architect",
       "name": "Karthik Shanbhogue",
-      "line": "Architecture for the collection: the design of each estate and the drawings it is built from.",
+      "line": "The design of each estate and the drawings it is built from.",
       "does": [
        "Estate plans and building design",
        "Design through to construction sets",
@@ -737,10 +737,10 @@ export const PAGES: Record<string, SitePage> =  {
       "initials": "M&amp;",
       "role": "Structural design",
       "name": "Manjunath &amp; Co.",
-      "line": "Structural design for the estates: frames, foundations and the ground each building stands on.",
+      "line": "Frames, foundations and the ground each building stands on.",
       "does": [
-       "The steel frame on driven piles at Seaside Confluence, chosen to leave the coastal ground barely touched",
-       "The pier fields that carry the Creek clusters above the forest floor",
+       "At Seaside Confluence, a steel frame on driven piles",
+       "At Streamside Creek, pier fields that lift the clusters above the forest floor",
        "Load paths, spans and the structural checks on every drawing set"
       ],
       "rows": [
@@ -758,13 +758,13 @@ export const PAGES: Record<string, SitePage> =  {
      },
      {
       "initials": "AD",
-      "role": "Building systems (MEP)",
+      "role": "Building systems",
       "name": "Addya",
-      "line": "Mechanical, electrical and plumbing design: water, power, drainage and air, planned from first principles for each estate's climate.",
+      "line": "Water, power, drainage and air, planned for each estate's climate.",
       "does": [
-       "Water and power, including off-grid where the estate needs it",
-       "Drainage for monsoon sites that take thousands of millimetres of rain a year",
-       "Ventilation and plant that run quietly, so silence is designed, not hoped for"
+       "Off-grid power where an estate needs it",
+       "Drainage for heavy monsoon rain",
+       "Plant that runs quietly"
       ],
       "rows": [
        [
@@ -778,7 +778,7 @@ export const PAGES: Record<string, SitePage> =  {
       "initials": "BIM",
       "role": "Building information modelling",
       "name": "Building information modellers",
-      "line": "One coordinated model per estate, in which architecture, structure and services are checked against each other before anything is built.",
+      "line": "One coordinated model per estate, where architecture, structure and services are checked against each other before building. Its quantities feed the bill of quantities, so cost follows the drawing.",
       "does": [
        "A single shared model for each estate",
        "Clash detection between structure, services and architecture",
@@ -809,7 +809,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "Governance counsel",
-      "Not yet appointed",
+      "Named on appointment",
       1
      ]
     ]
@@ -836,14 +836,14 @@ export const PAGES: Record<string, SitePage> =  {
  "build": {
   "key": "build",
   "eyebrow": "How we build",
-  "title": "Drawn to be checked, <span>not to be believed.</span>",
+  "title": "One standard, <span>drawn to be checked.</span>",
   "film": [
    "creek",
    12,
    0,
    1
   ],
-  "lead": "Specification is a claim that can be checked against a drawing. Adjectives are not. Every estate is carried from a confirmed site record to a coordinated model, and every question still open is written down with what will close it.",
+  "lead": "Every estate is built to the same standard, from drawings a partner can check. Each starts from a confirmed site record and ends in one model. Every open question is written down with what will close it. For a partner, the price, the programme and the standard are fixed on paper before building starts.",
   "blocks": [
    {
     "figs": [
@@ -853,15 +853,15 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "49",
-      "A1 sheets in the Creek construction basis set"
+      "A1 sheets in the Streamside Creek construction set"
      ],
      [
       "32",
-      "A1 sheets in the Confluence set"
+      "A1 sheets in the Seaside Confluence set"
      ],
      [
       "250",
-      "pages in Creek's specification catalogue"
+      "pages in Streamside Creek's specification catalogue"
      ]
     ]
    },
@@ -879,27 +879,27 @@ export const PAGES: Record<string, SitePage> =  {
     "steps": [
      [
       "A confirmed site",
-      "Each estate starts from an owner-confirmed site record: coordinates, land and title, read from the instrument itself rather than a summary."
+      "Coordinates, land and title, read from the instrument itself."
      ],
      [
       "A design brief",
-      "The architect sets the design: how the building meets the land, what it is made of, and which of the three chassis it uses."
+      "The architect sets how the building meets the land, what it is made of, and which of the three chassis it uses."
      ],
      [
       "Structure and services",
-      "Manjunath & Co. design the structure; Addya design water, power, drainage and air from first principles for the estate's climate."
+      "Manjunath & Co. design the structure. Addya design water, power, drainage and air for the estate's climate."
      ],
      [
       "One coordinated model",
-      "Building information modellers bring the disciplines into one model, so clashes are found on a screen rather than on site."
+      "Building information modellers bring every discipline into one model, so clashes are resolved on screen."
      ],
      [
-      "A basis set of drawings",
-      "A numbered set of A1 sheets, marked as design until it is issued for construction."
+      "A set of drawings",
+      "A numbered set of A1 sheets, marked as design until issued for construction."
      ],
      [
       "A list of open questions",
-      "Every open question is named with what closes it, who owns it and when. Seaside Confluence carries fifteen; Creek's basis set lists twenty-two."
+      "Each is named with what closes it, who owns it and when. Seaside Confluence carries fifteen; Streamside Creek's set lists twenty-two."
      ]
     ]
    },
@@ -907,25 +907,25 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "SSC-00-CN-003 §16 · CRK GFC R1 A-605"
    },
    {
-    "h": "The vehicle, formed in eight steps"
+    "h": "How each LLP is formed"
    },
    {
     "da": "formation"
    },
    {
-    "h": "Three chassis, every estate"
+    "h": "Three chassis, used at every estate"
    },
    {
     "da": "chassis"
    },
    {
-    "h": "Why we publish the holds"
+    "h": "Why we publish the open questions"
    },
    {
-    "p": "A drawing set with no open questions is either finished or hiding something. Ours say plainly what is not yet known: a coastal line not yet read, a flood line not yet surveyed. That is how a partner can tell a design from a brochure."
+    "p": "A partner can tell a design from a brochure by its open questions. Ours are named. At the coast, it is the CRZ line read from the survey. At Streamside Creek, it is the flood line."
    },
    {
-    "assert": "Nothing is cleared or built until the line that governs it is drawn."
+    "assert": "Each building is cleared once the line that governs it is drawn."
    },
    {
     "src": "SSC-00-CN-003 §14.1"
@@ -955,7 +955,7 @@ export const PAGES: Record<string, SitePage> =  {
   "light": 1,
   "eyebrow": "Press kit · 24 Sep 2026",
   "title": "Press <span>kit.</span>",
-  "lead": "Everything a writer, editor or researcher needs to describe Getaway Collective accurately: boilerplates, facts, names, and the few words we never use. Every figure here comes from a named source.",
+  "lead": "Everything a writer needs to describe Getaway Collective accurately.",
   "blocks": [
    {
     "h": "Boilerplate"
@@ -963,13 +963,13 @@ export const PAGES: Record<string, SitePage> =  {
    {
     "copy": [
      "Short",
-     "Getaway Collective is an investment platform for collective ownership of exceptional retreats in India. Each estate is held by its own Limited Liability Partnership and owned by its partners; Getaway Collective governs the vehicles and holds no equity in them."
+     "Getaway Collective is an ownership platform for retreats in India, and a brand of NAVINA Structures Pvt Ltd. Each estate is a single asset held in its own limited liability partnership (LLP), owned exclusively by its partners. NAVINA forms and governs each LLP and holds no equity in it."
     ]
    },
    {
     "copy": [
      "Long",
-     "Getaway Collective is an investment platform for collective ownership of exceptional retreats in India, founded by Nikhil Deshpande. Each estate is held by its own Limited Liability Partnership, divided into units and owned by its partners, who decide with votes weighted by equity. Getaway Collective structures and governs the vehicles, holds no equity in any of them, and is paid from one disclosed stage of each vehicle's waterfall. The estates are operated by Sensory Getaways under a Commercial Services Agreement. The collection includes Solace in the Nandi Hills corridor, Seaside Confluence on the Udupi coast, and Streamside Creek and Coffee Fields Forever in Kodagu. Capital is at risk."
+     "Getaway Collective is an ownership platform for retreats in India, founded by Nikhil Deshpande. It is a brand of NAVINA Structures Pvt Ltd. Each estate is held in its own limited liability partnership (LLP), divided into units. Its partners own it, and vote in proportion to their holding. NAVINA forms and governs each LLP, holds no equity in any of them, and is paid from one disclosed stage of revenue. Its directors, Nikhil Deshpande and Shirisha Avanchi, invest in each estate in their own names, on the same terms as other partners. Sensory Getaways runs the estates under a Commercial Services Agreement. The collection includes Solace in the Nandi Hills corridor, Seaside Confluence on the Udupi coast, and Streamside Creek and Coffee Fields Forever in Kodagu."
     ]
    },
    {
@@ -979,30 +979,38 @@ export const PAGES: Record<string, SitePage> =  {
     "rows": [
      [
       "Name",
-      "Getaway Collective"
+      "Getaway Collective, a brand of NAVINA Structures Pvt Ltd"
      ],
      [
       "Founder",
       "Nikhil Deshpande"
      ],
      [
+      "Promoters",
+      "Nikhil Deshpande and Shirisha Avanchi"
+     ],
+     [
       "What it is",
-      "An investment platform for collective ownership of exceptional retreats"
+      "An ownership platform for retreats in India"
      ],
      [
       "Structure",
-      "One LLP per estate; Getaway Collective holds no equity"
+      "One LLP per estate; NAVINA holds no equity"
      ],
      [
       "Operator",
       "Sensory Getaways"
      ],
      [
+      "House brands",
+      "SlowSpace · ESKAPE"
+     ],
+     [
       "Estates",
       "Solace by SLOWSPACE · Seaside Confluence · Streamside Creek · Coffee Fields Forever"
      ],
      [
-      "Keys across the four",
+      "Studios across the four",
       "58: 6, 12, 20 and 20"
      ],
      [
@@ -1018,7 +1026,7 @@ export const PAGES: Record<string, SitePage> =  {
       "Manjunath &amp; Co."
      ],
      [
-      "Mechanical, electrical and plumbing",
+      "Building systems",
       "Addya"
      ],
      [
@@ -1046,19 +1054,19 @@ export const PAGES: Record<string, SitePage> =  {
     "rows": [
      [
       "Solace by SLOWSPACE",
-      "Six keys on a granite ridge two hours north of Bengaluru; the reference estate."
+      "Six studios on a granite ridge two hours north of Bengaluru; the reference estate."
      ],
      [
       "Seaside Confluence",
-      "Twelve keys over the river where it meets the sea, on steel piles."
+      "Twelve studios over the river where it meets the sea, on steel piles."
      ],
      [
       "Streamside Creek",
-      "Twenty keys in five clusters, over a stream at Cherala in Kodagu."
+      "Twenty studios in five clusters, over a stream at Cherala in Kodagu."
      ],
      [
       "Coffee Fields Forever",
-      "Twenty keys inside a working coffee plantation at Suntikoppa."
+      "Twenty studios inside a working coffee plantation at Suntikoppa."
      ]
     ]
    },
@@ -1081,7 +1089,7 @@ export const PAGES: Record<string, SitePage> =  {
      ],
      [
       "On design",
-      "\"Specification is a claim that can be checked against a drawing. Adjectives are not.\""
+      "\"Specification is a claim that can be checked against a drawing.\""
      ]
     ]
    },
@@ -1089,18 +1097,19 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "L1-02 514 · L1-01 125 · public.ts 149, 711"
    },
    {
-    "p": "Please attribute these to Getaway Collective. Quotes attributed to a named person need that person's approval; ask hello@getawaycollective.co."
+    "p": "Please attribute these to Getaway Collective. A quote attributed to a named person needs that person's approval: ask hello@getawaycollective.co."
    },
    {
     "h": "Please write"
    },
    {
     "list": [
-     "Getaway Collective, in full, at first mention.",
-     "Collective ownership, not fractional ownership.",
-     "Partners or members, not customers or users.",
-     "Estate or property, and keys; the estates are not hotels or resorts.",
-     "Any figure with its source, and the words: capital is at risk."
+     "Getaway Collective, in full, at first mention, and NAVINA Structures Pvt Ltd as the company behind it.",
+     "Collective ownership, rather than fractional ownership.",
+     "Partners, rather than customers or users.",
+     "Estate or property, and studios; the estates are retreats, rather than hotels or resorts.",
+     "Units for shares of ownership; studios for where guests sleep.",
+     "Any figure with its source, and the words \"capital is at risk\"."
     ]
    },
    {
@@ -1108,10 +1117,10 @@ export const PAGES: Record<string, SitePage> =  {
    },
    {
     "list": [
-     "Timeshare, except to say it is not one.",
-     "Returns, yields or income, unless quoted from an offering letter with its confidence class.",
-     "Exclusive, limited, luxury resort, or any word that implies scarcity.",
-     "Naming a partner or investor who has not agreed to be named."
+     "Timeshare, except to say what it differs from.",
+     "Returns or yields, except as quoted from an offering letter, marked modelled or base case.",
+     "Exclusive, except of ownership: \"owned exclusively by its partners\".",
+     "A partner or investor's name, without their agreement."
     ]
    },
    {
@@ -1132,9 +1141,8 @@ export const PAGES: Record<string, SitePage> =  {
       "Inter Tight · Satoshi · Space Mono"
      ],
      [
-      "Photography",
-      "Not yet commissioned. Drawings and the drawn landscapes may be used, captioned as illustration.",
-      1
+      "Images",
+      "Drawings and drawn landscapes, captioned as illustration. Photography follows as each estate is built."
      ],
      [
       "Clear space",

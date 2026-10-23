@@ -103,17 +103,18 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
           eyebrow: "CHAPTER 06 · THE INVESTMENT",
           title: "Who is paid, and in what order.",
           lead:
-            "This estate states an order of payment, not shares of revenue: each tier is paid in full " +
-            "before the next, and the partners share only the last. No yield, rate or return is stated, " +
-            "and none is assured.",
+            "The estate is a single asset held in its own special purpose vehicle (SPV), in the form of a " +
+            "limited liability partnership (LLP). Its partners own it exclusively, in proportion to their units. " +
+            "This page shows what the project costs, how it is funded, and the fixed order in which revenue " +
+            "is paid: each tier in full before the next, the partners sharing the last as one class.",
           rows: [
             { label: "Project total", value: inr(s.projectTotal), basis: `${inr(s.equityLayer)} equity + ${inr(s.facility)} bank loan` },
             ...(s.uses ?? []).map(([label, x]) => ({ label, value: inr(x), basis: "What the project is spent on" })),
             {
               label: applied ? "Bank loan, applied for" : "Bank loan", value: inr(s.facility),
-              basis: plainTerms(`${applied ? "Applied for, not sanctioned. " : ""}${s.facilityLimit ? `A limit of ${inr(s.facilityLimit)}. ` : ""}${s.moratorium}. ${s.covenant}.`),
+              basis: plainTerms(`${applied ? "Applied for. " : ""}${s.facilityLimit ? `A limit of ${inr(s.facilityLimit)}. ` : ""}${s.moratorium}. ${s.covenant}.`),
             },
-            { label: "A unit", value: inr(o.unitPrice), basis: `${o.units} offered; ${o.available} available. ${o.promoterIs ? `The sponsor's ${inr(o.promoter)} is ${o.promoterIs}.` : ""}`.trim() },
+            { label: "A unit", value: inr(o.unitPrice), basis: `${o.units} offered; ${o.available} available. ${o.promoterIs ? `The promoters' ${inr(o.promoter)} is ${o.promoterIs}.` : ""}`.trim() },
             ...cascade.map((t, i) => ({ label: `${i + 1} ${t.what}`, value: i === cascade.length - 1 ? "Pro rata by units" : "Paid in full first", basis: t.rule })),
           ],
           withheld: [],
@@ -121,10 +122,11 @@ export function chapterContent(v: Vehicle, id: ChapterId): ChapterContent {
       }
       return {
         eyebrow: "CHAPTER 06 · THE INVESTMENT",
-        title: "Where each rupee of gross goes.",
+        title: "Who is paid, and in what order.",
         lead: y
-          ? `A modelled ${pct(y.bps)} to partners, ${v.operating.yieldBasis}. It is a forecast from ` +
-            `a model on an asset that does not exist yet — not a promise, and not a return.`
+          ? "The estate is a single asset held in its own special purpose vehicle (SPV), in the form of a " +
+            "limited liability partnership (LLP). Its partners own it exclusively, in proportion to their units. " +
+            `Revenue is paid in a fixed order; the modelled base case is ${pct(y.bps)} a year to partners, ${v.operating.yieldBasis}.`
           : "The waterfall is not complete, so no yield is stated.",
         rows: [
           { label: "Project total", value: inr(s.projectTotal), basis: `${inr(s.equityLayer)} equity + ${inr(s.facility)} facility` },

@@ -492,46 +492,42 @@ export const OPERATORS: PublicPage = {
   panes: [
     {
       n: "01", eyebrow: "The System", ground: "void",
-      title: "Four layers, one accountable party.",
+      title: "What it does",
       ledger: [
         { ref: "OPS-L1", role: "Intent", state: "Under contract", since: "2026-06-19",
           holder: "Sensory Getaways",
-          what: "What is asked for, however it is asked — a message, a schedule, or nothing at all." },
+          what: "What is asked for, however it is asked: a message, a schedule, or nothing at all." },
         { ref: "OPS-L2", role: "Core", state: "Under contract", since: "2026-06-19",
           holder: "Sensory Getaways",
-          what: "The logic that decides what that means for the property, and what it costs." },
+          what: "The logic that decides what a request means for the estate, and what it costs." },
         { ref: "OPS-L3", role: "Site", state: "Under contract", since: "2026-06-19",
           holder: "Sensory Getaways",
-          what: "The building itself: light, heat, water, access." },
+          what: "The building itself: light, heat, water and access." },
         { ref: "OPS-L4", role: "Dispatch", state: "Under contract", since: "2026-06-19",
           holder: "Sensory Getaways",
-          what: "A person, sent only when the first three cannot resolve it." },
+          what: "A person, sent when the first three layers cannot resolve it." },
       ],
-      note: "One holder across all four, which is the point: there is a single accountable party rather than a chain of them. Every layer runs under contract to the vehicle. Getaway Collective operates none of it and holds no equity in the vehicle it governs.",
+      note: "One accountable party, across four layers. One holder for all four means one party answers for the whole, under contract to each estate's LLP. NAVINA Structures Pvt Ltd governs, as Getaway Collective; Sensory Getaways operates. NAVINA holds no equity in any estate.",
     },
     {
       n: "02", eyebrow: "The Human Layer", ground: "void",
       title: "People, deployed on a rule.",
       body: [
-        "The people who run a property are not a feature to be photographed. Each role has a " +
-        "deployment rule — when it acts, and when it deliberately does not — and the rule is the " +
-        "thing worth publishing.",
-        "Discretion is a rule, not a manner. A role that only enters when the property is empty " +
-        "is a rule; a promise to be discreet is a hope.",
+        "Each role has a rule for when it acts, and when it holds back.",
+        "Discretion is written into the rule. A role that enters only when its studios are empty " +
+        "follows a rule, not a manner.",
       ],
     },
     {
       n: "03", eyebrow: "Accountability", ground: "paper",
-      title: "What happens when it fails.",
+      title: "How it is measured and paid",
       body: [
-        "The operating partner is measured against a Service Level and is paid from stage one of " +
-        "the waterfall — before the brand, before the reserves, before debt service and before " +
-        "partners.",
-        "It can be replaced. Replacement takes time, and the property earns less while it " +
-        "happens; that cost falls on partners and is disclosed as a risk rather than described " +
-        "as a safeguard.",
+        "Measured against agreed service levels, and paid from stage 1. It is paid first in the " +
+        "payment order. The brand, the reserves, the bank and the partners follow. Its duties run " +
+        "to the partnership.",
+        "Partners can replace it, under the terms of the operating agreement.",
       ],
-      cta: { label: "Where that sits in the waterfall", href: "/collection/slowspace-coastal/investment" },
+      cta: { label: "Where that sits in the payment order", href: "/collection/slowspace-coastal/investment" },
     },
   ],
 };

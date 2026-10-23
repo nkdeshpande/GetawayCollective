@@ -36,18 +36,18 @@ export interface CareerRole {
 export const ROLES: readonly CareerRole[] = [
   {
     label: "Developer and asset manager",
-    holder: "Getaway Collective · capital and governance",
+    holder: "NAVINA Structures Pvt Ltd, as Getaway Collective · capital and governance",
     title: "The master developer and asset manager",
     stamp: "Governs",
     purpose:
-      "Faces the partners. Forms each estate's partnership, secures its land, raises and reports its capital, and governs the operator on the partners' behalf. It holds no equity in any estate it governs.",
+      "Faces the partners. Forms each estate's LLP, secures its land, raises and reports its capital, and governs the operator for the partners. It holds no equity in any estate.",
     orientation: "Investor-facing · fiduciary · legal · financial · portfolio governance",
     holds: [
-      "Capital and partner relations: qualification, suitability, offering letters, and every communication with partners.",
-      "Vehicles and legal engineering: one limited liability partnership per estate, its LLP agreement, its reserved matters and its resolutions.",
-      "Land and title: finding the land, diligence on its title, conversion clearances, and title held in the partnership's own name.",
-      "The records and their reporting: the partnership records every figure on the site is read from, the six-stage waterfall, the sinking fund, and what partners receive.",
-      "Governance of the operator: its Service Level, its audits, and replacing an operator that falls short, where the agreement provides.",
+      "Partner relations: qualification, suitability, offering letters and every communication with partners.",
+      "The LLPs: one per estate, its agreement, its reserved matters and its resolutions.",
+      "Land and title: finding land, title diligence, conversion clearances, and title held in the LLP's name.",
+      "Records and reporting: the records every figure on the site comes from, the payment order, the sinking fund, and what partners receive.",
+      "Governance of the operator: its service levels, its audits, and its replacement where the agreement provides.",
     ],
   },
   {
@@ -59,9 +59,9 @@ export const ROLES: readonly CareerRole[] = [
       "Runs each estate day to day, under contract to its partnership, and carries the brands that bring people to it. It is measured against a Service Level and paid from stage one of the waterfall.",
     orientation: "Technical operations · administration · on-site delivery · marketing",
     holds: [
-      "Estate operations and partner care: the team on site, and each estate made ready for the partners who use it.",
-      "Technical upkeep: the structure and its systems (water, power, solar, pools), repairs, and renewals paid from the sinking fund.",
-      "Administration and the site: local procurement, vendors, health, safety and statutory compliance (FSSAI, fire, labour codes), payroll, and operational risk.",
+      "Operations and partner care: the team on site, and each estate ready for the partners who use it.",
+      "Technical upkeep: structure and systems (water, power, solar, pools), repairs, and renewals paid from the sinking fund.",
+      "Administration: local procurement, vendors, health, safety and statutory compliance (FSSAI, fire, labour codes), payroll and operational risk.",
       "Marketing and brand: the estates' brands, their public channels, and their campaigns.",
     ],
   },
@@ -89,5 +89,5 @@ export const WHY: readonly { readonly t: string; readonly sub: string; readonly 
 /** How to apply: one address, and one question answered instead of a CV. */
 export const APPLY = {
   address: "hello@getawaycollective.co",
-  ask: "Name the role in the subject line. Instead of a CV, tell us about one thing you have built or run: what it was, what went wrong, and what you did about it.",
+  ask: "Put the role in the subject line. In place of a CV, tell us about one thing you built or ran. Say what it was, what went wrong, and what you did.",
 } as const;
