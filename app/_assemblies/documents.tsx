@@ -261,6 +261,26 @@ function JournalBlock({ b }: { b: Block }) {
           <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>{b.source}</p>
         </div>
       );
+    /* The digital assemblies (23 Oct 2026) render on the public site
+       (site/pages.tsx); this older surface shows their words only. */
+    case "pull":
+      return <p className="t-heading measure" style={{ marginTop: "var(--gc-sp-m)" }}>{b.x}</p>;
+    case "story":
+      return (
+        <div className="panel on-paper" style={{ marginTop: "var(--gc-sp-m)" }}>
+          <span className="t-micro label">A story, to illustrate · {b.title}</span>
+          {b.x.map((p, i) => <p key={i} className="t-body" style={{ marginTop: "var(--gc-sp-3xs)" }}>{p.replace(/<[^>]+>/g, "")}</p>)}
+        </div>
+      );
+    case "facts":
+      return (
+        <ul className="t-body measure" style={{ marginTop: "var(--gc-sp-s)", paddingLeft: "1.1em" }}>
+          {b.rows.map(([k, v], i) => <li key={i}>{k}: {v}</li>)}
+        </ul>
+      );
+    case "graphic":
+    case "illus":
+      return null;
   }
 }
 

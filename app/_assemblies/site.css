@@ -701,6 +701,14 @@
 .site :is(.lt,.pg-col) .tx-toc a{color:var(--gc-s-stone);text-decoration-color:var(--gc-s-ash-2)}
 .site :is(.lt,.pg-col) .tx-toc a:is(:hover,.on){color:var(--ink);text-decoration-color:var(--cd)}
 .site .tx-h2{scroll-margin-top:80px}
+/* Journal digital assemblies (23 Oct 2026): a drawing, a story, a picture, each with room around it. */
+.site .j-fig,.site .j-illus{margin:calc(var(--gc-sp-l) * 1.25) 0;max-width:var(--col)}
+.site :is(.j-fig,.j-illus) figcaption{margin-top:var(--gc-sp-xs);font:500 13px/1.5 var(--text);color:var(--gc-s-fog);max-width:var(--read)}
+.site .j-illus-im{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--gc-s-tide)}
+.site .j-illus-im>:is(canvas,.film-img,picture>.film-img){position:absolute;inset:0;width:100%;height:100%}
+.site .j-story{margin:calc(var(--gc-sp-l) * 1.25) 0;padding:var(--gc-sp-m) 0 var(--gc-sp-m) var(--gc-sp-m);border-left:1px solid var(--gc-hairline);max-width:var(--read);display:grid;gap:var(--gc-sp-xs)}
+.site .j-story h3{margin:0;font:700 20px/1.25 var(--display);letter-spacing:-.01em}
+.site .j-story p{margin:0;font:500 16px/1.7 var(--text)}
 .site .tx-pull{margin:var(--gc-sp-l) 0;padding:var(--gc-sp-m) 0;border-top:2px solid var(--copper);border-bottom:1px solid var(--line)}
 .site .tx-pull p{margin:0;font:200 clamp(28px,3.6vw,46px)/1.12 var(--display);letter-spacing:-.03em;color:var(--paper);text-wrap:balance}
 .site .tx-inspire{margin:var(--gc-sp-xl) 0 var(--gc-sp-m);padding:var(--gc-sp-l) var(--gc-sp-l) var(--gc-sp-m);background:var(--panel);--mute:var(--gc-s-mute);--line:var(--gc-s-line);position:relative}

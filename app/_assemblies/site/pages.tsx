@@ -389,6 +389,12 @@ export function SiteJournalEntry({ slug }: { slug: string }) {
     else if (b.t === "list") blocks.push({ list: b.x });
     else if (b.t === "assert") blocks.push({ assert: b.x });
     else if (b.t === "figure") blocks.push({ rows: [[b.label, b.value]] });
+    /* Digital assemblies (23 Oct 2026): drawings, stories, pictures, pull lines and fact strips inline. */
+    else if (b.t === "graphic") blocks.push({ html: `<figure class="j-fig">${graphicHTML(b.g, headings)}${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>` });
+    else if (b.t === "story") blocks.push({ html: `<aside class="j-story"><span class="eb">A story, to illustrate</span><h3>${esc(b.title)}</h3>${b.x.map((p) => `<p>${p}</p>`).join("")}</aside>` });
+    else if (b.t === "illus") blocks.push({ html: `<figure class="j-illus"><div class="j-illus-im">${b.plate ? plate(b.plate, { sizes: "(max-width: 900px) 100vw, 760px", tag: "tl" }) : film(b.film?.[0] ?? "coast", b.film?.[1] ?? 17)}</div><figcaption>${esc(b.caption)}</figcaption></figure>` });
+    else if (b.t === "pull") blocks.push({ pull: b.x });
+    else if (b.t === "facts") blocks.push({ figs: b.rows });
     if (x && !drawn && x.graphicAfter === -1 && (x.graphic.kind === "weekends" || x.graphic.kind === "rain") && b.t === "p" && blocks.filter((k) => k.p || k.lede).length === 2) {
       blocks.push({ html: graphicHTML(x.graphic, headings) }); drawn = true;
     }

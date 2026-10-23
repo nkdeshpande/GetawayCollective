@@ -27,6 +27,7 @@
 import { WATERFALL, inr } from "../app/_assemblies/data";
 import { DSCR, UNIT, MY_YIELD_BPS, SITE, DEPOSIT } from "../app/_assemblies/slowspace";
 import type { JournalMeta } from "../constants/journal-taxonomy";
+import type { Graphic } from "./site/journal-extras";
 
 export type JournalKind =
   | "mechanism"   // how something works
@@ -72,7 +73,20 @@ export type Block =
   /** A claim set on paper. Reserved for assertions of fact. */
   | { t: "assert"; x: string }
   /** A figure and where it came from. Never a bare number in prose. */
-  | { t: "figure"; label: string; value: string; source: string };
+  | { t: "figure"; label: string; value: string; source: string }
+  /* ── Digital assemblies, 23 Oct 2026 (founder: "expand the Journal 5x
+     through digital assemblies, narrative stories, comparisons and
+     illustrations"). Each draws only what the entry states. ── */
+  /** A drawing inline, any kind the Journal already draws (compare, timeline, ladder, waterfall…). */
+  | { t: "graphic"; g: Graphic; caption?: string }
+  /** A story told to illustrate the point. Always labelled as an illustration: never a testimonial. */
+  | { t: "story"; title: string; x: readonly string[] }
+  /** An estate's own picture (content/site/media.ts) or a drawn film, with a caption. */
+  | { t: "illus"; plate?: string; film?: readonly [string, number]; caption: string }
+  /** One sentence of the entry, set large. */
+  | { t: "pull"; x: string }
+  /** A strip of the entry's own figures, label and value. */
+  | { t: "facts"; rows: readonly (readonly [string, string])[] };
 
 /* Values read from the canon, so an entry cannot drift from it. */
 const PARTNER_BPS = WATERFALL[WATERFALL.length - 1].bps;
