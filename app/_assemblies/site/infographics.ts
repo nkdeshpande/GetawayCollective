@@ -44,7 +44,7 @@ function timeline(steps: readonly (readonly [string, string])[], mark: number, m
 
 function triad() {
   const c = (h: string, b: string, t: string, lead = false) => `<div class="ig-tri${lead ? " lead" : ""}"><span class="eb">${h}</span><b>${b}</b><p>${t}</p></div>`;
-  return frame(`<div class="ig-triad">${c("Governs", "Getaway Collective", "Writes and keeps the rules. Paid from stage two. Holds no equity.")}` +
+  return frame(`<div class="ig-triad">${c("Governs", "NAVINA Structures, as Getaway Collective", "Forms each LLP and keeps its rules. Paid from stage two. Holds no equity.")}` +
     c("Owns", "One LLP per estate", "Its partners hold it and decide, with votes weighted by equity.", true) +
     c("Runs", "The operating partner", "Operates the estate under contract, measured on service levels.") + "</div>",
     "Separated on purpose: the party that interprets the rules has nothing an interpretation could improve.");
@@ -56,8 +56,8 @@ function ladder(steps: readonly (readonly [string, string])[]) {
 }
 
 function nots(headings: readonly string[]) {
-  const list = headings.filter((h) => /^We do not/i.test(h));
-  return frame(`<ul class="ig-nots">${list.map((h) => `<li><i aria-hidden="true"></i>${esc(h)}</li>`).join("")}</ul>`, "Five things asked for, and declined, with the reason for each below.");
+  const list = headings.slice(0, 5);
+  return frame(`<ul class="ig-nots">${list.map((h) => `<li><i aria-hidden="true"></i>${esc(h)}</li>`).join("")}</ul>`, "Five rules we keep, with the reason for each below.");
 }
 
 function weekends() {

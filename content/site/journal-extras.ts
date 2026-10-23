@@ -66,10 +66,10 @@ export const JOURNAL_EXTRAS: Readonly<Record<string, JournalExtra>> = {
     quote: { text: "Measure twice, cut once.", who: "A carpenter's proverb", where: "traditional" },
   },
   "governance-without-ownership": {
-    pull: "They are not aligned. They are separated, on purpose.",
+    pull: "The company is separated; its owners are aligned.",
     graphic: { kind: "triad" },
     graphicAfter: 0,
-    facts: [["0%", "Getaway Collective's equity in any vehicle"], ["1", "stage of the waterfall it is paid from"], ["100%", "of partners to change that clause"]],
+    facts: [["0%", "NAVINA's equity in any estate"], ["1", "stage of the payment order it is paid from"], ["100%", "of partners to change that rule"]],
     quote: { text: "Show me the incentive and I will show you the outcome.", who: "Charlie Munger", where: "as he often said it" },
   },
   "reading-a-modelled-number": {
@@ -79,10 +79,10 @@ export const JOURNAL_EXTRAS: Readonly<Record<string, JournalExtra>> = {
     quote: { text: "All models are wrong, but some are useful.", who: "George E. P. Box", where: "Robustness in the Strategy of Scientific Model Building, 1979" },
   },
   "two-waters": {
-    pull: "Sea frontage sells the winter; estuary frontage is calm in months when the surf is unusable.",
+    pull: "The sea frontage sells the winter; the estuary is calm in months when the surf is too rough to use.",
     graphic: { kind: "twowaters" },
     graphicAfter: 0,
-    facts: [["400 m", "between the surf and the still water"], ["12", "keys"], ["~50 min", "to Mangaluru airport"], ["2028", "handover, early in the year"]],
+    facts: [["400 m", "between the surf and the still water"], ["12", "studios"], ["32–46 min", "to Mangaluru airport"], ["2028", "handover, early in the year"]],
     quote: { text: "The edge of the sea is a strange and beautiful place.", who: "Rachel Carson", where: "The Edge of the Sea, 1955" },
   },
   "the-night-is-not-the-product": {
@@ -92,18 +92,18 @@ export const JOURNAL_EXTRAS: Readonly<Record<string, JournalExtra>> = {
     quote: { text: "Nowadays people know the price of everything and the value of nothing.", who: "Oscar Wilde", where: "The Picture of Dorian Gray, 1890" },
   },
   "what-this-platform-does-not-do": {
-    pull: "Most of what follows was requested by someone reasonable, for a reason that made sense at the time.",
+    pull: "Each rule began as a request from someone reasonable, for a reason that made sense at the time.",
     graphic: { kind: "nots" },
     graphicAfter: -1,
     quote: { text: "Less, but better.", who: "Dieter Rams", where: "his ten principles for good design" },
   },
   "what-a-holding-deposit-is": {
-    pull: "A deposit is not a position.",
+    pull: "Settlement is what makes a partner.",
     graphic: { kind: "compare", head: ["A holding deposit", "A position"], rows: [
-      ["What it is", "One payment that holds a slot", "Units entered on the register"],
-      ["Paid to", "The estate's LLP", "The estate's LLP"],
+      ["What it is", "One payment that holds your units", "Units entered on the register"],
+      ["Held by", "NAVINA Structures Pvt Ltd, as fiduciary", "The estate's LLP"],
       ["Makes you a partner", "No", "Yes, on settlement"],
-      ["Can come back", "In full, until you sign", "No; it can be sold after the lock-in"],
+      ["Can come back", "In full, until you sign", "Sold after the lock-in"],
     ] },
     graphicAfter: 2,
     quote: { text: "Measure twice, cut once.", who: "A carpenter's proverb", where: "traditional" },
