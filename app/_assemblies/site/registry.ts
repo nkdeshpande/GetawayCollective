@@ -208,7 +208,7 @@ export function read(v: Vehicle): Reading {
   const availability = complete ? "Funding complete"
     : v.lifecycle === "forming" ? "Not yet offered"
     : full ? "Fully subscribed"
-    : ok && o.available > 0 ? `${o.available} of ${o.units} units available`
+    : ok && o.available > 0 ? `${o.available} units offered`
     : "Offering not yet published";
   const delivery = v.lifecycle === "forming" ? "Pipeline" : v.lifecycle === "live" ? "Operating" : BUILD_LABEL[v.buildStage];
   /* The brief's table: raising → the offering; subscribed with a waitlist →

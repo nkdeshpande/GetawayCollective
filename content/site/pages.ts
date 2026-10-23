@@ -21,22 +21,22 @@ export const PAGES: Record<string, SitePage> =  {
    "coast",
    18.4
   ],
-  "lead": "Getaway Collective builds remarkable places in India and puts each one inside its own company, owned by its partners and governed in the open.",
+  "lead": "Getaway Collective creates remarkable places in India and holds each one in its own LLP, owned by its partners and governed in the open.",
   "blocks": [
    {
     "h": "What we are"
    },
    {
-    "p": "An investment platform for owning places worth returning to, together. Each place is held in its own LLP, owned by its partners and governed in the open."
+    "p": "An ownership platform for places worth returning to. Each place is a single asset in its own LLP. Its partners own it, and we govern it for them."
    },
    {
     "h": "Why it exists"
    },
    {
-    "p": "A second home is bought on one number and held on several nobody discusses. The fix is structural rather than commercial: one property, one company that owns it, and a record anyone holding it can read."
+    "p": "A second home is bought on one number and held on many. We built a structure that answers all of them: one place, one LLP that owns it, and records every partner can read."
    },
    {
-    "src": "about.tsx 104–123"
+    "src": "about.tsx 104–123 · copy GC-19-CT-001 R4"
    },
    {
     "h": "Four commitments"
@@ -50,28 +50,19 @@ export const PAGES: Record<string, SitePage> =  {
     ]
    },
    {
-    "src": "about.tsx 70–76"
-   },
-   {
-    "src": "L1-02 21–25 · public.ts 149"
-   },
-   {
     "q": "Modern luxury is defined not by excess, but by the absence of noise."
    },
    {
     "src": "L1-01 125–128, the axiom of the Architecture of Silence"
    },
    {
-    "h": "Three parties, never one"
+    "h": "Three parties, each with one role"
    },
    {
     "da": "entities"
    },
    {
-    "src": "L1-01 84–119 · legal.ts 132–154, 937"
-   },
-   {
-    "p": "No single party may control investment governance, operations and demand at once. That separation is the design, not a policy on top of it."
+    "p": "Governance, operations and demand sit with three different parties, so each holds the others to account. That separation is the design."
    },
    {
     "h": "Vision"
@@ -88,12 +79,20 @@ export const PAGES: Record<string, SitePage> =  {
    {
     "rows": [
      [
+      "NAVINA Structures Pvt Ltd",
+      "Getaway Collective is a brand of NAVINA Structures Pvt Ltd, which forms each estate's LLP and governs it for its partners."
+     ],
+     [
+      "The promoters",
+      "Nikhil Deshpande, the founder, and Shirisha Avanchi: the directors and shareholders of NAVINA, and partners in each estate in their own names, on the same terms as every other partner."
+     ],
+     [
       "The team",
-      "<a href=\"/team\" class=\"tx-u\">The founder, the architect, and the structural, building-systems and modelling practices</a>"
+      "<a href=\"/team\" class=\"tx-u\">The architect, and the structural, building-systems and modelling practices</a>"
      ],
      [
       "Registered details",
-      "Published here once the platform's own registration is complete. Each estate's partnership, with its LLP identification number where one has been issued, is named on that estate's page.",
+      "Each estate's LLP is named on that estate's page, with its identification number once it is issued. The <a href=\"/legal/disclosures\" class=\"tx-u\">Disclosures</a> set out how the parties are connected.",
       1
      ]
     ]
@@ -124,29 +123,56 @@ export const PAGES: Record<string, SitePage> =  {
    0,
    1
   ],
-  "lead": "Every estate is a single asset held in its own special purpose vehicle (SPV), in the form of a limited liability partnership (LLP). The LLP owns the land and the buildings in its own name. Its partners own the LLP in proportion to their units, each liable only up to what they agreed to contribute.",
+  "lead": "Every estate is a single asset held in its own special purpose vehicle (SPV), in the form of a limited liability partnership (LLP). The LLP owns the land and the buildings. Its partners own the LLP, in proportion to their units.",
   "blocks": [
    {
     "q": "Modern luxury is the absence of noise."
    },
    {
-    "p": "The doctrine first, then the arithmetic that has to survive it. Four chapters: what you own, how you become a partner, where the money goes, and how partners decide, use the estate and leave."
+    "h": "Why an LLP"
+   },
+   {
+    "steps": [
+     ["A legal entity of its own", "It owns the land and the buildings, signs contracts and keeps accounts in its own name."],
+     ["Limited liability", "Each partner's liability is limited to what they agreed to contribute."],
+     ["It continues as partners change", "Units can pass from one partner to another without the estate changing hands."],
+     ["Ring-fenced", "One estate per LLP, so each estate's money and obligations remain with that estate."]
+    ]
+   },
+   {
+    "h": "Who is behind it"
+   },
+   {
+    "rows": [
+     [
+      "NAVINA Structures Pvt Ltd, as Getaway Collective",
+      "Getaway Collective is NAVINA's brand. NAVINA forms each estate's LLP, holds your deposit as a fiduciary until you are admitted, then keeps the register and the records, runs the votes and reports to partners. It holds no equity, and is paid from one disclosed stage of revenue."
+     ],
+     [
+      "The promoters",
+      "Nikhil Deshpande and Shirisha Avanchi, NAVINA's directors and shareholders, invest in each estate in their own names: the same units, on the same terms, paid at the same stage as you."
+     ],
+     [
+      "Sensory Getaways",
+      "Runs each estate for its partners: the guests, the staff and the upkeep, measured on agreed service levels."
+     ]
+    ]
    },
    {
     "h": "Where your money goes"
    },
    {
     "steps": [
-     ["The deposit", "You hold your units with a ₹1,00,000 deposit, paid to NAVINA Structures, the company forming the estate's partnership, which holds it as a fiduciary. It is refundable in full until you sign."],
+     ["The deposit", "₹1,00,000 holds your units. It is paid to NAVINA Structures Pvt Ltd, the company forming the estate's LLP, which holds it as a fiduciary. It is refundable in full until you sign."],
      ["Identity checks", "They run alongside, at your pace, and complete before you sign."],
-     ["Signing", "You sign the LLP agreement and pay the balance; your units are allotted at signing."],
-     ["Building and running", "The estate is built and then run by the operating partner."],
-     ["Distributions", "Revenue pays six stages in order; partners share what remains, in proportion to their units."],
-     ["After the lock-in", "You may offer your units, to the other partners first."]
+     ["Signing", "You sign the LLP agreement and pay the balance. Your units are allotted at signing."],
+     ["Building", "The LLP builds the estate to its drawings and cost plan."],
+     ["Running", "Sensory Getaways opens it to guests."],
+     ["Distributions", "Revenue pays six stages in order, and partners share the last, in proportion to their units."]
     ]
    },
    {
-    "src": "public.ts 252–258"
+    "src": "public.ts 252–258 · copy GC-19-CT-001 R4"
    },
    {
     "toc": [
@@ -174,13 +200,13 @@ export const PAGES: Record<string, SitePage> =  {
     "id": "own"
    },
    {
-    "p": "A unit is a fixed share of one estate's LLP. Each estate sets its own: how large a share a unit is, what it costs, and the most one partner may hold. They differ, so they are read estate by estate from each offering's record, never stated once for all."
+    "p": "A unit is a fixed share of one estate's LLP. Each estate sets how large a share a unit is, what it costs and how many one partner may hold. Your units give you three things, in proportion to their number: a share of distributions, a vote, and nights at the estate."
    },
    {
     "units": true
    },
    {
-    "p": "Getaway Collective holds none of the equity in any estate. What it does at each estate, and what it is paid, are stated in that estate's own terms."
+    "p": "The equity belongs to the partners. What Getaway Collective does at each estate, and what it is paid, are stated in that estate's own terms."
    },
    {
     "src": "constants/vehicles.ts offering, ladder · legal.ts 132"
@@ -190,7 +216,7 @@ export const PAGES: Record<string, SitePage> =  {
     "id": "become"
    },
    {
-    "p": "Sign in with one email and read everything. The checks that follow run alongside your reading, and each stage can be resumed where you left it."
+    "p": "Sign in with one email and read everything. Identity checks run alongside your reading, and each stage resumes where you left it."
    },
    {
     "da": "path"
@@ -206,16 +232,16 @@ export const PAGES: Record<string, SitePage> =  {
     "id": "money"
    },
    {
-    "p": "Revenue flows through six stages, in order, each a share of the estate's gross revenue, and the six always add up to exactly 100%: nothing leaves outside them. There is no preferred return, no catch-up and no carried interest, so no class of investor is paid ahead of the others and no one takes a performance fee on top."
+    "p": "Revenue flows through six stages, in order. Each is a share of gross revenue, and together they make exactly 100%. There is one class of unit, so every partner is paid the same way, with no preferred return, catch-up or performance fee."
    },
    {
     "da": "wftable"
    },
    {
-    "p": "One estate states its waterfall differently. Streamside Creek sets out an order of payment, with the bank ahead of every partner and no share fixed in advance; <a class=\"tx-u\" href=\"/collection/coorg-coffee-creek#capital\">its page shows the order</a>."
+    "p": "Streamside Creek sets out its own order of payment, with the bank first; <a class=\"tx-u\" href=\"/collection/coorg-coffee-creek#capital\">its page shows the order</a>."
    },
    {
-    "p": "The same shares, drawn and applied to each estate's modelled revenue. The amounts are an illustration, not a forecast."
+    "p": "The same shares, drawn and applied to each estate's modelled revenue, as an illustration."
    },
    {
     "da": "waterfall",
@@ -225,24 +251,31 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "L1-16 28–57"
    },
    {
-    "h": "Who is paid, and for what",
+    "h": "Who is paid, and in what order",
     "id": "fees"
    },
    {
-    "p": "Every stage pays someone, and the order says who comes first. <b class=\"tx-strong\">First</b>, Sensory Getaways, the operating partner, for running the estate day to day under its Commercial Services Agreement. <b class=\"tx-strong\">Second</b>, the owner of the estate's house brand, SlowSpace or ESKAPE, for the name and the demand it brings, and Getaway Collective, for the platform: the records, the register of partners and the votes. <b class=\"tx-strong\">Third and fourth</b>, the partnership itself, which keeps its administration reserve and its sinking fund in its own name. <b class=\"tx-strong\">Fifth</b>, the bank, where there is a loan. <b class=\"tx-strong\">Last</b>, the partners."
+    "steps": [
+     ["Sensory Getaways", "For running the estate day to day, under its Commercial Services Agreement."],
+     ["The house brand and Getaway Collective", "SlowSpace or ESKAPE, for the name and the demand it brings; Getaway Collective, for the register, the records and the votes."],
+     ["The administration reserve", "Kept by the LLP in its own name."],
+     ["The sinking fund", "Kept by the LLP for repairs and renewal."],
+     ["The bank", "Where the estate has a loan."],
+     ["The partners", "Everything that remains, in proportion to their units."]
+    ]
    },
    {
-    "p": "The shares are set estate by estate. At Seaside Confluence and Solace the brand and platform stage takes 15% of revenue, and at Wildwood, still in the pipeline, 5%; the operating partner takes between 35% and 50%. At Streamside Creek the order is different, as above, and the operator's fee is not yet set. Each estate's investment page states its own."
+    "p": "The shares are set estate by estate. At Seaside Confluence and Solace the brand and platform stage takes 15% of revenue, and at Wildwood 5%; the operating partner takes between 35% and 50%. Streamside Creek states its own order. Each estate's investment page gives its shares."
    },
    {
-    "p": "Getaway Collective holds no equity in any estate and takes nothing from what reaches the partners. Where one of these parties is connected to another, by ownership or by the people who run it, the <a class=\"tx-u\" href=\"/legal/disclosures\">Disclosures</a> say so. No other charge can be made unless it appears in the offering letter before you commit."
+    "p": "Getaway Collective holds no equity in any estate and takes nothing from what reaches the partners. Its owner, NAVINA Structures Pvt Ltd, is owned and run by the promoters, and the <a class=\"tx-u\" href=\"/legal/disclosures\">Disclosures</a> set out every connection between the parties. Every charge appears in the offering letter before you commit."
    },
    {
     "h": "<span class=\"tx-ch\">Chapter 4</span>Deciding, using and leaving",
     "id": "decide"
    },
    {
-    "p": "<b class=\"tx-strong\">Deciding.</b> Votes are weighted by equity, never one partner, one vote. Resolutions are recorded in a register that is append-only: a correction is a new entry, never an edit."
+    "p": "<b class=\"tx-strong\">Deciding.</b> Votes are weighted by holding. Every resolution is recorded in a register that only grows: a correction is a new entry."
    },
    {
     "da": "vote"
@@ -251,7 +284,7 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "public.ts 932–938 · AGENTS.md 115 · Rule 11"
    },
    {
-    "p": "<b class=\"tx-strong\">Using the estate.</b> Nights follow your position; they are an incident of ownership, never the product. The standard rule is one night a year for each 1% of the estate you hold: ten nights for a 10% holding. Each offering letter confirms it."
+    "p": "<b class=\"tx-strong\">Using the estate.</b> Nights come with ownership: one night a year for each 1% of the estate you hold, from handover. A 10% holding brings ten nights. Each offering letter confirms it."
    },
    {
     "da": "position"
@@ -260,7 +293,7 @@ export const PAGES: Record<string, SitePage> =  {
     "src": "public.ts 184 · founder ruling, 6 Oct 2026"
    },
    {
-    "p": "<b class=\"tx-strong\">Leaving.</b> There is no public market for units. After the lock-in, partners can post units on a noticeboard that other partners see first; it is not a market, and nothing guarantees a buyer."
+    "p": "<b class=\"tx-strong\">Leaving.</b> After the lock-in, you offer your units on a private noticeboard, which fellow partners see first. A sale is agreed between partners, at a price they settle."
    },
    {
     "src": "public.ts 330–333"
@@ -274,7 +307,7 @@ export const PAGES: Record<string, SitePage> =  {
    {
     "links": [
      [
-      "How to qualify",
+      "How to join",
       "/how-to-qualify",
       "lead"
      ],

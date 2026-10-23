@@ -89,6 +89,9 @@ export function SiteHome() {
   };
   /* An estate's own picture, where it has one (content/site/media.ts); its drawn film otherwise. */
   const imgOf = (href: string) => COLLECTION.find((c) => c.href === href)?.img;
+  /* Wave 1: the promoters' money in each estate, from its register; private estates omitted. */
+  const stakes = VEHICLES.filter((v) => v.lifecycle !== "forming" && v.offering.promoter > 0n && !ownershipPrivate(v.slug)).map((v) =>
+    `${esc(publicName(v))}: ${rupees(v.offering.promoter)} of ${rupees(v.offering.totalEquity)} of equity${v.offering.promoterIs ? ", as the land they bring" : ""}`).join("; ");
   const html =
     // ── who we are, and what is offered ──
     /* 15 Oct 2026 (audit, section 5): the first thing a visitor reads is what
@@ -132,6 +135,20 @@ export function SiteHome() {
     '<section class="spv"><div class="center gut"><span class="eb">The structure</span><h2 class="h2">One asset. <span>Its own LLP.</span></h2>' +
     '<p class="para">Each estate is a single asset held in its own special purpose vehicle (SPV): an entity formed for that one estate and nothing else. The SPV takes the form of a limited liability partnership (LLP), and the LLP gives its partners four things. It is a legal entity in its own right. It owns the land and the buildings in its own name, signs its own contracts and keeps its own accounts. Each partner&rsquo;s liability is limited to what they agreed to contribute. It continues unchanged as partners join or leave. And because it holds one estate only, that estate&rsquo;s money and obligations remain inside it.</p>' +
     '<p class="para">The LLP is owned exclusively by its partners, a small circle of individuals invited to join. You join by buying units; each unit is a fixed share of the LLP, and of everything it owns.</p></div></section>' +
+    /* Wave 1, GC-19-CT-001 R4 (founder, 23 Oct 2026): who it suits and who is
+       behind it, in the investor's words. Figures from the register; Solace's
+       remain private (6 Oct ruling). */
+    '<section class="fit"><div class="fit-h"><span class="eb">Who it suits</span><h2 class="h2">Ownership for people who want <span>to hold something real.</span></h2></div><dl class="fit-grid">' +
+    '<div><dt>Capital you can set aside</dt><dd>Units are held for the estate&rsquo;s lock-in, 36 months at most estates, and then offered to fellow partners first.</dd></div>' +
+    '<div><dt>One place, not a portfolio</dt><dd>You own a share of one estate you can visit, with its own accounts.</dd></div>' +
+    '<div><dt>A say in it</dt><dd>Partners decide together, each vote weighted by what they hold.</dd></div>' +
+    '<div><dt>Nights of your own</dt><dd>One night a year for each 1% you hold, from handover.</dd></div>' +
+    '</dl><p class="para para-s">Investing from outside India, or for a family office? <a class="tx-u" href="/answers">The answers</a> cover who can invest and how much one partner may hold.</p></section>' +
+    '<section class="parties"><div class="fit-h"><span class="eb">Who is behind it</span><h2 class="h2">Three parties, <span>each with one job.</span></h2></div><dl>' +
+    '<div><dt>NAVINA Structures Pvt Ltd</dt><dd>Forms each estate&rsquo;s LLP and governs it, as Getaway Collective, its brand. It holds your deposit as a fiduciary until you are admitted, keeps the register, runs the votes and reports to partners. It holds no equity, and is paid from one disclosed stage of revenue.</dd></div>' +
+    `<div><dt>The promoters</dt><dd>Nikhil Deshpande and Shirisha Avanchi, NAVINA&rsquo;s directors and shareholders, invest alongside you in their own names: the same units, on the same terms, paid at the same stage, so their money rises and falls with yours.${stakes ? ` ${stakes}.` : ""}</dd></div>` +
+    '<div><dt>Sensory Getaways</dt><dd>Runs each estate: the guests, the staff and the upkeep. It is measured on agreed service levels and answers to the partners&rsquo; vote.</dd></div>' +
+    '</dl></section>' +
     // ── four estates, up close ──
     '<div class="explore-h"><span class="eb">The collection</span><h2 class="h2">Seven estates, <span>and where each one stands.</span></h2></div>' +
     '<div class="stackfilm">' + HOME_STACK.map((s) =>
@@ -245,7 +262,8 @@ export function SiteCollection() {
     const done = e.funding === "complete";
     return {
       e, g, st: stage(e), slug: e.href.replace("/collection/", ""),
-      facts: v ? `${v.keys} keys · ${landPublic(v)}` : e.spec,
+      /* Wave 1: studios are where guests sleep; units are shares of ownership. */
+      facts: v ? `${v.keys} studios · ${landPublic(v)}` : e.spec.replace(/\bkeys\b/g, "studios"),
       availability: R ? R.availability + (R.publishable && !R.complete && v!.offering.unitPrice > 0n ? ` · ${rupees(v!.offering.unitPrice)} a unit` : "")
         : done ? "Funding complete" : e.stage === "pipe" ? "Not yet offered" : "Not yet open for investment",
       delivery: R ? R.delivery : e.stage === "pipe" ? "Pipeline" : "In delivery",
@@ -257,7 +275,7 @@ export function SiteCollection() {
   ];
   const open: Group | "all" = counts.raising ? "raising" : "all";
   const html =
-    '<div class="col-head"><h1>Our estates</h1></div>' +
+    '<div class="col-head"><h1>Our estates</h1><p class="para col-lead">Seven estates in Karnataka, each a single asset in its own LLP. One is open to new partners today.</p></div>' +
     '<div class="filters"><div class="fl" role="group" aria-label="Filter"><span class="fl-l">Filters:</span><button type="button" aria-pressed="true" data-f="all">All</button><button type="button" aria-pressed="false" data-f="coast">Coast</button><button type="button" aria-pressed="false" data-f="hills">Hills</button><button type="button" aria-pressed="false" data-f="coffee">Coffee country</button></div><span class="fl-sort">Sort: by stage</span></div>' +
     `<div class="subtabs" role="tablist" aria-label="Where each estate stands">${tabs.map(([k, label]) => {
       const n = k === "all" ? cards.length : counts[k];
@@ -268,14 +286,14 @@ export function SiteCollection() {
       `<article class="cc cc-${g}" data-f="${e.region}" data-s="${g}" data-slug="${slug}"${open !== "all" && g !== open ? " hidden" : ""}>` +
       `<a class="cc-main" href="${e.href}"><div class="im">${e.img ? plate(e.img, { sizes: "(max-width: 900px) 100vw, 46vw", tag: "tl" }) : film(e.pal, e.hour)}<span class="st st-${g}">${st}</span></div>` +
       `<h3>${e.name}</h3><p class="cc-loc">${e.line}</p><p class="cc-char">${esc(e.character)}</p>` +
-      `<dl class="cc-facts"><div><dt>Keys and land</dt><dd>${esc(facts)}</dd></div><div><dt>Availability</dt><dd>${esc(availability)}</dd></div><div><dt>Delivery</dt><dd>${esc(delivery)}</dd></div></dl></a>` +
+      `<dl class="cc-facts"><div><dt>Studios and land</dt><dd>${esc(facts)}</dd></div><div><dt>Availability</dt><dd>${esc(availability)}</dd></div><div><dt>Delivery</dt><dd>${esc(delivery)}</dd></div></dl></a>` +
       `<a class="cc-act" href="${action[1]}">${esc(action[0])} ${NE}</a></article>`,
     ).join("") + "</div>" +
-    `<section class="mk">${film("solace", 17.8)}<div class="cap"><span class="eb">Take the next step</span><h2 class="h2">Become <span>a partner.</span></h2><p class="para dim">Talk to Investor Relations, or start qualification. Every conversation about capital continues in writing.</p><div><a class="btn" href="/contact">Make an enquiry</a></div></div></section>` +
-    '<section class="ben"><div class="l"><h2 class="h2 h2-s">Three things <span>that are different here</span></h2><p class="para dim">Most ways to own a retreat sell nights. This one governs an asset.</p><div><a class="btn" href="#faq">Read the questions</a></div></div>' +
-    '<div class="r"><div><span class="sq"><svg aria-hidden="true"><use href="#i-unit"/></svg></span><div><h4>Hold only what you need</h4><p>Each estate is divided into units in its own LLP, priced in its offering letter. A partner holds from one unit upward.</p></div></div>' +
-    '<div><span class="sq"><svg aria-hidden="true"><use href="#i-gov"/></svg></span><div><h4>Governed, never held</h4><p>Getaway Collective holds no equity in any estate and is paid from one disclosed stage of the waterfall.</p></div></div>' +
-    '<div><span class="sq"><svg aria-hidden="true"><use href="#i-net"/></svg></span><div><h4>One standard, many estates</h4><p>Every estate is built from the same three chassis and run by the same operating partner.</p></div></div></div></section>' +
+    `<section class="mk">${film("solace", 17.8)}<div class="cap"><span class="eb">Take the next step</span><h2 class="h2">Become <span>a partner.</span></h2><p class="para dim">Talk to Investor Relations, or begin with one email.</p><div><a class="btn" href="/contact">Make an enquiry</a></div></div></section>` +
+    '<section class="ben"><div class="l"><h2 class="h2 h2-s">Why own <span>this way</span></h2><p class="para dim">You own a share of the asset itself, and nights come with it.</p><div><a class="btn" href="#faq">Read the questions</a></div></div>' +
+    '<div class="r"><div><span class="sq"><svg aria-hidden="true"><use href="#i-unit"/></svg></span><div><h4>Own a share, sized to you</h4><p>Each estate is divided into units, priced in its offering letter. A partner holds from one unit upward.</p></div></div>' +
+    '<div><span class="sq"><svg aria-hidden="true"><use href="#i-gov"/></svg></span><div><h4>Governed for its partners</h4><p>Getaway Collective keeps the records and runs the votes. The equity belongs to the partners.</p></div></div>' +
+    '<div><span class="sq"><svg aria-hidden="true"><use href="#i-net"/></svg></span><div><h4>One standard, many estates</h4><p>Every estate is built to the same standard and run by the same operating partner.</p></div></div></div></section>' +
     `<section class="col-stages"><span class="eb">Where each estate stands</span><h2 class="h2">One track, <span>every estate.</span></h2>${daHTML("stages")}</section>` +
     compareHTML() +
     `<section class="faq" id="faq"><h2 class="h2">Frequently asked <span>questions</span></h2>${faqHTML(FAQ)}</section>`;
@@ -458,28 +476,28 @@ export function SiteQualify() {
   const blocks: Block[] = [
     { h: "What you own" },
     { html: `<div class="own-tiles">` +
-      tile("A share of a real place", "Your units are a share of the partnership that holds the land and the buildings, registered in its own name.") +
+      tile("A share of a real place", "Your units are a share of the LLP that owns the land and the buildings.") +
       /* 15 Oct 2026 (audit GC-02): one rule everywhere, the founder's of 6 Oct. */
-      tile("Nights of your own", openV ? `One night a year for each 1% of an estate you hold, from handover. At ${esc(publicName(openV))}, open now, one unit is ${openPct}% of the equity, so ${Math.floor(openPct + 1e-9)} nights a year. They come with owning; they are never sold.` : "One night a year for each 1% of an estate you hold, from handover. They come with owning; they are never sold.") +
-      tile("Income, modelled", lead ? `Distributions follow the waterfall. At ${esc(lead.name)} the modelled base-case yield is ${lead.yieldPct}% a year, ${esc(lead.basis)}.` : "Distributions follow the waterfall, from stabilised occupancy.") +
-      tile("Nothing to run", "The operating partner runs every estate day to day, measured on service levels and paid from the waterfall. You decide; it delivers.") +
-      tile("A vote", "The partners decide the matters that matter, each vote weighted by equity.") +
+      tile("Nights of your own", openV ? `One night a year for each 1% of an estate you hold, from handover. At ${esc(publicName(openV))}, open now, one unit is ${openPct}% of the equity, so ${Math.floor(openPct + 1e-9)} nights a year.` : "One night a year for each 1% of an estate you hold, from handover.") +
+      tile("Modelled income", lead ? `Distributions follow the payment order. At ${esc(lead.name)} the modelled base-case yield is ${lead.yieldPct}% a year, ${esc(lead.basis)}.` : "Distributions follow the payment order, from stabilised occupancy.") +
+      tile("Run for you", "Sensory Getaways runs every estate day to day, measured on agreed service levels.") +
+      tile("A vote", "Partners decide together, each vote weighted by holding.") +
       `</div>` },
     { h: "Three steps" },
     { steps: [
-      ["Sign in, and look", "One email address: no password, no documents, nothing to pass. Every estate, its drawings and its figures are open to you. A short suitability questionnaire opens the full offering documents, with a decision within 15 working days."],
-      ["Hold your units", `Hold your units online${hold ? ` with a ${hold} deposit` : ""}. It is paid to NAVINA Structures, the company forming the estate's partnership, which holds it as a fiduciary until partners are admitted. It is refundable in full until you sign the LLP agreement.`],
-      ["KYC alongside, then sign", "Identity checks run in parallel, at your pace, from the day you sign in. They complete before you sign the LLP agreement and settle your units. Then you are a partner: you vote, you receive distributions when there are any, and your nights begin at handover."],
+      ["Sign in and read", "One email address opens every estate, its drawings and its figures. A short suitability questionnaire opens the full offering documents, with a decision within 15 working days."],
+      ["Hold your units", `Hold your units online${hold ? ` with a ${hold} deposit` : ""}. It is paid to NAVINA Structures Pvt Ltd, the company forming the estate's LLP, which holds it as a fiduciary until partners are admitted. It is refundable in full until you sign the LLP agreement.`],
+      ["Sign, and become a partner", "Identity checks complete alongside your reading, at your pace. You sign the LLP agreement and settle your units; from then you vote, receive distributions and, from handover, your nights."],
     ] },
-    { p: "Why there are checks at all: partners own real land together, and the law requires the partnership to know who each of them is before they become one. That is why KYC is the last step, not the first. It never stands between you and the estates." },
+    { p: "Why identity checks: partners own real land together, and the law asks the partnership to know each partner before admitting them. That is why the checks come last." },
     { links: [["Sign in or begin", "/sign-in", "lead"], ["See the collection", "/collection"]] },
     /* 15 Oct 2026 (audit, section 6): the four-way calculator added an
        estate's value, its distributions and the worth of its nights into one
        headline, against comparators on different terms. It is withdrawn until
        it compares like with like; calc.ts is kept. */
     { h: "What your money does", id: "calculator" },
-    { p: "Three different things come with a share of an estate, and they are not added together. There is the value of the share itself, which can rise or fall and has no public market. There are distributions, which are paid only when there is money left after the estate's own costs and any loan, in the order its agreement sets. And there are nights, which are a benefit of owning, not income. Each estate's investment page sets out its own figures and the basis for each one." },
-    { assert: "An estate is not a deposit. Your capital is at risk and no return is guaranteed by any party; every estate figure here is modelled from its register and stated with its basis. Figures are before tax. Read the Risk Factors before you decide." },
+    /* Wave 1 (founder, 20 Oct): the one risk line lives in the footer; this states what each part is. */
+    { p: "Three things come with a share of an estate, each measured on its own. The value of the share itself, which moves with the estate. Distributions, paid from what remains after the estate's costs and any loan, in the order its agreement sets. And nights, a benefit of owning. Each estate's investment page sets out its own figures, modelled from its register, before tax, with the basis for each." },
     { h: "Every stage, in full" },
     { html: `<details class="tx-fold"><summary>Read every stage: the path, and KYC alongside it</summary>${stagesHTML}</details>` },
     { h: "What happens to what you enter" },
@@ -487,7 +505,7 @@ export function SiteQualify() {
     { links: [["Sign in or begin", "/sign-in", "lead"], ["Risk factors", "/legal/risk-disclosure"], ["Privacy Notice", "/legal/privacy"], ["Answers", "/answers"]] },
   ];
   const P: SitePage = {
-    key: "qualify", path: "/how-to-qualify", light: 1, eyebrow: "How to qualify",
+    key: "qualify", path: "/how-to-qualify", light: 1, eyebrow: "How to join",
     title: "Become a partner <span>in three steps.</span>",
     lead: "Sign in with one email and read everything. Hold your units with a refundable deposit. Identity checks run alongside and complete before you sign; then you are a partner, with nights of your own each year from handover.",
     blocks,

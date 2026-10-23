@@ -911,8 +911,8 @@ const DISCLOSURES: StandingDocument = {
   path: "/legal/disclosures",
   title: "Standing Disclosures",
   purpose: "The disclosures that apply to everything on this platform, and where each one lives.",
-  version: "2.0",
-  effective: "2026-07-31",
+  version: "2.1",
+  effective: "2026-10-23",
   alongside: [
     { path: "/legal/terms", title: "Terms and Conditions",
       why: "Part L carries the standing disclosure in full." },
@@ -952,6 +952,15 @@ const DISCLOSURES: StandingDocument = {
         { n: "B.4", h: "Conflicts",
           p: ["A register of conflicts is maintained and a conflicted party does not vote on the " +
               "matter concerned."] },
+        /* 2.1, 23 Oct 2026: wording approved by the founder (GC-19-CT-001 R4). */
+        { n: "B.5", h: "Who stands behind the platform",
+          p: ["Getaway Collective is a brand of NAVINA Structures Pvt Ltd. NAVINA forms each " +
+              "estate's LLP, holds holding deposits as a fiduciary until partners are admitted, and " +
+              "governs each LLP for its partners, for which it is paid from one disclosed stage of " +
+              "revenue. Its directors and shareholders, Nikhil Deshpande and Shirisha Avanchi, are " +
+              "also promoters of each estate and hold units in their own names, on the same terms " +
+              "as other partners."],
+          assertion: true },
       ],
     },
   ],

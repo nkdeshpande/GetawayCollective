@@ -9,7 +9,8 @@
  * Cut corners are clip-path, never a rounded radius; RADIUS.none is invariant.
  */
 
-.site{--void:var(--gc-s-night);--v2:var(--gc-s-coal);--panel:var(--gc-s-panel);--paper:var(--gc-paper);--light:var(--gc-s-light);--ink:var(--gc-ink);--mute:var(--gc-s-mute);--line:var(--gc-s-line);--copper:var(--gc-copper);--cd:var(--gc-copper-deep);--electric:var(--gc-electric);--moss:var(--gc-s-moss);--slate:var(--gc-s-slate);--ember:var(--gc-s-ember);--display:var(--gc-font-display);--text:var(--gc-font-body);--mono:var(--gc-font-mono);--gut:clamp(20px,5vw,72px);--sec:clamp(48px,8.9vw,128px);--nav-h:58px;--ebar-h:52px;--read:66ch;--iris-h:72px;--col:1040px;--col-faq:980px;--col-wide:1200px;--ease:var(--gc-ease-cinema);color-scheme:dark}
+/* 23 Oct 2026 (founder: more white space): wider gutters, taller sections, a narrower measure. */
+.site{--void:var(--gc-s-night);--v2:var(--gc-s-coal);--panel:var(--gc-s-panel);--paper:var(--gc-paper);--light:var(--gc-s-light);--ink:var(--gc-ink);--mute:var(--gc-s-mute);--line:var(--gc-s-line);--copper:var(--gc-copper);--cd:var(--gc-copper-deep);--electric:var(--gc-electric);--moss:var(--gc-s-moss);--slate:var(--gc-s-slate);--ember:var(--gc-s-ember);--display:var(--gc-font-display);--text:var(--gc-font-body);--mono:var(--gc-font-mono);--gut:clamp(22px,6vw,96px);--sec:clamp(64px,11vw,168px);--nav-h:58px;--ebar-h:52px;--read:62ch;--iris-h:72px;--col:1040px;--col-faq:980px;--col-wide:1200px;--ease:var(--gc-ease-cinema);color-scheme:dark}
 /* ── GENERATED RESET — scripts/gen-site-reset.js, do not edit by hand ── */
 .site{fill:revert}
 .site .brand{border-bottom:revert;padding:revert}
@@ -184,6 +185,7 @@
 .site .pg-col{background:var(--light);color:var(--ink);--mute:var(--gc-s-ash);--line:var(--gc-hairline)}
 .site .col-head{padding:calc(var(--gc-sp-3xs) * 17.5) var(--gut) calc(var(--gc-sp-3xs) * 4.5);border-bottom:1px solid var(--gc-s-rule)}
 .site .col-head h1{margin:0;font:700 clamp(34px,3.6vw,46px)/1 var(--display);letter-spacing:-.025em}
+.site .col-head .col-lead{margin:var(--gc-sp-s) 0 0;max-width:var(--read)}
 .site .filters{display:flex;justify-content:space-between;align-items:center;gap:var(--gc-sp-s);flex-wrap:wrap;padding:calc(var(--gc-sp-3xs) * 4.5) var(--gut) 0}
 .site .fl{display:flex;gap:calc(var(--gc-sp-3xs) * 1.5);align-items:center;flex-wrap:wrap;font-size:14px;color:var(--gc-s-ash)}
 .site .fl button{--c:5px;border:0;background:var(--gc-s-chip);padding:calc(var(--gc-sp-3xs) * 2.25) var(--gc-sp-s);cursor:pointer;font:600 13.5px var(--text);clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)*2),calc(100% - var(--c)) 100%,0 100%,0 calc(var(--c)*2))}
@@ -584,6 +586,16 @@
 .site .spv{padding:var(--sec) var(--gut)}
 .site .spv>div{max-width:760px;display:grid;gap:var(--gc-sp-s);text-align:left}
 .site .spv .h2,.site .spv .para{margin:0}
+/* Wave 1 (GC-19-CT-001 R4, 23 Oct 2026): who it suits, who is behind it. Room to breathe:
+   one idea a block, generous gaps, no cards or tiles. */
+.site :is(.fit,.parties){padding:calc(var(--sec) * 1.25) var(--gut);display:grid;gap:calc(var(--gc-sp-l) * 1.25)}
+.site .fit-h{display:grid;gap:var(--gc-sp-xs);max-width:760px}
+.site .fit-h .h2{margin:0}
+.site :is(.fit-grid,.parties dl){margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--gc-sp-l) calc(var(--gc-sp-l) * 1.5)}
+.site :is(.fit-grid,.parties dl)>div{display:grid;gap:var(--gc-sp-xs);align-content:start;max-width:46ch}
+.site :is(.fit-grid,.parties) dt{font:700 19px/1.25 var(--display);letter-spacing:-.01em}
+.site :is(.fit-grid,.parties) dd{margin:0;font:500 16px/1.65 var(--text)}
+.site .fit .para-s{margin:0;max-width:var(--read)}
 .site .phero .strip .sold-chip{margin:0}
 .site .rail,.site .pc-rail{scroll-padding-inline:var(--gut)}
 

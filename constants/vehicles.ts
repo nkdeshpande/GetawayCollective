@@ -120,7 +120,7 @@ export const TENURE_LABEL: Record<Tenure, string> = {
  * described as paid to an LLP directly, formed or not. The holding company
  * is NAVINA Structures (founder, 15 Oct 2026).
  */
-export const DEPOSIT_HOLDER: string | null = "NAVINA Structures";
+export const DEPOSIT_HOLDER: string | null = "NAVINA Structures Pvt Ltd";
 /** "NAVINA Structures, the holding company that forms SlowSpace Coorg Creek LLP, as fiduciary until its partners are admitted" */
 export const depositPayee = (v: Pick<Vehicle, "registeredName">): string =>
   `${DEPOSIT_HOLDER ?? "the holding company"}${DEPOSIT_HOLDER ? ", the holding company" : ""} that forms ${v.registeredName}, as fiduciary until its partners are admitted`;

@@ -1129,14 +1129,14 @@ export const ESTATES: Record<string, SiteEstate> = {
   "enquireHour": 20,
   "heroLabel": "Drawn film: rain over the river-forest, Coorg",
   "eyebrow": "Getaway Collective · Kodagu",
-  "credit": "Streamside Creek · twenty keys over a stream",
-  "spec": "{{KEYS}} keys in five clusters, set down along a stream.",
+  "credit": "Streamside Creek · twenty studios over a stream",
+  "spec": "{{KEYS}} studios in five clusters along a stream. Open to new partners.",
   "media": {
    "hero": "creek/hero",
    "heroTall": "creek/hero-tall",
    "enquire": "creek/lake"
   },
-  "intro": "Twenty keys over a stream. Five clusters of four are set down along the contour of a coffee slope in Kodagu, each under one thin roof, with a yard and a private pool in the shade below. Nothing here is built yet: every picture on this page is an illustration.",
+  "intro": "A share of one estate in coffee country. Streamside Creek is twenty studios in five clusters of four, along a perennial stream on eight acres of shade-grown coffee at Cherala, Kodagu. It is a single asset in its own LLP, divided into 20 units of 5% each: the promoters, Nikhil Deshpande and Shirisha Avanchi, hold 12 for the land they bring, and 8 are offered to new partners. Every picture here is an illustration of the estate as designed.",
   "place": {
    "film": [
     "creek",
@@ -1383,10 +1383,10 @@ export const ESTATES: Record<string, SiteEstate> = {
    }
   ],
   "made": [
-   "The standard",
-   "Quiet is <span>a number here.</span>"
+   "How it is built",
+   "One drawing, <span>built twenty times.</span>"
   ],
-  "madeSo": "A promise that can be measured can be kept at the twentieth key as at the first.",
+  "madeSo": "One drawing means one price, one crew and one standard. Each of the twenty is measured for quiet, darkness and warm evening light before it opens; the full specification is in the offering pack.",
   "materials": [
    [
     "Sound",
@@ -1612,19 +1612,19 @@ export const ESTATES: Record<string, SiteEstate> = {
   "own": [
    [
     "Start a conversation",
-    "Ask for the cost plan and the structure, and visit the estate and the stream. Getaway Collective introduces you. It gives no advice on whether this suits you, and it holds no money."
+    "Ask for the cost plan and the structure, and visit the land and the stream. Investor Relations answers in writing."
    ],
    [
-    "Read the plan and its doubts",
-    "The cost plan, the order of payment, and the list of what is still open. Nothing is signed before counsel has cleared the structure and your identity checks are complete."
+    "Read the offering pack",
+    "The cost plan, the order of payment and the drawings. Your identity checks complete alongside, and counsel clears the structure before anything is signed."
    ],
    [
-    "Sign into the estate's own vehicle",
-    "You become a partner of {{PARTNER}}, directly, and you pay the partnership itself. It owns the land and the buildings and owes the bank. Nothing is pooled with another estate."
+    "Hold your units, then sign",
+    "A ₹1,00,000 deposit holds your units, paid to NAVINA Structures Pvt Ltd as a fiduciary and refundable until you sign. At signing you become a partner of {{PARTNER}} and pay the balance to the LLP, which owns the land and the buildings. Its money stays with this estate."
    ]
   ],
   "ownAnswers": true,
-  "capitalNote": "Seven items of the build still await a quotation; they stand inside the undrawn part of the bank loan and are not in the figures above. The land is counted at the founders' own figure, which no independent valuer has yet confirmed.",
+  "capitalNote": "The land is counted at the founders' own figure, with an independent valuation to follow. Seven items of the build are being priced now, within the undrawn part of the bank loan, and will be added to the figures above.",
   "gates": [
    [
     "Before the loan is sanctioned",
