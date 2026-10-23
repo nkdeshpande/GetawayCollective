@@ -151,7 +151,7 @@ function Readout({ p }: { p: Position }) {
       </div>
       <div className="kv">
         <span className="label t-micro">Entitlement, from handover</span>
-        <span className="v nights">{p.nights.min}&ndash;{p.nights.max} nights</span>
+        <span className="v nights">{p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`}`} nights</span>
       </div>
       <div className="kv">
         <span className="label t-micro">Voting weight</span>

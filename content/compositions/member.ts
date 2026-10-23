@@ -59,7 +59,7 @@ export const MEMBER_PAGES: Record<string, Entry> = {
         { label: "Indicative annual", value: inr(p.distribution), money: true,
           sub: `${(p.yieldBps / 100).toFixed(1)}% once stabilised`, conf: "INFERRED" },
         { label: "Voting weight", value: pct(p.bps), sub: "contribution-weighted · §24a" },
-        { label: "Nights", value: "0", nights: true, sub: `of ${p.nights.min}–${p.nights.max}, from handover` },
+        { label: "Nights", value: "0", nights: true, sub: `of ${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`}, from handover` },
       ] },
       { kind: "links", items: [
         { t: "The vehicle console", to: "/flow/settled", primary: true },
@@ -221,7 +221,7 @@ export const MEMBER_PAGES: Record<string, Entry> = {
     ),
     sections: [
       { kind: "figures", items: [
-        { label: "Your allocation", value: `${p.nights.min}–${p.nights.max}`, nights: true,
+        { label: "Your allocation", value: `${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`}`, nights: true,
           sub: `floor of ${NIGHT_POOL.min}–${NIGHT_POOL.max} × ${pct(p.bps)}` },
         { label: "Drawable now", value: "0", nights: true, sub: "begins at handover" },
         { label: "Handover", value: PROGRAMME[3].w, sub: PROGRAMME[3].stage, conf: "FORECAST" },

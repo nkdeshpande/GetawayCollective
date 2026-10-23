@@ -74,7 +74,8 @@ export const SITE = {
   /* Two waters: Arabian Sea west, Shambhavi Estuary east. */
   frontage: "Arabian Sea (west) · Shambhavi Estuary (east)",
   access: [
-    { n: "Mangaluru International (IXE)", d: "45–55 min", km: "38 km", conf: "VERIFIED" as Confidence },
+    /* Founder, 23 Oct 2026: 31 km, matching the estate page (32–46 min). */
+    { n: "Mangaluru International (IXE)", d: "32–46 min", km: "31 km", conf: "VERIFIED" as Confidence },
     { n: "NH-66", d: "3 min", km: "1.5 km", conf: "VERIFIED" as Confidence },
     { n: "Udupi town", d: "28 min", km: "22 km", conf: "VERIFIED" as Confidence },
   ],
@@ -156,13 +157,13 @@ if (MIN_UNITS.some((u) => u !== MIN_UNIT)) {
 /**
  * ENTITLEMENT IS A POOL, DIVIDED — not a per-unit figure multiplied.
  *
- * 18–21 nights per 10% was the stated entitlement, and multiplying it
- * gives 9–10.5 nights for a 5% holding. Half a night is not a night. The
- * pool is stated for the whole vehicle and each position takes its floor
- * of it, so the sum of every partner's entitlement can never exceed what
- * the property can actually deliver.
+ * The rule is one night a year for each 1% held (founder, 6 Oct 2026,
+ * confirmed 23 Oct): a pool of 100 nights for the whole vehicle, each
+ * position taking its floor of it, so the sum of every partner's
+ * entitlement can never exceed what the property can deliver. It was
+ * 18–21 nights per 10% before the ruling.
  */
-export const NIGHT_POOL = { min: 180, max: 210 } as const;
+export const NIGHT_POOL = { min: 100, max: 100 } as const;
 
 const nightsFor = (bps: number) => ({
   min: Math.floor((NIGHT_POOL.min * bps) / 10000),
@@ -210,7 +211,7 @@ export const IS_FULLY_SUBSCRIBED = REMAINING_BPS === 0;
 export const UNIT = {
   commitment: MIN_UNIT * BigInt(ALLOCATION.defaultBps / ALLOCATION.minBps),  // ₹40,00,000
   sharePct: ALLOCATION.defaultBps,                                           // 10.00%, bps
-  nights: nightsFor(ALLOCATION.defaultBps),                                  // 18–21
+  nights: nightsFor(ALLOCATION.defaultBps),                                  // 10
   lockIn: "36 months from financial close",
 };
 

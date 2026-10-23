@@ -119,7 +119,7 @@ export function Offering() {
             <div className="panel on-panel" style={{ flex: "1 1 300px" }}>
               <span className="t-micro label">Entitlement</span>
               <div className="t-display-m nights" style={{ marginTop: "var(--gc-sp-2xs)" }}>
-                {p.nights.min}–{p.nights.max}
+                {p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`}`}
               </div>
               <p className="t-body-s dim" style={{ marginTop: "var(--gc-sp-2xs)" }}>
                 nights a year at {pct(p.bps)}, taken from a pool of{" "}
@@ -945,7 +945,7 @@ export function Commit() {
               <div className="row"><span>Indicative annual</span>
                 <span className="v">{inr(p.distribution)}</span></div>
               <div className="row"><span>Nights per year</span>
-                <span className="v">{p.nights.min}–{p.nights.max}</span></div>
+                <span className="v">{p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`}`}</span></div>
               <p className="note">
                 Derived from the equity layer by largest remainder, so{" "}
                 {10000 / ALLOCATION.minBps} minimum units are exactly {inr(EQUITY)} with nothing

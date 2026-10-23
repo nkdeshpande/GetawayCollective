@@ -156,7 +156,7 @@ function Entitlement({ p }: { p: Holding }) {
         <span className="t-micro label">Nights available now</span>
         <div className="t-display-m nights" style={{ marginTop: "var(--gc-sp-2xs)" }}>0</div>
         <span className="t-mono-s dim">
-          of {p.nights.min}–{p.nights.max} a year, once the property is open
+          of {p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`}`} a year, once the property is open
         </span>
       </div>
       <div style={{ marginTop: "var(--gc-sp-m)" }}>

@@ -42,7 +42,7 @@ describe("the allocation ladder", () => {
     const p = position(1000);
     expect(inr(p.commitment)).toBe("₹40,00,000");
     expect(p.commitment).toBe(UNIT.commitment);
-    expect(p.nights).toEqual({ min: 18, max: 21 });
+    expect(p.nights).toEqual({ min: 10, max: 10 }) /* one night a year per 1% held: founder, 6 and 23 Oct 2026 */;
     expect(p.distribution).toBe(MY_DISTRIBUTION);
     expect(p.yieldBps).toBe(MY_YIELD_BPS);
   });

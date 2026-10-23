@@ -202,7 +202,7 @@ export const PUB: Record<string, Entry> = {
             sub: pct(p.bps) + " of " + LLP.name, conf: "INFERRED" },
           { label: "Indicative annual", value: inr(p.distribution), money: true,
             sub: (p.yieldBps / 100).toFixed(1) + "% once stabilised", conf: "INFERRED" },
-          { label: "Entitlement", value: `${p.nights.min}–${p.nights.max}`, nights: true,
+          { label: "Entitlement", value: `${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`}`, nights: true,
             sub: "nights a year, from handover" },
         ] },
         { kind: "note", tone: "hazard", strong: "Every figure above is modelled.",

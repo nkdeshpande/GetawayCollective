@@ -179,7 +179,7 @@ export const NOTICES: readonly NoticeSpec[] = [
         facts: [
           { k: "Position", v: inr(p.commitment), money: true },
           { k: "Share", v: (p.bps / 100).toFixed(0) + "% · contribution-weighted vote" },
-          { k: "Entitlement", v: `${p.nights.min}–${p.nights.max} nights a year, from handover` },
+          { k: "Entitlement", v: `${p.nights.min === p.nights.max ? p.nights.min : `${p.nights.min}–${p.nights.max}`} nights a year, from handover` },
         ],
         links: [{ t: "Your home", to: "/home" }],
       };
