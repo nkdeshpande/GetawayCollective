@@ -930,10 +930,10 @@ const DISCLOSURES: StandingDocument = {
           p: ["The standing disclosure on capital at risk, past performance and advice is stated in " +
               "the Terms and Conditions at Part L. The Hospitality Asset Disclosure makes the same " +
               "three statements in its own words, at Part A and again at Part L.",
-              "It is deliberately not repeated here, or on a banner, or in a footer. Wording " +
-              "repeated in five places becomes five wordings the moment one is revised, and which " +
-              "one you were shown then depends on which screen you were on. It is stated once so " +
-              "that it can be revised once."],
+              /* 2.1, 23 Oct 2026: reworded with the founder's approval, for the footer line. */
+              "The full wording is stated in those two documents only, so that it can be revised " +
+              "in one place. Every page of the site carries one line at its foot that points to " +
+              "the Risk Factors; it summarises the disclosure and does not replace it."],
           assertion: true },
       ],
     },
